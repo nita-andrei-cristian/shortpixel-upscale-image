@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel\Helper;
+namespace SPUI\Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Model\AiDataModel;
+use SPUI\Model\AccessModel as AccessModel;
+use SPUI\Model\AiDataModel;
 
 class UiHelper
 {
@@ -35,7 +35,7 @@ class UiHelper
 
     $output .= "<div class='sp-column-actions '>
                     <div class='sp-dropdown'>
-                        <button onclick='ShortPixel.openImageMenu(event);' class='sp-dropbtn button dashicons dashicons-menu $primary' title='ShortPixel Actions'></button>";
+                        <button onclick='SPUI.openImageMenu(event);' class='sp-dropbtn button dashicons dashicons-menu $primary' title='ShortPixel Actions'></button>";
     $output .= "<div id='sp-dd-$id' class='sp-dropdown-content'>";
 
     foreach($actions as $actionName => $actionData)
@@ -73,10 +73,10 @@ class UiHelper
     $output .= '<p>';
     if ($percent && intval($percent) >= 5)
     {
-      $output .= __('Reduced by','shortpixel-image-optimiser') . ' <strong>' . self::formatNumber($percent,2) . '%</strong>';
+      $output .= __('Reduced by','shortpixel-upscale-image') . ' <strong>' . self::formatNumber($percent,2) . '%</strong>';
     }
     else if (intval($percent) < 5)
-      $output .= __('Bonus processing','shortpixel-image-optimiser');
+      $output .= __('Bonus processing','shortpixel-upscale-image');
 
     $type = $imageObj->getMeta('compressionType');
     $output .= ' ('. self::compressionTypeToText($type) .')';
@@ -115,14 +115,14 @@ class UiHelper
 
     if (isset($improvements['thumbnails']))
     {
-       $excluded = ($excludedThumbs > 0) ? sprintf(__('%s (%s excluded)', 'shortpixel-image-optimiser'), '<br>', $excludedThumbs) : '';
+       $excluded = ($excludedThumbs > 0) ? sprintf(__('%s (%s excluded)', 'shortpixel-upscale-image'), '<br>', $excludedThumbs) : '';
 
        $output .= '<div class="thumbnails optimized">';
        if ($thumbsTotal > $thumbsDone)
-         $output .= '<div class="totals">' . sprintf(__('+%s of %s thumbnails optimized','shortpixel-image-optimiser'), self::formatNumber($thumbsDone,0), self::formatNumber($thumbsTotal,0)) . ' ' .   $excluded . '</div>';
+         $output .= '<div class="totals">' . sprintf(__('+%s of %s thumbnails upscaled','shortpixel-upscale-image'), self::formatNumber($thumbsDone,0), self::formatNumber($thumbsTotal,0)) . ' ' .   $excluded . '</div>';
 
        elseif ($thumbsDone > 0)
-         $output .= '<div class="totals">' . sprintf(__('+%s thumbnails optimized','shortpixel-image-optimiser'), self::formatNumber($thumbsDone, 0)) . ' ' . $excluded . '</div>';
+         $output .= '<div class="totals">' . sprintf(__('+%s thumbnails upscaled','shortpixel-upscale-image'), self::formatNumber($thumbsDone, 0)) . ' ' . $excluded . '</div>';
 
 			 $improvs = array();
 
@@ -160,7 +160,7 @@ class UiHelper
 		       foreach($improvs as $thumbName => $stat)
 		       {
 						   $statText = self::formatNumber($stat, 2);
-		           $title =  sprintf(__('%s : %s', 'shortpixel-image-optimiser'), $thumbName, $statText . '%');
+		           $title =  sprintf(__('%s : %s', 'shortpixel-upscale-image'), $thumbName, $statText . '%');
 		           $rating = ceil( round($stat) / 10);
 							 if (0 == $rating)
 							 {
@@ -182,14 +182,14 @@ class UiHelper
 						 $blocks_off = str_repeat('<span class="point">&nbsp;</span>', 10);
 
 						 $output .= "<div class='thumb'>"
-												 . "<span class='thumb-name'>" . sprintf(__('+ %d thumbnails ', 'shortpixel-image-optimiser'), $lowrating) . '</span>' .
+												 . "<span class='thumb-name'>" . sprintf(__('+ %d thumbnails ', 'shortpixel-upscale-image'), $lowrating) . '</span>' .
 													"<span class='optimize-bar'>" . $blocks_off . "</span>
 												</div>";
 					 }
 
 					 if (true === $cutoff)
 					 {
-						 $output .= '<div class="thumb"><span class="cutoff">' . sprintf(__('+ %d more', 'shortpixel-image-optimiser'), ($thumbCount - 15)) . '</span></div>';
+						 $output .= '<div class="thumb"><span class="cutoff">' . sprintf(__('+ %d more', 'shortpixel-upscale-image'), ($thumbCount - 15)) . '</span></div>';
 					 }
 
 
@@ -200,15 +200,15 @@ class UiHelper
 
     if ($retinasDone > 0)
     {
-      $output .= '<div class="filetype retina">' . sprintf(__('+%s Retina images optimized','shortpixel-image-optimiser') , $retinasDone) . '</div>';
+      $output .= '<div class="filetype retina">' . sprintf(__('+%s Retina images upscaled','shortpixel-upscale-image') , $retinasDone) . '</div>';
     }
     if ($webpsTotal > 0)
     {
-      $output .=  '<div class="filetype webp">' . sprintf(__('+%s Webp images ','shortpixel-image-optimiser') , $webpsTotal) . '</div>';
+      $output .=  '<div class="filetype webp">' . sprintf(__('+%s Webp images ','shortpixel-upscale-image') , $webpsTotal) . '</div>';
     }
     if ($avifsTotal > 0)
     {
-        $output .=  '<div class="filetype avif">' . sprintf(__('+%s Avif images ','shortpixel-image-optimiser') , $avifsTotal) . '</div>';
+        $output .=  '<div class="filetype avif">' . sprintf(__('+%s Avif images ','shortpixel-upscale-image') , $avifsTotal) . '</div>';
     }
 
     if ($imageObj->isSomethingOptimized() && $imageObj->isProcessable())
@@ -238,7 +238,7 @@ class UiHelper
 
         if ($optimizable > 0)
         {
-           $output .= '<div class="thumbs-todo"><h4>' . sprintf(__('%d images to optimize', 'shortpixel-image-optimiser'), $optimizable) . '</h4>';
+           $output .= '<div class="thumbs-todo"><h4>' . sprintf(__('%d images to upscale', 'shortpixel-upscale-image'), $optimizable) . '</h4>';
              $output .= "<span>";
                foreach($urls as $optObj)
                {
@@ -254,7 +254,7 @@ class UiHelper
         if ($webpCount > 0 )
         {
 
-           $output .= '<div class="thumbs-todo"><h4>' . sprintf(__('%d Webp files to create', 'shortpixel-image-optimiser'), $webpCount) . '</h4>';
+           $output .= '<div class="thumbs-todo"><h4>' . sprintf(__('%d Webp files to create', 'shortpixel-upscale-image'), $webpCount) . '</h4>';
              $output .= "<span>";
                foreach($webpUrls as $optObj)
                {
@@ -268,7 +268,7 @@ class UiHelper
         }
         if ($avifCount > 0)
         {
-            $output .= '<div class="thumbs-todo"><h4>' . sprintf(__('%d Avif files to create', 'shortpixel-image-optimiser'), $avifCount) . '</h4>';
+            $output .= '<div class="thumbs-todo"><h4>' . sprintf(__('%d Avif files to create', 'shortpixel-upscale-image'), $avifCount) . '</h4>';
               $output .= "<span>";
                 foreach($avifUrls as $optObj)
                 {
@@ -289,16 +289,16 @@ class UiHelper
      switch($type)
      {
         case ImageModel::COMPRESSION_LOSSLESS:
-           $text = __('Lossless', 'shortpixel-image-optimiser');
+           $text = __('Lossless', 'shortpixel-upscale-image');
         break;
         case ImageModel::COMPRESSION_LOSSY:
-            $text = __('Lossy', 'shortpixel-image-optimiser');
+            $text = __('Lossy', 'shortpixel-upscale-image');
         break;
         case ImageModel::COMPRESSION_GLOSSY:
-            $text = __('Glossy', 'shortpixel-image-optimiser');
+            $text = __('Glossy', 'shortpixel-upscale-image');
         break;
         default:
-            $text = __('No compression', 'shortpixel-image-optimiser');
+            $text = __('No compression', 'shortpixel-upscale-image');
         break; 
      }
 
@@ -350,22 +350,22 @@ class UiHelper
                }
 
 							 if ($optimizableWebp > 0 || $optimizableAvif > 0)
-							 	   $itemText = __('items', 'shortpixel-image-optimiser');
+							 	   $itemText = __('items', 'shortpixel-upscale-image');
 								else {
-									 $itemText = __('thumbnails', 'shortpixel-image-optimiser');
+									 $itemText = __('thumbnails', 'shortpixel-upscale-image');
 								}
-               $action['text']  = sprintf(__('Optimize %s  %s','shortpixel-image-optimiser'),$total, $itemText);
+               $action['text']  = sprintf(__('Upscale %s  %s','shortpixel-upscale-image'),$total, $itemText);
 
 
              }
              else
              {
                  if ($optimizableWebp > 0 && $optimizableAvif > 0)
-                   $text  = sprintf(__('Optimize %s webps and %s avif','shortpixel-image-optimiser'),$optimizableWebp, $optimizableAvif);
-                 elseif ($optimizableWebp > 0)
-                   $text  = sprintf(__('Optimize %s webps','shortpixel-image-optimiser'),$optimizableWebp);
-                 else
-                    $text  = sprintf(__('Optimize %s avifs','shortpixel-image-optimiser'),$optimizableAvif);
+                   $text  = sprintf(__('Upscale %s webps and %s avif','shortpixel-upscale-image'),$optimizableWebp, $optimizableAvif);
+                elseif ($optimizableWebp > 0)
+                   $text  = sprintf(__('Upscale %s webps','shortpixel-upscale-image'),$optimizableWebp);
+                else
+                    $text  = sprintf(__('Upscale %s avifs','shortpixel-upscale-image'),$optimizableAvif);
                  $action['text'] = $text;
              }
              $list_actions['optimizethumbs'] = $action;
@@ -400,25 +400,25 @@ class UiHelper
 		           switch($compressionType)
 		           {
 		               case ImageModel::COMPRESSION_LOSSLESS:
-		                 $list_actions['reoptimize-lossy'] = self::getAction('reoptimize-lossy', $id);
-		                 $list_actions['reoptimize-glossy'] = self::getAction('reoptimize-glossy', $id);
+		                 $list_actions['re-upscale-lossy'] = self::getAction('re-upscale-lossy', $id);
+		                 $list_actions['re-upscale-glossy'] = self::getAction('re-upscale-glossy', $id);
 
 		               break;
 		               case ImageModel::COMPRESSION_LOSSY:
-		                 $list_actions['reoptimize-lossless'] = self::getAction('reoptimize-lossless', $id);
-		                 $list_actions['reoptimize-glossy'] = self::getAction('reoptimize-glossy', $id);
+		                 $list_actions['re-upscale-lossless'] = self::getAction('re-upscale-lossless', $id);
+		                 $list_actions['re-upscale-glossy'] = self::getAction('re-upscale-glossy', $id);
 
 		               break;
 		               case ImageModel::COMPRESSION_GLOSSY:
-		                 $list_actions['reoptimize-lossy'] = self::getAction('reoptimize-lossy', $id);
-		                 $list_actions['reoptimize-lossless'] = self::getAction('reoptimize-lossless', $id);
+		                 $list_actions['re-upscale-lossy'] = self::getAction('re-upscale-lossy', $id);
+		                 $list_actions['re-upscale-lossless'] = self::getAction('re-upscale-lossless', $id);
 		               break;
 		           }
 
 							 if ($mediaItem->get('type') === 'media')
 							 {
-							 		$list_actions['reoptimize-smartcrop'] = self::getAction('reoptimize-smartcrop', $id, array('compressionType' => $compressionType));
-							 		$list_actions['reoptimize-smartcropless'] = self::getAction('reoptimize-smartcropless', $id, array('compressionType' => $compressionType));
+							 		$list_actions['re-upscale-smartcrop'] = self::getAction('re-upscale-smartcrop', $id, array('compressionType' => $compressionType));
+							 		$list_actions['re-upscale-smartcropless'] = self::getAction('re-upscale-smartcropless', $id, array('compressionType' => $compressionType));
 								}
 		          		$list_actions['restore'] = self::getAction('restore', $id);
 							} // isRestorable
@@ -428,7 +428,7 @@ class UiHelper
 						}
         } // hasBackup
 
-				if (\wpSPIO()->env()->is_debug && $mediaItem->get('type') == 'media')
+				if (\wpSPUI()->env()->is_debug && $mediaItem->get('type') == 'media')
 				{
 					 $list_actions['redo_legacy'] = self::getAction('redo_legacy', $id);
 				}
@@ -443,7 +443,7 @@ class UiHelper
 
       if(! $quotaControl->hasQuota())
       {
-         $remove = array('reoptimize-lossy' => '', 'reoptimize-glossy' => '', 'reoptimize-lossless' => '', 'optimizethumbs' => '');
+         $remove = array('re-upscale-lossy' => '', 're-upscale-glossy' => '', 're-upscale-lossless' => '', 'optimizethumbs' => '');
          $list_actions = array_diff_key($list_actions, $remove);
 
       }
@@ -497,7 +497,7 @@ class UiHelper
   {
     $keyControl = ApiKeyController::getInstance();
     $queueController = new QueueController();
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPUI()->settings();
 
     $text = '';
 
@@ -505,23 +505,23 @@ class UiHelper
 
     if (! $keyControl->keyIsVerified())
     {
-      $text = __('Invalid API Key. <a href="options-general.php?page=wp-shortpixel-settings">Check your Settings</a>','shortpixel-image-optimiser');
+      $text = __('Invalid API Key. <a href="options-general.php?page=wp-shortpixel-upscale-settings">Check your Settings</a>','shortpixel-upscale-image');
     }
 		// This basically happens when a NextGen gallery is not added to Custom Media.
 		elseif ($mediaItem->get('id') === 0)
 		{
 			 if ($mediaItem->isProcessable(true) === false)
 			 {
-				 $text = __('Not Processable: ','shortpixel_image_optimiser');
+				 $text = __('Not Processable: ','shortpixel-upscale-image');
 				 $text  .= $mediaItem->getProcessableReason();
 			 }
 			 else {
-         if (\wpSPIO()->env()->has_nextgen && false == $settings->includeNextGen)
+         if (\wpSPUI()->env()->has_nextgen && false == $settings->includeNextGen)
          {
-           $text = __('This image was not found in our database. Enable "Optimize nextgen galleries" in the settings, or add this folder manually. ', 'shortpixel-image-optimiser');
+           $text = __('This image was not found in our database. Enable "Upscale nextgen galleries" in the settings, or add this folder manually. ', 'shortpixel-upscale-image');
          }
          else {
-           $text = __('This image was not found in our database. Refresh folders, or add this gallery', 'shortpixel-image-optimiser');
+           $text = __('This image was not found in our database. Refresh folders, or add this gallery', 'shortpixel-upscale-image');
          }
 			 }
 		}
@@ -531,12 +531,12 @@ class UiHelper
     }
     elseif (false === $mediaItem->isProcessable()  )
     {
-       $text = __('Not Processable: ','shortpixel_image_optimiser');
+       $text = __('Not Processable: ','shortpixel-upscale-image');
        $text  .= $mediaItem->getProcessableReason();
     }
     elseif (! $mediaItem->exists())
     {
-       $text = __('File does not exist.','shortpixel-image-optimiser');
+       $text = __('File does not exist.','shortpixel-upscale-image');
     }
     elseif ($mediaItem->getMeta('status') < 0)
     {
@@ -544,7 +544,7 @@ class UiHelper
     }
     elseif( $queueController->isItemInQueue($mediaItem) === true)
 		{
-			 $text = '<p>' . __('This item is waiting to be processed', 'shortpixel-image-optimiser') . '</p>';
+			 $text = '<p>' . __('This item is waiting to be processed', 'shortpixel-upscale-image') . '</p>';
 			 $action = self::getAction('cancelOptimize', $mediaItem->get('id'));
 
 			 if ($access->imageIsEditable($mediaItem))
@@ -561,7 +561,7 @@ class UiHelper
 
 					if ($mediaItem->get('type') == 'media')
 					{
-	 					$was_converted = get_post_meta($mediaItem->get('id'), '_shortpixel_was_converted', true);
+	 					$was_converted = get_post_meta($mediaItem->get('id'), '_spui_was_converted', true);
 						$updateTs = 1656892800; // July 4th 2022 - 00:00 GMT
 
 						if ($was_converted < $updateTs)
@@ -581,12 +581,12 @@ class UiHelper
           {
             $text .= "<div class='shortpixel-image-notice'>" . esc_html($mediaItem->getReason('processable'));
 
-            $text .= "<p class='shortpixel-error-reset'>" . sprintf(__('%s Click to unmark as completed %s', 'shortpixel-image-optimiser'), '<a href="javascript:' . $unmark['function'] . '">', '</a>') . '</p>';
+            $text .= "<p class='shortpixel-error-reset'>" . sprintf(__('%s Click to unmark as completed %s', 'shortpixel-upscale-image'), '<a href="javascript:' . $unmark['function'] . '">', '</a>') . '</p>';
             $text .= '</div>';
           }
           else {
             $text .= "<div class='shortpixel-image-error'>" . esc_html($mediaItem->getReason('processable'));
-            $text .= "<span class='shortpixel-error-reset'>" . sprintf(__('After you have fixed this issue, you can %s click here to retry %s', 'shortpixel-image-optimiser'), '<a href="javascript:' . $retry['function'] . '">', '</a>') . '</span>';
+            $text .= "<span class='shortpixel-error-reset'>" . sprintf(__('After you have fixed this issue, you can %s click here to retry %s', 'shortpixel-upscale-image'), '<a href="javascript:' . $retry['function'] . '">', '</a>') . '</span>';
             $text .= '</div>';
           }
 
@@ -596,7 +596,7 @@ class UiHelper
 					{
 						$text .= "<div class='shortpixel-image-error'><span class='shortpixel-error-reset'>";
 
-						$text .= sprintf(esc_html__('It seems you have older converted legacy data, which might cause this issue. You can try to %s %s %s . If nothing changes, this is not the cause. ','shortpixel-image-optimiser'), '<a href="javascript:' . $redo_legacy['function'] . '">', $redo_legacy['text'], '</a>');
+						$text .= sprintf(esc_html__('It seems you have older converted legacy data, which might cause this issue. You can try to %s %s %s . If nothing changes, this is not the cause. ','shortpixel-upscale-image'), '<a href="javascript:' . $redo_legacy['function'] . '">', $redo_legacy['text'], '</a>');
 						$text .= "</span></div>";
 					}
 
@@ -630,12 +630,12 @@ class UiHelper
       ];
 
 
-      $mainline =  sprintf(__('Exif: %s'), ($removed) ? __('Removed', 'shortpixel-image-optimiser') : __('Kept', 'shortpixel-image-optimiser'));
+      $mainline =  sprintf(__('Exif: %s'), ($removed) ? __('Removed', 'shortpixel-upscale-image') : __('Kept', 'shortpixel-upscale-image'));
 
       if (! is_null($ai))
       {
-         $mainline .=  sprintf(__(', AI %s '), ($ai) ? __('Allowed', 'shortpixel-image-optimiser') : __('Denied', 'shortpixel-image-optimiser'));
-         $mainline .=  sprintf(__(', SEO %s'), ($seo) ? __('Allowed', 'shortpixel-image-optimiser') : __('Denied', 'shortpixel-image-optimiser'));
+         $mainline .=  sprintf(__(', AI %s '), ($ai) ? __('Allowed', 'shortpixel-upscale-image') : __('Denied', 'shortpixel-upscale-image'));
+         $mainline .=  sprintf(__(', SEO %s'), ($seo) ? __('Allowed', 'shortpixel-upscale-image') : __('Denied', 'shortpixel-upscale-image'));
       }
 
       $status['line']  = $mainline;
@@ -655,47 +655,47 @@ class UiHelper
     switch($name)
     {
       case 'optimize':
-         $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ')';
+         $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ')';
          $action['type']  = 'js';
-         $action['text'] = __('Optimize Now', 'shortpixel-image-optimiser');
+         $action['text'] = __('Upscale Now', 'shortpixel-upscale-image');
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
       break;
       case 'forceOptimize':
-        $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ', true)';
+        $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ', true)';
         $action['type']  = 'js';
-        $action['text'] = __('Override exclusions and optimize now', 'shortpixel-image-optimiser');
+        $action['text'] = __('Override exclusions and upscale now', 'shortpixel-upscale-image');
         $action['display'] = 'button';
         $action['is-optimizable'] = true;
       break;
 			case 'cancelOptimize':
-				 $action['function'] = 'window.ShortPixelProcessor.screen.CancelOptimizeItem(' . $id . ')';
+				 $action['function'] = 'window.SPUIProcessor.screen.CancelOptimizeItem(' . $id . ')';
 				 $action['type']  = 'js';
-				 $action['text'] = __('Cancel item optimization', 'shortpixel-image-optimiser');
+				 $action['text'] = __('Cancel item upscaling', 'shortpixel-upscale-image');
 				 $action['display'] = 'button';
 			break;
       case 'markCompleted':
-          $action['function'] = 'window.ShortPixelProcessor.screen.MarkCompleted(' . $id . ')';
+          $action['function'] = 'window.SPUIProcessor.screen.MarkCompleted(' . $id . ')';
           $action['type']  = 'js';
-          $action['text'] = __('Mark as Completed', 'shortpixel-image-optimiser');
+          $action['text'] = __('Mark as Completed', 'shortpixel-upscale-image');
           $action['display'] = 'button-secondary';
           $action['layout'] = 'paragraph';
-          $action['title'] = __('This will cause the plugin to skip this image for optimization', 'shortpixel-image-optimiser');
+          $action['title'] = __('This will cause the plugin to skip this image for upscaling', 'shortpixel-upscale-image');
       break;
       case 'unMarkCompleted':
-          $action['function'] = 'window.ShortPixelProcessor.screen.UnMarkCompleted(' . $id . ')';
+          $action['function'] = 'window.SPUIProcessor.screen.UnMarkCompleted(' . $id . ')';
           $action['type']  = 'js';
-          $action['text'] = __('Click to unmark this item as done', 'shortpixel-image-optimiser');
+          $action['text'] = __('Click to unmark this item as done', 'shortpixel-upscale-image');
           $action['display'] = 'js';
       break;
       case 'optimizethumbs':
           if (! is_null($compressionType))
           {
-            $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
+            $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
           }
           else
           {
-            $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ');';
+            $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ');';
           }
 
           $action['type'] = 'js';
@@ -704,86 +704,86 @@ class UiHelper
           $action['is-optimizable'] = true;
       break;
       case 'retry':
-         $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ');';
+         $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ');';
          $action['type']  = 'js';
-         $action['text'] = __('Retry', 'shortpixel-image-optimiser') ;
+         $action['text'] = __('Retry', 'shortpixel-upscale-image') ;
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
      break;
 		 case 'redo_legacy':
-		 			$action['function'] = 'window.ShortPixelProcessor.screen.RedoLegacy(' . $id . ');';
+		 			$action['function'] = 'window.SPUIProcessor.screen.RedoLegacy(' . $id . ');';
 		 			$action['type']  = 'js';
-		 			$action['text'] = __('Redo Conversion', 'shortpixel-image-optimiser') ;
+		 			$action['text'] = __('Redo Conversion', 'shortpixel-upscale-image') ;
 		 			$action['display'] = 'button';
 		 break;
 
      case 'restore':
-         $action['function'] = 'window.ShortPixelProcessor.screen.RestoreItem(' . $id . ');';
+         $action['function'] = 'window.SPUIProcessor.screen.RestoreItem(' . $id . ');';
          $action['type'] = 'js';
-         $action['text'] = __('Restore backup','shortpixel-image-optimiser');
+         $action['text'] = __('Restore backup','shortpixel-upscale-image');
          $action['display'] = 'inline';
      break;
 
      case 'compare':
-        $action['function'] = 'ShortPixel.loadComparer(' . $id . ')';
+        $action['function'] = 'SPUI.loadComparer(' . $id . ')';
         $action['type'] = 'js';
-        $action['text'] = __('Compare', 'shortpixel-image-optimiser');
+        $action['text'] = __('Compare', 'shortpixel-upscale-image');
         $action['display'] = 'inline';
      break;
      case 'compare-custom':
-        $action['function'] = 'ShortPixel.loadComparer(' . $id . ',"custom")';
+        $action['function'] = 'SPUI.loadComparer(' . $id . ',"custom")';
         $action['type'] = 'js';
-        $action['text'] = __('Compare', 'shortpixel-image-optimiser');
+        $action['text'] = __('Compare', 'shortpixel-upscale-image');
         $action['display'] = 'inline';
      break;
-     case 'reoptimize-glossy':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
+     case 're-upscale-glossy':
+        $action['function'] = 'window.SPUIProcessor.screen.ReUpscale(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
         $action['type'] = 'js';
-        $action['text'] = __('Re-optimize Glossy','shortpixel-image-optimiser') ;
+        $action['text'] = __('Re-upscale Glossy','shortpixel-upscale-image') ;
         $action['display'] = 'inline';
      break;
-     case 'reoptimize-lossy':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
+     case 're-upscale-lossy':
+        $action['function'] = 'window.SPUIProcessor.screen.ReUpscale(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
         $action['type'] = 'js';
-        $action['text'] = __('Re-optimize Lossy','shortpixel-image-optimiser');
+        $action['text'] = __('Re-upscale Lossy','shortpixel-upscale-image');
         $action['display'] = 'inline';
      break;
 
-     case 'reoptimize-lossless':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
+     case 're-upscale-lossless':
+        $action['function'] = 'window.SPUIProcessor.screen.ReUpscale(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
         $action['type'] = 'js';
-        $action['text'] = __('Re-optimize Lossless','shortpixel-image-optimiser');
+        $action['text'] = __('Re-upscale Lossless','shortpixel-upscale-image');
         $action['display'] = 'inline';
      break;
-		 case 'reoptimize-smartcrop':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
+		 case 're-upscale-smartcrop':
+        $action['function'] = 'window.SPUIProcessor.screen.ReUpscale(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
         $action['type'] = 'js';
-        $action['text'] = __('Re-optimize with SmartCrop','shortpixel-image-optimiser');
+        $action['text'] = __('Re-upscale with SmartCrop','shortpixel-upscale-image');
         $action['display'] = 'inline';
      break;
-		 case 'reoptimize-smartcropless':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
+		 case 're-upscale-smartcropless':
+        $action['function'] = 'window.SPUIProcessor.screen.ReUpscale(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
         $action['type'] = 'js';
-        $action['text'] = __('Re-optimize without SmartCrop','shortpixel-image-optimiser');
+        $action['text'] = __('Re-upscale without SmartCrop','shortpixel-upscale-image');
         $action['display'] = 'inline';
      break;
      case 'shortpixel-generateai': 
-      $action['function'] = 'window.ShortPixelProcessor.screen.RequestAlt(' . $id . ')';
+      $action['function'] = 'window.SPUIProcessor.screen.RequestAlt(' . $id . ')';
       $action['type'] = 'js';
-      $action['text'] = __('Generate image SEO data','shortpixel-image-optimiser');     
+      $action['text'] = __('Generate image SEO data','shortpixel-upscale-image');     
       $action['ai-action'] = true;
       break; 
      case 'extendquota':
         $action['function'] = 'https://shortpixel.com/login/'. $keyControl->getKeyForDisplay();
         $action['type'] = 'button';
-        $action['text'] = __('Extend Quota','shortpixel-image-optimiser');
+        $action['text'] = __('Extend Quota','shortpixel-upscale-image');
         $action['display'] = 'button';
      break;
      case 'checkquota':
-        $action['function'] = 'ShortPixel.checkQuota()';
+        $action['function'] = 'SPUI.checkQuota()';
         $action['type'] = 'js';
         $action['display'] = 'button';
-        $action['text'] = __('Check&nbsp;&nbsp;Quota','shortpixel-image-optimiser');
+        $action['text'] = __('Check&nbsp;&nbsp;Quota','shortpixel-upscale-image');
      break;
    }
 
@@ -795,30 +795,30 @@ class UiHelper
 		switch($error)
 		{
 			case -1: //ERROR_LIBRARY:
-				$reason = __('PNG Library is not present or not working', 'shortpixel-image-optimiser');
+				$reason = __('PNG Library is not present or not working', 'shortpixel-upscale-image');
 			break;
 			case -2: //ERROR_PATHFAIL:
-				$reason = __('Could not create path', 'shortpixel-image-optimiser');
+				$reason = __('Could not create path', 'shortpixel-upscale-image');
 			break;
 			case -3: //ERROR_RESULTLARGER:
-				$reason  = __('Result file is larger','shortpixel-image-optimiser');
+				$reason  = __('Result file is larger','shortpixel-upscale-image');
 			break;
 			case -4: // ERROR_WRITEERROR
-				$reason = __('Could not write result file', 'shortpixel-image-optimiser');
+				$reason = __('Could not write result file', 'shortpixel-upscale-image');
 			break;
 			case -5: // ERROR_BACKUPERROR
-				$reason = __('Could not create backup', 'shortpixel-image-optimiser');
+				$reason = __('Could not create backup', 'shortpixel-upscale-image');
 			break;
 			case -6:  // ERROR_TRANSPARENT
-				$reason = __('Image is transparent', 'shortpixel-image-optimiser');
+				$reason = __('Image is transparent', 'shortpixel-upscale-image');
 			break;
 			default:
-				$reason = sprintf(__('Unknown error %s', 'shortpixel-image-optimiser'), $error);
+				$reason = sprintf(__('Unknown error %s', 'shortpixel-upscale-image'), $error);
 			break;
 		}
 
 
-		$message = sprintf(__('Not converted: %s ', 'shortpixel-image-optimiser'), $reason);
+		$message = sprintf(__('Not converted: %s ', 'shortpixel-upscale-image'), $reason);
 		return $message;
 	}
 
@@ -934,11 +934,11 @@ class UiHelper
 	{
 		if ($type == 'webp')
 		{
-			$is_double = \wpSPIO()->env()->useDoubleWebpExtension();
+			$is_double = \wpSPUI()->env()->useDoubleWebpExtension();
 		}
 		if ($type == 'avif')
 		{
-			$is_double = \wpSPIO()->env()->useDoubleAvifExtension();
+			$is_double = \wpSPUI()->env()->useDoubleAvifExtension();
 		}
 
 		if ($is_double)
@@ -960,30 +960,30 @@ class UiHelper
       );
 
       $exclusion_types = array(
-          'name' => __('Image Name', 'shortpixel-image-optimiser'),
-          'path' => __('Image Path', 'shortpixel-image-optimiser'),
-          'size' => __('Image Size', 'shortpixel-image-optimiser'),
-          'filesize' => __('Image File Size', 'shortpixel-image-optimiser'),
-          'date' => __('Date', 'shortpixel-image-optimiser'), 
+          'name' => __('Image Name', 'shortpixel-upscale-image'),
+          'path' => __('Image Path', 'shortpixel-upscale-image'),
+          'size' => __('Image Size', 'shortpixel-upscale-image'),
+          'filesize' => __('Image File Size', 'shortpixel-upscale-image'),
+          'date' => __('Date', 'shortpixel-upscale-image'), 
       );
 
       $exclusion_apply = array(
-           'all' => __('All', 'shortpixel-image-optimiser'),
-           'only-thumbs' => __('Only Thumbnails', 'shortpixel-image-optimiser'),
-           'only-custom' =>  __('Only Custom Media Images', 'shortpixel-image-optimiser'),
-           'selected-thumbs' => __('Selected Images', 'shortpixel-image-optimiser'),
+           'all' => __('All', 'shortpixel-upscale-image'),
+           'only-thumbs' => __('Only Thumbnails', 'shortpixel-upscale-image'),
+           'only-custom' =>  __('Only Custom Media Images', 'shortpixel-upscale-image'),
+           'selected-thumbs' => __('Selected Images', 'shortpixel-upscale-image'),
       );
 
       $dashboard_string = [
-            'ok' => __('Everything ok', 'shortpixel-image-optimiser'),
-            'warning' => __('Improvement possible', 'shortpixel-image-optimiser'),
-            'alert' => __('Action needed', 'shortpixel-image-optimiser'),
+            'ok' => __('Everything ok', 'shortpixel-upscale-image'),
+            'warning' => __('Improvement possible', 'shortpixel-upscale-image'),
+            'alert' => __('Action needed', 'shortpixel-upscale-image'),
       ];
 
       $ai_string = [
-            'imagemodaltitle' => __('Select an image for AI SEO data preview', 'shortpixel-image-optimiser'), 
-            'selectimage' => __('Use this image', 'shortpixel-image-optimiser'),
-            'preview_requested' => __('Working on your AI SEO data preview. This may take a while ... ', 'shortpixel-image-optimiser'),
+            'imagemodaltitle' => __('Select an image for AI SEO data preview', 'shortpixel-upscale-image'), 
+            'selectimage' => __('Use this image', 'shortpixel-upscale-image'),
+            'preview_requested' => __('Working on your AI SEO data preview. This may take a while ... ', 'shortpixel-upscale-image'),
       ];
 
       $strings['exclusion_types'] = $exclusion_types;
@@ -1005,7 +1005,7 @@ class UiHelper
 
       );
 
-      $icon_url = plugins_url($path, SHORTPIXEL_PLUGIN_FILE);
+      $icon_url = plugins_url($path, SPUI_PLUGIN_FILE);
 
       $attr = ''; 
       if (isset($args['width']))

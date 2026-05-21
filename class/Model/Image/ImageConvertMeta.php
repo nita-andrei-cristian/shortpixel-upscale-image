@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Model\Image;
+namespace SPUI\Model\Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 class ImageConvertMeta
 {

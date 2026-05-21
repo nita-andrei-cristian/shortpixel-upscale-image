@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 /** Loads a few environment variables handy to have nearby
 *
-* Notice - This is meant to be loaded via the plugin class. Easy access with wpSPIO()->getEnv().
+* Notice - This is meant to be loaded via the plugin class. Easy access with wpSPUI()->getEnv().
 */
-class EnvironmentModel extends \ShortPixel\Model
+class EnvironmentModel extends \SPUI\Model
 {
     // Server and PHP
     public $is_nginx;
@@ -172,7 +172,7 @@ class EnvironmentModel extends \ShortPixel\Model
   /* https://github.com/WordPress/WordPress/blob/master/wp-includes/class-wp-image-editor-imagick.php */
   public function hasImagick()
   {
-    $editor = wp_get_image_editor(\wpSPIO()->plugin_path('res/img/test.jpg'));
+    $editor = wp_get_image_editor(\wpSPUI()->plugin_path('res/img/test.jpg'));
     $className = get_class($editor);
 
     if ($className == 'WP_Image_Editor_Imagick')
@@ -183,7 +183,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
 	public function hasOffload()
 	{
-			$off = \ShortPixel\External\Offload\Offloader::getInstance();
+			$off = \SPUI\External\Offload\Offloader::getInstance();
 			$name = $off->getOffloadName();
 			if (is_null($name))
 				return false;
@@ -193,7 +193,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function getOffloadName()
   {
-    $off = \ShortPixel\External\Offload\Offloader::getInstance();
+    $off = \SPUI\External\Offload\Offloader::getInstance();
     $name = $off->getOffloadName();
     return $name;
   }
@@ -202,7 +202,7 @@ class EnvironmentModel extends \ShortPixel\Model
   {
       $bool = ($this->hasOffload()) ? false : true; // If has WP Offload, by default don't use.
 
-      $bool = apply_filters('shortpixel/file/virtual/heavy_features', $bool);
+      $bool = apply_filters('spui/file/virtual/heavy_features', $bool);
       return $bool;
   }
 
@@ -236,7 +236,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
     $this->is_debug = Log::debugIsActive();
 
-    if (\wpSPIO()->settings()->autoMediaLibrary == 1)
+    if (\wpSPUI()->settings()->autoMediaLibrary == 1)
       $this->is_autoprocess = true;
 
     
@@ -269,7 +269,7 @@ class EnvironmentModel extends \ShortPixel\Model
         'media', // add new item screen
     );
 
-    $use_screens = apply_filters('shortpixel/init/optimize_on_screens', $use_screens, $screen);
+    $use_screens = apply_filters('spui/init/optimize_on_screens', $use_screens, $screen);
 
     $this->screen_id = $screen->id;
     if(is_array($use_screens) && in_array($screen->id, $use_screens)) {
@@ -277,8 +277,8 @@ class EnvironmentModel extends \ShortPixel\Model
     }
 
     // Our pages.
-    $admin_pages = \wpSPIO()->get_admin_pages();
-    // the main WP pages where SPIO hooks a lot of functions into, our operating area.
+    $admin_pages = \wpSPUI()->get_admin_pages();
+    // the main WP pages where SPUI hooks a lot of functions into, our operating area.
     $wp_pages = array('upload', 'attachment');
     $pages = array_merge($admin_pages, $wp_pages);
 
@@ -299,7 +299,7 @@ class EnvironmentModel extends \ShortPixel\Model
        $this->is_our_screen = true;
        }
 			 // Strpos instead of full screen id, because the first page (media_page) is not reliable and can change.
-       if ( strpos($screen->id, 'wp-short-pixel-bulk') !== false)
+       if ( strpos($screen->id, 'wp-shortpixel-upscale-bulk') !== false)
         $this->is_bulk_page = true;
     }
 		elseif (is_object($screen) && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
@@ -320,14 +320,14 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function setIntegrations()
   {
-    $ng = \ShortPixel\NextGenController::getInstance();
+    $ng = \SPUI\NextGenController::getInstance();
     $this->has_nextgen = $ng->has_nextgen();
   }
 
   //set default move as "list". only set once, it won't try to set the default mode again.
   public function setDefaultViewModeList()
   {
-      $settings = \wpSPIO()->settings();
+      $settings = \wpSPUI()->settings();
       if( $settings->mediaLibraryViewMode == false)
       {
           $settings->mediaLibraryViewMode = 1;
@@ -343,10 +343,10 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function getRelativePluginSlug()
   {
-      $dir = SHORTPIXEL_PLUGIN_DIR;
-      $file = SHORTPIXEL_PLUGIN_FILE;
+      $dir = SPUI_PLUGIN_DIR;
+      $file = SPUI_PLUGIN_FILE;
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 
       $plugins_dir = $fs->getDirectory($dir)->getParent();
 
@@ -357,7 +357,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function useDoubleWebpExtension()
   {
-      if (defined('SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION') && SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION)
+      if (defined('SPUI_USE_DOUBLE_WEBP_EXTENSION') && SPUI_USE_DOUBLE_WEBP_EXTENSION)
         return true;
 
       return false;
@@ -365,7 +365,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
 	public function useDoubleAvifExtension()
   {
-      if (defined('SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION') && SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION)
+      if (defined('SPUI_USE_DOUBLE_AVIF_EXTENSION') && SPUI_USE_DOUBLE_AVIF_EXTENSION)
         return true;
 
       return false;
@@ -373,7 +373,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
 	public function useTrustedMode()
 	{
-		 if (defined('SHORTPIXEL_TRUSTED_MODE') && true === SHORTPIXEL_TRUSTED_MODE)
+		 if (defined('SPUI_TRUSTED_MODE') && true === SPUI_TRUSTED_MODE)
 		 {
 			 	return true;
 		 }
@@ -404,7 +404,7 @@ class EnvironmentModel extends \ShortPixel\Model
           }
 
           // max execution is the percentage of max execution time one can take upon.
-          $limit_perc  = round($limit/100 * apply_filters('spio/process/max_execution', 90));
+          $limit_perc  = round($limit/100 * apply_filters('spui/process/max_execution', 90));
 
           if ($limit_perc <= $elapsed)
           {
@@ -426,7 +426,7 @@ class EnvironmentModel extends \ShortPixel\Model
           $current_mem = memory_get_usage();
 
           $percentage_limit = 90;
-          $limit = round($memory_limit/100 * apply_filters('spio/process/max_memory', $percentage_limit));
+          $limit = round($memory_limit/100 * apply_filters('spui/process/max_memory', $percentage_limit));
 
           if ($current_mem >= $limit)
           {

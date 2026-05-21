@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 class BuildAutoLoader
 {
@@ -8,10 +8,10 @@ class BuildAutoLoader
   {
     echo 'Building Plugin.JSON';
     $plugin = array(
-        'name' => 'ShortPixel/Plugin',
-        'description' => 'ShortPixel AutoLoader',
+      'name' => 'SPUI/Plugin',
+        'description' => 'SPUI AutoLoader',
         'type' => 'function',
-        'autoload' => array('psr-4' => array('ShortPixel' => 'class'),
+        'autoload' => array('psr-4' => array('SPUI' => 'class'),
             'files' => self::getFiles(),
         ),
       );
@@ -28,10 +28,10 @@ class BuildAutoLoader
   public static function getFiles()
   {
     $main = array(
-      // 'shortpixel_api.php',
+      // 'spui_api.php',
       // 'class/wp-short-pixel.php',
        'class/wp-shortpixel-settings.php',
-      // 'class/view/shortpixel_view.php',
+      // 'class/view/spui_view.php',
        'class/front/img-to-picture-webp.php',
     );
 

@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Helper\UiHelper as UiHelper;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
 
 /* Class for View integration in the Nextgen gallery */
-class NextGenViewController extends \ShortPixel\ViewController
+class NextGenViewController extends \SPUI\ViewController
 {
   protected static $nggColumnIndex = 0;
 
@@ -24,8 +24,8 @@ class NextGenViewController extends \ShortPixel\ViewController
 
    public function nggColumns( $defaults ) {
        self::$nggColumnIndex = count($defaults) + 1;
-  /*     add_filter( 'ngg_manage_images_column_' . self::$nggColumnIndex . '_header', array( '\ShortPixel\nextGenViewController', 'nggColumnHeader' ) );
-       add_filter( 'ngg_manage_images_column_' . self::$nggColumnIndex . '_content', array( '\ShortPixel\nextGenViewController', 'nggColumnContent' ), 10, 2 );
+  /*     add_filter( 'ngg_manage_images_column_' . self::$nggColumnIndex . '_header', array( '\SPUI\nextGenViewController', 'nggColumnHeader' ) );
+       add_filter( 'ngg_manage_images_column_' . self::$nggColumnIndex . '_content', array( '\SPUI\nextGenViewController', 'nggColumnContent' ), 10, 2 );
        $defaults['wp-shortPixelNgg'] = 'ShortPixel Compression'; */
        return $defaults;
    }
@@ -39,7 +39,7 @@ class NextGenViewController extends \ShortPixel\ViewController
 		 	 wp_enqueue_style('dashicons');
 
 
-       return __('ShortPixel Compression','shortpixel-image-optimiser');
+       return __('ShortPixel Compression','shortpixel-upscale-image');
    }
 
 	 public function loadComparer()

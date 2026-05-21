@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\QuotaController as QuotaController;
 
 
-class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
+class QuotaNoticeReached extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_QUOTA_REACHED';
 	protected $errorLevel = 'error';
@@ -55,7 +55,7 @@ class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
 
 		if ($keyControl->getKeyForDisplay())
 		{
-			$login_url .= $keyControl->getKeyForDisplay() . '/spio-unlimited';
+			$login_url .= $keyControl->getKeyForDisplay() . '/spui-unlimited';
 			$friend_url = $login_url . 'tell-a-friend';
 		}
 
@@ -65,13 +65,13 @@ class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
 
 				$message .= '<div style="float:right;">
 						<div class="bulk-progress-indicator" style="height: 110px">
-								<div style="margin-bottom:5px">' . __('Average image<br>reduction until now:','shortpixel-image-optimiser') . '</div>
+								<div style="margin-bottom:5px">' . __('Average image<br>reduction until now:','shortpixel-upscale-image') . '</div>
 								<div id="sp-avg-optimization"><input type="text" id="sp-avg-optimization-dial" value="' . round($averageCompression) . '" class="dial percentDial" data-dialsize="60"></div>
 								<script>
 										jQuery(function() {
 												if (ShortPixel)
 												{
-													ShortPixel.percentDial("#sp-avg-optimization-dial", 60);
+													SPUI.percentDial("#sp-avg-optimization-dial", 60);
 												}
 										});
 								</script>
@@ -80,30 +80,30 @@ class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
 
 		}
 
-			$message .= '<h3>' . __('Quota Exceeded','shortpixel-image-optimiser') . '</h3>';
+			$message .= '<h3>' . __('Quota Exceeded','shortpixel-upscale-image') . '</h3>';
 
 			$quota = $quotaController->getQuota();
 
 			$creditsUsed = number_format($quota->monthly->consumed + $quota->onetime->consumed);
-			$totalOptimized = $statsControl->find('total', 'images');
-			$totalImagesToOptimize = number_format($statsControl->totalImagesToOptimize());
+			$totalUpscaled = $statsControl->find('total', 'images');
+			$totalImagesToUpscale = number_format($statsControl->totalImagesToUpscale());
 
-			$message .= '<p>' . sprintf(__('The plugin has optimized <strong>%s images</strong> and has been stopped because it has reached the available quota limit.','shortpixel-image-optimiser'),
+			$message .= '<p>' . sprintf(__('The plugin has upscaled <strong>%s images</strong> and has been stopped because it has reached the available quota limit.','shortpixel-upscale-image'),
 						$creditsUsed);
 
-			if($totalImagesToOptimize > 0) {
+			if($totalImagesToUpscale > 0) {
 
-						$message .= sprintf(__('<strong> %s images and thumbnails</strong> have not been optimized by ShortPixel yet.','shortpixel-image-optimiser'), $totalImagesToOptimize  );
+						$message .= sprintf(__('<strong> %s images and thumbnails</strong> have not been upscaled by ShortPixel yet.','shortpixel-upscale-image'), $totalImagesToUpscale  );
 				}
 
 			 $message .= sprintf('</p>
 					<div>
-						<button class="button button-primary" type="button" id="shortpixel-upgrade-advice" onclick="ShortPixel.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>
+						<button class="button button-primary" type="button" id="shortpixel-upgrade-advice" onclick="SPUI.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-upscale-image') . '</strong></button>
 						<a class="button button-primary" href="%s"
-							 title="' . __('Go to My Account and choose a plan','shortpixel-image-optimiser') . '" target="_blank" style="margin-right:10px;">
-								<strong>' . __('Upgrade','shortpixel-image-optimiser') . '</strong>
+							 title="' . __('Go to My Account and choose a plan','shortpixel-upscale-image') . '" target="_blank" style="margin-right:10px;">
+								<strong>' . __('Upgrade','shortpixel-upscale-image') . '</strong>
 						</a>
-						<button type="button" name="checkQuota" class="button" onclick="ShortPixel.checkQuota()">'.  __('Confirm new credits','shortpixel-image-optimiser') . '</button>
+						<button type="button" name="checkQuota" class="button" onclick="SPUI.checkQuota()">'.  __('Confirm new credits','shortpixel-upscale-image') . '</button>
 				</div>', $login_url);
 
 			$message .= '</div>'; /// closing div

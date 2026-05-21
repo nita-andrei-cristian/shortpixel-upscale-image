@@ -1,21 +1,21 @@
 <?php
-namespace ShortPixel\Controller\Optimizer;
+namespace SPUI\Controller\Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
 
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\Api\RequestManager as RequestManager;
-use ShortPixel\Controller\Queue\Queue;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\Api\RequestManager as RequestManager;
+use SPUI\Controller\Queue\Queue;
+use SPUI\Controller\ResponseController as ResponseController;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Converter\Converter as Converter;
 
 class ActionController extends OptimizerBase
 {
@@ -34,8 +34,9 @@ class ActionController extends OptimizerBase
          case 'restore':
             return $this->restoreItem($item);
          break;
-         case 'reoptimize': 
-            return $this->reoptimizeItem($item);
+         case 'reupscale':
+         case 'reoptimize':
+            return $this->reupscaleItem($item);
          break; 
          case 'png2jpg':
             return $this->convertPNG($item); 
@@ -99,8 +100,9 @@ class ActionController extends OptimizerBase
        case 'restore':
           $qItem->newRestoreAction(); // This doesn't do much really.
        break; 
-       case 'reoptimize': 
-         $qItem->newReOptimizeAction($args);
+      case 'reupscale':
+      case 'reoptimize':
+         $qItem->newReUpscaleAction($args);
       break; 
       case 'png2jpg':
       break; 
@@ -114,7 +116,7 @@ class ActionController extends OptimizerBase
     //   $result = new \stdClass;
      //  $result->qstatus = RequestManager::STATUS_NOT_API;
 
-      // The assumption here that will work always because of requeue in reOptimizeItem, should not respond with NO_API response, but with continue process 
+      // The assumption here is that requeueing returns a continue-process response instead of a NO_API response.
 /*      if (is_object($process_result))
       {
          $result->qstatus = Queue::RESULT_EMPTY;
@@ -144,7 +146,7 @@ class ActionController extends OptimizerBase
 
     $queue->updateItem($qItem);
 
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPUI()->filesystem();
 
     $imageObj = $qItem->imageModel;
 
@@ -168,10 +170,10 @@ class ActionController extends OptimizerBase
 
     if ($bool)
     {
-       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG converted', 'shortpixel-image-optimiser'));
+       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG converted', 'shortpixel-upscale-image'));
     }
     else {
-       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG not converted', 'shortpixel-image-optimiser'));
+       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG not converted', 'shortpixel-upscale-image'));
     }
 
     // Regardless if it worked or not, requeue the item otherwise it will keep trying to convert due to the flag.
@@ -184,7 +186,7 @@ class ActionController extends OptimizerBase
 
     $qItem->addResult([
       'is_done' => true, 
-      'message' => __('Image converted', 'shortpixel-image-optimiser'), 
+      'message' => __('Image converted', 'shortpixel-upscale-image'), 
    ]);
 
     return $bool; 
@@ -192,27 +194,27 @@ class ActionController extends OptimizerBase
 
   }
 
-  /** Reoptimize an item
+  /** Re-upscale an item
   *
   * @param Object $queueItem QueueItem
   * @return bool|Object 
   */
  // @todo This should probably be contained in the newAction in QueueItem ( comrpressiontype / args )
-  protected function reoptimizeItem(QueueItem $queueItem)
+  protected function reupscaleItem(QueueItem $queueItem)
   {
 
     $bool = $this->restoreItem($queueItem);
 
     if (true == $bool) // successful restore.
     {
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPUI()->filesystem();
         $fs->flushImageCache();
 
         // Mark Item ( for results ) as ongoing and such
         $queueItem->addResult([
             'fileStatus' => ImageModel::FILE_STATUS_PENDING, 
             'is_done' => true, 
-            'message' => __('Image being reoptimized', 'shortpixel-image-optimiser'), 
+            'message' => __('Image being re-upscaled', 'shortpixel-upscale-image'), 
         ]);
 
          // $result = $this->finishItemProcess($queueItem);
@@ -237,7 +239,7 @@ class ActionController extends OptimizerBase
        $queueItem->addResult([
          'is_done' => true, 
          'is_error' => false,
-         'message' => __('Item migrated / checked ', 'shortpixel-image-optimiser'), 
+         'message' => __('Item migrated / checked ', 'shortpixel-upscale-image'), 
          'apiStatus' => ApiController::STATUS_NOT_API,
      ]);
 
@@ -249,7 +251,7 @@ class ActionController extends OptimizerBase
    */
   protected function restoreItem(QueueItem $queueItem)
   {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 
       $check = $this->checkItem($queueItem);
 
@@ -308,7 +310,7 @@ class ActionController extends OptimizerBase
       if (true === $result)
       {
          $queueItem->addResult([
-             'message' => __('Item restored', 'shortpixel-image-optimiser'),
+             'message' => __('Item restored', 'shortpixel-upscale-image'),
              'fileStatus' => ImageModel::FILE_STATUS_RESTORED,
              'is_done' => true,
              'success' => true,

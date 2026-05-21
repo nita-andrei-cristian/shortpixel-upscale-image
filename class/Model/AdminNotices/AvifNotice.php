@@ -1,15 +1,15 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use \ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use \SPUI\Controller\CacheController as CacheController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
+class AvifNotice extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_AVIF_ERROR';
 	protected $errorLevel = 'error';
@@ -29,20 +29,20 @@ class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
 	public function check()
 	{
 		$cache = new CacheController();
-		if (apply_filters('shortpixel/avifcheck/override', false) === true)
+		if (apply_filters('spui/avifcheck/override', false) === true)
 		{ return; }
 
 
 		if ($cache->getItem('avif_server_check')->exists() === false)
 		{
-			 $url = \WPSPIO()->plugin_url('res/img/test.avif');
+			 $url = \wpSPUI()->plugin_url('res/img/test.avif');
 			 $headers = get_headers($url);
 			 $is_error = true;
 
 			 $this->addData('headers', $headers);
 			 // Defaults.
-			 $this->error_message = __('AVIF server test failed. Your server may not be configured to display AVIF files correctly. Serving AVIF might cause your images not to load. Check your images, disable the AVIF option, or update your web server configuration.', 'shortpixel-image-optimiser');
-			 $this->error_detail = __('The request did not return valid HTTP headers. Check if the plugin is allowed to access ' . $url, 'shortpixel-image-optimiser');
+			 $this->error_message = __('AVIF server test failed. Your server may not be configured to display AVIF files correctly. Serving AVIF might cause your images not to load. Check your images, disable the AVIF option, or update your web server configuration.', 'shortpixel-upscale-image');
+			 $this->error_detail = __('The request did not return valid HTTP headers. Check if the plugin is allowed to access ' . $url, 'shortpixel-upscale-image');
 
 			 $response = $headers[0];
 
@@ -63,11 +63,11 @@ class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
  					 // http not ok, redirect etc. Shouldn't happen.
 					 if (is_null($response) || strpos($response, '200') === false)
 					 {
-						 $this->error_detail = sprintf(__('AVIF check could not be completed because the plugin could not retrieve %s %s %s. %s Please check the security/firewall settings and try again', 'shortpixel-image-optimiser'), '<a href="' . $url . '">', $url, '</a>', '<br>');
+						 $this->error_detail = sprintf(__('AVIF check could not be completed because the plugin could not retrieve %s %s %s. %s Please check the security/firewall settings and try again', 'shortpixel-upscale-image'), '<a href="' . $url . '">', $url, '</a>', '<br>');
 					 }
 					 elseif(is_null($contentType) || strpos($contentType, 'avif') === false)
 					 {
-						 $this->error_detail = sprintf(__('The required Content-type header for AVIF files was not found. Please check this with your hosting and/or CDN provider. For more details on how to fix this issue, %s see this article %s', 'shortpixel_image_optimiser'), '<a href="https://shortpixel.com/blog/avif-mime-type-delivery-apache-nginx/" target="_blank"> ', '</a>');
+						 $this->error_detail = sprintf(__('The required Content-type header for AVIF files was not found. Please check this with your hosting and/or CDN provider. For more details on how to fix this issue, %s see this article %s', 'shortpixel-upscale-image'), '<a href="https://shortpixel.com/blog/avif-mime-type-delivery-apache-nginx/" target="_blank"> ', '</a>');
 					 }
 					 else
 					 {
@@ -101,10 +101,10 @@ class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
 			$headers = $this->getData('headers');
 
 
-			$message = '<h4>' . $this->error_message . '</h4><p>' . $this->error_detail . '</p><p class="small">' . __('Returned headers for:<br>', 'shortpixel-image-optimiser') . print_r($headers, true) .  '</p>';
+			$message = '<h4>' . $this->error_message . '</h4><p>' . $this->error_detail . '</p><p class="small">' . __('Returned headers for:<br>', 'shortpixel-upscale-image') . print_r($headers, true) .  '</p>';
 
       $message .= '<div>
-        <button class="button button-primary notice-dismiss-action" data-dismisstype="remove" type="button" id="shortpixel-upgrade-advice" style="margin-right:10px;"><strong>' .  __('Dismiss and try again on next page load', 'shortpixel-image-optimiser') . '</strong></button>
+        <button class="button button-primary notice-dismiss-action" data-dismisstype="remove" type="button" id="shortpixel-upgrade-advice" style="margin-right:10px;"><strong>' .  __('Dismiss and try again on next page load', 'shortpixel-upscale-image') . '</strong></button>
         </div>';
 
 			return $message;

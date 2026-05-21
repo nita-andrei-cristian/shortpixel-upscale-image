@@ -1,16 +1,16 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Helper\InstallHelper as InstallHelper;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
 
 
-class OtherMediaFolderViewController extends \ShortPixel\ViewController
+class OtherMediaFolderViewController extends \SPUI\ViewController
 {
 
   protected $template = 'view-other-media-folder';
@@ -34,7 +34,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
   {
     parent::__construct();
 
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPUI()->filesystem();
 
 		$this->controller = OtherMediaController::getInstance();
 
@@ -80,11 +80,11 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
   protected function loadSettings()
   {
 
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPUI()->settings();
     $this->view->settings = new \stdclass;
     $this->view->settings->includeNextGen = $settings->includeNextGen;
 
-    $this->view->title = __('ShortPixel Custom Media Folders', 'shortpixel-image-optimiser');
+    $this->view->title = __('ShortPixel Custom Media Folders', 'shortpixel-upscale-image');
     $this->view->show_search = true;
     $this->view->has_filters = true;
 
@@ -96,16 +96,16 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
      $actions = array();
 
      $removeAction = array('remove' => array(
-        'function' => 'window.ShortPixelProcessor.screen.StopMonitoringFolder(' . intval($item->get('id')) . ')',
+        'function' => 'window.SPUIProcessor.screen.StopMonitoringFolder(' . intval($item->get('id')) . ')',
         'type' => 'js',
-        'text' => __('Stop Monitoring', 'shortpixel-image-optimiser'),
+        'text' => __('Stop Monitoring', 'shortpixel-upscale-image'),
         'display' => 'inline',
      ));
 
      $refreshAction = array('refresh' => array(
-        'function' => 'window.ShortPixelProcessor.screen.RefreshFolder(' . intval($item->get('id')) . ')',
+        'function' => 'window.SPUIProcessor.screen.RefreshFolder(' . intval($item->get('id')) . ')',
         'type' => 'js',
-        'text' => __('Refresh Folder', 'shortpixel-image-optimiser'),
+        'text' => __('Refresh Folder', 'shortpixel-upscale-image'),
         'display' => 'inline',
      ));
 
@@ -116,7 +116,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
      $showFilesAction = array('showfiles' => array(
         'function' => esc_url($url),
         'type' => 'link',
-        'text' => __('Show all Files', 'shortpixel-image-optimiser'),
+        'text' => __('Show all Files', 'shortpixel-upscale-image'),
         'display' => 'inline',
      ));
 
@@ -170,14 +170,14 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
       else
         return array();
     }
-    $fs =  \wpSPIO()->fileSystem();
+    $fs =  \wpSPUI()->fileSystem();
 
     if ($args['only_count'])
       $selector = 'count(id) as id';
     else
       $selector = '*';
 
-    $sql = "SELECT " . $selector . "  FROM " . $wpdb->prefix . "shortpixel_folders WHERE 1=1 ";
+    $sql = "SELECT " . $selector . "  FROM " . $wpdb->prefix . "spui_folders WHERE 1=1 ";
     $prepare = array();
   //  $mask = array();
 
@@ -226,25 +226,25 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
                           'sortable' => false,
                           'orderby' => 'id',  // placeholder to allow sort on this.
                         ),
-           'name' =>  array('title' => __('Folder Name', 'shortpixel-image-optimiser'),
+           'name' =>  array('title' => __('Folder Name', 'shortpixel-upscale-image'),
                             'sortable' => true,
                             'orderby' => 'name',
                         ),
-          'type' => array('title' => __('Type', 'shortpixel-image-optimiser'),
+          'type' => array('title' => __('Type', 'shortpixel-upscale-image'),
                             'sortable' => false,
                             'orderby' => 'path',
                         ),
-           'files' =>   array('title' => __('Files', 'shortpixel-image-optimiser'),
+           'files' =>   array('title' => __('Files', 'shortpixel-upscale-image'),
                             'sortable' => false,
                             'orderby' => 'files',
-                            'title_context' => __('Images in folder - optimized / unoptimized ','shortpixel-image-optimiser'),
+                            'title_context' => __('Images in folder - upscaled / unupscaled ','shortpixel-upscale-image'),
                             ),
-           'date' =>    array('title' => __('Last change', 'shortpixel-image-optimiser'),
+           'date' =>    array('title' => __('Last change', 'shortpixel-upscale-image'),
                             'sortable' => true,
                             'orderby' => 'ts_updated',
                          ),
           /* Status is only yes, or nextgen. Already in the Type string.  Status use for messages */
-           'status' => array('title' => __('Message', 'shortpixel-image-optimiser'),
+           'status' => array('title' => __('Message', 'shortpixel-upscale-image'),
                             'sortable' => false,
                             'orderby' => 'status',
                         ),
@@ -371,11 +371,11 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
 
          // Try with controller URL, if not present, try with upload URL and page param.
          $admin_url = admin_url('upload.php');
-         $url = (is_null($this->url)) ?  add_query_arg('page','wp-short-pixel-custom', $admin_url) : $this->url; // has url
+         $url = (is_null($this->url)) ?  add_query_arg('page','wp-shortpixel-upscale-custom', $admin_url) : $this->url; // has url
          $current_url = add_query_arg($page_args, $url);
 
          $url = remove_query_arg('page', $url);
-         $page_args['page'] = 'wp-short-pixel-custom';
+         $page_args['page'] = 'wp-shortpixel-upscale-custom';
 
 
          $output = '<form method="GET" action="'. esc_attr($url) . '">';
@@ -383,7 +383,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
          {
             $output .= sprintf('<input type="hidden" name="%s" value="%s">', $arg, $val);
          }
-         $output .= '<span class="displaying-num">'. sprintf(esc_html__('%d Images', 'shortpixel-image-optimiser'), $this->total_items) . '</span>';
+         $output .= '<span class="displaying-num">'. sprintf(esc_html__('%d Images', 'shortpixel-upscale-image'), $this->total_items) . '</span>';
 
          if ( $disable_first ) {
                   $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
@@ -465,7 +465,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
 
     private function hasFoldersTable()
     {
-      return InstallHelper::checkTableExists('shortpixel_folders');
+      return InstallHelper::checkTableExists('spui_folders');
     }
 
 

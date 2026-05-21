@@ -41,7 +41,7 @@ onmessage = function(e)
 
 var SpWorker = {
    ajaxUrl: null,
-   action: 'shortpixel_image_processing',
+   action: 'spui_image_processing',
    secret: null,
    nonce: null,
    isBulk: false, // If we are on the bulk screen  / queue
@@ -157,17 +157,17 @@ var SpWorker = {
 	 },
    AjaxRequest: function(data)
    {
-      this.action = 'shortpixel_ajaxRequest';
+      this.action = 'spui_ajaxRequest';
       this.Fetch(data);
    },
 	 SettingsRequest: function(data)
 	 {
-			this.action = 'shortpixel_settingsRequest';
+			this.action = 'spui_settingsRequest';
 			this.Fetch(data);
 	 },
    Process: function(data)
    {
-      this.action = 'shortpixel_image_processing';
+      this.action = 'spui_image_processing';
       this.Fetch(data);
    }
 } // worker

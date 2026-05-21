@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Controller\Front;
+namespace SPUI\Controller\Front;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class PageConverter extends \ShortPixel\Controller
+class PageConverter extends \SPUI\Controller
 {
 
 	protected $site_url;
@@ -26,7 +26,7 @@ class PageConverter extends \ShortPixel\Controller
   /** Check if the converters should run on this request.  This is mainly used to filter out frontend pagebuilder where changing images could result in crashing builders and such cases */
 	protected function shouldConvert()
 	{
-		$env = wpSPIO()->env();
+		$env = wpSPUI()->env();
 
     $checks = [ $env->is_admin,
        $env->is_ajaxcall,
@@ -75,7 +75,7 @@ class PageConverter extends \ShortPixel\Controller
       return false;
     }
 
-    if (isset($_GET['spio_no_cdn']))
+    if (isset($_GET['spui_no_cdn']))
     {
        return false;
     }
@@ -90,7 +90,7 @@ class PageConverter extends \ShortPixel\Controller
        return false;
     }
 
-    if (false === \wpSPIO()->env()->is_front) // if is front.
+    if (false === \wpSPUI()->env()->is_front) // if is front.
     {
        return false; 
     }
@@ -98,7 +98,7 @@ class PageConverter extends \ShortPixel\Controller
 
 	 add_filter('status_header', [$this, 'status_header_sent'], 10, 2);
 
-   $bool = apply_filters('shortpixel/front/convert_this_page', true);
+   $bool = apply_filters('spui/front/convert_this_page', true);
    return $bool ;
 	}
 

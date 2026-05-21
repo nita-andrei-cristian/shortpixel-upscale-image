@@ -1,10 +1,10 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\Notices\NoticeController as NoticeController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI;
+use SPUI\Notices\NoticeController as NoticeController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,20 +15,20 @@ $opt = new QueueController();
 
 $q = $opt->getQueue('media');
 
-$env = \wpSPIO()->env();
-$fs = \wpSPIO()->filesystem();
+$env = \wpSPUI()->env();
+$fs = \wpSPUI()->filesystem();
 
 $debugUrl = add_query_arg(array('part' => 'debug', 'noheader' => true), $this->url);
 
 if (Log::isManualDebug())
 {
-  $debugUrl = add_query_arg(['SHORTPIXEL_DEBUG' => sanitize_text_field($_GET['SHORTPIXEL_DEBUG'])], $debugUrl);
+  $debugUrl = add_query_arg(['SPUI_DEBUG' => sanitize_text_field($_GET['SPUI_DEBUG'])], $debugUrl);
 }
 ?>
 
 <section id="tab-debug" class="<?php echo esc_attr(($this->display_part == 'debug') ? 'active setting-tab' :'setting-tab'); ?>" data-part="debug">
   <h2><a class='tab-link' href='javascript:void(0);' data-id="tab-debug">
-    <?php esc_html_e('Debug','shortpixel-image-optimiser');?></a>
+    <?php esc_html_e('Debug','shortpixel-upscale-image');?></a>
   </h2>
 
   <div class='env'>
@@ -43,11 +43,11 @@ if (Log::isManualDebug())
       <span>Hide Key</span><span><?php var_export($view->key->hide_api_key); ?></span>
       <span>Has Nextgen</span><span><?php var_export($this->has_nextgen); ?></span>
 			<span>Has Offload</span><span><?php
-        $offload = \wpSPIO()->env()->hasOffload();
+        $offload = \wpSPUI()->env()->hasOffload();
         var_export($offload);
         if (true === $offload)
         {
-            echo ' (' .  \wpSPIO()->env()->getOffloadName() . ') ';
+            echo ' (' .  \wpSPUI()->env()->getOffloadName() . ') ';
         }
 
 
@@ -61,9 +61,9 @@ if (Log::isManualDebug())
 		</div>
 
 		<div class='flex'>
-				<span>Uploads Base</span><span><?php echo esc_html((defined('SHORTPIXEL_UPLOADS_BASE')) ? SHORTPIXEL_UPLOADS_BASE : 'not defined'); ?></span>
-				<span>Uploads Name</span><span><?php echo esc_html((defined('SHORTPIXEL_UPLOADS_NAME')) ? SHORTPIXEL_UPLOADS_NAME : 'not defined'); ?></span>
-				<span>Backup Folder</span><span><?php echo esc_html((defined('SHORTPIXEL_BACKUP_FOLDER')) ? SHORTPIXEL_BACKUP_FOLDER : 'not defined'); ?></span>
+				<span>Uploads Base</span><span><?php echo esc_html((defined('SPUI_UPLOADS_BASE')) ? SPUI_UPLOADS_BASE : 'not defined'); ?></span>
+				<span>Uploads Name</span><span><?php echo esc_html((defined('SPUI_UPLOADS_NAME')) ? SPUI_UPLOADS_NAME : 'not defined'); ?></span>
+				<span>Backup Folder</span><span><?php echo esc_html((defined('SPUI_BACKUP_FOLDER')) ? SPUI_BACKUP_FOLDER : 'not defined'); ?></span>
 			
 
         <span>
@@ -132,7 +132,7 @@ if (Log::isManualDebug())
       </form>
   </div>
   <div class="stats env">
-      <h3><?php esc_html_e('Stats', 'shortpixel-image-optimiser'); ?></h3>
+      <h3><?php esc_html_e('Stats', 'shortpixel-upscale-image'); ?></h3>
       <h4>Media</h4>
       <div class='flex'>
         <?php $statsControl = StatsController::getInstance();
@@ -146,7 +146,7 @@ if (Log::isManualDebug())
      </div>
      <h4>Custom</h4>
      <div class='flex'>
-       <span>Custom Optimized</span><span><?php echo esc_html($statsControl->find('custom', 'items')); ?></span>
+       <span>Custom Upscaled</span><span><?php echo esc_html($statsControl->find('custom', 'items')); ?></span>
        <span>Custom itemsTotal</span><span><?php echo esc_html($statsControl->find('custom', 'itemsTotal')); ?>
        </span>
      </div>

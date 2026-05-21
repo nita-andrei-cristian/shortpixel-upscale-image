@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\BulkController as BulkController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPUI\Model\AccessModel as AccessModel;
 
 
-class BulkViewController extends \ShortPixel\ViewController
+class BulkViewController extends \SPUI\ViewController
 {
 
   protected $form_action = 'sp-bulk';
@@ -43,7 +43,7 @@ class BulkViewController extends \ShortPixel\ViewController
     $this->view->stats = $queueController->getStartupData();
     $this->view->approx = $this->getApproxData();
 
-    $this->view->logHeaders = array(__('Images', 'shortpixel_image_optimiser'), __('Errors', 'shortpixel_image_optimizer'), __('Date', 'shortpixel_image_optimizer'), '');
+    $this->view->logHeaders = array(__('Images', 'shortpixel-upscale-image'), __('Errors', 'shortpixel-upscale-image'), __('Date', 'shortpixel-upscale-image'), '');
     $this->view->logs = $this->getLogs();
 
     $keyControl = ApiKeyController::getInstance();
@@ -53,16 +53,16 @@ class BulkViewController extends \ShortPixel\ViewController
     if ( ! $keyControl->keyIsVerified() )
     {
         $this->view->error = true;
-        $this->view->errorTitle = __('Missing API Key', 'shortpixel_image_optimiser');
+        $this->view->errorTitle = __('Missing API Key', 'shortpixel-upscale-image');
         $this->view->errorContent = $this->getActivationNotice();
         $this->view->showError = 'key';
     }
     elseif ( ! $quota->hasQuota())
     {
         $this->view->error = true;
-        $this->view->errorTitle = __('Quota Exceeded','shortpixel-image-optimiser');
-        $this->view->errorContent = __('Can\'t start the Bulk Process due to lack of credits.', 'shortpixel-image-optimiser');
-        $this->view->errorText = __('Please check or add quota and refresh the page', 'shortpixel-image-optimiser');
+        $this->view->errorTitle = __('Quota Exceeded','shortpixel-upscale-image');
+        $this->view->errorContent = __('Can\'t start the Bulk Process due to lack of credits.', 'shortpixel-upscale-image');
+        $this->view->errorText = __('Please check or add quota and refresh the page', 'shortpixel-upscale-image');
         $this->view->showError = 'quota';
 
     }
@@ -70,7 +70,7 @@ class BulkViewController extends \ShortPixel\ViewController
 		$this->view->mediaErrorLog = $this->loadCurrentLog('media');
 		$this->view->customErrorLog = $this->loadCurrentLog('custom');
 
-		$this->view->buyMoreHref = 'https://shortpixel.com/' . ($keyControl->getKeyForDisplay() ? 'login/' . $keyControl->getKeyForDisplay() . '/spio-unlimited' : 'pricing');
+		$this->view->buyMoreHref = 'https://shortpixel.com/' . ($keyControl->getKeyForDisplay() ? 'login/' . $keyControl->getKeyForDisplay() . '/spui-unlimited' : 'pricing');
 
 
     $custom_operation_media = $bulkController->getCustomOperation('media');
@@ -101,7 +101,7 @@ class BulkViewController extends \ShortPixel\ViewController
       $noticesController = AdminNoticesController::getInstance();
       $offer = $noticesController->getRemoteOffer(); 
 
-          $this->view->dashboard_icon = plugins_url('res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE); 
+          $this->view->dashboard_icon = plugins_url('res/images/icon/shortpixel.svg', SPUI_PLUGIN_FILE); 
           $this->view->dashboard_link = false; 
           $this->view->dashboard_title = false; 
           $this->view->dashboard_message = ''; 
@@ -120,16 +120,16 @@ class BulkViewController extends \ShortPixel\ViewController
       switch($operation)
       {
           case 'bulk-restore':
-            $label = __('Bulk Restore', 'shortpixel-image-optimiser');
+            $label = __('Bulk Restore', 'shortpixel-upscale-image');
           break;
           case 'migrate':
-            $label = __('Bulk Migrate Optimization Data', 'shortpixel-image-optimiser');
+            $label = __('Bulk Migrate Upscaling Data', 'shortpixel-upscale-image');
           break;
           case 'removeLegacy':
-            $label = __('Bulk Remove Legacy Data', 'shortpixel-image-optimiser');
+            $label = __('Bulk Remove Legacy Data', 'shortpixel-upscale-image');
           break;
           case 'bulk-undoAI':
-            $label = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');           
+            $label = __('Bulk Remove AI Data', 'shortpixel-upscale-image');           
           break; 
       }
 
@@ -174,10 +174,10 @@ class BulkViewController extends \ShortPixel\ViewController
 	// Double with ApiNotice . @todo Fix.
 	protected function getActivationNotice()
 	{
-		$message = "<p>" . __('In order to start the optimization process, you need to validate your API Key in the '
-						. '<a href="options-general.php?page=wp-shortpixel-settings">ShortPixel Settings</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
+		$message = "<p>" . __('In order to start the upscaling process, you need to validate your API Key in the '
+						. '<a href="options-general.php?page=wp-shortpixel-upscale-settings">ShortPixel Upscaler Settings</a> page in your WordPress Admin.','shortpixel-upscale-image') . "
 		</p>
-		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
+		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-upscale-image') . "</p>";
 		return $message;
 	}
 
@@ -193,12 +193,12 @@ class BulkViewController extends \ShortPixel\ViewController
     $sc = StatsController::getInstance();
     $sc->reset(); // Get a fresh stat.
 
-    $excludeSizes = \wpSPIO()->settings()->excludeSizes;
+    $excludeSizes = \wpSPUI()->settings()->excludeSizes;
 
 
     $approx->media->items = $sc->find('media', 'itemsTotal') - $sc->find('media', 'items');
 
-    // ThumbsTotal - Approx thumbs in installation - Approx optimized thumbs (same query)
+    // ThumbsTotal - Approx thumbs in installation - Approx upscaled thumbs (same query)
     $approx->media->thumbs = $sc->find('media', 'thumbsTotal') - $sc->find('media', 'thumbs');
 
     // If sizes are excluded, remove this count from the approx.
@@ -207,14 +207,14 @@ class BulkViewController extends \ShortPixel\ViewController
       $approx->media->thumbs = $approx->media->thumbs - ($approx->media->items * count($excludeSizes));
     }
 
-    // Total optimized items + Total optimized (approx) thumbnails
+    // Total upscaled items + Total upscaled (approx) thumbnails
     $approx->media->total = $approx->media->items + $approx->media->thumbs;
 
 
     $approx->custom->images = $sc->find('custom', 'itemsTotal') - $sc->find('custom', 'items');
 		$approx->custom->has_custom = $otherMediaController->hasCustomImages();
 
-    $approx->total->images = $approx->media->total + $approx->custom->images; // $sc->totalImagesToOptimize();
+    $approx->total->images = $approx->media->total + $approx->custom->images; // $sc->totalImagesToUpscale();
 
 		$approx->media->isLimited = $sc->find('media', 'isLimited');
 
@@ -273,7 +273,7 @@ class BulkViewController extends \ShortPixel\ViewController
 				if ($message)
 					$output .= $message;
 				if ($filename)
-					$output .= ' ( '. __('in file ','shortpixel-image-optimiser') . ' ' . $filename . ' ) ' . $kbinfo;
+					$output .= ' ( '. __('in file ','shortpixel-upscale-image') . ' ' . $filename . ' ) ' . $kbinfo;
 
 				$output .= '</div>';
 		 }
@@ -286,8 +286,8 @@ class BulkViewController extends \ShortPixel\ViewController
   {
       $bulkController = BulkController::getInstance();
       $logs = $bulkController->getLogs();
-      $fs = \wpSPIO()->filesystem();
-      $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+      $fs = \wpSPUI()->filesystem();
+      $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
 
       $view = array();
 
@@ -309,10 +309,10 @@ class BulkViewController extends \ShortPixel\ViewController
 					switch($logData['type'])
 					{
 						 case 'custom':
-						 	$bulkName = __('Custom Media Bulk', 'shortpixel-image-optimiser');
+						 	$bulkName = __('Custom Media Bulk', 'shortpixel-upscale-image');
 						 break;
 						 case 'media':
-						 	$bulkName = __('Media Library Bulk', 'shortpixel-image-optimiser');
+						 	$bulkName = __('Media Library Bulk', 'shortpixel-upscale-image');
 						 break;
 
 					}
@@ -322,19 +322,19 @@ class BulkViewController extends \ShortPixel\ViewController
 					switch($op)
 					{
 							 case 'bulk-restore':
-							 	$bulkName .= __('Restore', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Restore', 'shortpixel-upscale-image');
 							 break;
 							 case 'migrate':
-							 	$bulkName .= __('Migrate old Metadata', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Migrate old Metadata', 'shortpixel-upscale-image');
 							 break;
 							 case 'removeLegacy':
-								$bulkName = __('Remove Legacy Data', 'shortpixel-image-optimiser');
+								$bulkName = __('Remove Legacy Data', 'shortpixel-upscale-image');
 							 break;
 							 case 'bulk-undoAI':
-								$bulkName  = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');
+								$bulkName  = __('Bulk Remove AI Data', 'shortpixel-upscale-image');
 							 break;
 							 default:
-							 	$bulkName .= __('Optimization', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Upscaling', 'shortpixel-upscale-image');
 							 break;
 					}
 

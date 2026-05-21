@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\ShortQ\Tests;
+namespace SPUI\ShortQ\Tests;
 
 class Tests{
 

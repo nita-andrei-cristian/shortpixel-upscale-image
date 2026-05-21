@@ -1,26 +1,26 @@
 <?php
 
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if (! defined('ABSPATH')) {
   exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPUI\Model\File\DirectoryModel as DirectoryModel;
+use SPUI\Model\File\FileModel as FileModel;
 
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
-use ShortPixel\Model\Image\MediaLibraryThumbnailModel as MediaLibraryThumbnailModel;
-use ShortPixel\Model\Image\CustomImageModel as CustomImageModel;
+use SPUI\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPUI\Model\Image\MediaLibraryThumbnailModel as MediaLibraryThumbnailModel;
+use SPUI\Model\Image\CustomImageModel as CustomImageModel;
 
 /** Controller for FileSystem operations
  *
  * This controller is used for -compound- ( complex ) FS operations, using the provided models File en Directory.
- * USE via \wpSPIO()->filesystem();
+ * USE via \wpSPUI()->filesystem();
  */
-class FileSystemController extends \ShortPixel\Controller
+class FileSystemController extends \SPUI\Controller
 {
   protected $env;
   static $mediaItems = array();
@@ -28,7 +28,7 @@ class FileSystemController extends \ShortPixel\Controller
 
   public function __construct()
   {
-    $this->env = wpSPIO()->env();
+    $this->env = wpSPUI()->env();
   }
 
   /** Get FileModel for a certain path. This can exist or not
@@ -62,7 +62,7 @@ class FileSystemController extends \ShortPixel\Controller
       return false;
 
     $filepath = get_attached_file($id);
-    $filepath = apply_filters('shortpixel_get_attached_file', $filepath, $id);
+    $filepath = apply_filters('spui_get_attached_file', $filepath, $id);
 
     // Somehow get_attached_file can return other random stuff.
     if ($filepath === false || strlen($filepath) == 0)
@@ -155,7 +155,7 @@ class FileSystemController extends \ShortPixel\Controller
   public function getOriginalImage($id)
   {
     $filepath = \wp_get_original_image_path($id);
-    $filepath = apply_filters('shortpixel_get_original_image_path', $filepath, $id);
+    $filepath = apply_filters('spui_get_original_image_path', $filepath, $id);
     return new MediaLibraryThumbnailModel($filepath, $id, 'original');
   }
 
@@ -186,7 +186,7 @@ class FileSystemController extends \ShortPixel\Controller
     $filepath = $file->getFullPath();
 
     if ($file->is_virtual()) {
-      $filepath = apply_filters('shortpixel/file/virtual/translate', $filepath, $file);
+      $filepath = apply_filters('spui/file/virtual/translate', $filepath, $file);
     }
 
     //  translate can return false if not properly offloaded / not found there.
@@ -204,11 +204,11 @@ class FileSystemController extends \ShortPixel\Controller
          $backup_subdir = $this->returnOldSubDir($filepath);
       } */
 
-    $backup_fulldir = SHORTPIXEL_BACKUP_FOLDER . '/' . $backup_subdir;
+    $backup_fulldir = SPUI_BACKUP_FOLDER . '/' . $backup_subdir;
 
     $directory = $this->getDirectory($backup_fulldir);
 
-    $directory = apply_filters("shortpixel/file/backup_folder", $directory, $file);
+    $directory = apply_filters("spui/file/backup_folder", $directory, $file);
 
     if ($create === false && $directory->exists())
       return $directory;
@@ -224,7 +224,7 @@ class FileSystemController extends \ShortPixel\Controller
    */
   public function getWPFileBase()
   {
-    if (\wpSPIO()->env()->is_mainsite) {
+    if (\wpSPUI()->env()->is_mainsite) {
       $path = (string) $this->getWPAbsPath();
     } else {
       $up = wp_upload_dir();
@@ -274,7 +274,7 @@ class FileSystemController extends \ShortPixel\Controller
       $abspath = trailingslashit(ABSPATH) . UPLOADS;
     }
 
-    $abspath = apply_filters('shortpixel/filesystem/abspath', $abspath);
+    $abspath = apply_filters('spui/filesystem/abspath', $abspath);
 
     return $this->getDirectory($abspath);
   }
@@ -282,7 +282,7 @@ class FileSystemController extends \ShortPixel\Controller
 
 
   /** Not in use yet, do not use. Future replacement. */
-  public function checkBackUpFolder($folder = SHORTPIXEL_BACKUP_FOLDER)
+  public function checkBackUpFolder($folder = SPUI_BACKUP_FOLDER)
   {
     $dirObj = $this->getDirectory($folder);
     $result = $dirObj->check(true);  // check creates the whole structure if needed.
@@ -392,7 +392,7 @@ class FileSystemController extends \ShortPixel\Controller
       }
     }
 
-    return apply_filters('shortpixel/filesystem/url', $url);
+    return apply_filters('spui/filesystem/url', $url);
   }
 
   /** Utility function to check if a path is an URL
@@ -423,7 +423,7 @@ class FileSystemController extends \ShortPixel\Controller
 
     // what are we sorting.
     $class = get_class($array[0]);
-    $is_files = ($class == 'ShortPixel\FileModel') ? true : false; // if not files, then dirs.
+    $is_files = ($class == 'SPUI\FileModel') ? true : false; // if not files, then dirs.
 
     usort(
       $array,
@@ -467,7 +467,7 @@ class FileSystemController extends \ShortPixel\Controller
   // Url very sparingly.
   public function url_exists($url)
   {
-    if (! \wpSPIO()->env()->is_function_usable('curl_init')) {
+    if (! \wpSPUI()->env()->is_function_usable('curl_init')) {
       return null;
     }
 
@@ -489,7 +489,7 @@ class FileSystemController extends \ShortPixel\Controller
    */
   public function startTrustedMode()
   {
-    if (\wpSPIO()->env()->useTrustedMode()) {
+    if (\wpSPUI()->env()->useTrustedMode()) {
       FileModel::$TRUSTED_MODE = true;
       DirectoryModel::$TRUSTED_MODE = true;
     }
@@ -497,7 +497,7 @@ class FileSystemController extends \ShortPixel\Controller
 
   public function endTrustedMode()
   {
-    if (\wpSPIO()->env()->useTrustedMode()) {
+    if (\wpSPUI()->env()->useTrustedMode()) {
       FileModel::$TRUSTED_MODE = false;
       DirectoryModel::$TRUSTED_MODE = false;
     }
@@ -516,13 +516,13 @@ class FileSystemController extends \ShortPixel\Controller
 
     if (true === $args['to_temp'])
     {
-      $sourcePath = SHORTPIXEL_BACKUP_FOLDER; 
+      $sourcePath = SPUI_BACKUP_FOLDER; 
       $targetPath = $tmpLocation;
     }
     else
     {
       $sourcePath = $tmpLocation; 
-      $targetPath = SHORTPIXEL_BACKUP_FOLDER;
+      $targetPath = SPUI_BACKUP_FOLDER;
     }
 
     $logFiles = $files = glob(trailingslashit($sourcePath) . "*.log");

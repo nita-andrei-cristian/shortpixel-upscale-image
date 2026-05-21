@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\CacheModel as CacheModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\CacheModel as CacheModel;
 // Future replacement for everything that needs temporary storage
 // Storage agnostic -> called function should not need to know what is stored where, this is job of controller.
 // Works with cache-model, which handles the data representation and storage.
 //
 
-class CacheController extends \ShortPixel\Controller
+class CacheController extends \SPUI\Controller
 {
   protected static $cached_items = array();
 
@@ -27,7 +27,7 @@ class CacheController extends \ShortPixel\Controller
      $cache->setExpires($expires);
 
      $cache->save();
-     $cache = apply_filters('shortpixel/cache/save', $cache, $name);
+     $cache = apply_filters('spui/cache/save', $cache, $name);
      self::$cached_items[$name] = $cache;
 
      return $cache;
@@ -49,7 +49,7 @@ class CacheController extends \ShortPixel\Controller
       return self::$cached_items[$name];
 
      $cache = new CacheModel($name);
-     $cache = apply_filters('shortpixel/cache/get', $cache, $name);
+     $cache = apply_filters('spui/cache/get', $cache, $name);
      self::$cached_items[$name] = $cache;
 
      return $cache;

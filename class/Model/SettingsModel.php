@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-class SettingsModel extends \ShortPixel\Model
+class SettingsModel extends \SPUI\Model
 {
 		private static $instance;
 
-		private $option_name = 'spio_settings';
+		private $option_name = 'spui_settings';
 
 		private $updated = false;
 
@@ -59,7 +59,7 @@ class SettingsModel extends \ShortPixel\Model
 				'useCDN' => ['s' => 'boolean', 'default' => false],
 				'cdn_css' => ['s' =>  'boolean', 'default' => false],
 				'cdn_js' => ['s' => 'boolean', 'default' => false],
-				'CDNDomain' => ['s' => 'string', 'default' => 'https://spcdn.shortpixel.ai/spio'],
+				'CDNDomain' => ['s' => 'string', 'default' => 'https://spcdn.shortpixel.ai/spui'],
         'redirectedSettings' => ['s' => 'int', 'default' => 0],
         'exif' => ['s' => 'int', 'default' => 1],
         'exif_ai' => ['s' => 'int', 'default' => 0],
@@ -197,7 +197,16 @@ class SettingsModel extends \ShortPixel\Model
            unset($settings['keepExif']);
         }
 
-        $settings = apply_filters('shortpixel/settings/check', $settings);
+        if (isset($settings['CDNDomain']) && is_string($settings['CDNDomain']))
+        {
+          $settings['CDNDomain'] = str_replace(
+            array('https://cdn.shortpixel.ai/spio', 'https://spcdn.shortpixel.ai/spio'),
+            array('https://cdn.shortpixel.ai/spui', 'https://spcdn.shortpixel.ai/spui'),
+            $settings['CDNDomain']
+          );
+        }
+
+        $settings = apply_filters('spui/settings/check', $settings);
         return $settings;
     }
 
@@ -310,4 +319,3 @@ class SettingsModel extends \ShortPixel\Model
 		}
 
 } // class
-

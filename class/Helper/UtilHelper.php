@@ -1,8 +1,8 @@
 <?php
 
-namespace ShortPixel\Helper;
+namespace SPUI\Helper;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if (! defined('ABSPATH')) {
@@ -17,7 +17,7 @@ class UtilHelper
   {
     global $wpdb;
 
-    return $wpdb->prefix . 'shortpixel_postmeta';
+    return $wpdb->prefix . 'spui_postmeta';
   }
 
   public static function shortPixelIsPluginActive($plugin)
@@ -57,7 +57,7 @@ class UtilHelper
       $sizes = array_merge($sizes, $_wp_additional_image_sizes);
     }
 
-    $sizes = apply_filters('shortpixel/settings/image_sizes', $sizes);
+    $sizes = apply_filters('spui/settings/image_sizes', $sizes);
     return $sizes;
   }
 
@@ -72,7 +72,7 @@ class UtilHelper
 
   public static function getExifParameter()
   {
-    return (\wpSPIO()->settings()->exif + \wpSPIO()->settings()->exif_ai);
+    return (\wpSPUI()->settings()->exif + \wpSPUI()->settings()->exif_ai);
   }
 
   // Copy of private https://developer.wordpress.org/reference/functions/_wp_relative_upload_path/
@@ -127,7 +127,7 @@ class UtilHelper
 
     $args = wp_parse_args($args, $defaults);
 
-    $patterns = \wpSPIO()->settings()->excludePatterns;
+    $patterns = \wpSPUI()->settings()->excludePatterns;
     $matches = array();
 
     if (false === is_array($patterns)) {
@@ -175,7 +175,7 @@ class UtilHelper
 
   public static function getAiSettings($params = [])
   {
-    $settings = \wpSPIO()->settings(); 
+    $settings = \wpSPUI()->settings(); 
 
     $defaults = [
     'ai_general_context' => $settings->ai_general_context, 
@@ -235,7 +235,7 @@ class UtilHelper
     if (false === $webp && false === $avif) {
       insert_with_markers(get_home_path() . '.htaccess', 'ShortPixelWebp', '');
 
-      // Only empty these tags if the file actually exist, they are created by SPIO.
+      // Only empty these tags if the file actually exist, they are created by SPUI.
       if (file_exists($upload_base . '.htaccess')) {
         insert_with_markers($upload_base . '.htaccess', 'ShortPixelWebp', '');
       }
@@ -340,7 +340,7 @@ class UtilHelper
         'uploads' => array('useInherit' => true),
         'wp_content' => array('useInherit' => true)
       );
-      $deepOptionsFiltered = apply_filters('shortpixel/install/write_deep_htaccess', $deepOptions);
+      $deepOptionsFiltered = apply_filters('spui/install/write_deep_htaccess', $deepOptions);
 
       // Previous filter used a boolean. This is backward compat.
       if (true === $deepOptionsFiltered) {

@@ -1,32 +1,32 @@
 <?php
 
-namespace ShortPixel\Controller\Optimizer;
+namespace SPUI\Controller\Optimizer;
 
-use ShortPixel\Controller\Api\RequestManager;
+use SPUI\Controller\Api\RequestManager;
 
 if (!defined('ABSPATH')) {
   exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ResponseController as ResponseController;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Queue\QueueItem as QueueItem;
 
-use ShortPixel\Helper\DownloadHelper as DownloadHelper;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\DownloadHelper as DownloadHelper;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Helper\UiHelper as UiHelper;
 
 
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
 
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPUI\Model\Converter\Converter as Converter;
 
-use ShortPixel\Controller\AjaxController as AjaxController;
-use ShortPixel\Controller\Queue\QueueItems;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\StatsController as StatsController;
+use SPUI\Controller\AjaxController as AjaxController;
+use SPUI\Controller\Queue\QueueItems;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\StatsController as StatsController;
 
 class OptimizeController extends OptimizerBase
 {
@@ -63,7 +63,7 @@ class OptimizeController extends OptimizerBase
       );
       $args = wp_parse_args($args, $defaults); */
 
-    //$fs = \wpSPIO()->filesystem();
+    //$fs = \wpSPUI()->filesystem();
 
     // $json = $this->getJsonResponse();
     $bool = $this->checkImageModel($qItem);
@@ -143,7 +143,7 @@ class OptimizeController extends OptimizerBase
 
       $qItem->addResult([
         'apiStatus' => RequestManager::STATUS_UNCHANGED,
-        'message' => __('Item is waiting (blocked)', 'shortpixel-image-optimiser'),
+        'message' => __('Item is waiting (blocked)', 'shortpixel-upscale-image'),
       ]);
       Log::addWarn('Encountered blocked item, processing success? ', $item_id);
     } else {
@@ -246,7 +246,7 @@ class OptimizeController extends OptimizerBase
   {
     $imageModel = $qItem->imageModel;
     $item_id = $qItem->item_id;
-    $fs = \wpSPIO()->filesystem(); 
+    $fs = \wpSPUI()->filesystem(); 
     $q = $this->getCurrentQueue($qItem);
     $statsController = StatsController::getInstance();
 
@@ -271,8 +271,8 @@ class OptimizeController extends OptimizerBase
               'fileStatus' => ImageModel::FILE_STATUS_SUCCESS
             ]);
 
-            do_action('shortpixel_image_optimised', $item_id);
-            do_action('shortpixel/image/optimised', $imageModel);
+            do_action('spui_image_optimised', $item_id);
+            do_action('spui/image/optimised', $imageModel);
           } elseif (RequestManager::STATUS_CONVERTED == $status) {
             $qItem->addResult([
               'apiStatus' => RequestManager::STATUS_CONVERTED,
@@ -307,7 +307,7 @@ class OptimizeController extends OptimizerBase
           // Nothing here.
         } else {
           Log::addWarn('Api returns Success, but result has no files', $qItem->result());
-          $message = sprintf(__('Image API returned succes, but without images', 'shortpixel-image-optimiser'), $item_id);
+          $message = sprintf(__('Image API returned succes, but without images', 'shortpixel-upscale-image'), $item_id);
           ResponseController::addData($item_id, 'message', $message);
           $qItem->addResult(['is_error' => true, 'apiStatus' => RequestManager::STATUS_FAIL]);
         }
@@ -364,7 +364,7 @@ class OptimizeController extends OptimizerBase
         }
 
         if ($retry_limit == $qItem->data()->tries || $retry_limit == ($qItem->data()->tries - 1)) {
-          $message = __('Retry Limit reached. Image might be too large, limit too low or network issues.  ', 'shortpixel-image-optimiser');
+          $message = __('Retry Limit reached. Image might be too large, limit too low or network issues.  ', 'shortpixel-upscale-image');
 
           ResponseController::addData($item_id, 'message', $message);
           ResponseController::addData($item_id, 'is_error', true);
@@ -529,10 +529,10 @@ class OptimizeController extends OptimizerBase
     if (is_object($converter) && $converter->isConverterFor('api')) {
       $optimizedResult = $converter->handleConverted($successData);
       if (true === $optimizedResult) {
-        ResponseController::addData($item_id, 'message', __('File Converted', 'shortpixel-image-optimiser'));
+        ResponseController::addData($item_id, 'message', __('File Converted', 'shortpixel-upscale-image'));
         $status = ApiController::STATUS_CONVERTED;
       } else {
-        ResponseController::addData($item_id, 'message', __('File conversion failed.', 'shortpixel-image-optimiser'));
+        ResponseController::addData($item_id, 'message', __('File conversion failed.', 'shortpixel-upscale-image'));
         $q->itemFailed($qItem, true);
         Log::addError('File conversion failed with data ', $successData);
         $status = ApiController::STATUS_FAIL;
@@ -563,7 +563,7 @@ class OptimizeController extends OptimizerBase
     }
 
     $files = $qItem->files;
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPUI()->filesystem();
 
     foreach ($files as $name => $data) {
       foreach ($data as $tmpPath) {

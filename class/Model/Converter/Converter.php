@@ -1,17 +1,17 @@
 <?php
 
-namespace ShortPixel\Model\Converter;
+namespace SPUI\Model\Converter;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Replacer\Replacer as Replacer;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
-use ShortPixel\Model\File\FileModel as FileModel;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPUI\Replacer\Replacer as Replacer;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\File\DirectoryModel as DirectoryModel;
+use SPUI\Model\File\FileModel as FileModel;
+use SPUI\Controller\ResponseController as ResponseController;
+use SPUI\Model\Queue\QueueItem as QueueItem;
 
 
 /* ShortPixel Image Optimiser Converters. Unified interface for handling conversion between file types */
@@ -27,7 +27,7 @@ abstract class Converter
 	const ERROR_BACKUPERROR = -5; // Backup didn't work.
 	const ERROR_TRANSPARENT = -6; // Transparency when it is not allowed.
 
-	protected $imageModel;  // The current ImageModel from SPIO
+	protected $imageModel;  // The current ImageModel from SPUI
 
 	// Method specific
 	abstract public function convert($args = array());
@@ -147,7 +147,7 @@ abstract class Converter
 		}
 
 		$number = 0;
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		$base = $file->getFileBase();
 		$ext = $file->getExtension();
@@ -164,7 +164,7 @@ abstract class Converter
 
 	protected function getReplacementPath()
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$image_id = $this->imageModel->get('id');
 
 		if ($this->imageModel->isScaled()) {
@@ -184,7 +184,7 @@ abstract class Converter
 
 		if (! $fileDir->is_writable()) {
 			Log::addWarn('Replacement path for PNG not writable ' . $newPath);
-			$msg = __('Replacement path for PNG not writable', 'shortpixel-image-optimiser');
+			$msg = __('Replacement path for PNG not writable', 'shortpixel-upscale-image');
 			ResponseController::addData($image_id, 'message', $msg);
 
 			return false;

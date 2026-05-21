@@ -1,21 +1,21 @@
 <?php
-namespace ShortPixel\Controller\Optimizer;
+namespace SPUI\Controller\Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Controller\Api\RequestManager as RequestManager;
-use ShortPixel\Controller\Api\AiController;
-use ShortPixel\Controller\Api\ApiController;
-use ShortPixel\Controller\Queue\Queue;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Replacer\Replacer;
-use ShortPixel\ViewController as ViewController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Controller\Api\RequestManager as RequestManager;
+use SPUI\Controller\Api\AiController;
+use SPUI\Controller\Api\ApiController;
+use SPUI\Controller\Queue\Queue;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\AiDataModel;
+use SPUI\Replacer\Replacer;
+use SPUI\ViewController as ViewController;
 
 // Class for AI Operations.  In time split off OptimizeController / Optimize actions to a main queue runner seperately.
 class OptimizeAiController extends OptimizerBase
@@ -67,7 +67,7 @@ class OptimizeAiController extends OptimizerBase
         $qItem->addResult([
             'is_error' => true, 
             'is_done' => true,
-            'message' => __('AI data cannot be generated for GIF files by ShortPixel AI, for now', 'shortpixel-image-optimiser'), 
+            'message' => __('AI data cannot be generated for GIF files by ShortPixel AI, for now', 'shortpixel-upscale-image'), 
             'apiStatus' => AiController::AI_STATUS_INVALID_URL,
         ]); 
 
@@ -153,7 +153,7 @@ class OptimizeAiController extends OptimizerBase
             if ($qItem->result()->message == '')
             {
                 $qItem->addResult([
-                'message' => __('Request for image SEO data sent to Shortpixel AI', 'shortpixel-image-optimiser')]);
+                'message' => __('Request for image SEO data sent to Shortpixel AI', 'shortpixel-upscale-image')]);
             }
         }
         else
@@ -269,10 +269,10 @@ class OptimizeAiController extends OptimizerBase
   private function getDataLabels()
   {
     $labels = [
-      'alt' => __('Alt', 'shortpixel-image-optimiser'), 
-      'caption' => __('Caption', 'shortpixel-image-optimiser'), 
-      'description' => __('Description', 'shortpixel-image-optimiser'), 
-      'post_title' =>  __('Image Title' , 'shortpixel-image-optimiser'), 
+      'alt' => __('Alt', 'shortpixel-upscale-image'), 
+      'caption' => __('Caption', 'shortpixel-upscale-image'), 
+      'description' => __('Description', 'shortpixel-upscale-image'), 
+      'post_title' =>  __('Image Title' , 'shortpixel-upscale-image'), 
     ];
 
     return $labels;
@@ -281,7 +281,7 @@ class OptimizeAiController extends OptimizerBase
   protected function HandleSuccess(QueueItem $qItem)
   {
         $aiData = $qItem->result()->aiData;  
-        // $settings = \wpSPIO()->settings();
+        // $settings = \wpSPUI()->settings();
 
         /* $checks = ['alt' => 'ai_gen_alt', 
         'caption' => 'ai_gen_caption', 
@@ -358,7 +358,7 @@ class OptimizeAiController extends OptimizerBase
                  $url = $qItem->imageModel->getUrl(); 
              }
 
-             $replacer2 = \ShortPixel\Replacer\Replacer::getInstance(); 
+             $replacer2 = \SPUI\Replacer\Replacer::getInstance(); 
              $setup = $replacer2->Setup(); 
              $setup->forSearch()->URL()->addData($url);
              
@@ -379,7 +379,7 @@ class OptimizeAiController extends OptimizerBase
       $item_id = $qItem->item_id; 
 
       $files = $imageModel->getAllFiles();
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 
       if (isset($files['files'][$imageModel->getImageKey('original')]))
       {
@@ -507,7 +507,7 @@ class OptimizeAiController extends OptimizerBase
   public function handleReplace($results, $args)
   {
 
-    $replacer2 = \ShortPixel\Replacer\Replacer::getInstance();
+    $replacer2 = \SPUI\Replacer\Replacer::getInstance();
     $aiData = $args['aiData'];
     $qItem = $args['qItem'];
 
@@ -528,7 +528,7 @@ class OptimizeAiController extends OptimizerBase
             {
 
             // @todo The result of the post, should parse the content somehow via regex, then load.
-             $frontImage = new \ShortPixel\Model\FrontImage($match); 
+             $frontImage = new \SPUI\Model\FrontImage($match); 
 
              $src = $frontImage->src; 
              // Only replace in post content the image we did
@@ -598,11 +598,11 @@ class OptimizeAiController extends OptimizerBase
    */
   public function isAiEnabled()
   {
-     $settings = \wpSPIO()->settings(); 
+     $settings = \wpSPUI()->settings(); 
 
      $bool = (true == $settings->enable_ai) ? true : false; // make sure boolean is hard type. 
     
-     $no_ai = apply_filters('shortpixel/settings/no_ai', false);
+     $no_ai = apply_filters('spui/settings/no_ai', false);
      if (true === $no_ai) // switch around negative filter
      {
          $bool = false; 
@@ -619,7 +619,7 @@ class OptimizeAiController extends OptimizerBase
          return $bool; 
       }
 
-      $settings = \wpSPIO()->settings(); 
+      $settings = \wpSPUI()->settings(); 
 
       $bool = (true == $settings->autoAI) ? true : false; 
 
@@ -637,7 +637,7 @@ class OptimizeAiController extends OptimizerBase
         $text = ucfirst(trim($text));
 
         // Add period to the end of the string.
-        if (substr($text, -1) !== '.' && true === apply_filters('shortpixel/ai/check_period', true))
+        if (substr($text, -1) !== '.' && true === apply_filters('spui/ai/check_period', true))
         {
             $text .= '.';
         }
@@ -673,7 +673,7 @@ class OptimizeAiController extends OptimizerBase
        $qItem->addResult([
         'is_done' => true, 
         'is_error' => false,
-        'message' => __('AI Data reverted ', 'shortpixel-image-optimiser'), 
+        'message' => __('AI Data reverted ', 'shortpixel-upscale-image'), 
         'apiStatus' => ApiController::STATUS_NOT_API,
     ]);
     $this->finishItemProcess($qItem);
@@ -693,11 +693,11 @@ public function getAltData(QueueItem $qItem)
     // check for old data
     if (AiDataModel::AI_STATUS_NOTHING === $status) // old data 
     {
-         $metacheck = get_post_meta($item_id, 'shortpixel_alt_requests', true); 
+         $metacheck = get_post_meta($item_id, 'spui_alt_requests', true); 
          if (false !== $metacheck && is_array($metacheck))
          {
                 $aiModel->migrate($metacheck);
-                delete_post_meta($item_id, 'shortpixel_alt_requests');
+                delete_post_meta($item_id, 'spui_alt_requests');
                 $aiModel = AiDataModel::getModelByAttachment($item_id, 'media');
                 $status = $aiModel->getStatus();
          }

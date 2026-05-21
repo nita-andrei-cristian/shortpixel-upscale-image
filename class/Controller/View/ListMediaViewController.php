@@ -1,27 +1,27 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Model\AiDataModel;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
 // Controller for the MediaLibraryView
-class ListMediaViewController extends \ShortPixel\ViewController
+class ListMediaViewController extends \SPUI\ViewController
 {
 
 	protected static $instance;
@@ -31,7 +31,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function load()
   {
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
 			$fs->startTrustedMode();
 
       $this->loadHooks();
@@ -54,7 +54,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function headerColumns($defaults)
   {
-    $defaults['wp-shortPixel'] = __('ShortPixel Compression', 'shortpixel-image-optimiser');
+    $defaults['wp-shortPixel'] = __('ShortPixel Compression', 'shortpixel-upscale-image');
 
 
     return $defaults;
@@ -77,13 +77,13 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   protected function loadItem($id)
   {
-     $fs = \wpSPIO()->filesystem();
+     $fs = \wpSPUI()->filesystem();
      $mediaItem = $fs->getMediaImage($id);
 
 		 // Asking for something non-existing.
 	 if ($mediaItem === false)
      {
-       $this->view->text = __('File Error. This could be not an image or the file is missing', 'shortpixel-image-optimiser');
+       $this->view->text = __('File Error. This could be not an image or the file is missing', 'shortpixel-upscale-image');
 		 	 return;
      }
      $this->view->mediaItem = $mediaItem;
@@ -91,10 +91,10 @@ class ListMediaViewController extends \ShortPixel\ViewController
      $actions = array();
      $list_actions = array();
 
-     $optimizeAiController = OptimizeAiController::getInstance(); 
+     $upscaleAiController = OptimizeAiController::getInstance(); 
 
 
-     if (true === $optimizeAiController->isAiEnabled())
+     if (true === $upscaleAiController->isAiEnabled())
      {
         $aiDataModel = $this->loadAiItem($id);
      }
@@ -149,7 +149,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 				$compressionType = $mediaItem->getMeta('compressionType');
 		}
 		else {
-				$compressionType = \wpSPIO()->settings()->compressionType;
+				$compressionType = \wpSPUI()->settings()->compressionType;
 		}
 
 
@@ -181,13 +181,13 @@ class ListMediaViewController extends \ShortPixel\ViewController
         }
         $generated_fields = implode(',', array_keys(array_filter($generated_data)));
         $this->view->ai_icon = 'ai'; 
-        $this->view->ai_title = sprintf(__('AI-generated image SEO data: %s', 'shortpixel-image-optimiser'), $generated_fields); 
+        $this->view->ai_title = sprintf(__('AI-generated image SEO data: %s', 'shortpixel-upscale-image'), $generated_fields); 
 
      }
      else
      {
        $this->view->ai_icon = 'no-ai'; 
-       $this->view->ai_title = __('No AI-generated SEO data for this image', 'shortpixel-image-optimiser'); 
+       $this->view->ai_title = __('No AI-generated SEO data for this image', 'shortpixel-upscale-image'); 
 
      }
 
@@ -208,16 +208,16 @@ class ListMediaViewController extends \ShortPixel\ViewController
       $scr = get_current_screen();
       if ( $scr->base !== 'upload' ) return;
 
-      $status   = filter_input(INPUT_GET, 'shortpixel_status', FILTER_UNSAFE_RAW );
+      $status   = filter_input(INPUT_GET, 'spui_status', FILTER_UNSAFE_RAW );
 
       $options = array(
-          'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-          'optimized' => __('Optimized', 'shortpixel-image-optimiser'),
-          'unoptimized' => __('Unoptimized', 'shortpixel-image-optimiser'),
-					'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
+          'all' => __('Any ShortPixel State', 'shortpixel-upscale-image'),
+          'upscaled' => __('Upscaled', 'shortpixel-upscale-image'),
+          'unupscaled' => __('Unupscaled', 'shortpixel-upscale-image'),
+					'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
       );
 
-      echo  "<select name='shortpixel_status' id='shortpixel_status'>\n";
+      echo  "<select name='spui_status' id='spui_status'>\n";
       foreach($options as $optname => $optval)
       {
           $selected = ($status == $optname) ? esc_attr('selected') : '';

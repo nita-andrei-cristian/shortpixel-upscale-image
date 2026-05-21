@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPUI\Controller\Api;
 
 if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\ResponseController as ResponseController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 class ApiController extends RequestManager
 {
@@ -38,9 +38,9 @@ class ApiController extends RequestManager
 
 	public function __construct()
 	{
-		$settings = \wpSPIO()->settings();
-		$this->apiEndPoint = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/reducer.php';
-		$this->apiDumpEndPoint = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/cleanup.php';
+		$settings = \wpSPUI()->settings();
+		$this->apiEndPoint = $settings->httpProto . '://' . SPUI_API . '/v2/reducer.php';
+		$this->apiDumpEndPoint = $settings->httpProto . '://' . SPUI_API . '/v2/cleanup.php';
 	}
 
 	/*
@@ -52,28 +52,28 @@ class ApiController extends RequestManager
 		$imageModel = $qItem->imageModel; 
 
 		if (!is_object($imageModel)) {
-			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-image-optimiser')));
+			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-upscale-image')));
 		} elseif (false === $imageModel->isProcessable() || $imageModel->isOptimizePrevented() == true) {
 			if ($imageModel->isOptimized()) // This only looks at main item
 			{
-				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is already optimized', 'shortpixel-image-optimiser')));
+				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is already upscaled', 'shortpixel-upscale-image')));
 			} else {
-				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is not processable and not optimized', 'shortpixel-image-optimiser')));
+				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is not processable and not upscaled', 'shortpixel-upscale-image')));
 			}
 		}
 
 		if (!is_array($qItem->data()->urls) || count($qItem->data()->urls) == 0) {
-			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('No Urls given for this Item', 'shortpixel-image-optimiser')));
+			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('No Urls given for this Item', 'shortpixel-upscale-image')));
 			return;
 		}
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$keyControl = ApiKeyController::getInstance();
 		$flags = $qItem->data()->flags; 
 		$convertTo = implode("|", $flags);
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'lossy' => $qItem->data()->compressionType,
@@ -116,7 +116,7 @@ class ApiController extends RequestManager
 		$keyControl = ApiKeyController::getInstance();
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'lossy' => $qItem->data()->compressionType,
@@ -161,7 +161,7 @@ class ApiController extends RequestManager
 	   */
 	public function dumpMediaItem(QueueItem $qItem)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$keyControl = ApiKeyController::getInstance();
 
 		if (is_null($qItem->data()->urls) || !is_array($qItem->data()->urls) || count($qItem->data()->urls) == 0) {
@@ -170,7 +170,7 @@ class ApiController extends RequestManager
 		}
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'item_id' => $qItem->item_id,
@@ -225,10 +225,10 @@ class ApiController extends RequestManager
 					@delete_option('bulkProcessingStatus');
 					QuotaController::getInstance()->setQuotaExceeded();
 
-					return $this->returnRetry(self::STATUS_QUOTA_EXCEEDED, __('Quota exceeded.', 'shortpixel-image-optimiser'));
+					return $this->returnRetry(self::STATUS_QUOTA_EXCEEDED, __('Quota exceeded.', 'shortpixel-upscale-image'));
 					break;
 				case -306:
-					return $this->returnFailure(self::STATUS_FAIL, __('Files need to be from a single domain per request.', 'shortpixel-image-optimiser'));
+					return $this->returnFailure(self::STATUS_FAIL, __('Files need to be from a single domain per request.', 'shortpixel-upscale-image'));
 					break;
 				case -401: // Invalid Api Key
 				case -402: // Wrong API key
@@ -248,9 +248,9 @@ class ApiController extends RequestManager
 		if (is_array($APIresponse) && isset($APIresponse[0])) //API returned image details
 		{
 
-				if ('optimize' === $action || 'convert_api' === $action)
+				if ('upscale' === $action || 'convert_api' === $action)
 				{
-					 return $this->handleOptimizeResponse($qItem, $APIresponse);
+					 return $this->handleUpscaleResponse($qItem, $APIresponse);
 				} 
 				if ('remove_background' === $action)
 				{
@@ -271,7 +271,7 @@ class ApiController extends RequestManager
 		if (!isset($APIresponse['Status'])) {
 
 			Log::addError('API returned Unknown Status/Response ', $response);
-			return $this->returnFailure(self::STATUS_FAIL, __('Unrecognized API response. Please contact support.', 'shortpixel-image-optimiser'));
+			return $this->returnFailure(self::STATUS_FAIL, __('Unrecognized API response. Please contact support.', 'shortpixel-upscale-image'));
 
 		} else {
 
@@ -283,7 +283,7 @@ class ApiController extends RequestManager
 			}
 
 			if (!isset($message) || is_null($message) || $message == '') {
-				$message = __('Unrecognized API message. Please contact support.', 'shortpixel-image-optimiser');
+				$message = __('Unrecognized API message. Please contact support.', 'shortpixel-upscale-image');
 			}
 			return $this->returnRetry(self::STATUS_FAIL, $message);
 		} // else
@@ -291,7 +291,7 @@ class ApiController extends RequestManager
 	}
 	// handleResponse function
 
-	protected function handleOptimizeResponse(QueueItem $qItem, $response)
+	protected function handleUpscaleResponse(QueueItem $qItem, $response)
 	{
 		$neededURLS = $qItem->data()->urls; // URLS we are waiting for.
 
@@ -315,7 +315,7 @@ class ApiController extends RequestManager
 		}
 
 		if (!isset($returnDataList['sizes'])) {
-			return $this->returnFailure(self::STATUS_FAIL, __('Item did not return image size information. This might be a failed queue item. Reset the queue if this persists or contact support', 'shortpixel-image-optimiser'));
+			return $this->returnFailure(self::STATUS_FAIL, __('Item did not return image size information. This might be a failed queue item. Reset the queue if this persists or contact support', 'shortpixel-upscale-image'));
 		}
 
 		$analyze = array('total' => count($neededURLS), 'ready' => 0, 'waiting' => 0);
@@ -392,7 +392,7 @@ class ApiController extends RequestManager
 			}
 		} elseif ($analyze['waiting'] > 0) {
 
-			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-image-optimiser')));
+			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-upscale-image')));
 		} else {
 			// Theoretically this should not be needed.
 			Log::addWarn('ApiController Response not handled before default case', $imageList);
@@ -401,14 +401,14 @@ class ApiController extends RequestManager
 				$err = array(
 					"Status" => self::STATUS_FAIL,
 					"Code" => (isset($response[0]->Status->Code) ? $response[0]->Status->Code : self::ERR_UNKNOWN),
-					"Message" => __('There was an error and your request was not processed.', 'shortpixel-image-optimiser')
+					"Message" => __('There was an error and your request was not processed.', 'shortpixel-upscale-image')
 						. " (" . wp_basename($response[0]->OriginalURL) . ": " . $response[0]->Status->Message . ")"
 				);
 				return $this->returnRetry($err['Code'], $err['Message']);
 			} else {
 				$err = array(
 					"Status" => self::STATUS_FAIL,
-					"Message" => __('There was an error and your request was not processed.', 'shortpixel-image-optimiser'),
+					"Message" => __('There was an error and your request was not processed.', 'shortpixel-upscale-image'),
 					"Code" => (isset($response[0]->Status->Code) ? $response[0]->Status->Code : self::ERR_UNKNOWN)
 				);
 				return $this->returnRetry($err['Code'], $err['Message']);
@@ -423,13 +423,13 @@ class ApiController extends RequestManager
 		
 		if (in_array($status_code, [self::STATUS_UNCHANGED, self::STATUS_WAITING] ))
 		{
-			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-image-optimiser')));
+			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-upscale-image')));
 		}
 		if (self::STATUS_SUCCESS == $status_code)
 		{	
 			$image = $item->LosslessURL; 
 			$imageData = [
-				'optimized' => $image, 
+				'upscaled' => $image, 
 				'original' => $item->OriginalURL, 
 			];
 			return $this->returnSuccess($imageData);
@@ -438,7 +438,7 @@ class ApiController extends RequestManager
 	}
 
 	/**
-	 * When API signals it's done optimizing an image.
+	 * When API signals it's done optimization an image.
 	 * @param  Object $item                   Queue Item object with all settings
 	 * @param  Object $fileData               API response with image URLS
 	 * @param  Array $data                   Data is filename, imagename, filesize (optionally) from returnDataList
@@ -446,9 +446,9 @@ class ApiController extends RequestManager
 	 */
 	protected function handleNewSuccess(QueueItem $qItem, $fileData, $data)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$compressionType = ! is_null($qItem->data()->compressionType) ? $qItem->data()->compressionType : $settings->compressionType;
-		//$savedSpace =  $originalSpace =  $optimizedSpace = $fileCount  = 0;
+		//$savedSpace =  $originalSpace =  $upscaledSpace = $fileCount  = 0;
 
 		$defaults = [
 			'fileName' => false,
@@ -471,7 +471,7 @@ class ApiController extends RequestManager
 			'image' => array(
 				'url' => false,
 				'originalSize' => $originalFileSize,
-				'optimizedSize' => false,
+				'upscaledSize' => false,
 				'status' => self::STATUS_SUCCESS,
 			),
 			'webp' => array(
@@ -489,20 +489,20 @@ class ApiController extends RequestManager
 		$fileType = ($compressionType > 0) ? 'LossyURL' : 'LosslessURL';
 		$fileSize = ($compressionType > 0) ? 'LossySize' : 'LosslessSize';
 
-		// if originalURL and OptimizedURL is the same, API is returning it as the same item, aka not optimized.
+		// if originalURL and UpscaledURL is the same, API is returning it as the same item, aka not upscaled.
 		if ($fileData->$fileType === $fileData->OriginalURL) {
 			$image['image']['status'] = self::STATUS_UNCHANGED;
 		} else {
 			$image['image']['url'] = $fileData->$fileType;
-			$image['image']['optimizedSize'] = intval($fileData->$fileSize);
+			$image['image']['upscaledSize'] = intval($fileData->$fileSize);
 		}
 
-		// Don't download if the originalSize / OptimizedSize is the same ( same image ) . This can be non-opt result or it was not asked to be optimized( webp/avif only job i.e. )
-		if ($image['image']['originalSize'] == $image['image']['optimizedSize']) {
+		// Don't download if the originalSize / UpscaledSize is the same ( same image ) . This can be non-opt result or it was not asked to be upscaled( webp/avif only job i.e. )
+		if ($image['image']['originalSize'] == $image['image']['upscaledSize']) {
 			$image['image']['status'] = self::STATUS_UNCHANGED;
 		}
 
-		$checkFileSize = intval($fileData->$fileSize); // Size of optimized image to check against Avif/Webp
+		$checkFileSize = intval($fileData->$fileSize); // Size of upscaled image to check against Avif/Webp
 
 		if (false === $this->checkFileSizeMargin($originalFileSize, $checkFileSize)) {
 			
@@ -560,7 +560,7 @@ class ApiController extends RequestManager
 	 *  Function to check if the filesize of the imagetype (webp/avif) is smaller, or within bounds of size to be stored. If not, the webp is not downloaded and uses.
 	 *
 	 * @param  int $fileSize                 Filesize of the original
-	 * @param  int $resultSize               Filesize of the optimized image
+	 * @param  int $resultSize               Filesize of the upscaled image
 	 * @return [type]             [description]
 	 */
 	private function checkFileSizeMargin($fileSize, $resultSize)
@@ -573,9 +573,9 @@ class ApiController extends RequestManager
 		if ($fileSize == 0)
 			return true;
 
-		$percentage = apply_filters('shortpixel/api/filesizeMargin', 5);
+		$percentage = apply_filters('spui/api/filesizeMargin', 5);
 
-		// If the percentage is lower than 0, stop checking. This is a way to short-circuit this check in case optimized images always should be used.
+		// If the percentage is lower than 0, stop checking. This is a way to short-circuit this check in case upscaled images always should be used.
 		if ($percentage < 0) {
 			return true;
 		}
@@ -588,7 +588,7 @@ class ApiController extends RequestManager
 			return true;
 
 
-		if (\wpSPIO()->settings()->useSmartcrop == true && \wpSPIO()->settings()->smartCropIgnoreSizes == true) {
+		if (\wpSPUI()->settings()->useSmartcrop == true && \wpSPUI()->settings()->smartCropIgnoreSizes == true) {
 			return true;
 		}
 

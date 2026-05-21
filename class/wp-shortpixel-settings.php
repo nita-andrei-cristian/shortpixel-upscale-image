@@ -1,7 +1,7 @@
 <?php
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\SettingsModel as SettingsModel;
+use SPUI\Model\SettingsModel as SettingsModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 /** Settings Model **/
-class WPShortPixelSettings extends \ShortPixel\Model {
+class WPShortPixelSettings extends \SPUI\Model {
     private $_apiKey = '';
     private $_compressionType = 1;
     private $_keepExif = 0;
@@ -27,44 +27,44 @@ class WPShortPixelSettings extends \ShortPixel\Model {
     //    'frontBootstrap' => array('key' => 'wp-short-pixel-front-bootstrap', 'default' => null, 'group' => 'options'), //set to 1 when need the plugin active for logged in user in the front-end
       //  'lastBackAction' => array('key' => 'wp-short-pixel-last-back-action', 'default' => null, 'group' => 'state'), //when less than 10 min. passed from this timestamp, the front-bootstrap is ineffective.
 
-        //optimization options
-        'apiKey' => array('key' => 'wp-short-pixel-apiKey', 'default' => '', 'group' => 'options'),
-        'verifiedKey' => array('key' => 'wp-short-pixel-verifiedKey', 'default' => false, 'group' => 'options'),
-        'compressionType' => array('key' => 'wp-short-pixel-compression', 'default' => 1, 'group' => 'options'),
-        'processThumbnails' => array('key' => 'wp-short-process_thumbnails', 'default' => 1, 'group' => 'options'),
-				'useSmartcrop' => array('key' => 'wpspio-usesmartcrop', 'default' => 0, 'group' => 'options'),
-        'keepExif' => array('key' => 'wp-short-pixel-keep-exif', 'default' => 0, 'group' => 'options'),
-        'CMYKtoRGBconversion' => array('key' => 'wp-short-pixel_cmyk2rgb', 'default' => 1, 'group' => 'options'),
-        'createWebp' => array('key' => 'wp-short-create-webp', 'default' => null, 'group' => 'options'),
-        'createAvif' => array('key' => 'wp-short-create-avif', 'default' => null, 'group' => 'options'),
-        'deliverWebp' => array('key' => 'wp-short-pixel-create-webp-markup', 'default' => 0, 'group' => 'options'),
-        'optimizeRetina' => array('key' => 'wp-short-pixel-optimize-retina', 'default' => 1, 'group' => 'options'),
-        'optimizeUnlisted' => array('key' => 'wp-short-pixel-optimize-unlisted', 'default' => 0, 'group' => 'options'),
-        'backupImages' => array('key' => 'wp-short-backup_images', 'default' => 1, 'group' => 'options'),
-        'resizeImages' => array('key' => 'wp-short-pixel-resize-images', 'default' => false, 'group' => 'options'),
-        'resizeType' => array('key' => 'wp-short-pixel-resize-type', 'default' => null, 'group' => 'options'),
-        'resizeWidth' => array('key' => 'wp-short-pixel-resize-width', 'default' => 0, 'group' => 'options'),
-        'resizeHeight' => array('key' => 'wp-short-pixel-resize-height', 'default' => 0, 'group' => 'options'),
-        'siteAuthUser' => array('key' => 'wp-short-pixel-site-auth-user', 'default' => null, 'group' => 'options'),
-        'siteAuthPass' => array('key' => 'wp-short-pixel-site-auth-pass', 'default' => null, 'group' => 'options'),
-        'autoMediaLibrary' => array('key' => 'wp-short-pixel-auto-media-library', 'default' => 1, 'group' => 'options'),
-        'doBackgroundProcess' => array('key' => 'wp-short-pixel-backgroundprocess', 'default' => 0, 'group' => 'options'),
-        'optimizePdfs' => array('key' => 'wp-short-pixel-optimize-pdfs', 'default' => 1, 'group' => 'options'),
-        'excludePatterns' => array('key' => 'wp-short-pixel-exclude-patterns', 'default' => array(), 'group' => 'options'),
-        'png2jpg' => array('key' => 'wp-short-pixel-png2jpg', 'default' => 0, 'group' => 'options'),
-        'excludeSizes' => array('key' => 'wp-short-pixel-excludeSizes', 'default' => array(), 'group' => 'options'),
-				'currentVersion' => array('key' => 'wp-short-pixel-currentVersion', 'default' => null, 'group' => 'options'),
-				'showCustomMedia' => array('key' => 'wp-short-pixel-show-custom-media', 'default' => 1, 'group' => 'options'),
+        // Upscaling options. Legacy SPUI option names are read as fallbacks in getOpt().
+        'apiKey' => array('key' => 'spui-apiKey', 'default' => '', 'group' => 'options'),
+        'verifiedKey' => array('key' => 'spui-verifiedKey', 'default' => false, 'group' => 'options'),
+        'compressionType' => array('key' => 'spui-compression', 'default' => 1, 'group' => 'options'),
+        'processThumbnails' => array('key' => 'spui-process_thumbnails', 'default' => 1, 'group' => 'options'),
+				'useSmartcrop' => array('key' => 'wpspui-usesmartcrop', 'default' => 0, 'group' => 'options'),
+        'keepExif' => array('key' => 'spui-keep-exif', 'default' => 0, 'group' => 'options'),
+        'CMYKtoRGBconversion' => array('key' => 'spui_cmyk2rgb', 'default' => 1, 'group' => 'options'),
+        'createWebp' => array('key' => 'spui-create-webp', 'default' => null, 'group' => 'options'),
+        'createAvif' => array('key' => 'spui-create-avif', 'default' => null, 'group' => 'options'),
+        'deliverWebp' => array('key' => 'spui-create-webp-markup', 'default' => 0, 'group' => 'options'),
+        'optimizeRetina' => array('key' => 'spui-upscale-retina', 'default' => 1, 'group' => 'options'),
+        'optimizeUnlisted' => array('key' => 'spui-upscale-unlisted', 'default' => 0, 'group' => 'options'),
+        'backupImages' => array('key' => 'spui-backup_images', 'default' => 1, 'group' => 'options'),
+        'resizeImages' => array('key' => 'spui-resize-images', 'default' => false, 'group' => 'options'),
+        'resizeType' => array('key' => 'spui-resize-type', 'default' => null, 'group' => 'options'),
+        'resizeWidth' => array('key' => 'spui-resize-width', 'default' => 0, 'group' => 'options'),
+        'resizeHeight' => array('key' => 'spui-resize-height', 'default' => 0, 'group' => 'options'),
+        'siteAuthUser' => array('key' => 'spui-site-auth-user', 'default' => null, 'group' => 'options'),
+        'siteAuthPass' => array('key' => 'spui-site-auth-pass', 'default' => null, 'group' => 'options'),
+        'autoMediaLibrary' => array('key' => 'spui-auto-media-library', 'default' => 1, 'group' => 'options'),
+        'doBackgroundProcess' => array('key' => 'spui-backgroundprocess', 'default' => 0, 'group' => 'options'),
+        'optimizePdfs' => array('key' => 'spui-upscale-pdfs', 'default' => 1, 'group' => 'options'),
+        'excludePatterns' => array('key' => 'spui-exclude-patterns', 'default' => array(), 'group' => 'options'),
+        'png2jpg' => array('key' => 'spui-png2jpg', 'default' => 0, 'group' => 'options'),
+        'excludeSizes' => array('key' => 'spui-excludeSizes', 'default' => array(), 'group' => 'options'),
+				'currentVersion' => array('key' => 'spui-currentVersion', 'default' => null, 'group' => 'options'),
+				'showCustomMedia' => array('key' => 'spui-show-custom-media', 'default' => 1, 'group' => 'options'),
 
         //CloudFlare
         /*'cloudflareEmail'   => array( 'key' => 'wp-short-pixel-cloudflareAPIEmail', 'default' => '', 'group' => 'options'),
         'cloudflareAuthKey' => array( 'key' => 'wp-short-pixel-cloudflareAuthKey', 'default' => '', 'group' => 'options'), */
-        'cloudflareZoneID'  => array( 'key' => 'wp-short-pixel-cloudflareAPIZoneID', 'default' => '', 'group' => 'options'),
-        'cloudflareToken'   => array( 'key' => 'wp-short-pixel-cloudflareToken', 'default' => '', 'group' => 'options'),
+        'cloudflareZoneID'  => array( 'key' => 'spui-cloudflareAPIZoneID', 'default' => '', 'group' => 'options'),
+        'cloudflareToken'   => array( 'key' => 'spui-cloudflareToken', 'default' => '', 'group' => 'options'),
 
-        //optimize other images than the ones in Media Library
-        'includeNextGen' => array('key' => 'wp-short-pixel-include-next-gen', 'default' => null, 'group' => 'options'),
-        'hasCustomFolders' => array('key' => 'wp-short-pixel-has-custom-folders', 'default' => false, 'group' => 'options'),
+        // Upscale other images than the ones in Media Library
+        'includeNextGen' => array('key' => 'spui-include-next-gen', 'default' => null, 'group' => 'options'),
+        'hasCustomFolders' => array('key' => 'spui-has-custom-folders', 'default' => false, 'group' => 'options'),
         //'customBulkPaused' => array('key' => 'wp-short-pixel-custom-bulk-paused', 'default' => false, 'group' => 'options'),
 
         //uninstall
@@ -72,25 +72,25 @@ class WPShortPixelSettings extends \ShortPixel\Model {
 
         //stats, notices, etc.
 				// @todo Most of this can go. See state machine comment.
-        'currentStats' => array('key' => 'wp-short-pixel-current-total-files', 'default' => null, 'group' => 'state'),
+        'currentStats' => array('key' => 'spui-current-total-files', 'default' => null, 'group' => 'state'),
       //  'fileCount' => array('key' => 'wp-short-pixel-fileCount', 'default' => 0, 'group' => 'state'),
-        'thumbsCount' => array('key' => 'wp-short-pixel-thumbnail-count', 'default' => 0, 'group' => 'state'),
+        'thumbsCount' => array('key' => 'spui-thumbnail-count', 'default' => 0, 'group' => 'state'),
         //'under5Percent' => array('key' => 'wp-short-pixel-files-under-5-percent', 'default' => 0, 'group' => 'state'),
     //    'savedSpace' => array('key' => 'wp-short-pixel-savedSpace', 'default' => 0, 'group' => 'state'),
        // 'apiRetries' => array('key' => 'wp-short-pixel-api-retries', 'default' => 0, 'group' => 'state'),
       //  'totalOptimized' => array('key' => 'wp-short-pixel-total-optimized', 'default' => 0, 'group' => 'state'),
       //  'totalOriginal' => array('key' => 'wp-short-pixel-total-original', 'default' => 0, 'group' => 'state'),
-        'quotaExceeded' => array('key' => 'wp-short-pixel-quota-exceeded', 'default' => 0, 'group' => 'state'),
-        'httpProto' => array('key' => 'wp-short-pixel-protocol', 'default' => 'https', 'group' => 'state'),
-        'downloadProto' => array('key' => 'wp-short-pixel-download-protocol', 'default' => null, 'group' => 'state'),
+        'quotaExceeded' => array('key' => 'spui-quota-exceeded', 'default' => 0, 'group' => 'state'),
+        'httpProto' => array('key' => 'spui-protocol', 'default' => 'https', 'group' => 'state'),
+        'downloadProto' => array('key' => 'spui-download-protocol', 'default' => null, 'group' => 'state'),
 
-				'downloadArchive' => array('key' => 'wp-short-pixel-download-archive', 'default' => -1, 'group' => 'state'),
+				'downloadArchive' => array('key' => 'spui-download-archive', 'default' => -1, 'group' => 'state'),
 
-        'activationDate' => array('key' => 'wp-short-pixel-activation-date', 'default' => null, 'group' => 'state'),
-        'mediaLibraryViewMode' => array('key' => 'wp-short-pixel-view-mode', 'default' => false, 'group' => 'state'),
-        'redirectedSettings' => array('key' => 'wp-short-pixel-redirected-settings', 'default' => null, 'group' => 'state'),
+        'activationDate' => array('key' => 'spui-activation-date', 'default' => null, 'group' => 'state'),
+        'mediaLibraryViewMode' => array('key' => 'spui-view-mode', 'default' => false, 'group' => 'state'),
+        'redirectedSettings' => array('key' => 'spui-redirected-settings', 'default' => null, 'group' => 'state'),
       //  'convertedPng2Jpg' => array('key' => 'wp-short-pixel-converted-png2jpg', 'default' => array(), 'group' => 'state'),
-				'unlistedCounter' => array('key' => 'wp-short-pixel-unlisted-counter', 'default' => 0, 'group' => 'state'),
+				'unlistedCounter' => array('key' => 'spui-unlisted-counter', 'default' => 0, 'group' => 'state'),
     );
 
 
@@ -136,7 +136,11 @@ class WPShortPixelSettings extends \ShortPixel\Model {
       public static function resetOptions() {
         foreach(self::$_optionsMap as $key => $val) {
             delete_option($val['key']);
+            foreach (self::getLegacyKeys($val['key']) as $legacy_key) {
+                delete_option($legacy_key);
+            }
         }
+        delete_option("spui-bulk-previous-percent");
         delete_option("wp-short-pixel-bulk-previous-percent");
     }
 
@@ -144,8 +148,9 @@ class WPShortPixelSettings extends \ShortPixel\Model {
         /*if(!self::getOpt('wp-short-pixel-verifiedKey', false)) {
             update_option('wp-short-pixel-activation-notice', true, 'no');
         } */
-        update_option( 'wp-short-pixel-activation-date', time(), 'no');
+        update_option( 'spui-activation-date', time(), 'no');
 
+        delete_option( 'spui-current-total-files');
         delete_option( 'wp-short-pixel-current-total-files');
 				//delete_option('wp-short-pixel-remove-settings-on-delete-plugin');
 
@@ -260,7 +265,11 @@ class WPShortPixelSettings extends \ShortPixel\Model {
             if($value !== null) {
                 $this->setOpt(self::$_optionsMap[$name]['key'], $value);
             } else {
-                delete_option(self::$_optionsMap[$name]['key']);
+                $key = self::$_optionsMap[$name]['key'];
+                delete_option($key);
+                foreach (self::getLegacyKeys($key) as $legacy_key) {
+                    delete_option($legacy_key);
+                }
             }
         }
     }
@@ -272,6 +281,9 @@ class WPShortPixelSettings extends \ShortPixel\Model {
 				{
 						$deleteKey = self::$_optionsMap[$key]['key'];
 						delete_option($deleteKey);
+                        foreach (self::getLegacyKeys($deleteKey) as $legacy_key) {
+                            delete_option($legacy_key);
+                        }
 				}
 		}
 
@@ -283,8 +295,47 @@ class WPShortPixelSettings extends \ShortPixel\Model {
 						$key = self::$_optionsMap[$key]['key'];
         }
 
-        $opt = get_option($key, $default);
+        $opt = get_option($key, null);
+        if (null === $opt) {
+            foreach (self::getLegacyKeys($key) as $legacy_key) {
+                $legacy_value = get_option($legacy_key, null);
+                if (null !== $legacy_value) {
+                    update_option($key, $legacy_value, true);
+                    return $legacy_value;
+                }
+            }
+            $opt = $default;
+        }
 				return $opt;
+    }
+
+    protected static function getLegacyKeys($key) {
+        $legacy_keys = array();
+
+        if (0 === strpos($key, 'wpspui-')) {
+            $legacy_keys[] = 'wpspio-' . substr($key, strlen('wpspui-'));
+        }
+
+        if (0 === strpos($key, 'spui-')) {
+            $suffix = substr($key, strlen('spui-'));
+            $legacy_keys[] = 'wp-short-pixel-' . $suffix;
+            $legacy_keys[] = 'wp-short-' . $suffix;
+        }
+
+        if (0 === strpos($key, 'spui_')) {
+            $legacy_keys[] = 'wp-short-pixel_' . substr($key, strlen('spui_'));
+        }
+
+        $explicit_map = array(
+            'spui-upscale-retina' => 'wp-short-pixel-optimize-retina',
+            'spui-upscale-unlisted' => 'wp-short-pixel-optimize-unlisted',
+            'spui-upscale-pdfs' => 'wp-short-pixel-optimize-pdfs',
+        );
+        if (isset($explicit_map[$key])) {
+            $legacy_keys[] = $explicit_map[$key];
+        }
+
+        return array_unique($legacy_keys);
     }
 
     public function setOpt($key, $val) {

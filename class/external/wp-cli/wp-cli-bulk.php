@@ -1,23 +1,23 @@
 <?php
 
-namespace ShortPixel;
+namespace SPUI;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\BulkController as BulkController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\BulkController as BulkController;
 
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\QueueController;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\Queue\Queue as Queue;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\QueueController;
+use SPUI\Controller\ResponseController as ResponseController;
 
 /**
  * Actions for running bulk operations from WP-CLI
  */
-class SpioBulk extends SpioCommandBase
+class SPUIBulk extends SPUICommandBase
 {
 	/**
 	 * Starts the prepared queue(s). The bulk needs an express command to start processing.
@@ -36,7 +36,7 @@ class SpioBulk extends SpioCommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp spio bulk start
+	 * wp spui bulk start
 	 *
 	 *
 	 * @when after_wp_load
@@ -76,7 +76,7 @@ class SpioBulk extends SpioCommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp spio bulk auto
+	 * wp spui bulk auto
 	 *
 	 *
 	 */
@@ -175,7 +175,7 @@ class SpioBulk extends SpioCommandBase
 	 * 
 	 * ## EXAMPLES
 	 *
-	 *  wp spio bulk create
+	 *  wp spui bulk create
 	 *
 	 *
 	 * @when after_wp_load
@@ -215,7 +215,7 @@ class SpioBulk extends SpioCommandBase
 			 $args['filters'] = $filters; 
 		}
 
-		$mediaArgs = array_merge($args, ['doMedia' => true, 'doAi' => \wpSPIO()->settings()->autoAIBulk]);
+		$mediaArgs = array_merge($args, ['doMedia' => true, 'doAi' => \wpSPUI()->settings()->autoAIBulk]);
 
 		foreach ($queues as $qname) {
 
@@ -257,7 +257,7 @@ class SpioBulk extends SpioCommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spio bulk restore 0 100
+	 *   wp spui bulk restore 0 100
 	 *
 	 *
 	 * @when after_wp_load
@@ -297,7 +297,7 @@ class SpioBulk extends SpioCommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spio bulk prepare
+	 *   wp spui bulk prepare
 	 *
 	 */
 	public function prepare($args, $assoc)

@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPUI\Controller\Api;
 
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Helper\UtilHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -66,15 +66,15 @@ abstract class RequestManager
    */
   protected function getRequest($requestBody = [], $requestParameters = [])
   {
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPUI()->settings();
 
-    $requestBody = apply_filters('shortpixel/api/request', $requestBody, $requestBody['item_id']);
+    $requestBody = apply_filters('spui/api/request', $requestBody, $requestBody['item_id']);
 
     $arguments = array(
         'method' => 'POST',
         'timeout' => 15, // timeout in seconds
         'redirection' => 3, // amount of redirects allowed.
-        'sslverify' => apply_filters('shortpixel/system/sslverify', true),
+        'sslverify' => apply_filters('spui/system/sslverify', true),
         'httpversion' => '1.0',
         'blocking' => isset($requestParameters['blocking']) ? $requestParameters['blocking'] : true,
         'headers' => isset($requestParameters['headers']) ? $requestParameters['headers'] : [],
@@ -115,7 +115,7 @@ abstract class RequestManager
 
             if (strpos($errorMessage, 'cURL error 28') !== false)
             {
-               $errorMessage = __('Timeout fetching data from ShortPixel servers. If persistent, check server connection / whitelist', 'shortpixel-image-optimiser');
+               $errorMessage = __('Timeout fetching data from ShortPixel servers. If persistent, check server connection / whitelist', 'shortpixel-upscale-image');
             }
             if (strpos($errorMessage, 'cURL error 60') !== false)
             {
@@ -179,7 +179,7 @@ abstract class RequestManager
 
        $flags = $qItem->data()->flags;
 			 $flags = implode("|", $flags);
-       $text = sprintf(__('New item #%d sent for processing ( %d URLS %s)  ', 'shortpixel-image-optimiser'), $qItem->item_id, $urls, $flags );
+       $text = sprintf(__('New item #%d sent for processing ( %d URLS %s)  ', 'shortpixel-upscale-image'), $qItem->item_id, $urls, $flags );
 
        $qItem->addResult($this->returnOK(self::STATUS_ENQUEUED, $text ));
 		}

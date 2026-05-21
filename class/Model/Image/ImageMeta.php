@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Model\Image;
+namespace SPUI\Model\Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.

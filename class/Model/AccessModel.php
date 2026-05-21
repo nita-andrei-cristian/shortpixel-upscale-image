@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\QuotaController as QuotaController;
 
 // Central place for user / access checking, roles etc.
 class AccessModel
@@ -15,7 +15,7 @@ class AccessModel
   // Instance of class
 	private static $instance;
 
-  // Array of known SPIO Capabilities mapped to WordPress variants
+  // Array of known SPUI Capabilities mapped to WordPress variants
 	private $caps;
 
   // int  . The current user id
@@ -30,7 +30,7 @@ class AccessModel
 	protected function setDefaultPermissions()
 	{
 
-			$spioCaps = array(
+			$spuiCaps = array(
 					'notices' =>  'activate_plugins',				// used in AdminNoticesController
 					'quota-warning' => 'manage_options',    // used in AdminController
 					'image_all' =>  'edit_others_posts',
@@ -42,9 +42,9 @@ class AccessModel
 					'actions' => array(),
 			);
 
-		 $spioCaps = apply_filters('shortpixel/init/permissions', $spioCaps);
+		 $spuiCaps = apply_filters('spui/init/permissions', $spuiCaps);
 		 // $this->cap_actions = bla.
-		 $this->caps = $spioCaps;
+		 $this->caps = $spuiCaps;
 
 	}
 
@@ -68,7 +68,7 @@ class AccessModel
 	}
 
 	/*
-	@param SPIO capability to check again the user WordPress permissions.
+	@param SPUI capability to check again the user WordPress permissions.
 	*/
 	public function userIsAllowed($cap)
 	{
@@ -127,7 +127,7 @@ class AccessModel
 
 	/** Find the needed capability
 	*
-	* This translates a SPIO capability into the associated cap that is registered within WordPress.
+	* This translates a SPUI capability into the associated cap that is registered within WordPress.
 	*
 	* @param $cap The required Capability
 	* @param $default The default value if not found. This is defaults to an admin cap to prevent access leaking.

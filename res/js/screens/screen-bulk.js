@@ -29,7 +29,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 			window.addEventListener('shortpixel.bulk.onSwitchPanel', this.EventPanelSwitched.bind(this));
 			window.addEventListener('shortpixel.reloadscreen', this.ReloadScreen.bind(this));
 
-			var processData = ShortPixelProcessorData.startData;
+			var processData = SPUIProcessorData.startData;
 			var initMedia = processData.media.stats;
 			var initCustom = processData.custom.stats;
 			var initTotal = processData.total.stats;

@@ -78,7 +78,7 @@
   float: none;
 }
 
-.spio-message img {
+.spui-message img {
   animation: cssload-spin 5000ms infinite linear;
   -o-animation: cssload-spin 5000ms infinite linear;
   -ms-animation: cssload-spin 5000ms infinite linear;
@@ -323,7 +323,7 @@
   width: 60px;
 }
 
-.fixed .column-wp-spio-ai {
+.fixed .column-wp-spui-ai {
   width: 5.5em;
 }
 

@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel\Notices;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI\Notices;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 class NoticeController //extends ShortPixelController
 {

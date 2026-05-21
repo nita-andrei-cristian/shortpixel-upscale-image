@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\InstallHelper as InstallHelper;
 
 
 class StatsModel
@@ -82,13 +82,13 @@ class StatsModel
 
   public function __construct()
   {
-      $this->refreshStatTime = apply_filters('shortpixel/statistics/refresh', WEEK_IN_SECONDS);
+      $this->refreshStatTime = apply_filters('spui/statistics/refresh', WEEK_IN_SECONDS);
       $this->load();
   }
 
   public function load()
   {
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPUI()->settings();
 
     $stats = $settings->currentStats;
 		if (! is_array($stats))
@@ -121,7 +121,7 @@ class StatsModel
 
   public function save()
   {
-     $settings = \wpSPIO()->settings();
+     $settings = \wpSPUI()->settings();
      $stats = $this->stats;
      $stats['time'] = time();
      $settings->currentStats = $stats;
@@ -130,7 +130,7 @@ class StatsModel
   public function reset()
   {
       $this->stats = $this->defaults;
-			\wpSPIO()->settings()->deleteOption('currentStats');
+			\wpSPUI()->settings()->deleteOption('currentStats');
 
   //    $this->save();
   }
@@ -341,7 +341,7 @@ class StatsModel
 			 // This query will return 2 positions after the thumbnail array declaration.  Value can be up to two positions ( 0-100 thumbnails) . If positions is 1-10 intval will filter out the string part.
 	     $sql = "SELECT  meta_id, post_id, substr(meta_value, instr(meta_value,'sizes')+9,2) as thumbcount, LOCATE('original_image', meta_value) as originalImage FROM " . $wpdb->postmeta . " WHERE meta_key = '_wp_attachment_metadata' ";
 
-	     $sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
+	     $sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_spui_prevent_optimize' )";  // exclude 'crashed items'
 
 			 $sql .= " limit 0," . $args['limit'];
 		 }
@@ -387,13 +387,13 @@ class StatsModel
 
       if ($args['optimizedOnly'] == true)
       {
-        //$sql .= ' AND post_id IN ( SELECT post_id FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_shortpixel_optimized")';
+        //$sql .= ' AND post_id IN ( SELECT post_id FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_spui_optimized")';
 				$sql = ' SELECT count(id) as count FROM ' . UtilHelper::getPostMetaTable() . ' WHERE status = %d AND parent = %d';
 				$prepare = array(ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_MAIN);
       }
 			else {
 				$sql = 'SELECT count(meta_id) FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_wp_attached_file"';
-     		$sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
+     		$sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_spui_prevent_optimize' )";  // exclude 'crashed items'
 			}
 
 			if (count($prepare) > 0)
@@ -416,7 +416,7 @@ class StatsModel
   {
      global $wpdb;
      //$monthsAgo = 0 - $monthsAgo; // minus it for the sub.
-     /*$sql = "select meta_id from wp_postmeta where meta_key = '_shortpixel_meta' HAVING substr(meta_value, instr(meta_value, 'tsOptimized')+15,10) as stamp >= %d and stamp <= %d"; */
+     /*$sql = "select meta_id from wp_postmeta where meta_key = '_spui_meta' HAVING substr(meta_value, instr(meta_value, 'tsOptimized')+15,10) as stamp >= %d and stamp <= %d"; */
 
 		 $date = new \DateTime();
      $date->sub( new \DateInterval('P' . $monthsAgo . 'M'));
@@ -424,12 +424,12 @@ class StatsModel
      $dateUntil = new \DateTime();
      $dateUntil->sub( new \DateInterval('P' . ($monthsAgo-1). 'M'));
 
-     $sql = 'SELECT count(id) FROM '  . $wpdb->prefix . 'shortpixel_postmeta WHERE tsOptimized >= %s and tsOptimized <= %s';
+     $sql = 'SELECT count(id) FROM '  . $wpdb->prefix . 'spui_postmeta WHERE tsOptimized >= %s and tsOptimized <= %s';
      $sql = $wpdb->prepare($sql, $date->format('Y-m-d H:i:s'), $dateUntil->format('Y-m-d H:i:s') );
      $count_media = $wpdb->get_var($sql);
 
 		 // Custom
-		 $sql = 'SELECT count(id) FROM '  . $wpdb->prefix . 'shortpixel_meta WHERE ts_optimized >= %s and ts_optimized <= %s';
+		 $sql = 'SELECT count(id) FROM '  . $wpdb->prefix . 'spui_meta WHERE ts_optimized >= %s and ts_optimized <= %s';
 		 $sql = $wpdb->prepare($sql, $date->format('Y-m-d H:i:s'), $dateUntil->format('Y-m-d H:i:s') );
 		 $count_custom = $wpdb->get_var($sql);
 
@@ -469,7 +469,7 @@ class StatsModel
 					$in_str_arr = array_fill( 0, count( $activeDirectories ), '%s' );
  				 $in_str = join( ',', $in_str_arr );
 
-       $sql = 'SELECT COUNT(id) as count FROM ' . $wpdb->prefix . 'shortpixel_meta WHERE folder_id in (' . $in_str . ')';
+       $sql = 'SELECT COUNT(id) as count FROM ' . $wpdb->prefix . 'spui_meta WHERE folder_id in (' . $in_str . ')';
 			 $sql = $wpdb->prepare($sql, $activeDirectories);
 
        if ($args['optimizedOnly'] == true)

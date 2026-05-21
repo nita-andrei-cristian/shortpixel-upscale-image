@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notices;
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
 
-use ShortPixel\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
+use SPUI\Controller\Queue\CustomQueue as CustomQueue;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UiHelper as UiHelper;
 
 // Future contoller for the edit media metabox view.
-class OtherMediaViewController extends \ShortPixel\ViewController
+class OtherMediaViewController extends \SPUI\ViewController
 {
       //$this->model = new
       protected $template = 'view-other-media';
@@ -67,7 +67,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
           $this->view->filter = $this->getFilter();
 
-					$this->view->title = __('Custom Media optimized by ShortPixel', 'shortpixel-image-optimiser');
+					$this->view->title = __('Custom Media upscaled by ShortPixel', 'shortpixel-upscale-image');
 					$this->view->show_search = true;
 
     //      $this->checkQueue();
@@ -79,26 +79,26 @@ class OtherMediaViewController extends \ShortPixel\ViewController
       {
          $headings = array(
               'checkbox' => array('title' => '<input type="checkbox" name="select-all">', 'sortable' => false),
-              'thumbnails' => array('title' => __('Thumbnail', 'shortpixel-image-optimiser'),
+              'thumbnails' => array('title' => __('Thumbnail', 'shortpixel-upscale-image'),
                               'sortable' => false,
                               'orderby' => 'id',  // placeholder to allow sort on this.
                             ),
-               'name' =>  array('title' => __('Name', 'shortpixel-image-optimiser'),
+               'name' =>  array('title' => __('Name', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'name',
                             ),
-               'folder' => array('title' => __('Folder', 'shortpixel-image-optimiser'),
+               'folder' => array('title' => __('Folder', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'path',
                             ),
-               'type' =>   array('title' => __('Type', 'shortpixel-image-optimiser'),
+               'type' =>   array('title' => __('Type', 'shortpixel-upscale-image'),
                                 'sortable' => false,
                                 ),
-               'date' =>    array('title' => __('Date', 'shortpixel-image-optimiser'),
+               'date' =>    array('title' => __('Date', 'shortpixel-upscale-image'),
                                 'sortable' => true,
-                                'orderby' => 'ts_optimized',
+                                'orderby' => 'ts_upscaled',
                              ),
-               'status' => array('title' => __('Status', 'shortpixel-image-optimiser'),
+               'status' => array('title' => __('Status', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'status',
                             ),
@@ -116,7 +116,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
       protected function getItems()
       {
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
 
           // [BS] Moving this from ts_added since often images get added at the same time, resulting in unpredictable sorting
           $items = $this->queryItems();
@@ -212,10 +212,10 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
               switch($statusFilter)
               {
-                 case 'optimized':
+                 case 'upscaled':
                     $value = ImageModel::FILE_STATUS_SUCCESS;
                  break;
-                 case 'unoptimized':
+                 case 'unupscaled':
                      $value = ImageModel::FILE_STATUS_UNPROCESSED;
                  break;
                  case 'prevented':
@@ -263,7 +263,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
           if (strlen($dirs) == 0)
             return array();
 
-          $sql = "SELECT COUNT(id) as count FROM " . $wpdb->prefix . "shortpixel_meta where folder_id in ( " . $dirs  . ") ";
+          $sql = "SELECT COUNT(id) as count FROM " . $wpdb->prefix . "spui_meta where folder_id in ( " . $dirs  . ") ";
 
           foreach($filters as $field => $value) {
               $field  = property_exists($value, 'field')  ? $value->field : $field;
@@ -272,7 +272,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
           $this->total_items = $wpdb->get_var($sql);
 
-          $sql = "SELECT * FROM " . $wpdb->prefix . "shortpixel_meta where folder_id in ( " . $dirs  . ") ";
+          $sql = "SELECT * FROM " . $wpdb->prefix . "spui_meta where folder_id in ( " . $dirs  . ") ";
 
           foreach($filters as $field => $value) {
               $field  = property_exists($value, 'field')  ? $value->field : $field;
@@ -361,18 +361,18 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
 					 // Try with controller URL, if not present, try with upload URL and page param.
 	         $admin_url = admin_url('upload.php');
-	         $url = (is_null($this->url)) ?  add_query_arg('page','wp-short-pixel-custom', $admin_url) : $this->url; // has url
+	         $url = (is_null($this->url)) ?  add_query_arg('page','wp-shortpixel-upscale-custom', $admin_url) : $this->url; // has url
 					 $current_url = add_query_arg($page_args, $url);
 
 					 $url = remove_query_arg('page', $url);
-					 $page_args['page'] = 'wp-short-pixel-custom';
+					 $page_args['page'] = 'wp-shortpixel-upscale-custom';
 
            $output = '<form method="GET" action="'. esc_attr($url) . '">';
 					 foreach($page_args as $arg => $val)
 					 {
 						  $output .= sprintf('<input type="hidden" name="%s" value="%s">', $arg, $val);
 					 }
-           $output .= '<span class="displaying-num">'. sprintf(esc_html__('%d Images', 'shortpixel-image-optimiser'), $this->total_items) . '</span>';
+           $output .= '<span class="displaying-num">'. sprintf(esc_html__('%d Images', 'shortpixel-upscale-image'), $this->total_items) . '</span>';
 
            if ( $disable_first ) {
                     $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
@@ -447,7 +447,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
       protected function getRowActions($item)
       {
 
-          $settings = \wpSPIO()->settings();
+          $settings = \wpSPUI()->settings();
 
           $keyControl = ApiKeyController::getInstance();
 
@@ -456,7 +456,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 					$viewAction = array('view' => array(
 						 'function' => $item->getUrl(),
 						 'type' => 'link',
-						 'text' => __('View', 'shortpixel-image-optimiser'),
+						 'text' => __('View', 'shortpixel-upscale-image'),
 						 'display' => 'inline',
 
 					));
@@ -510,10 +510,10 @@ class OtherMediaViewController extends \ShortPixel\ViewController
             $status   = filter_input(INPUT_GET, 'custom-status', FILTER_UNSAFE_RAW );
 
             $options = array(
-                'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-                'optimized' => __('Optimized', 'shortpixel-image-optimiser'),
-                'unoptimized' => __('Unoptimized', 'shortpixel-image-optimiser'),
-                'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
+                'all' => __('Any ShortPixel State', 'shortpixel-upscale-image'),
+                'upscaled' => __('Upscaled', 'shortpixel-upscale-image'),
+                'unupscaled' => __('Unupscaled', 'shortpixel-upscale-image'),
+                'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
 
             );
 

@@ -1,21 +1,21 @@
 <?php
 
-namespace ShortPixel\Helper;
+namespace SPUI\Helper;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\CronController as CronController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\FileSystemController as FileSystemController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\CronController as CronController;
+use SPUI\Controller\BulkController as BulkController;
+use SPUI\Controller\FileSystemController as FileSystemController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Notices\NoticeController as Notices;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 
 class InstallHelper
@@ -25,7 +25,7 @@ class InstallHelper
 	{
 		self::deactivatePlugin();
 
-		$env = wpSPIO()->env();
+		$env = wpSPUI()->env();
 
 		if (\WPShortPixelSettings::getOpt('deliverWebp') == 3 && ! $env->is_nginx) {
 			UtilHelper::alterHtaccess(true, true); //add the htaccess lines. Both are true because even if one option is now off in the past both fileformats could have been generated.
@@ -40,18 +40,18 @@ class InstallHelper
 		$q = $queueController->getQueue('media');
 		$q->getShortQ()->install(); // create table.
 
-		$settings = \wpSPIO()->settings();
-		$settings->currentVersion = SHORTPIXEL_IMAGE_OPTIMISER_VERSION;
+		$settings = \wpSPUI()->settings();
+		$settings->currentVersion = SPUI_IMAGE_OPTIMISER_VERSION;
 
 		wp_cache_flush();
 	}
 
 	public static function deactivatePlugin()
 	{
-		$settings = new \WPShortPixelSettings(); // \wpSPIO()->settings();
+		$settings = new \WPShortPixelSettings(); // \wpSPUI()->settings();
 		$settings::onDeactivate();
 
-		$env = wpSPIO()->env();
+		$env = wpSPUI()->env();
 
 		if (! $env->is_nginx) {
 			UtilHelper::alterHtaccess(false, false);
@@ -59,7 +59,7 @@ class InstallHelper
 
 		// save remove.
 		$fs = new FileSystemController();
-		$log = $fs->getFile(SHORTPIXEL_BACKUP_FOLDER . "/shortpixel_log");
+		$log = $fs->getFile(SPUI_BACKUP_FOLDER . "/spui_log");
 
 		if ($log->exists())
 			$log->delete();
@@ -84,10 +84,10 @@ class InstallHelper
 		delete_transient('quotaData');
 	}
 
-	// Removes everything  of SPIO 5.x .  Not recommended.
+	// Removes everything  of SPUI 5.x .  Not recommended.
 	public static function hardUninstall()
 	{
-		$env = \wpSPIO()->env();
+		$env = \wpSPUI()->env();
 		$settings = new \WPShortPixelSettings();
 
 		$nonce = (isset($_POST['tools-nonce'])) ? sanitize_key($_POST['tools-nonce']) : null;
@@ -104,7 +104,7 @@ class InstallHelper
 		$settings::resetOptions();
 
 		// new settings
-		delete_option('spio_settings');
+		delete_option('spui_settings');
 
 		if (! $env->is_nginx) {
 			insert_with_markers(get_home_path() . '.htaccess', 'ShortPixelWebp', '');
@@ -113,10 +113,10 @@ class InstallHelper
 		self::removeTables();
 
 		// Remove Backups
-		$dir = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+		$dir = \wpSPUI()->filesystem()->getDirectory(SPUI_BACKUP_FOLDER);
 		$dir->recursiveDelete();
 
-		$plugin = basename(SHORTPIXEL_PLUGIN_DIR) . '/' . basename(SHORTPIXEL_PLUGIN_FILE);
+		$plugin = basename(SPUI_PLUGIN_DIR) . '/' . basename(SPUI_PLUGIN_FILE);
 		deactivate_plugins($plugin);
 	}
 
@@ -178,13 +178,13 @@ class InstallHelper
 		global $wpdb;
 
 		$definitions = array(
-			'shortpixel_meta' => array(
+			'spui_meta' => array(
 				'path' => 'path'
 			),
-			'shortpixel_folders' => array(
+			'spui_folders' => array(
 				'path' => 'path'
 			),
-			'shortpixel_postmeta' => array(
+			'spui_postmeta' => array(
 				'attach_id' => 'attach_id',
 				'parent' => 'parent',
 				'size' => 'size',
@@ -214,20 +214,20 @@ class InstallHelper
 	private static function removeTables()
 	{
 		global $wpdb;
-		if (self::checkTableExists('shortpixel_folders') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_folders';
+		if (self::checkTableExists('spui_folders') === true) {
+			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'spui_folders';
 			$wpdb->query($sql);
 		}
-		if (self::checkTableExists('shortpixel_meta') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_meta';
+		if (self::checkTableExists('spui_meta') === true) {
+			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'spui_meta';
 			$wpdb->query($sql);
 		}
-		if (self::checkTableExists('shortpixel_postmeta') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_postmeta';
+		if (self::checkTableExists('spui_postmeta') === true) {
+			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'spui_postmeta';
 			$wpdb->query($sql);
 		}
-		if (self::checkTableExists('shortpixel_aipostmeta') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_aipostmeta';
+		if (self::checkTableExists('spui_aipostmeta') === true) {
+			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'spui_aipostmeta';
 			$wpdb->query($sql);
 		}
 	}
@@ -238,7 +238,7 @@ class InstallHelper
 		$charsetCollate = $wpdb->get_charset_collate();
 		$prefix = $wpdb->prefix;
 
-		return "CREATE TABLE {$prefix}shortpixel_folders (
+		return "CREATE TABLE {$prefix}spui_folders (
           id mediumint(9) NOT NULL AUTO_INCREMENT,
           path varchar(512),
           name varchar(150),
@@ -259,7 +259,7 @@ class InstallHelper
 		$charsetCollate = $wpdb->get_charset_collate();
 		$prefix = $wpdb->prefix;
 
-		return "CREATE TABLE {$prefix}shortpixel_meta (
+		return "CREATE TABLE {$prefix}spui_meta (
           id mediumint(10) NOT NULL AUTO_INCREMENT,
           folder_id mediumint(9) NOT NULL,
           ext_meta_id int(10),
@@ -290,7 +290,7 @@ class InstallHelper
 		$charsetCollate = $wpdb->get_charset_collate();
 		$prefix = $wpdb->prefix;
 
-		$sql = "CREATE TABLE {$prefix}shortpixel_postmeta (
+		$sql = "CREATE TABLE {$prefix}spui_postmeta (
 			 id bigint unsigned NOT NULL AUTO_INCREMENT,
 			 attach_id bigint unsigned NOT NULL,
 			 parent bigint unsigned NOT NULL,
@@ -315,7 +315,7 @@ class InstallHelper
 		$charsetCollate = $wpdb->get_charset_collate();
 		$prefix = $wpdb->prefix;
 
-		$sql = "CREATE TABLE {$prefix}shortpixel_aipostmeta (
+		$sql = "CREATE TABLE {$prefix}spui_aipostmeta (
 				id bigint unsigned not null AUTO_INCREMENT, 
 				post_type tinyint default 1,
 				attach_id bigint unsigned NOT NULL,  

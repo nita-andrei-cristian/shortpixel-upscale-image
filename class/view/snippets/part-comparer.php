@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div id="spUploadCompare" class="shortpixel-modal shortpixel-hide">
       <div class="sp-modal-title">
         <button type="button" class="sp-close-button">&times;</button>
-        <?php esc_html_e('Compare Images', 'shortpixel-image-optimiser');?>
+        <?php esc_html_e('Compare Images', 'shortpixel-upscale-image');?>
       </div>
       <div class="sp-modal-body sptw-modal-spinner" style="height:400px;padding:0;">
         <div class="shortpixel-slider" style="z-index:2000;">
             <div class="twentytwenty-container" id="spCompareSlider">
                 <img class="spUploadCompareOriginal"/>
-                <img class="spUploadCompareOptimized"/>
+                <img class="spUploadCompareUpscaled"/>
             </div>
         </div>
       </div>
@@ -35,8 +35,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 Original
             </div>
             <div class="side-by-side" style="text-align: center; display:inline-block;">
-                <img class="spUploadCompareOptimized" style="margin: 10px"/><br>
-                Optimized
+                <img class="spUploadCompareUpscaled" style="margin: 10px"/><br>
+                Upscaled
             </div>
         </div>
       </div>

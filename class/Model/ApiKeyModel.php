@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notice;
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\QuotaController as QuotaController;
 
-class ApiKeyModel extends \ShortPixel\Model
+class ApiKeyModel extends \SPUI\Model
 {
 
   // variables
@@ -51,13 +51,13 @@ class ApiKeyModel extends \ShortPixel\Model
        ),
   );
 
-	private $option_name =  'spio_key';
+	private $option_name =  'spui_key';
 
   /** Constructor. Check for constants, load the key */
   public function __construct()
   {
-    $this->key_is_constant = (defined("SHORTPIXEL_API_KEY")) ? true : false;
-    $this->key_is_hidden = (defined("SHORTPIXEL_HIDE_API_KEY")) ? (bool) SHORTPIXEL_HIDE_API_KEY : false;
+    $this->key_is_constant = (defined("SPUI_API_KEY")) ? true : false;
+    $this->key_is_hidden = (defined("SPUI_HIDE_API_KEY")) ? (bool) SPUI_HIDE_API_KEY : false;
 
   }
 
@@ -93,7 +93,7 @@ class ApiKeyModel extends \ShortPixel\Model
 
     if ($this->key_is_constant)
     {
-        $key = SHORTPIXEL_API_KEY;
+        $key = SPUI_API_KEY;
         if (isset($apikeySettings['apiKey']))
         {
             $this->apiKey = '';
@@ -158,7 +158,7 @@ class ApiKeyModel extends \ShortPixel\Model
         }
         elseif ($key != $this->apiKey)
         {
-          Notice::addWarning(__('Your API Key has been removed', 'shortpixel-image-optimiser'));
+          Notice::addWarning(__('Your API Key has been removed', 'shortpixel-upscale-image'));
           $this->clearApiKey(); // notice and remove;
           return false;
         }
@@ -259,7 +259,7 @@ class ApiKeyModel extends \ShortPixel\Model
      if (! $checked_key)
      {
 			  Log::addError('Key is not validated', $quotaData['Message']);
-        Notice::addError(sprintf(__('Error during verifying API key: %s','shortpixel-image-optimiser'), $quotaData['Message'] ));
+        Notice::addError(sprintf(__('Error during verifying API key: %s','shortpixel-upscale-image'), $quotaData['Message'] ));
      }
      elseif ($checked_key) {
         if (false === $this->is_constant())
@@ -280,22 +280,22 @@ class ApiKeyModel extends \ShortPixel\Model
     //display notification
     $urlParts = explode("/", get_site_url());
     if( $quotaData['DomainCheck'] == 'NOT Accessible'){
-        $notice = array("status" => "warn", "msg" => __("API Key is valid but your site is not accessible from our servers. Please make sure that your server is accessible from the Internet before using the API or otherwise we won't be able to optimize them.",'shortpixel-image-optimiser'));
+        $notice = array("status" => "warn", "msg" => __("API Key is valid but your site is not accessible from our servers. Please make sure that your server is accessible from the Internet before using the API or otherwise we won't be able to upscale them.",'shortpixel-upscale-image'));
         Notice::addWarning($notice);
     } else {
-        if ( function_exists("is_multisite") && is_multisite() && !defined("SHORTPIXEL_API_KEY"))
-            $notice = __("Great, your API Key is valid! <br>You seem to be running a multisite, please note that API Key can also be configured in wp-config.php like this:",'shortpixel-image-optimiser')
-                . "<BR> <b>define('SHORTPIXEL_API_KEY', '". $this->apiKey ."');</b>";
+        if ( function_exists("is_multisite") && is_multisite() && !defined("SPUI_API_KEY"))
+            $notice = __("Great, your API Key is valid! <br>You seem to be running a multisite, please note that API Key can also be configured in wp-config.php like this:",'shortpixel-upscale-image')
+                . "<BR> <b>define('SPUI_API_KEY', '". $this->apiKey ."');</b>";
         else
-            $notice = __('Great, your API Key is valid. Please take a few moments to review the plugin settings before starting to optimize your images.','shortpixel-image-optimiser');
+            $notice = __('Great, your API Key is valid. Please take a few moments to review the plugin settings before starting to upscale your images.','shortpixel-upscale-image');
 
         Notice::addSuccess($notice);
     }
 
     //test that the "uploads"  have the right rights and also we can create the backup dir for ShortPixel
-    if ( \wpSPIO()->filesystem()->checkBackupFolder() === false)
+    if ( \wpSPUI()->filesystem()->checkBackupFolder() === false)
     {
-        $notice = sprintf(__("There is something preventing us to create a new folder for backing up your original files.<BR>Please make sure that folder <b>%s</b> has the necessary write and read rights.",'shortpixel-image-optimiser'), WP_CONTENT_DIR . '/' . SHORTPIXEL_UPLOADS_NAME );
+        $notice = sprintf(__("There is something preventing us to create a new folder for backing up your original files.<BR>Please make sure that folder <b>%s</b> has the necessary write and read rights.",'shortpixel-upscale-image'), WP_CONTENT_DIR . '/' . SPUI_UPLOADS_NAME );
        Notice::addError($notice);
     }
 
@@ -309,14 +309,14 @@ class ApiKeyModel extends \ShortPixel\Model
       return;
 
     $KeyLength = strlen($key);
-    $notice =  sprintf(__("The API Key you provided has %s characters, but it should contain exactly 20 characters, using only letters and numbers.",'shortpixel-image-optimiser'), $KeyLength)
+    $notice =  sprintf(__("The API Key you provided has %s characters, but it should contain exactly 20 characters, using only letters and numbers.",'shortpixel-upscale-image'), $KeyLength)
                . "<BR> <b>"
-               . __('Please check that the API Key is the same as the one you received in your sign-up email.','shortpixel-image-optimiser')
+               . __('Please check that the API Key is the same as the one you received in your sign-up email.','shortpixel-upscale-image')
                . "</b><BR> "
-               . __('If this problem persists, please contact us at ','shortpixel-image-optimiser')
+               . __('If this problem persists, please contact us at ','shortpixel-upscale-image')
                . "<a href='mailto:help@shortpixel.com?Subject=API Key issues' target='_top'>help@shortpixel.com</a>"
-               . __(' or ','shortpixel-image-optimiser')
-               . "<a href='https://shortpixel.com/contact' target='_blank'>" . __('here','shortpixel-image-optimiser') . "</a>.";
+               . __(' or ','shortpixel-upscale-image')
+               . "<a href='https://shortpixel.com/contact' target='_blank'>" . __('here','shortpixel-upscale-image') . "</a>.";
     self::$notified['apilength'] = true;
     Notice::addError($notice);
   }
@@ -333,19 +333,19 @@ class ApiKeyModel extends \ShortPixel\Model
 
   protected function checkRedirect()
   {
-    $redirectedSettings =  \wpSPIO()->settings()->redirectedSettings;
-    if(! \wpSPIO()->env()->is_ajaxcall && !$redirectedSettings && !$this->verifiedKey && (!function_exists("is_multisite") || ! is_multisite())) {
+    $redirectedSettings =  \wpSPUI()->settings()->redirectedSettings;
+    if(! \wpSPUI()->env()->is_ajaxcall && !$redirectedSettings && !$this->verifiedKey && (!function_exists("is_multisite") || ! is_multisite())) {
       
-      \wpSPIO()->settings()->redirectedSettings = 1;
+      \wpSPUI()->settings()->redirectedSettings = 1;
 
-      if (isset($_GET['page']) && 'wp-shortpixel-settings' === $_GET['page'])
+      if (isset($_GET['page']) && 'wp-shortpixel-upscale-settings' === $_GET['page'])
       {
          Log::addError('Panic! RedirectSettings failed setting!');
          return false; 
       }
 
   //    $this->update();
-      wp_safe_redirect(admin_url("options-general.php?page=wp-shortpixel-settings"));
+      wp_safe_redirect(admin_url("options-general.php?page=wp-shortpixel-upscale-settings"));
       exit();
     }
 

@@ -1,6 +1,6 @@
-=== ShortPixel Image Optimizer - Optimize Images, Convert WebP & AVIF ===
+=== ShortPixel Image Upscaler - Upscale Images, Convert WebP & AVIF ===
 Contributors: ShortPixel
-Tags: convert webp, optimize images, image optimization, resize, compress images
+Tags: convert webp, upscale images, image upscaling, resize, compress images
 Requires at least: 4.8.0
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -8,25 +8,25 @@ Stable tag: 6.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Optimize images & PDFs smartly. Create and compress next-gen WebP and AVIF formats. Smart crop and resize.
+Upscale images & PDFs smartly. Create and compress next-gen WebP and AVIF formats. Smart crop and resize.
 
 == Description ==
 
-###🚀 The Ultimate Image Optimization Plugin for WordPress###
+###🚀 The Ultimate Image Upscaling Plugin for WordPress###
 
-**⚡ Boost your site’s speed instantly! Optimize images and PDFs with one click, bulk compress to WebP and AVIF, use lazy loading, and resize images.**
+**⚡ Boost your site’s speed instantly! Upscale images and PDFs with one click, bulk compress to WebP and AVIF, use lazy loading, and resize images.**
 
-Increase your website's SEO ranking, number of visitors, and ultimately your sales by optimising any image or PDF document on your website.
+Increase your website's SEO ranking, number of visitors, and ultimately your sales by upscaling any image or PDF document on your website.
 
-The <a href="https://shortpixel.com" target="_blank">ShortPixel</a> plugin is a lightweight, user-friendly, install-and-forget solution for image optimization.
+The <a href="https://shortpixel.com" target="_blank">ShortPixel</a> plugin is a lightweight, user-friendly, install-and-forget solution for image upscaling.
 It is designed to work with any website type, whether it's a small blog or a large WooCommerce-powered online store with tens of thousands of products.
-Additionally, it's an excellent choice for agencies, offering unlimited image optimization credits for a flat monthly fee.
+Additionally, it's an excellent choice for agencies, offering unlimited image upscaling credits for a flat monthly fee.
 
-= 🎬 Ready for a Quick DEMO of our Top Image Optimization Tool? =
-Test our plugin <a href="https://demo.tastewp.com/shortpixel-image-optimiser" target="_blank">here</a>.
-Make an instant <a href="https://shortpixel.com/image-compression-test" target="_blank">image compression test</a> of your site or <a href="https://shortpixel.com/online-image-compression" target="_blank">compress some images</a> to test our optimization algorithms.
+= 🎬 Ready for a Quick DEMO of our Top Image Upscaling Tool? =
+Test our plugin <a href="https://demo.tastewp.com/shortpixel-upscale-image" target="_blank">here</a>.
+Make an instant <a href="https://shortpixel.com/image-compression-test" target="_blank">image compression test</a> of your site or <a href="https://shortpixel.com/online-image-compression" target="_blank">compress some images</a> to test our upscaling algorithms.
 
-== 💡 Why is ShortPixel the best choice for image optimization or PDF compression? ==
+== 💡 Why is ShortPixel the best choice for image upscaling or PDF compression? ==
 
 ### 🆕 New! Brand new AI features ###
 
@@ -51,12 +51,12 @@ Make an instant <a href="https://shortpixel.com/image-compression-test" target="
 * Added support for serving CSS, JS and fonts from our global CDN.
 * Save & Restore option for all settings – ideal for agencies and users managing multiple websites.
 * Decide whether AI bots can use your images for machine learning (ML) training, or <a href="https://shortpixel.com/blog/prevent-ai-data-mining-on-images/" target="_blank">block them entirely</a>.
-* You can now exclude images from optimization based on their upload date, perfect for skipping older or already optimized media.
-* Filter and select images in bulk using date-based criteria, giving you precise control over what gets optimized and when.
+* You can now exclude images from upscaling based on their upload date, perfect for skipping older or already upscaled media.
+* Filter and select images in bulk using date-based criteria, giving you precise control over what gets upscaled and when.
 
 ### 🌍 Faster Websites for Global Audiences ###
 
-The ShortPixel plugin now includes a built-in global Content Delivery Network (CDN). This powerful feature ensures that ShortPixel-optimized WebP and AVIF images, as well as your website’s CSS and JavaScript files, are delivered quickly and efficiently to any location worldwide, minimizing delays and improving load times.
+The ShortPixel plugin now includes a built-in global Content Delivery Network (CDN). This powerful feature ensures that ShortPixel-upscaled WebP and AVIF images, as well as your website’s CSS and JavaScript files, are delivered quickly and efficiently to any location worldwide, minimizing delays and improving load times.
 
 By leveraging this built-in solution, you enhance the user experience, reduce server strain, boost SEO performance, and simplify website management — all with minimal effort.
 
@@ -71,30 +71,30 @@ By leveraging this built-in solution, you enhance the user experience, reduce se
 ### 🌟 Lossy and Lossless image compression ###
 
 Both **Lossy and Lossless image compression** are available for the most common image types (JPG, PNG, GIF, WebP, and AVIF) plus PDF files.
-We also offer **Glossy** JPEG compression which is a very high-quality lossy optimization algorithm. Especially designed for photographers or for high-quality product pictures.
-Optimized images lead to a better user experience, improved PageSpeed Insights or GTmetrix results, higher Google PageRank, and more visitors.
+We also offer **Glossy** JPEG compression which is a very high-quality lossy upscaling algorithm. Especially designed for photographers or for high-quality product pictures.
+Upscaled images lead to a better user experience, improved PageSpeed Insights or GTmetrix results, higher Google PageRank, and more visitors.
 
 ### 🔄 Convert WebP and AVIF Formats ###
 
 * Option to automatically convert JPEG, PNG, or GIF to WebP and AVIF for better performance and improved Google ranking.
-* Automatically optimize your existing WebP files with ShortPixel's SmartCompress algorithm.
+* Automatically upscale your existing WebP files with ShortPixel's SmartCompress algorithm.
 * Animated GIFs can be automatically converted to much smaller animated WebP or AVIF files.
 * Option to include next-gen images (WebP and AVIF) in front-end pages with a single click using the <picture> tag.
 
-### 📦 Bulk Image Optimization and Background Image Processing ###
+### 📦 Bulk Image Upscaling and Background Image Processing ###
 
-* New! With 'Background mode,' images can now be optimized without needing to keep a browser tab open.
-* Easily add recurring cron jobs for background optimization, ideal for sites where users upload images via the front end.
-* Bulk-optimize all images in the Media Library or any gallery with a single click.
+* New! With 'Background mode,' images can now be upscaled without needing to keep a browser tab open.
+* Easily add recurring cron jobs for background upscaling, ideal for sites where users upload images via the front end.
+* Bulk-upscale all images in the Media Library or any gallery with a single click.
 * Full WP-CLI support for background processing, especially useful for large Media Libraries.
 
-### 🔥 Performance and Automatic Image Optimization ###
+### 🔥 Performance and Automatic Image Upscaling ###
 
-ShortPixel uses minimal resources and works well with any shared, cloud, VPS, or dedicated web hosting. It can optimize any image on your website, including those not listed in the Media Library, such as images in galleries or those added directly via FTP.
-All optimization is performed using ShortPixel's Image Optimization Cloud, so your hosting resources remain unaffected.
+ShortPixel uses minimal resources and works well with any shared, cloud, VPS, or dedicated web hosting. It can upscale any image on your website, including those not listed in the Media Library, such as images in galleries or those added directly via FTP.
+All upscaling is performed using ShortPixel's Image Upscaling Cloud, so your hosting resources remain unaffected.
 
 * New! Automatic scan of Custom media folders for new images using cron jobs.
-* Skip already optimized images to avoid redundant processing.
+* Skip already upscaled images to avoid redundant processing.
 
 ### 🎨 Compatibility with Popular Themes, Page Builders, and Media Library Plugins ###
 
@@ -106,21 +106,21 @@ All optimization is performed using ShortPixel's Image Optimization Cloud, so yo
 * Fully compatible with WP Offload Media plugin.
 * Supports both HTTPS and HTTP websites.
 * Compatible with virtually all hosting providers.
-* Integrates with Gravity Forms' post_image field type to optimize images upon upload.
+* Integrates with Gravity Forms' post_image field type to upscale images upon upload.
 * Works with watermarking plugins.
 * Integrates directly with Cloudflare via a Cloudflare Token, automatically synchronizing updates with Cloudflare cache.
 * **New! HEIC file support**
-With ShortPixel, you can now add images in Apple's HEIC format directly from your iPhone. They will be automatically converted to JPG and optimized according to your settings. Easy!
- <a href="https://shortpixel.com/knowledge-base/article/heic-apple-images-support-in-shortpixel-image-optimizer/" target="_blank">Read more</a>.
+With ShortPixel, you can now add images in Apple's HEIC format directly from your iPhone. They will be automatically converted to JPG and upscaled according to your settings. Easy!
+ <a href="https://shortpixel.com/knowledge-base/article/heic-apple-images-support-in-shortpixel-image-upscaler/" target="_blank">Read more</a>.
 
-### 🔧 Advanced Image Optimization Features ###
+### 🔧 Advanced Image Upscaling Features ###
 
 * NEW Smart Cropping: Generate <a href="https://shortpixel.com/knowledge-base/article/what-is-smart-cropping/">subject-centered</a> thumbnails using AI, ideal for eCommerce websites.
-* Optimize thumbnails and featured images, with options to exclude individual thumbnails from optimization.
+* Upscale thumbnails and featured images, with options to exclude individual thumbnails from upscaling.
 * Advanced exclusion options (exclude images based on filename, path, size, or complex regex).
-* Ability to optimize any image, including those in NextGEN Gallery and other image galleries or sliders.
+* Ability to upscale any image, including those in NextGEN Gallery and other image galleries or sliders.
 * Option to scale images down, with two automatic resizing options for large images (applicable to featured images).
-* Option to deactivate auto-optimization of images on upload.
+* Option to deactivate auto-upscaling of images on upload.
 * Keep or remove EXIF data from images, which is especially useful for photographers or for enhanced privacy.
 * Easily test lossy, glossy, or lossless versions of images with a single click in the Media Library.
 * 100MB filesize limit
@@ -128,22 +128,22 @@ With ShortPixel, you can now add images in Apple's HEIC format directly from you
 ### 🛡️ Backup and Safety ###
 
 * Safe to test and use: original images are backed up locally and can be restored with a single click (either individually or in bulk).
-* No credits are used for images optimized by less than 5%
+* No credits are used for images upscaled by less than 5%
 * Save & Restore option for all settings – ideal for agencies and users managing multiple websites.
 * Decide whether AI bots can use your images for machine learning (ML) training, or block them entirely
 
 ### 📊 Reporting, Analytics, Compliance and Customer Support ###
 
-* 30-day optimization report with detailed image statistics and overall site performance improvements.
+* 30-day upscaling report with detailed image statistics and overall site performance improvements.
 * 24/7 stellar support.
 * We are fully GDPR compliant.
 
 **🚀 <a href="https://shortpixel.com/pricing" target="_blank">New Plan: ShortPixel Unlimited</a>**
 This is the ideal monthly plan for web agencies or website owners with multiple sites and frequent image uploads.
-It allows you to optimize an unlimited number of images with ShortPixel Image Optimizer or use <a href=”https://wordpress.org/plugins/shortpixel-adaptive-images/”>ShortPixel Adaptive Images</a> without worrying about CDN traffic limits.
+It allows you to upscale an unlimited number of images with ShortPixel Image Upscaler or use <a href=”https://wordpress.org/plugins/shortpixel-adaptive-images/”>ShortPixel Adaptive Images</a> without worrying about CDN traffic limits.
 Read more details on our <a href="https://shortpixel.com/knowledge-base/article/how-does-the-unlimited-plan-work/" target="_blank">dedicated page</a>.
 
-* **free optimization credits for non-profits**, <a href="https://shortpixel.com/contact" target="_blank">contact us</a> for details
+* **free upscaling credits for non-profits**, <a href="https://shortpixel.com/contact" target="_blank">contact us</a> for details
 
 **💸 How much does it cost?**
 ShortPixel comes with 100 free credits per month, and additional unlimited monthly credits can be purchased for $9.99.
@@ -155,8 +155,8 @@ Check out <a href="https://shortpixel.com/pricing" target="_blank">our prices</a
 > ★★★★★ **The secret sauce for a WordPress website.**  [mark1mark](https://wordpress.org/support/topic/the-secret-sauce-for-a-wordpress-website/)
 > ★★★★★ **A must have plugin, great support!** [ElColo13](https://wordpress.org/support/topic/a-must-have-plugin-great-support/)
 > ★★★★★ **Excellent Plugin! Even Better Customer Service!**  [scaliendo](https://wordpress.org/support/topic/great-plugin-great-support-508/)
-> ★★★★★ **Great image compression, solid plugin, equally great support.** [matters1959](https://wordpress.org/support/topic/support-shortpixel-image-optimiser/)
-> [more testimonials](https://wordpress.org/support/plugin/shortpixel-image-optimiser/reviews/?filter=5)
+> ★★★★★ **Great image compression, solid plugin, equally great support.** [matters1959](https://wordpress.org/support/topic/support-shortpixel-upscale-image/)
+> [more testimonials](https://wordpress.org/support/plugin/shortpixel-upscale-image/reviews/?filter=5)
 
 [youtube https://www.youtube.com/watch?v=FVPWeNsJWss]
 
@@ -164,8 +164,8 @@ Help us spread the word by recommending ShortPixel to your friends and collect *
 
 **🛠️ Other plugins by ShortPixel**
 
-* [FastPixel Caching](https://wordpress.org/plugins/fastpixel-website-accelerator/) - WP Optimization made easy
-* [ShortPixel Adaptive Images](https://wordpress.org/plugins/shortpixel-adaptive-images/) - On-the-fly image optimization & CDN delivery
+* [FastPixel Caching](https://wordpress.org/plugins/fastpixel-website-accelerator/) - WP Upscaling made easy
+* [ShortPixel Adaptive Images](https://wordpress.org/plugins/shortpixel-adaptive-images/) - On-the-fly image upscaling & CDN delivery
 * [Enable Media Replace](https://wordpress.org/plugins/enable-media-replace/) - Easily replace images or files in Media Library
 * [reGenerate Thumbnails Advanced](https://wordpress.org/plugins/regenerate-thumbnails-advanced/) - Easily regenerate thumbnails
 * [Resize Image After Upload](https://wordpress.org/plugins/resize-image-after-upload/) - Automatically resize each uploaded image
@@ -188,24 +188,24 @@ Let's get the ShortPixel plugin running on your WordPress website:
 2. You will receive your personal API key in a confirmation email, to the address you provided.
 3. Upload the ShortPixel plugin to the /wp-content/plugins/ directory
 4. Use your unique API key to activate the ShortPixel plugin in the 'Plugins' menu in WordPress.
-5. Uploaded images can be automatically optimized in the Media Library.
+5. Uploaded images can be automatically upscaled in the Media Library.
 6. Done!
 
 
 == Frequently Asked Questions ==
 
-= How does ShortPixel compare to other image optimisation plugins (e.g Smush, Imagify, TinyPNG, Kraken, EWWW, Optimole)?  =
+= How does ShortPixel compare to other image upscaling plugins (e.g Smush, Imagify, TinyPNG, Kraken, EWWW, Optimole)?  =
 	ShortPixel consistently has better compression rates along with more features, backup support and has very affordable one-time or monthly plans.
 	Here are a couple of independent reviews:
-	AuthorityHacker - "ShortPixel is our tool of choice, simply because it’s pretty much automated – we just let it do its thing." (<a href="https://www.authorityhacker.com/best-wordpress-image-optimizer/" target="_blank">read full review</a>)
-	WP Modula - "One of the reasons I’m personally a huge fan of ShortPixel is the built-in support for next-gen image formats like WebP." (<a href="https://wp-modula.com/the-best-wordpress-image-optimization-plugins/" target="_blank">read full review</a>)
+	AuthorityHacker - "ShortPixel is our tool of choice, simply because it’s pretty much automated – we just let it do its thing." (<a href="https://www.authorityhacker.com/best-wordpress-image-upscaler/" target="_blank">read full review</a>)
+	WP Modula - "One of the reasons I’m personally a huge fan of ShortPixel is the built-in support for next-gen image formats like WebP." (<a href="https://wp-modula.com/the-best-wordpress-image-upscaling-plugins/" target="_blank">read full review</a>)
 
 = Can I use the same API Key on multiple web sites? =
     Yes, you can.
     As long as you have available credits, you can use a single API Key on as many websites as you wish!
 
 = What plan is better for me? What do you recommend? =
-	Everyone has different needs, but generally, we recommend getting a One-Time plan to optimize your whole Media Library and then get a Monthly plan to optimize your future uploads. To learn more, have a look at <a href="https://shortpixel.com/knowledge-base/article/monthly-plans-vs-one-time-plans/" target="_blank">this comparison</a>
+	Everyone has different needs, but generally, we recommend getting a One-Time plan to upscale your whole Media Library and then get a Monthly plan to upscale your future uploads. To learn more, have a look at <a href="https://shortpixel.com/knowledge-base/article/monthly-plans-vs-one-time-plans/" target="_blank">this comparison</a>
 
 = I don't know how many thumbnails do I have, what plan should I take?
 	To know how many thumbnails you have, just install the plugin and go to Media > Bulk ShortPixel. The plugin will tell you how many thumbnails you've got. Based on this, have a look at <a href="https://shortpixel.com/pricing" target="_blank">our plans</a>
@@ -215,40 +215,40 @@ Let's get the ShortPixel plugin running on your WordPress website:
 
 = Can I test/use the plugin for free? =
     Yes, you can.
-    We offer 100 free image optimization credits each month. Exceeding the monthly free quota will pause the optimization process till the quota is reset or extended by buying one of our plans.
+    We offer 100 free image upscaling credits each month. Exceeding the monthly free quota will pause the upscaling process till the quota is reset or extended by buying one of our plans.
 
-= Can I optimize images that aren't in Media Library? =
+= Can I upscale images that aren't in Media Library? =
     Absolutely.
-    You can actually optimize any image you have on your site regardless of its place. You just need to add - in the Advanced section of the ShortPixel Settings - the folders where the images you want to optimize are located and ShortPixel will work its magic and do the rest.
+    You can actually upscale any image you have on your site regardless of its place. You just need to add - in the Advanced section of the ShortPixel Settings - the folders where the images you want to upscale are located and ShortPixel will work its magic and do the rest.
 
-= Can I optimize images that are both past and new? =
+= Can I upscale images that are both past and new? =
     Sure!
-    You can optimize all your past/current images and photos using our "Bulk ShortPixel" page in your Media with a single click.
+    You can upscale all your past/current images and photos using our "Bulk ShortPixel" page in your Media with a single click.
 
-= A credit = an optimized image? =
+= A credit = an upscaled image? =
     Yes, that is correct.
-    But please note that usually, an image in Media Library has 5 or more associated thumbs. Each optimized thumbnail requires a credit. In the rare cases when ShortPixel does not optimise the image (lossy) with at least 5%, the credit will not be consumed, though.
+    But please note that usually, an image in Media Library has 5 or more associated thumbs. Each upscaled thumbnail requires a credit. In the rare cases when ShortPixel does not upscale the image (lossy) with at least 5%, the credit will not be consumed, though.
 
 = Can I restore my images? What happens with the originals? =
-    If you choose the "Image backup" option in Settings/ShortPixel then the original version of any optimized image or PDF will be saved in the backup folder.
+    If you choose the "Image backup" option in Settings/ShortPixel then the original version of any upscaled image or PDF will be saved in the backup folder.
     The original image is needed if you want to restore an image or if you want to convert an image from lossy/glossy to lossless or vice-versa.
 
-= What types of formats can be optimized? =
-    ShortPixel optimises JPEG (JPG, JPEG, JPEG 2000, JPEG XR), PNG, GIF (animated and still), and PDF type of files.
+= What types of formats can be upscaled? =
+    ShortPixel upscales JPEG (JPG, JPEG, JPEG 2000, JPEG XR), PNG, GIF (animated and still), and PDF type of files.
 
 = Do you have one-time plans? =
     Yes we do.
     The credits that come with our <a href="https://shortpixel.com/plans" >one-time plans</a> never expire. Yummy! :-)
 
 = What happens to my existing images? =
-    Your existing images are replaced with the optimized ones.
+    Your existing images are replaced with the upscaled ones.
     If you choose the backup option then the originals will be saved in a separate folder so you can restore them should you ever need/want to do that.
 
 = How does the plugin work? =
-    Our lightweight plugin sends the original images to our Image Optimization Cloud where they are compressed. ShortPixel then downloads the optimized images and the unoptimized originals are replaced with the optimised versions.
+    Our lightweight plugin sends the original images to our Image Upscaling Cloud where they are compressed. ShortPixel then downloads the upscaled images and the unupscaled originals are replaced with the upscaled versions.
 
-= Do you optimize images in the cloud? =
-    Yes, all the images processed by ShortPixel are optimized in the Cloud. This takes the load off of your server and allows us to produce the best results.
+= Do you upscale images in the cloud? =
+    Yes, all the images processed by ShortPixel are upscaled in the Cloud. This takes the load off of your server and allows us to produce the best results.
 
 = What payment methods are accepted? =
     We accept payments via card (Mastercard, Visa, Maestro, American Express, Discover, Diners Club, JCB, UnionPay), PayPal, and Apple Pay.
@@ -257,30 +257,30 @@ Let's get the ShortPixel plugin running on your WordPress website:
     You have to activate the plugin in the network admin and then activate it manually on each individual site in the multisite. Once you have done that, the Settings menu appears and you can add the API key for each individual site.
     As an alternative, you can edit wp-config.php and add this line:
 
-`define('SHORTPIXEL_API_KEY', 'APIKEY');`
+`define('SPUI_API_KEY', 'APIKEY');`
 where `APIKEY` is the API Key received upon sign up.
     If configured that way, the API key will be used for all the sites of the multisite but will only be visible on the main site’s Settings page, being hidden for the rest of the sites.
 
 = I am not the only one working on the WordPress Dashboard. How can I hide my API key? =
     There is a simple way to hide the API key, all you need to do is to add these two lines in your wp-config.php:
 
-`define('SHORTPIXEL_API_KEY', '<<your api key here>>');`
-`define('SHORTPIXEL_HIDE_API_KEY', true);`
+`define('SPUI_API_KEY', '<<your api key here>>');`
+`define('SPUI_HIDE_API_KEY', true);`
 
 = How much is a credit? =
-    A credit is used each time ShortPixel optimizes an image or thumbnail by at least 5%. If we're not able to optimize an image or thumbnail by at least 5% then no credit will be used :-)
-    Please also note that usually images in your Media Library have 3-5 thumbs associated and a credit will be used for each featured image or associated thumbnail that is optimized.
+    A credit is used each time ShortPixel upscales an image or thumbnail by at least 5%. If we're not able to upscale an image or thumbnail by at least 5% then no credit will be used :-)
+    Please also note that usually images in your Media Library have 3-5 thumbs associated and a credit will be used for each featured image or associated thumbnail that is upscaled.
 
 = Why shall I use a WordPress plugin and not an offline tool? =
-    Because ShortPixel algorithms were perfected while optimizing over 3.5 billion real-life images.
-    ShortPixel not only offers the best compression for JPEG, PNG, GIF, and PDF files but it also saves you a lot of time. You just install it on your site and then ShortPixel will take care that all the images on your site are immediately optimized after upload.
+    Because ShortPixel algorithms were perfected while upscaling over 3.5 billion real-life images.
+    ShortPixel not only offers the best compression for JPEG, PNG, GIF, and PDF files but it also saves you a lot of time. You just install it on your site and then ShortPixel will take care that all the images on your site are immediately upscaled after upload.
 
-= Does optimizing images affect my ALT tags? =
-    No, ShortPixel only optimizes images, it won't touch anything else like your HTML/CSS.
+= Does upscaling images affect my ALT tags? =
+    No, ShortPixel only upscales images, it won't touch anything else like your HTML/CSS.
 
-= If I stop using ShortPixel will my images remain optimized? =
+= If I stop using ShortPixel will my images remain upscaled? =
     Absolutely!
-    Once optimized, the images will remain optimized unless you explicitly choose to restore them. But why would you do that? :-)
+    Once upscaled, the images will remain upscaled unless you explicitly choose to restore them. But why would you do that? :-)
 
 = Do I have to pay monthly or one time? =
     We have both options available.
@@ -312,7 +312,7 @@ where `APIKEY` is the API Key received upon sign up.
     Absolutely! Sometimes you'll need to make sure you whitelist some IPs, just <a href="https://shortpixel.com/contact">contact us</a> and we'll assist you with that.
 
 = Where do I report security bugs found in this plugin? =
-Please report security bugs found in the source code of the ShortPixel Image Optimizer plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/shortpixel-image-optimiser). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+Please report security bugs found in the source code of the ShortPixel Image Upscaler plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/shortpixel-upscale-image). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 = Does the plugin use any external services =
 This plugin integrates with Chatbase ([https://www.chatbase.co](https://www.chatbase.co/)) to provide AI-powered chat support directly within the plugin interface. This integration allows plugin users to ask questions and receive automated assistance. The only data collected is the Country(no city and no exact location) and the message itself.
@@ -324,30 +324,30 @@ Chatbase [ToS](https://www.chatbase.co/legal/terms).
 The ShortPixel team is here to help. <a href="https://shortpixel.com/contact">Contact us</a>!
 
 = How do I compress images without losing quality in WordPress? =
-The best way to compress images without losing quality in WordPress is by using the ShortPixel plugin. ShortPixel automatically compresses images with lossless compression, ensuring the visual quality remains intact while significantly reducing file sizes. Once installed, it optimizes your images in just one click, improving your website's loading speed and SEO performance. You can bulk optimize existing images or compress new ones as you upload them, all without sacrificing quality, making it an ideal solution for maintaining high-quality visuals and fast site performance.
+The best way to compress images without losing quality in WordPress is by using the ShortPixel plugin. ShortPixel automatically compresses images with lossless compression, ensuring the visual quality remains intact while significantly reducing file sizes. Once installed, it upscales your images in just one click, improving your website's loading speed and SEO performance. You can bulk upscale existing images or compress new ones as you upload them, all without sacrificing quality, making it an ideal solution for maintaining high-quality visuals and fast site performance.
 
-= What is image optimization? =
+= What is image upscaling? =
 
-Image optimization is reducing the file size of images without compromising their quality, to improve website performance. This can be done using tools like ShortPixel, which compresses images, converts them to more efficient formats like WebP, and ensures they are properly sized for faster loading times. Optimized images help improve website speed, enhance user experience, and boost SEO rankings by reducing page load time and bandwidth usage.
+Image upscaling is reducing the file size of images without compromising their quality, to improve website performance. This can be done using tools like ShortPixel, which compresses images, converts them to more efficient formats like WebP, and ensures they are properly sized for faster loading times. Upscaled images help improve website speed, enhance user experience, and boost SEO rankings by reducing page load time and bandwidth usage.
 
-= How to optimize a WordPress image? =
+= How to upscale a WordPress image? =
 
-The best way to optimize a WordPress image is by using the ShortPixel plugin. ShortPixel automatically optimizes images with both lossless and lossy compression options, reducing file size while keeping high visual quality. Once installed, it optimizes your images in one click, improving your site's load speed and SEO. You can bulk optimize existing images or new uploads, ensuring fast site performance without sacrificing image quality, making it the ideal solution for WordPress image optimization.
+The best way to upscale a WordPress image is by using the ShortPixel plugin. ShortPixel automatically upscales images with both lossless and lossy compression options, reducing file size while keeping high visual quality. Once installed, it upscales your images in one click, improving your site's load speed and SEO. You can bulk upscale existing images or new uploads, ensuring fast site performance without sacrificing image quality, making it the ideal solution for WordPress image upscaling.
 
-= How to SEO optimize images? =
+= How to SEO upscale images? =
 
-To SEO optimize images in wordpress, use the ShortPixel plugin to compress and convert them without losing quality, reducing load times—a key SEO factor. Add descriptive file names and alt text with relevant keywords to help search engines understand your images. Additionally, resize images to appropriate dimensions and consider converting them to WebP for faster performance. ShortPixel makes this entire process easy, helping improve both your SEO rankings and site speed.
+To SEO upscale images in wordpress, use the ShortPixel plugin to compress and convert them without losing quality, reducing load times—a key SEO factor. Add descriptive file names and alt text with relevant keywords to help search engines understand your images. Additionally, resize images to appropriate dimensions and consider converting them to WebP for faster performance. ShortPixel makes this entire process easy, helping improve both your SEO rankings and site speed.
 
-= How do you optimize images for performance? =
+= How do you upscale images for performance? =
 
-To optimize images for performance in WordPress, use the ShortPixel plugin to compress images without sacrificing quality, reducing file sizes for faster load times. Convert images to efficient formats like WebP and ensure they are properly resized to fit your site’s design. ShortPixel automates this process in one click, boosting your website's speed, improving user experience, and enhancing SEO—all key elements for optimal performance.
+To upscale images for performance in WordPress, use the ShortPixel plugin to compress images without sacrificing quality, reducing file sizes for faster load times. Convert images to efficient formats like WebP and ensure they are properly resized to fit your site’s design. ShortPixel automates this process in one click, boosting your website's speed, improving user experience, and enhancing SEO—all key elements for optimal performance.
 
 == Actions and Filters for Developers ==
 
-The ShortPixel Image Optimizer plugin calls the following actions and filters:
+The ShortPixel Image Upscaler plugin calls the following actions and filters:
 
-`do_action( 'shortpixel_image_optimised', $post_id );`
-upon successful optimization;
+`do_action( 'shortpixel_image_upscaled', $post_id );`
+upon successful upscaling;
 
 `do_action("shortpixel_before_restore_image", $post_id);`
 before restoring an image from backup;
@@ -362,46 +362,46 @@ just before returning the ShortPixel backup folder, usually /wp-content/uploads/
 
 For version 5.0.0 and later:
 
-`$directory = apply_filters("shortpixel/file/backup_folder", $directory, $file);`
+`$directory = apply_filters("spui/file/backup_folder", $directory, $file);`
 just before returning the ShortPixel backup folder, usually /wp-content/uploads/ShortpixelBackups).
 
 `apply_filters('shortpixel_image_exists', file_exists($path), $path, $post_id);`
 post ID is not always set, only if it's an image from Media Library;
 
 `apply_filters('shortpixel_image_urls', $URLs, $post_id);`
-filters the URLs that will be sent to optimisation, `$URLs` is a plain array;
+filters the URLs that will be sent to upscaling, `$URLs` is a plain array;
 
 <strong>The filter below is deprecated starting with version 5.0.0!</strong>
 
-`apply_filters('shortpixel/db/chunk_size', $chunk);`
+`apply_filters('spui/db/chunk_size', $chunk);`
 the `$chunk` is the value ShortPixel chooses to use as the number of selected records in one query (based on total table size), some hosts work better with a different value;
 
 For version 4.22.10 and earlier:
 
-`apply_filters('shortpixel/backup/paths', $PATHs, $mainPath);`
+`apply_filters('spui/backup/paths', $PATHs, $mainPath);`
 filters the array of paths of the images sent for backup and can be used to exclude certain paths/images/thumbs from being backed up, based on the image path. `$mainPath` is the path of the main image, while `$PATHs` is an array with all files to be backed up (including thumbnails);
 
 For version 5.0.0 and later:
 
-`apply_filters('shortpixel/image/skip_backup', false, $this->getFullPath(), $this->is_main_file)`
+`apply_filters('spui/image/skip_backup', false, $this->getFullPath(), $this->is_main_file)`
 filters the images that are skipped or not from the backup. Return true for the type of images to be skipped in the backup. If you check if `is_main_file` is true and return false (do not skip backup), while while otherwise returning true, the backup will be kept only for the main image. We suggest using it in conjuction with this action that fires right after the restore from backup is done:
 
-`do_action('shortpixel/image/after_restore', $this, $this->id, $cleanRestore);`
+`do_action('spui/image/after_restore', $this, $this->id, $cleanRestore);`
 This action can be used to cleanup the meta data from the database, regenerate thumbnails after restoring the main file, writing the updated meta data, etc.
 
-`apply_filters('shortpixel/settings/image_sizes', $sizes);`
+`apply_filters('spui/settings/image_sizes', $sizes);`
 filters the array (`$sizes`) of image sizes that can be excluded from processing (displayed in the plugin Advanced settings);
 
-`apply_filters('shortpixel/image/imageparamlist', $result, $this->id, $this);`
+`apply_filters('spui/image/imageparamlist', $result, $this->id, $this);`
 filters the list of parameters sent to the API so that resizing can be performed more granularly;
 
-`apply_filters('shortpixel/api/request', $requestParameters, $item_id);`
-filters the parameters sent to the optimization API (through `$requestParameters`), described in detail here: <a href="https://shortpixel.com/api-docs" target="_blank">ShortPixel Reducer API</a>; `$item_id` contains the ID of the Media Library item, or the ID of the Custom Media item (when used). In short, this filter can be used to alter any parameters sent to the API, depending on the needs. For example, you can set different resize parameters for different post types, different compression levels, remove EXIF or not, covert WebP/AVIF, and basically any other parameter that is sent to the API for a specific image (together with all its thumbnails).
+`apply_filters('spui/api/request', $requestParameters, $item_id);`
+filters the parameters sent to the upscaling API (through `$requestParameters`), described in detail here: <a href="https://shortpixel.com/api-docs" target="_blank">ShortPixel Reducer API</a>; `$item_id` contains the ID of the Media Library item, or the ID of the Custom Media item (when used). In short, this filter can be used to alter any parameters sent to the API, depending on the needs. For example, you can set different resize parameters for different post types, different compression levels, remove EXIF or not, covert WebP/AVIF, and basically any other parameter that is sent to the API for a specific image (together with all its thumbnails).
 
-This filter enables the background ShortPixel processing in additional pages (see <a href="https://shortpixel.com/knowledge-base/article/on-what-pages-does-spio-optimize-images/" target="_blank">here</a> the original list). Here's an example of this filter that enables the processing on the Comments screen (to be placed in your functions.php file):
+This filter enables the background ShortPixel processing in additional pages (see <a href="https://shortpixel.com/knowledge-base/article/on-what-pages-does-spui-upscale-images/" target="_blank">here</a> the original list). Here's an example of this filter that enables the processing on the Comments screen (to be placed in your functions.php file):
 
 `
-add_filter('shortpixel/init/optimize_on_screens', function ($screens) {
+add_filter('spui/init/upscale_on_screens', function ($screens) {
 	$screens[] = 'edit-comments';
 	return $screens;
 });
@@ -411,62 +411,62 @@ The `edit-comments` is the ID of the screen where you want to enable the process
 If you want to add multiple pages, here's what the snippet looks like:
 
 `
-add_filter('shortpixel/init/optimize_on_screens', function ($screens) {
+add_filter('spui/init/upscale_on_screens', function ($screens) {
 	$screens = array('edit-comments', 'plugins', 'another-custom-post-type-page');
 	return $screens;
 	});
 `
 
-`add_filter('shortpixel/image/filecheck', function () { return true; });`
+`add_filter('spui/image/filecheck', function () { return true; });`
 This filter forces a file check for WebP/AVIF in case they were manually removed from disk.
 
-If you want to disable the automatic cache flush that is triggered after image optimization, you can use this filter:
+If you want to disable the automatic cache flush that is triggered after image upscaling, you can use this filter:
 
-`add_filter( 'shortpixel/external/flush_cache', function() { return false; } );`
+`add_filter( 'spui/external/flush_cache', function() { return false; } );`
 
-In order to define custom thumbnails to be picked up by the optimization you have two options, both comma separated defines:
+In order to define custom thumbnails to be picked up by the upscaling you have two options, both comma separated defines:
 
-`define('SHORTPIXEL_CUSTOM_THUMB_SUFFIXES', '_tl,_tr');`
+`define('SPUI_CUSTOM_THUMB_SUFFIXES', '_tl,_tr');`
 will handle custom thumbnails like image-100x100_tl.jpg;
 
-`define('SHORTPIXEL_CUSTOM_THUMB_INFIXES', '-uae');`
+`define('SPUI_CUSTOM_THUMB_INFIXES', '-uae');`
  will handle custom thumbnails like image-uae-100x100.jpg;
 
-`define('SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION', true);`
-`define('SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION', true);`
+`define('SPUI_USE_DOUBLE_WEBP_EXTENSION', true);`
+`define('SPUI_USE_DOUBLE_AVIF_EXTENSION', true);`
 will tell the plugin to create double extensions for the WebP/AVIF image counterparts, for example, image.jpg.webp/image.jpg.avif for image.jpg;
 
 Enable the "Trusted mode" in case the file system has limitations and is very slow in responding to direct file operations by adding this constant:
 
-`define('SHORTPIXEL_TRUSTED_MODE', true);`
+`define('SPUI_TRUSTED_MODE', true);`
 
 This will simply skip file check operations and if the Media Library loads very slowly or freezes, you might want to try adding the constant above to your wp-config.php file.
 
 Disable the feedback survey when the plugin is deactivated:
 
-`define('SHORTPIXEL_SKIP_FEEDBACK', true);`
+`define('SPUI_SKIP_FEEDBACK', true);`
 
 Hide the Cloudflare settings by defining these constants in wp-config.php:
 
-`define('SHORTPIXEL_CFTOKEN', 'the Cloudflare API token that has Purge Cache right');`
-`define('SHORTPIXEL_CFZONE', 'The Zone ID from the domain settings in Cloudflare');`
+`define('SPUI_CFTOKEN', 'the Cloudflare API token that has Purge Cache right');`
+`define('SPUI_CFZONE', 'The Zone ID from the domain settings in Cloudflare');`
 
 Add HTTP basic authentication credentials by defining these constants in wp-config.php
 
-`define('SHORTPIXEL_HTTP_AUTH_USER', 'user');`
-`define('SHORTPIXEL_HTTP_AUTH_PASSWORD', 'pass');`
+`define('SPUI_HTTP_AUTH_USER', 'user');`
+`define('SPUI_HTTP_AUTH_PASSWORD', 'pass');`
 
 == Screenshots ==
 
-1. Select bulk optimization options. (Media -> Bulk ShortPixel)
+1. Select bulk upscaling options. (Media -> Bulk ShortPixel)
 
-2. Bulk optimization running. (Media -> Bulk ShortPixel)
+2. Bulk upscaling running. (Media -> Bulk ShortPixel)
 
 3. Activate your API key in the plugin Settings. (Settings -> ShortPixel)
 
 4. Plugin dashboard after entering the API key. (Settings -> ShortPixel)
 
-5. Image Optimization settings. (Settings -> ShortPixel -> Image Optimization)
+5. Image Upscaling settings. (Settings -> ShortPixel -> Image Upscaling)
 
 6. Exclusion settings. (Settings -> ShortPixel -> Exclusions)
 
@@ -480,11 +480,11 @@ Add HTTP basic authentication credentials by defining these constants in wp-conf
 
 11. Help Center. (Settings -> ShortPixel -> Help Center)
 
-12. Check image optimization status, and restore or reoptimize the image. (Media -> Library)
+12. Check image upscaling status, and restore or reupscale the image. (Media -> Library)
 
-13. Check image optimisation details. (Media -> Library -> Edit)
+13. Check image upscaling details. (Media -> Library -> Edit)
 
-14. Check other optimized images' status - themes or other plugins' images. (Media>Other Media)
+14. Check other upscaled images' status - themes or other plugins' images. (Media>Other Media)
 
 == Changelog ==
 
@@ -496,11 +496,11 @@ Release Date: March 24, 2026
 
 ✨ New Feature
 
-* Exclusions by Filesize: You can now exclude images from optimization based on their file size, giving you even more precise control over what gets processed.
+* Exclusions by Filesize: You can now exclude images from upscaling based on their file size, giving you even more precise control over what gets processed.
 
 🛠️ Fixes
 
-* Bulk Operation Messaging: When running bulk actions other than optimization, the correct descriptive text is now displayed.
+* Bulk Operation Messaging: When running bulk actions other than upscaling, the correct descriptive text is now displayed.
 * PICTURE Tag Fixes:
   - Fixed issues with certain background images not being handled correctly.
   - Multiple improvements to ensure correct paths and compatibility with Bedrock setups.
@@ -510,7 +510,7 @@ Release Date: March 24, 2026
 * Async Chatbot Loading: The chatbot now loads asynchronously in settings to prevent slowdowns when CDN responses are delayed.
 * JS Worker Stability: The JavaScript worker no longer stops if invalid JSON is received from the backend.
 * LS Cache Compatibility: Fixed incompatibilities with LiteSpeed Cache and certain custom media folder setups.
-* Custom Media Errors: Resolved errors occurring during optimization of specific custom media folders.
+* Custom Media Errors: Resolved errors occurring during upscaling of specific custom media folders.
 * open_basedir Improvements: Additional safeguards to prevent warnings with strict open_basedir configurations.
 * PHP 8.4 Deprecation Fix: Fixed a rare deprecation warning on PHP 8.4.
 
@@ -523,7 +523,7 @@ Release Date: March 24, 2026
 
 * Wording & Layout Updates: Small improvements to texts and settings layout for a cleaner and clearer experience.
 
-Update now for stronger security, improved compatibility, and smarter control over your optimization workflows! 🚀
+Update now for stronger security, improved compatibility, and smarter control over your upscaling workflows! 🚀
 
 = 6.4.3 =
 
@@ -549,19 +549,19 @@ Release Date: January 29, 2026
 * Multisite Settings Hidden: Temporarily hid the multisite settings menu due to related errors - it will return in a future release.
 * Correct Parent Page Context: Ensured that the parent post/page context of an image is properly sent to the AI API for better SEO relevance.
 
-Update now for a more secure, transparent, and intelligent optimization experience! 🚀
+Update now for a more secure, transparent, and intelligent upscaling experience! 🚀
 
 = 6.4.2 =
 
-📊 The Optimization Update
+📊 The Upscaling Update
 
 Release Date: January 15, 2026
 
 🛠️ Fixes & Improvements
 
-* Media Library Optimization Display: Fixed an issue where optimized images were always shown as "bonus optimization" — the stats now reflect actual results.
+* Media Library Upscaling Display: Fixed an issue where upscaled images were always shown as "bonus upscaling" — the stats now reflect actual results.
 * Bulk UI Improvements: Cleaned up the layout of the bulk processing screen when only a few options are selected, for a more focused experience.
-* Percentage Hidden for Non-Optimization Actions: Removed the optimization percentage display when running bulk operations like restore or data migration (that don't involve actual image optimization).
+* Percentage Hidden for Non-Upscaling Actions: Removed the upscaling percentage display when running bulk operations like restore or data migration (that don't involve actual image upscaling).
 * AVIF via .htaccess for WebPs: Added support for AVIF delivery using the .htaccess method for images added directly in the WebP format.
 * AI SEO Preview Fix: Prevented display of incorrect data in the AI SEO Preview section within plugin settings.
 * SmartCrop Percentage Display: Fixed the issue where SmartCrop could show a negative improvement percentage if the cropped image ended up larger in size.
@@ -569,7 +569,7 @@ Release Date: January 15, 2026
 * PHP 8.5 Deprecation Fix: Fixed a deprecation warning added in PHP 8.5, thanks to @mondalaci.
 * Text & Typo Corrections: Polished various texts and corrected typos on the Bulk and Settings pages.
 
-Update now for clearer stats, smarter previews, and a smoother optimization experience across the board! 🚀
+Update now for clearer stats, smarter previews, and a smoother upscaling experience across the board! 🚀
 
 = 6.4.1 =
 
@@ -579,7 +579,7 @@ Release Date: December 18, 2025
 
 🎁 Fixes & Improvements
 
-* Temporary File Cleanup: Introduced a mechanism to automatically clean up temporary files after optimization, keeping your server tidy.
+* Temporary File Cleanup: Introduced a mechanism to automatically clean up temporary files after upscaling, keeping your server tidy.
 * Zero-Byte File Protection: Prevents copying of 0-byte files from the /tmp/ folder in cases of permission errors or low tmp disk space.
 * IIS Compatibility Fix: Resolved a timestamp-related warning on IIS servers using 32-bit PHP environments.
 * Download Timeout Limit: Added a 25-second cap on item downloads to prevent conflicts with PHP's 30-second timeout.
@@ -601,7 +601,7 @@ Release Date: November 20, 2025
 * AI Background Removal: Instantly remove image backgrounds with one click, great for clean product photos or transparent assets.
 * AI Image Titles: In addition to ALT text, captions, and descriptions, you can now generate smart image titles using AI for better SEO.
 * Date-Based Exclusions: Easily exclude images from processing based on their upload date.
-* Bulk Optimization by Date Interval: Run bulk optimization on a selected date range for precise control over what gets optimized and when.
+* Bulk Upscaling by Date Interval: Run bulk upscaling on a selected date range for precise control over what gets upscaled and when.
 
 🔄 Compatibility Updates
 
@@ -628,7 +628,7 @@ Release Date: October 16, 2025
 
 🛠️ Fixes & Improvements
 
-* SmartCrop Re-Optimization Fix: The “Re-optimize with/without SmartCrop” feature now correctly follows the selected action instead of always applying the saved setting.
+* SmartCrop Re-Upscaling Fix: The “Re-upscale with/without SmartCrop” feature now correctly follows the selected action instead of always applying the saved setting.
 * AI SEO Preview Credit Message: A clear message is now displayed in the AI SEO preview (from Settings) when you’re out of credits.
 * French Locale Compatibility: Fixed an issue that prevented plugin deactivation when WordPress was set to French due to a language-related error.
 * AI SEO Limits Save Fix: The limits for AI-generated SEO text fields are now properly saved in the settings.
@@ -649,14 +649,14 @@ Release Date: September 18, 2025
 ✨ New Features & Improvements
 
 * Preserve Existing SEO Data: Added an option to keep your existing ALT, caption, and description fields untouched when using AI-generated image SEO — your manual work is safe!
-* Better Block Editor Integration: AI-generated SEO data and image optimization now work flawlessly when uploading images directly from the block editor.
+* Better Block Editor Integration: AI-generated SEO data and image upscaling now work flawlessly when uploading images directly from the block editor.
 * AI Support Chatbot: Meet our new AI-powered support assistant — here to help you faster, 24/7.
 
 🛠️ Fixes & Behavioral Improvements
 
 * Full AI Deactivation: Disabling AI Image SEO now also disables auto-generation and hides all related options from WP Admin, including the Bulk Processing section.
 * EXIF-Based AI Training Block: If AI training is blocked via EXIF data, the plugin now shows a clear message and prevents the image from being sent for processing.
-* Re-Optimize Logic Fixed: The "Re-optimize with/without SmartCrop" buttons now respect the selected option instead of always using the saved setting.
+* Re-Upscale Logic Fixed: The "Re-upscale with/without SmartCrop" buttons now respect the selected option instead of always using the saved setting.
 * Inline Font Handling: Inline fonts will no longer be replaced with CDN links if the CSS option is disabled.
 * AI SEO for Excluded Items: Bulk AI SEO generation now skips excluded items as expected.
 
@@ -716,13 +716,13 @@ Release Date: August 18, 2025
 * Faster AI Model: We've upgraded to a better, faster AI model for generating image SEO data more accurately and efficiently.
 * Expanded SEO Tags: In addition to ALT tags, you can now automatically generate image captions and descriptions to enhance SEO and accessibility.
 * Auto-Generate on Upload: Image SEO data can now be generated automatically for newly uploaded images.
-* Bulk SEO Generation: Easily generate image SEO data in bulk, perfect for optimizing existing media libraries.
+* Bulk SEO Generation: Easily generate image SEO data in bulk, perfect for upscaling existing media libraries.
 * Language Selection: Choose the language used for image SEO generation directly from the plugin settings.
 
 🛠️ Fixes & Improvements
 
 * Cache-Control Headers: WebP and AVIF images now include cache-control headers when delivered via .htaccess, improving cache behavior.
-* Thumbnail Handling: If a main image in a special format (like BMP/TIFF) is excluded from optimization, its JPG thumbnails are no longer excluded incorrectly.
+* Thumbnail Handling: If a main image in a special format (like BMP/TIFF) is excluded from upscaling, its JPG thumbnails are no longer excluded incorrectly.
 * WooCommerce SVG Fix: Fixed an issue where certain SVG icons for payment methods weren’t correctly replaced with CDN links on the WooCommerce cart.
 
 Update now to take full advantage of smarter image SEO with AI and better compatibility across your site! 🚀
@@ -743,10 +743,10 @@ Release Date: July 29, 2025
 * 404 Page Styling: Fixed an issue where CSS was broken on 404 pages when CDN delivery was enabled.
 * Large PNG Restore Fix: Resolved errors that occurred when restoring backups of large PNGs with scaled versions generated by WordPress.
 * Improved CDN Replacement: Images using data-srcset are now correctly replaced with CDN links when delivery is enabled.
-* SmartCropping Upload Issue: Fixed a bug where SmartCropping didn’t work correctly when automatic optimization on upload was turned off.
+* SmartCropping Upload Issue: Fixed a bug where SmartCropping didn’t work correctly when automatic upscaling on upload was turned off.
 * Queue Stability: Added a safeguard for rare cases involving old items in the processing queue that could trigger errors.
 
-Update now for better REST API support, improved CDN handling, and a smoother media optimization experience! 🚀
+Update now for better REST API support, improved CDN handling, and a smoother media upscaling experience! 🚀
 
 
 = 6.2.1 =
@@ -765,7 +765,7 @@ CDN Delivery Enhancements:
 * Fallback for Missing WebP/AVIF: If WebP or AVIF images aren't generated locally, they’ll now be created on-the-fly and served directly from the CDN.
 * Broken Image Protection: Added checks to ensure the CDN doesn't store or deliver broken images.
 
-* Improved Timestamp Handling: Timestamps are now added whenever images are sent for optimization, helping prevent unwanted caching.
+* Improved Timestamp Handling: Timestamps are now added whenever images are sent for upscaling, helping prevent unwanted caching.
 * PNG Conversion via ImageMagick: Added fallback support for PNG conversion using ImageMagick when the GD extension isn’t available.
 * Punctuation Tweak for AI Texts: AI-generated alternative texts now end with a trailing dot for readability (can be disabled via filter).
 
@@ -779,7 +779,7 @@ CDN Delivery:
 * Settings Import: Fixed import functionality for older PHP versions.
 * WebP/AVIF Count Fix: Image counts in bulk processing now display correctly again.
 * S3 Uploads Compatibility: Fixed an error triggered by a missing method when using the S3 Uploads plugin (thanks @matthewgrzegorczyk! 🙌).
-* WP-CLI Message Bug: Corrected a misleading WP-CLI message shown when thumbnails were unwritable but main images were optimized.
+* WP-CLI Message Bug: Corrected a misleading WP-CLI message shown when thumbnails were unwritable but main images were upscaled.
 * Custom Media Folder Fix: Resolved errors in the folders list when performing specific actions.
 
 🌍 Language Updates
@@ -805,7 +805,7 @@ Release Date: May 8, 2025
 
 ⚙️ Improvements
 
-* Cross-Tab Sync: Optimizations done in multiple browser tabs now stay in sync using browser broadcasting.
+* Cross-Tab Sync: Upscalings done in multiple browser tabs now stay in sync using browser broadcasting.
 * Automatic Association to ShortPixel Account: Your site domain is now automatically associated to your ShortPixel account when enabling CDN delivery.
 * CDN Domain Validation: Prevent misconfigurations with smart validation of your CDN domain format.
 * Cleaner Admin Bar: The ShortPixel icon is now hidden when restoring items to keep your admin interface tidy.
@@ -814,7 +814,7 @@ Release Date: May 8, 2025
 
 🛠️ Fixes
 
-* Lossless Labeling Bug: Fixed an issue where images were incorrectly marked as "Lossless" if the main image wasn't optimized.
+* Lossless Labeling Bug: Fixed an issue where images were incorrectly marked as "Lossless" if the main image wasn't upscaled.
 * Sticky Notification: Resolved an issue where the API key notification couldn't be dismissed after saving it from settings.
 * Folder Creation Fix: The plugin no longer attempts to create month-based folders—it now leaves that job to WordPress.
 * File Format Conversions: Improved support for HEIC, TIFF, and BMP file conversion.
@@ -834,7 +834,7 @@ Release Date: March 27, 2025
 
 🛠️ Fixes & Improvements
 
-* Quota Limit Message: Clearer messaging is now shown on the bulk processing screen when you're out of optimization quota.
+* Quota Limit Message: Clearer messaging is now shown on the bulk processing screen when you're out of upscaling quota.
 * Admin Notice Styling: Fixed visual issues with some admin notifications that weren’t styled correctly in wp-admin.
 * Duplicate Image Requests: Resolved an issue where some background images caused doubled image requests when using the PICTURE tag for next-gen formats.
 * Redirect Loop Prevention: Added a fail-safe mechanism to avoid potential redirect loops in wp-admin if `register_shutdown_function` fails.
@@ -864,7 +864,7 @@ Release Date: February 11, 2025
 🛠️ Fixes
 
 * WooCommerce CDN Fixes: Resolved issues where images in the WooCommerce cart and checkout pages weren’t correctly replaced with CDN links.
-* Duplicate Optimization Info: Fixed cases where ShortPixel optimization details appeared twice when using Gutenberg.
+* Duplicate Upscaling Info: Fixed cases where ShortPixel upscaling details appeared twice when using Gutenberg.
 * Background Processing Errors: Corrected cron errors affecting background processing in specific scenarios.
 * Relative URL CDN Delivery: Ensured proper replacement of relative URLs when using CDN delivery for consistent performance.
 * Picture Tag Adjustments: All attributes are now fully supported when delivering next-gen images via the Picture tag method.
@@ -915,7 +915,7 @@ Release Date: January 23, 2025
 * Proper detection of Custom Media images missing WebP or AVIF formats in all scenarios.
 * Fixed display issues with Custom Media notices when selecting new folders.
 * Removed old Custom Media cron formats when the plugin is deactivated.
-* Prevented errors by ensuring thumbnails aren’t added to the optimization queue when the main image isn’t processable.
+* Prevented errors by ensuring thumbnails aren’t added to the upscaling queue when the main image isn’t processable.
 * Resized images through filters get their metadata updated correctly.
 
 ✨ Tweaks & Improvements
@@ -952,7 +952,7 @@ Release Date: January 16, 2025
 ✨ Tweaks & Improvements
 
 * Updated Texts: Improved clarity in messages when bulk processing is paused and background mode is active.
-* API Key Box Hidden: Completely hide the API Key box when the SHORTPIXEL_HIDE_API_KEY constant is used.
+* API Key Box Hidden: Completely hide the API Key box when the SPUI_HIDE_API_KEY constant is used.
 
 🌍 Language Updates
 
@@ -967,7 +967,7 @@ Release date: December 10, 2024
 * Fix: When trying to clear the queue, the settings page was not loaded correctly;
 * Fix: Forced generation for PNGs could be enabled even if the PNG2JPG option was disabled;
 * Tweak: Several minor CSS and wording improvements have been added;
-* Tweak: Bulk preparation now runs faster when no images are optimized;
+* Tweak: Bulk preparation now runs faster when no images are upscaled;
 * Language: 0 new strings added, 2 updated, 0 fuzzed and 0 deprecated.
 
 = 6.0.3 =
@@ -997,7 +997,7 @@ Release date: November 28, 2024
 
 = 6.0.1 =
 Release date: November 22, 2024
-* Fix: Some PHP warnings were displayed for certain images when they were optimized;
+* Fix: Some PHP warnings were displayed for certain images when they were upscaled;
 * Fix: The plugin settings are loaded correctly even if the Google Reviews & Ratings plugin is active;
 * Fix: Help icon pop-ups now look better;
 * Language: 0 new strings added, 0 updated, 0 fuzzed and 0 deprecated.
@@ -1009,19 +1009,19 @@ Release date: November 21, 2024
 * New: Overview page with image status in a single view;
 * New: Simple and advanced settings modes are now available;
 * Tweak: Plugin processing is no longer started for users without appropriate rights (such as Authors);
-* Fix: The filter "optimized/not optimized" from the Media Library now works correctly when the main image is excluded;
+* Fix: The filter "upscaled/not upscaled" from the Media Library now works correctly when the main image is excluded;
 * Fix: The comparator in the NextGen Gallery now looks better;
-* Fix: When using WPML, random optimization errors occurred with some images;
+* Fix: When using WPML, random upscaling errors occurred with some images;
 * Language: Many of the plugin strings have been updated or changed and we thank the translation teams for their efforts..
 
 = EARLIER VERSIONS =
-* please refer to the <a href="https://github.com/short-pixel-optimizer/shortpixel-image-optimiser/blob/master/changelog.txt" target="_blank">changelog.txt</a> file inside the plugin archive.
+* please refer to the <a href="https://github.com/short-pixel-upscaler/shortpixel-upscale-image/blob/master/changelog.txt" target="_blank">changelog.txt</a> file inside the plugin archive.
 
 == Upgrade Notice ==
 
 = 5.0.0 =
 
-* BIG UPDATE: This version is a major rewrite of the plugin. We strongly suggest you take a FULL BACKUP (DATABASE and IMAGES) before upgrading because there are multiple changes in the code and the optimization information is stored in a different way starting with this version.
+* BIG UPDATE: This version is a major rewrite of the plugin. We strongly suggest you take a FULL BACKUP (DATABASE and IMAGES) before upgrading because there are multiple changes in the code and the upscaling information is stored in a different way starting with this version.
 
 = 4.22.9 =
 

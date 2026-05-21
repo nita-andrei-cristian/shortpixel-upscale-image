@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if (! is_null($view->debugInfo) && is_array($view->debugInfo) && count($view->debugInfo) > 0 ):  ?>
       <div class='debugInfo' id='debugInfo'>
 
-        <a class='debugModal' data-modal="debugInfo" ><?php esc_html_e('Debug Window', 'shortpixel-image-optimiser') ?></a>
+        <a class='debugModal' data-modal="debugInfo" ><?php esc_html_e('Debug Window', 'shortpixel-upscale-image') ?></a>
         <div class='content wrapper'>
 
           <?php
@@ -71,7 +71,7 @@ if (! is_null($view->debugInfo) && is_array($view->debugInfo) && count($view->de
 
 </div>
 
-  <div id="sp-message-<?php echo( esc_attr($this->view->id) ); ?>" class='spio-message'>
+  <div id="sp-message-<?php echo( esc_attr($this->view->id) ); ?>" class='spui-message'>
   <?php if (! is_null($view->status_message)): ?>
   <?php echo esc_html($view->status_message); ?>
   <?php endif; ?>

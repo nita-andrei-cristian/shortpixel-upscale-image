@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -17,12 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php if (property_exists($view, 'show_search') && true === $view->show_search):  ?>
       <div class="searchbox">
             <form method="get">
-                <input type="hidden" name="page" value="wp-short-pixel-custom" />
+                <input type="hidden" name="page" value="wp-shortpixel-upscale-custom" />
                 <input type='hidden' name='order' value="<?php echo esc_attr($this->order) ?>" />
                 <input type="hidden" name="orderby" value="<?php echo esc_attr($this->orderby) ?>" />
 
                 <p class="search-form">
-                  <label><?php esc_html_e('Search', 'shortpixel-image-optimiser'); ?></label>
+                  <label><?php esc_html_e('Search', 'shortpixel-upscale-image'); ?></label>
                   <input type="text" name="s" value="<?php echo esc_attr($this->search) ?>" />
 
                 </p>
@@ -50,13 +50,13 @@ $current_part = isset($_GET['part']) ? sanitize_text_field($_GET['part']) : 'fil
 
 $tabs = array(
 	'files' => array('link' => $file_url,
-									 'text' => __('Files', 'shortpixel-image-optimiser'),
+									 'text' => __('Files', 'shortpixel-upscale-image'),
 								 ),
 	 'folders' => array('link' => $folder_url,
-	 										'text' => __('Folders', 'shortpixel-image-optimiser'),
+	 										'text' => __('Folders', 'shortpixel-upscale-image'),
  								),
 		'scan' => array('link' => $scan_url,
-										'text' => __('Scan', 'shortpixel-image-optimiser'),
+										'text' => __('Scan', 'shortpixel-upscale-image'),
 
 	),
 );

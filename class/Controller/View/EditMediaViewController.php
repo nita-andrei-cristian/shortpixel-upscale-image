@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
-use ShortPixel\Controller\Front\CDNController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\QueueController;
+use SPUI\Controller\Front\CDNController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\Controller\QueueController;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\AiDataModel;
+use SPUI\Model\File\FileModel as FileModel;
 
 
 // Future contoller for the edit media metabox view.
-class EditMediaViewController extends \ShortPixel\ViewController
+class EditMediaViewController extends \SPUI\ViewController
 {
       protected $template = 'view-edit-media';
   //    protected $model = 'image';
@@ -44,7 +44,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
         if (! $this->hooked)
           $this->loadHooks();
 
-					$fs = \wpSPIO()->filesystem();
+					$fs = \wpSPUI()->filesystem();
 					$fs->startTrustedMode();
 
       }
@@ -52,8 +52,8 @@ class EditMediaViewController extends \ShortPixel\ViewController
       public function addMetaBox()
       {
           add_meta_box(
-              'shortpixel_info_box',          // this is HTML id of the box on edit screen
-              __('ShortPixel Info', 'shortpixel-image-optimiser'),    // title of the box
+              'spui_info_box',          // this is HTML id of the box on edit screen
+              __('ShortPixel Info', 'shortpixel-upscale-image'),    // title of the box
               array( $this, 'doMetaBox'),   // function to be called to display the info
               null,//,        // on which edit screen the box should appear
               'side'//'normal',      // part of page where the box should appear
@@ -71,9 +71,9 @@ class EditMediaViewController extends \ShortPixel\ViewController
       { 
           $post_id = intval($post->ID);
           $fields['aibutton'] = [
-              'label' => __('ShortPixel AI Data', 'shortpixel-image-optimiser'), 
+              'label' => __('ShortPixel AI Data', 'shortpixel-upscale-image'), 
               'input' => 'html', 
-              'html' => "<a href='javascript:window.ShortPixelProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
+              'html' => "<a href='javascript:window.SPUIProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-upscale-image') . "</a>
                  <div class='shortpixel-alt-messagebox' id='shortpixel-ai-messagebox-$post_id'>&nbsp;</div>
                ",
           ];
@@ -88,13 +88,13 @@ class EditMediaViewController extends \ShortPixel\ViewController
 					$this->view->id = $this->post_id;
 					$this->view->list_actions = '';
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
           $this->imageModel = $fs->getMediaImage($this->post_id);
 
 					// Asking for something non-existing.
 					if ($this->imageModel === false)
 					{
-						$this->view->status_message = __('File Error. This could be not an image or the file is missing', 'shortpixel-image-optimiser');
+						$this->view->status_message = __('File Error. This could be not an image or the file is missing', 'shortpixel-upscale-image');
 
 						$this->loadView();
 						return false;
@@ -120,7 +120,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
             $this->view->list_actions = '';
           }
 
-          if(true === \wpSPIO()->env()->is_debug )
+          if(true === \wpSPUI()->env()->is_debug )
           {
             $this->view->debugInfo = $this->getDebugInfo();
           }
@@ -142,7 +142,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 				$did_convert = $imageObj->getMeta()->convertMeta()->isConverted();
         $resize = $imageObj->getMeta('resize');
 
-				// Not optimized, not data.
+				// Not upscaled, not data.
 				if (! $imageObj->isOptimized())
 					return array();
 
@@ -158,7 +158,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
         if (true === $did_convert )
         {
 					$ext = $imageObj->getMeta()->convertMeta()->getFileFormat();
-          $stats[] = array(  sprintf(__('Converted from %s','shortpixel-image-optimiser'), $ext), '');
+          $stats[] = array(  sprintf(__('Converted from %s','shortpixel-upscale-image'), $ext), '');
         }
 				elseif (false !== $imageObj->getMeta()->convertMeta()->didTry()) {
 					$ext = $imageObj->getMeta()->convertMeta()->getFileFormat();
@@ -176,12 +176,12 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
         $tsOptimized = $imageObj->getMeta('tsOptimized');
         if ($tsOptimized !== null)
-          $stats[] = array(__("Optimized on :", 'shortpixel-image-optimiser') . "<br /> ", UiHelper::formatTS($tsOptimized) );
+          $stats[] = array(__("Upscaled on :", 'shortpixel-upscale-image') . "<br /> ", UiHelper::formatTS($tsOptimized) );
 
 				if ($imageObj->isOptimized())
 				{
-					$stats[] = array( sprintf(__('%s %s Read more about theses stats %s ', 'shortpixel-image-optimiser'), '
-					<p><img alt=' . esc_html('Info Icon', 'shortpixel-image-optimiser')  . ' src=' . esc_url( wpSPIO()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
+					$stats[] = array( sprintf(__('%s %s Read more about theses stats %s ', 'shortpixel-upscale-image'), '
+					<p><img alt=' . esc_html('Info Icon', 'shortpixel-upscale-image')  . ' src=' . esc_url( wpSPUI()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
 				}
 
         return $stats;
@@ -189,29 +189,29 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
       protected function getDebugInfo()
       {
-          if(! \wpSPIO()->env()->is_debug )
+          if(! \wpSPUI()->env()->is_debug )
           {
             return [];
           }
 
           $meta = \wp_get_attachment_metadata($this->post_id);
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
 
 					$imageObj = $this->imageModel;
 
 					if ($imageObj->isProcessable())
 					{
-						 $optimizeData = $imageObj->getOptimizeData();
-						 $urls = $optimizeData['urls'];
+						 $upscaleData = $imageObj->getOptimizeData();
+						 $urls = $upscaleData['urls'];
 					}
 
-          $optimizeAiController = OptimizeAiController::getInstance();
+          $upscaleAiController = OptimizeAiController::getInstance();
 
 
 					$thumbnails = $imageObj->get('thumbnails');
 					$processable = ($imageObj->isProcessable()) ? '<span class="green">Yes</span>' : '<span class="red">No</span> (' . $imageObj->getReason('processable') . ')';
-          $optimized = ($imageObj->isOptimized()) ? '<span class="green">Yes</span>' : '<span class="red">No</span>';
+          $upscaled = ($imageObj->isOptimized()) ? '<span class="green">Yes</span>' : '<span class="red">No</span>';
 
 					$anyFileType = ($imageObj->isProcessableAnyFileType()) ? '<span class="green">Yes</span>' : '<span class="red">No</span>';
 					$restorable = ($imageObj->isRestorable()) ? '<span class="green">Yes</span>' : '<span class="red">No</span> (' . $imageObj->getReason('restorable') . ')';
@@ -219,7 +219,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 					$hasrecord = ($imageObj->hasDBRecord()) ? '<span class="green">Yes</span>' : '<span class="red">No</span> ';
 
           $debugInfo = array();
-          $debugInfo[] = array(__('URL (get attachment URL)', 'shortpixel_image_optiser'), wp_get_attachment_url($this->post_id));
+          $debugInfo[] = array(__('URL (get attachment URL)', 'spui_image_optiser'), wp_get_attachment_url($this->post_id));
           $debugInfo[] = array(__('File (get attached)'), get_attached_file($this->post_id));
 
 					if ($imageObj->is_virtual())
@@ -239,7 +239,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
           $debugInfo[] = array(__('Status (ShortPixel)'), $imageObj->getMeta('status') . ' '   );
 
 					$debugInfo[] = array(__('Processable'), $processable);
-          $debugInfo[] = array(__('Optimized'), $optimized);
+          $debugInfo[] = array(__('Upscaled'), $upscaled);
 					$debugInfo[] = array(__('Avif/Webp needed'), $anyFileType);
 					$debugInfo[] = array(__('Restorable'), $restorable);
 					$debugInfo[] = array(__('Record'), $hasrecord);
@@ -260,7 +260,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
 					if (isset($urls))
 					{
-						 $debugInfo[] = array(__('To Optimize URLS'),  $urls);
+						 $debugInfo[] = array(__('To Upscale URLS'),  $urls);
 					}
 
           $item = QueueItems::getImageItem($imageObj);
@@ -279,7 +279,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
 					}
 
-          if ( $optimizeAiController->isAIEnabled())
+          if ( $upscaleAiController->isAIEnabled())
           {
             $aiDataModel = AiDataModel::getModelByAttachment($this->post_id);
 
@@ -318,7 +318,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 						if ($imageObj->hasBackup())
 							$backupText = __('Backup File :');
 						else {
-							$backupText = __('Target Backup File after optimization (no backup) ');
+							$backupText = __('Target Backup File after upscaling (no backup) ');
 						}
             $debugInfo[] = array( $backupText, (string) $backupFile . '(' . UiHelper::formatBytes($backupFile->getFileSize()) . ')' );
 
@@ -356,7 +356,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
           if (! isset($meta['sizes']) )
           {
-             $debugInfo[] = array('',  __('Thumbnails were not generated', 'shortpixel-image-optimiser'));
+             $debugInfo[] = array('',  __('Thumbnails were not generated', 'shortpixel-upscale-image'));
           }
           else
           {
@@ -368,7 +368,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
               if ($thumbObj === false)
               {
-                $debugInfo[] =  array(__('Thumbnail not found / loaded: ', 'shortpixel-image-optimiser'), $size );
+                $debugInfo[] =  array(__('Thumbnail not found / loaded: ', 'shortpixel-upscale-image'), $size );
                 continue;
               }
 
@@ -385,7 +385,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 							else {
 								$backupFile = $fs->getFile($fs->getBackupDirectory($thumbObj) . $thumbObj->getBackupFileName());
 								$backup = $backupFile->getFullPath();
-								$backupText = __('Target Backup File after optimization (no backup) ');
+								$backupText = __('Target Backup File after upscaling (no backup) ');
 							}
 
               $width = $thumbObj->get('width');

@@ -1,9 +1,9 @@
 <?php
 
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UiHelper as UiHelper;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,18 +14,18 @@ $item = $this->view->current_item;
 
 $folder_id = $item->get('id');
 
-$type_display =   ($item->get('is_nextgen') ) ? __('Nextgen', 'shortpixel-image-optimiser') : __('Custom Media', 'shortpixel-image-optimiser');
+$type_display =   ($item->get('is_nextgen') ) ? __('Nextgen', 'shortpixel-upscale-image') : __('Custom Media', 'shortpixel-upscale-image');
 $stat = $item->getStats();
 
 
-$fullstatus = esc_html__("Optimized",'shortpixel-image-optimiser') . ": " . $stat['optimized'] . "\n"
-      . "" . esc_html__("Unoptimized",'shortpixel-image-optimiser') . ": " . $stat['waiting'] . "\n"
+$fullstatus = esc_html__("Upscaled",'shortpixel-upscale-image') . ": " . $stat['optimized'] . "\n"
+      . "" . esc_html__("Not Upscaled",'shortpixel-upscale-image') . ": " . $stat['waiting'] . "\n"
       ;
 
 
 $err = ''; // unused since failed is gone.
 if (! $item->exists() && ! $err)
-  $err = __('Directory does not exist', 'shortpixel-image-optimiser');
+  $err = __('Directory does not exist', 'shortpixel-upscale-image');
 
 
 if ($item->get('is_nextgen') && $view->settings->includeNextGen == 1)
@@ -70,7 +70,7 @@ if ($item->get('is_nextgen') && $view->settings->includeNextGen == 1)
     <span>
 
         <span title="<?php echo esc_attr($fullstatus); ?>" class='info-icon'>
-            <img alt='<?php esc_html_e('Info Icon', 'shortpixel-image-optimiser') ?>' src='<?php echo esc_url( wpSPIO()->plugin_url('res/img/info-icon.png' ));?>' style="margin-bottom: -2px;"/>
+            <img alt='<?php esc_html_e('Info Icon', 'shortpixel-upscale-image') ?>' src='<?php echo esc_url( wpSPUI()->plugin_url('res/img/info-icon.png' ));?>' style="margin-bottom: -2px;"/>
         </span>&nbsp;<?php
         //echo esc_html($type_display. ' ' );
         ?>
@@ -79,7 +79,7 @@ if ($item->get('is_nextgen') && $view->settings->includeNextGen == 1)
           echo esc_html($stat['optimized']);
           echo '/';
           echo esc_html($stat['total']); ?>
-        </span> <?php _e('Files', 'shortpixel-image-optimiser'); ?>
+        </span> <?php _e('Files', 'shortpixel-upscale-image'); ?>
     </span>
 		<span class='updated'>
         <?php echo esc_html(UiHelper::formatTS($item->get('updated'))) ?>

@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 class Spai
 {
@@ -17,10 +17,10 @@ class Spai
 
 		public function addHooks()
 		{
-			  if (\wpSPIO()->env()->plugin_active('spai'))
+			  if (\wpSPUI()->env()->plugin_active('spai'))
 				{
 					 // Prevent SPAI doing its stuff to our JSON returns.
-					 $hook_upon = array('shortpixel_image_processing', 'shortpixel_ajaxRequest');
+					 $hook_upon = array('spui_image_processing', 'spui_ajaxRequest');
 					 if (wp_doing_ajax() &&
 					 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
 					 		 isset($_REQUEST['action']) &&
