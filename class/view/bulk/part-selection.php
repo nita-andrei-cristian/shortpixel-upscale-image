@@ -86,6 +86,15 @@ $approx = $this->view->approx;
 							<?php endif; ?>
 	         </div>
 
+					<div class='scale-options optiongroup'>
+						<h4><?php esc_html_e('Upscale factor', 'shortpixel-upscale-image'); ?></h4>
+						<div class='option'>
+							<label><input type="radio" name="bulk_scale" value="2" checked> <?php esc_html_e('2x', 'shortpixel-upscale-image'); ?></label>
+							<label><input type="radio" name="bulk_scale" value="3"> <?php esc_html_e('3x', 'shortpixel-upscale-image'); ?></label>
+							<label><input type="radio" name="bulk_scale" value="4"> <?php esc_html_e('4x', 'shortpixel-upscale-image'); ?></label>
+						</div>
+					</div>
+
 
 					<?php if (! \wpSPUI()->settings()->processThumbnails): ?>
 					<div class='thumbnails optiongroup'>
@@ -108,7 +117,7 @@ $approx = $this->view->approx;
 
 				<?php
 				$upscaleAiController = OptimizeAiController::getInstance(); 
-				if (true === $upscaleAiController->isAiEnabled()):  ?>
+				if (false && true === $upscaleAiController->isAiEnabled()):  ?>
 			 <div class='ai-images optiongroup'>
 				<div class='switch_button'>
 				<label>
@@ -140,7 +149,7 @@ $approx = $this->view->approx;
 
 			<?php endif ?>
 			
-	         <div class="custom-images optiongroup"  data-check-visibility data-control="data-check-custom-hascustom" >
+	         <div class="custom-images optiongroup" style="display:none" data-check-visibility data-control="data-check-custom-hascustom" >
 	           <div class='switch_button'>
 	             <label>
 	               <input type="checkbox" class="switch" id="custom_checkbox" checked>
@@ -187,8 +196,7 @@ $approx = $this->view->approx;
 
 				<div class="option-block selection-settings">
 					 <h2><?php esc_html_e('Options','shortpixel-upscale-image') ?>: </h2>
-						 <p><?php esc_html_e('Enable these options if you also want to create WebP/AVIF files. These options change the global ShortPixel settings of your site.','shortpixel-upscale-image'); ?></p>
-		         <div class='optiongroup'  >
+		         <div class='optiongroup' style="display:none" >
 		           <div class='switch_button'>
 
 		             <label>
@@ -212,7 +220,7 @@ $approx = $this->view->approx;
 					 ?>
 
 
-		       <div class='optiongroup'>
+		       <div class='optiongroup' style="display:none">
 		         <div class='switch_button'>
 
 		           <label>

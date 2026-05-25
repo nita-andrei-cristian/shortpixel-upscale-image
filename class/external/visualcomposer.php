@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Visual Composer and compat class.
-class visualComp
+class SPUIVisualComp
 {
 
   public function __construct()
@@ -24,4 +24,4 @@ class visualComp
 
 } // Class
 
-$vc = new visualComp();
+$vc = new SPUIVisualComp();

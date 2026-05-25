@@ -695,6 +695,7 @@ class QueueItem
       $paramlist['newPostTitle'] = $args['newPostTitle'];
 
       $paramlist['refresh'] = $args['refresh']; // When sending item first, do the refresh. This is the mimc the tries = 0 refresh option we don't have here. 
+      $paramlist['upscale'] = $args['scale'];
       $paramlist['optimize'] = $args['scale'];
 
       if (! is_null($args['attached_post_id']) && $args['attached_post_id'] > 0)
@@ -712,6 +713,12 @@ class QueueItem
       $this->data->paramlist = $paramlist; 
       $this->data->tries = 0;
       $this->item_count = 1;
+      $this->data->addCount([
+         'creditCount' => 1,
+         'baseCount' => 1,
+         'webpCount' => 0,
+         'avifCount' => 0,
+      ]);
       
    }
 

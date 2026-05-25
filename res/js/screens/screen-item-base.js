@@ -377,6 +377,10 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		this.processor.AjaxRequest(data);
 	}
 
+	StartUpscaleFlow(id, force, compressionType) {
+		this.Optimize(id, force, compressionType);
+	}
+
 	MarkCompleted(id) {
 		var data = {};
 		data.id = id;

@@ -58,6 +58,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 
 	InitEditorActions(item_id, uiType, args)
 	{
+		const showRemoveBackground = false;
 		let id = 'spui_removebackground_button';
 		var button = document.createElement('button'); 
 
@@ -99,14 +100,22 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			var parent = document.querySelector('[id^=media-head]'); 
 			let par = document.createElement('p');
 			let par2 = document.createElement('p');
-			par.append(button);
+			if (showRemoveBackground) {
+				par.append(button);
+			}
 			par2.append(scaleButton); 
-			parent.append(par, par2);
+			if (showRemoveBackground) {
+				parent.append(par);
+			}
+			parent.append(par2);
 		}
 		else if('gallery' === uiType)
 		{
 			var parent = document.querySelector('.media-modal .attachment-actions')
-			parent.append(button, scaleButton);
+			if (showRemoveBackground) {
+				parent.append(button);
+			}
+			parent.append(scaleButton);
 		}
 		else if ('gutenberg' == uiType)
 		{
@@ -129,7 +138,9 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 					parent.append(scaleButton);
 				}
 
-				parent.append(button);
+				if (showRemoveBackground) {
+					parent.append(button);
+				}
 			}
 		}
 	}
@@ -314,6 +325,24 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		this.processor.AjaxRequest(data);
 
 
+	}
+
+	StartUpscaleFlow(id, force, compressionType)
+	{
+		if (force || typeof compressionType !== 'undefined') {
+			this.Optimize(id, force, compressionType);
+			return;
+		}
+
+		this.OpenEditorEvent({
+			target: {
+				dataset: {
+					item_id: id,
+					opener: 'edit',
+				}
+			},
+			preventDefault: function () {}
+		}, 'scale');
 	}
 
 	MediaEditorDoAction(data)
@@ -886,6 +915,8 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			wrapper.remove();
 		}
 
+		return false;
+
 		// This will not work because the wrapper doesn't exist and is recreated each time on fly. Need some place to store item_id on item load
 		var wrapper = document.createElement('div');
 		wrapper.id = 'shortpixel-ai-wrapper-' + item_id;
@@ -1052,6 +1083,4 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 	}
 
 } // class
-
-
 

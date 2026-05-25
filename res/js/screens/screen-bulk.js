@@ -281,23 +281,20 @@ class ShortPixelScreen extends ShortPixelScreenBase
   {
      console.log('Start Bulk');
      var data = {screen_action: 'createBulk', callback: 'shortpixel.PrepareBulk'}; //
+     const isChecked = function(id) {
+        var element = document.getElementById(id);
+        return element !== null && element.checked;
+     };
 
-     data.mediaActive = (document.getElementById('media_checkbox').checked) ? true : false;
-     data.customActive = (document.getElementById('custom_checkbox').checked) ? true : false;
-     data.webpActive = (document.getElementById('webp_checkbox').checked) ? true : false;
-     data.avifActive = (document.getElementById('avif_checkbox').checked) ? true : false;
-     
-     if (null !== document.getElementById('autoai_checkbox'))
-     {
-        data.aiActive = (document.getElementById('autoai_checkbox').checked) ? true : false;
-        data.aiPreserve = (document.getElementById('aipreserve_checkbox').checked) ? true : false;
-     }
-     else
-     {
-       data.aiActive = false; 
-     //  data.aiPreserve = false; 
-     }
-     data.backgroundProcess = (document.getElementById('background_checkbox').checked) ? true : false;
+     data.mediaActive = isChecked('media_checkbox');
+     data.customActive = false;
+     data.webpActive = false;
+     data.avifActive = false;
+     data.aiActive = false;
+     data.aiPreserve = false;
+     data.backgroundProcess = isChecked('background_checkbox');
+     var scaleInput = document.querySelector('input[name="bulk_scale"]:checked');
+     data.bulkScale = scaleInput !== null ? scaleInput.value : 2;
 
 
 		 if (document.getElementById('thumbnails_checkbox') !== null)

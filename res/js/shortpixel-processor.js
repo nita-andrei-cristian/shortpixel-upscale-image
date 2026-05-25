@@ -108,7 +108,7 @@ window.SPUIProcessor =
 
         this.tooltip = new ShortPixelToolTip({}, this);
 
-        if (typeof SPUIScreen == 'undefined')
+        if (typeof ShortPixelScreen == 'undefined')
         {
            console.error('Missing Screen!');
            return;

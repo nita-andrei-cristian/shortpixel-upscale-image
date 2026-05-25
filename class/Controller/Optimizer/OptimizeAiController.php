@@ -20,6 +20,7 @@ use SPUI\ViewController as ViewController;
 // Class for AI Operations.  In time split off OptimizeController / Optimize actions to a main queue runner seperately.
 class OptimizeAiController extends OptimizerBase
 {
+  const AI_DISABLED_MESSAGE = 'AI Image SEO calls are disabled in ShortPixel Image Upscaler.';
    
   public function __construct()
   {
@@ -598,32 +599,17 @@ class OptimizeAiController extends OptimizerBase
    */
   public function isAiEnabled()
   {
-     $settings = \wpSPUI()->settings(); 
-
-     $bool = (true == $settings->enable_ai) ? true : false; // make sure boolean is hard type. 
-    
-     $no_ai = apply_filters('spui/settings/no_ai', false);
-     if (true === $no_ai) // switch around negative filter
-     {
-         $bool = false; 
-     } 
-     
-     return $bool; 
+     return false;
   }
 
   public function isAutoAiEnabled()
   {
-      $bool = $this->isAiEnabled(); 
-      if (false === $bool)
-      { 
-         return $bool; 
-      }
+      return false;
+  }
 
-      $settings = \wpSPUI()->settings(); 
-
-      $bool = (true == $settings->autoAI) ? true : false; 
-
-      return $bool; 
+  public static function getDisabledMessage()
+  {
+      return __(self::AI_DISABLED_MESSAGE, 'shortpixel-upscale-image');
   }
 
   /**

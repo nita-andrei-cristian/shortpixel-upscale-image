@@ -3,6 +3,7 @@ namespace SPUI\Controller\Api;
 
 use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
 
 use SPUI\Controller\Queue\QueueItems as QueueItems;
 use \SPUI\Model\Queue\QueueItem as QueueItem;
@@ -31,6 +32,9 @@ class AiController extends RequestManager
 
     public function processMediaItem(QueueItem $qItem)
     {
+      $qItem->addResult($this->returnFailure(self::STATUS_FAIL, OptimizeAiController::getDisabledMessage()));
+      return;
+
       $imageObj = $qItem->imageModel; 
       
       if (! is_object($imageObj))

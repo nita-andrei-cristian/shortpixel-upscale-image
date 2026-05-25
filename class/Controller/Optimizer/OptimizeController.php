@@ -207,6 +207,11 @@ class OptimizeController extends OptimizerBase
       elseif ('remove_background' === $action || 'scale_image' === $action) 
       {
         $this->handleAction($qItem);
+        if (true === $qItem->result()->is_done)
+        {
+          $qItem->addResult(['fileStatus' => ImageModel::FILE_STATUS_SUCCESS]);
+          $this->finishItemProcess($qItem);
+        }
       } 
     }
 

@@ -21,6 +21,7 @@ use SPUI\Helper\UtilHelper;
 
 use SPUI\Model\Image\ImageModel as ImageModel;
 use SPUI\Model\AccessModel as AccessModel;
+use SPUI\Controller\Optimizer\OptimizeAiController;
 
 // @todo This should probably become settingscontroller, for saving
 use SPUI\Controller\View\SettingsViewController as SettingsViewController;
@@ -914,6 +915,19 @@ class AjaxController
 
 	protected function requestAlt($json, $data)
 	{
+		$type = $data['type'];
+		$json->$type->results = [(object) [
+			'apiStatus' => RequestManager::STATUS_FAIL,
+			'message' => OptimizeAiController::getDisabledMessage(),
+			'is_error' => true,
+			'is_done' => true,
+			'apiName' => 'ai',
+		]];
+		$json->$type->qstatus = false;
+		$json->status = true;
+
+		return $json;
+
 		$id = $data['id'];
 		$type = $data['type'];
 
@@ -1044,14 +1058,28 @@ class AjaxController
 		$bulkControl = BulkController::getInstance();
 		// This is where the settings start to break and double. This info is also needs inside the process. 
 		$doMedia = filter_var(sanitize_text_field($_POST['mediaActive']), FILTER_VALIDATE_BOOLEAN);
+		$doCustom = filter_var(sanitize_text_field($_POST['customActive']), FILTER_VALIDATE_BOOLEAN);
 		$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
-		$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi]);
+		$bulkScale = isset($_POST['bulkScale']) ? absint($_POST['bulkScale']) : 2;
+		if (! in_array($bulkScale, [2, 3, 4], true))
+		{
+			$bulkScale = 2;
+		}
+		$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi, 'scale' => $bulkScale]);
 
 		$stats = $bulkControl->createNewBulk('media', $mediaArgs);
 		$json->media->stats = $stats;
 
-		$stats = $bulkControl->createNewBulk('custom', $args);
-		$json->custom->stats = $stats;
+		if ($doCustom)
+		{
+			$stats = $bulkControl->createNewBulk('custom', $args);
+			$json->custom->stats = $stats;
+		}
+		else
+		{
+			$queueControl = new QueueController(['is_bulk' => true]);
+			$json->custom->stats = $queueControl->getQueue('custom')->getStats();
+		}
 
 		$json = $this->applyBulkSelection($json, $data);
 		return $json;
@@ -1210,6 +1238,12 @@ class AjaxController
 
 	protected function getNewAiImagePreview($data)
 	{
+		$this->send((object) [
+			'message' => OptimizeAiController::getDisabledMessage(),
+			'is_error' => true,
+			'status' => false,
+		]);
+
 		$item_id = $data['id'];
 		$settingsData = isset($_POST['settingsData']) ? $_POST['settingsData'] : null; 
 

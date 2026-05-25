@@ -27,14 +27,14 @@ class InstallHelper
 
 		$env = wpSPUI()->env();
 
-		if (\WPShortPixelSettings::getOpt('deliverWebp') == 3 && ! $env->is_nginx) {
+		if (\WPSPUISettings::getOpt('deliverWebp') == 3 && ! $env->is_nginx) {
 			UtilHelper::alterHtaccess(true, true); //add the htaccess lines. Both are true because even if one option is now off in the past both fileformats could have been generated.
 		}
 
 		self::checkTables();
 
 		AdminNoticesController::resetOldNotices();
-		\WPShortPixelSettings::onActivate();
+		\WPSPUISettings::onActivate();
 
 		$queueController = new QueueController();
 		$q = $queueController->getQueue('media');
@@ -48,7 +48,7 @@ class InstallHelper
 
 	public static function deactivatePlugin()
 	{
-		$settings = new \WPShortPixelSettings(); // \wpSPUI()->settings();
+		$settings = new \WPSPUISettings(); // \wpSPUI()->settings();
 		$settings::onDeactivate();
 
 		$env = wpSPUI()->env();
@@ -88,7 +88,7 @@ class InstallHelper
 	public static function hardUninstall()
 	{
 		$env = \wpSPUI()->env();
-		$settings = new \WPShortPixelSettings();
+		$settings = new \WPSPUISettings();
 
 		$nonce = (isset($_POST['tools-nonce'])) ? sanitize_key($_POST['tools-nonce']) : null;
 		if (! wp_verify_nonce($nonce, 'remove-all')) {

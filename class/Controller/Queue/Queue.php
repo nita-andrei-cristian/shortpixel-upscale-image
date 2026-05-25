@@ -438,8 +438,30 @@ abstract class Queue
 											 continue;
 										}
 
+                    if ('media' === $mediaItem->get('type'))
+                    {
+                      $scale = isset($queueOptions['scale']) ? (int) $queueOptions['scale'] : 2;
+                      $scaleMaxWidths = [2 => 1200, 3 => 1200, 4 => 1024];
+                      $extension = $mediaItem->getExtension();
+                      $maxWidth = isset($scaleMaxWidths[$scale]) ? $scaleMaxWidths[$scale] : $scaleMaxWidths[2];
+                      $maxWidth = (int) apply_filters('spui/bulk/upscale_max_width', $maxWidth, $scale);
+                      if (! in_array($extension, ['jpg', 'jpeg', 'png'], true) || (int) $mediaItem->get('width') > $maxWidth)
+                      {
+                        continue;
+                      }
+                    }
+
                     $qItem = QueueItems::getImageItem($mediaItem);
-                    $qItem->newOptimizeAction();
+                    $scale = isset($queueOptions['scale']) ? (int) $queueOptions['scale'] : 2;
+                    if (! in_array($scale, [2, 3, 4], true))
+                    {
+                      $scale = 2;
+                    }
+                    $qItem->newScaleImageAction([
+                      'is_preview' => false,
+                      'refresh' => true,
+                      'scale' => $scale,
+                    ]);
 
 									 if ($mediaItem->getParent() !== false)
 						 			 {

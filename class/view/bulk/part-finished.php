@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class='bulk-summary' data-check-visibility="false" data-control='data-check-total-customOperation'>
 		<p class='finished-paragraph'>
-			<?php printf(__('Congratulations, ShortPixel has upscaled %s %s images and thumbs %s for your website! Yay to faster loading websites! %s', 'shortpixel-upscale-image'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
+			<?php printf(__('Congratulations, ShortPixel has upscaled %s %s images and thumbs %s for your website! %s', 'shortpixel-upscale-image'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
 			?>
 		</p>
 	</div>

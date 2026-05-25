@@ -655,7 +655,7 @@ class UiHelper
     switch($name)
     {
       case 'optimize':
-         $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ')';
+         $action['function'] = 'window.SPUIProcessor.screen.StartUpscaleFlow(' . $id . ')';
          $action['type']  = 'js';
          $action['text'] = __('Upscale Now', 'shortpixel-upscale-image');
          $action['display'] = 'button';

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 /** Settings Model **/
-class WPShortPixelSettings extends \SPUI\Model {
+class WPSPUISettings extends \SPUI\Model {
     private $_apiKey = '';
     private $_compressionType = 1;
     private $_keepExif = 0;
