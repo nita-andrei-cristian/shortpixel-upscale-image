@@ -1,10 +1,10 @@
 <?php
-namespace SPUI;
-use SPUI\Notices\NoticeController as NoticeController;
-use SPUI\Controller\StatsController as StatsController;
-use SPUI\Controller\QueueController as QueueController;
-use SPUI\Controller\AdminNoticesController as AdminNoticesController;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+namespace ShortPixel;
+use ShortPixel\Notices\NoticeController as NoticeController;
+use ShortPixel\Controller\StatsController as StatsController;
+use ShortPixel\Controller\QueueController as QueueController;
+use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,8 +15,8 @@ $opt = new QueueController();
 
 $q = $opt->getQueue('media');
 
-$env = \wpSPUI()->env();
-$fs = \wpSPUI()->filesystem();
+$env = \wpSPIO()->env();
+$fs = \wpSPIO()->filesystem();
 
 $debugUrl = add_query_arg(array('part' => 'debug', 'noheader' => true), $this->url);
 
@@ -43,11 +43,11 @@ if (Log::isManualDebug())
       <span>Hide Key</span><span><?php var_export($view->key->hide_api_key); ?></span>
       <span>Has Nextgen</span><span><?php var_export($this->has_nextgen); ?></span>
 			<span>Has Offload</span><span><?php
-        $offload = \wpSPUI()->env()->hasOffload();
+        $offload = \wpSPIO()->env()->hasOffload();
         var_export($offload);
         if (true === $offload)
         {
-            echo ' (' .  \wpSPUI()->env()->getOffloadName() . ') ';
+            echo ' (' .  \wpSPIO()->env()->getOffloadName() . ') ';
         }
 
 

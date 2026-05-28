@@ -15,7 +15,7 @@
 */
 'use strict';
 
-window.SPUIProcessor =
+window.ShortPixelProcessor =
 {
   //  spp: {},
     isActive: false, // Is the processor active in this window - at all - . Transient
@@ -35,7 +35,7 @@ window.SPUIProcessor =
     waitingForAction: false, // used if init yields results that should pause the processor.
     timesEmpty: 0, // number of times queue came up empty.
     nonce: [],
-		debugIsActive : false, // indicating is SPUI is in debug mode. Don't report certain things if not.
+		debugIsActive : false, // indicating is SPIO is in debug mode. Don't report certain things if not.
 		hasStartQuota: false, // if we start without quota, don't notice too much, don't run.
 		workerErrors: 0, // times worker encoutered an error.
     broadcaster: null, 
@@ -69,7 +69,7 @@ window.SPUIProcessor =
         '-4': 'APIKEY_FAILED',
         '-5': 'NOQUOTA',
         '-10': 'SERVER FAILURE',
-				'-903': 'TIMEOUT', // SPUI shortQ retry limit reached.
+				'-903': 'TIMEOUT', // SPIO shortQ retry limit reached.
      },
 
     Load: function(hasQuota)
@@ -77,32 +77,32 @@ window.SPUIProcessor =
 
 			window.addEventListener('error', this.ScriptError.bind(this));
 
-        this.isBulkPage = Boolean(SPUIProcessorData.isBulkPage);
+        this.isBulkPage = Boolean(ShortPixelProcessorData.isBulkPage);
         this.localSecret = localStorage.getItem('bulkSecret');
 
-        this.remoteSecret = SPUIProcessorData.bulkSecret;
-				this.debugIsActive = SPUIProcessorData.debugIsActive;
-        this.is_disabled = Boolean(SPUIProcessorData.disable_processor); 
+        this.remoteSecret = ShortPixelProcessorData.bulkSecret;
+				this.debugIsActive = ShortPixelProcessorData.debugIsActive;
+        this.is_disabled = Boolean(ShortPixelProcessorData.disable_processor); 
 
-        this.nonce['process'] = SPUIProcessorData.nonce_process;
-        this.nonce['exit'] = SPUIProcessorData.nonce_exit;
-        this.nonce['ajaxRequest'] = SPUIProcessorData.nonce_ajaxrequest;
-				this.nonce['settingsRequest'] = SPUIProcessorData.nonce_settingsrequest;
+        this.nonce['process'] = ShortPixelProcessorData.nonce_process;
+        this.nonce['exit'] = ShortPixelProcessorData.nonce_exit;
+        this.nonce['ajaxRequest'] = ShortPixelProcessorData.nonce_ajaxrequest;
+				this.nonce['settingsRequest'] = ShortPixelProcessorData.nonce_settingsrequest;
 
-				this.autoMediaLibrary = (SPUIProcessorData.autoMediaLibrary == 'true') ? true : false;
+				this.autoMediaLibrary = (ShortPixelProcessorData.autoMediaLibrary == 'true') ? true : false;
 
         this.AddBroadCastListener();
 
 				if (hasQuota == 1)
 					this.hasStartQuota = true;
 
-				if (SPUIProcessorData.interval && SPUIProcessorData.interval > 100)
-				this.interval = SPUIProcessorData.interval;
+				if (ShortPixelProcessorData.interval && ShortPixelProcessorData.interval > 100)
+				this.interval = ShortPixelProcessorData.interval;
 
-				if (SPUIProcessorData.interval && SPUIProcessorData.interval > 100)
-				this.deferInterval = SPUIProcessorData.deferInterval;
+				if (ShortPixelProcessorData.interval && ShortPixelProcessorData.interval > 100)
+				this.deferInterval = ShortPixelProcessorData.deferInterval;
 
-        console.log('Start Data from Server', SPUIProcessorData.startData, this.interval, this.deferInterval);
+        console.log('Start Data from Server', ShortPixelProcessorData.startData, this.interval, this.deferInterval);
         console.log('remoteSecret ' + this.remoteSecret + ', localsecret: ' + this.localSecret);
 
 
@@ -140,7 +140,7 @@ window.SPUIProcessor =
     {
         var self = this; 
         var window_origin = window.location.origin; 
-        this.broadcaster = new BroadcastChannel('spui_processor');
+        this.broadcaster = new BroadcastChannel('spio_processor');
         this.broadcaster.onmessage = function (event) {
 
         if (window_origin !== event.origin)
@@ -149,7 +149,7 @@ window.SPUIProcessor =
            return false; 
         }
        /*   This is mozilla only, not standard , shan't be used!
-        if (! event.originalTarget || event.originalTarget.name !== 'spui_processor')
+        if (! event.originalTarget || event.originalTarget.name !== 'spio_processor')
         {
           console.log('Broadcast = Wrong target');
           return false; 
@@ -273,11 +273,11 @@ window.SPUIProcessor =
     {
         if (window.Worker)
         {
-            var ajaxURL = SPUI.AJAX_URL;
+            var ajaxURL = ShortPixel.AJAX_URL;
             var nonce = '';
             console.log('Starting Worker');
 
-            this.worker = new Worker(SPUIProcessorData.workerURL);
+            this.worker = new Worker(ShortPixelProcessorData.workerURL);
 
             var isBulk = false;
             if (this.isBulkPage)
@@ -748,7 +748,7 @@ window.SPUIProcessor =
 
 		GetPluginUrl: function()
 		{
-			 return SPUIConstants[0].WP_PLUGIN_URL;
+			 return ShortPixelConstants[0].WP_PLUGIN_URL;
 		},
     GetScreen: function()
     {

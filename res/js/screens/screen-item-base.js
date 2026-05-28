@@ -287,12 +287,12 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		this.processor.AjaxRequest(data);
 	}
 
-	ReUpscale(id, compression, action) {
+	ReOptimize(id, compression, action) {
 		var data = {
 			id: id,
 			compressionType: compression,
 			type: this.type,
-			screen_action: 'reUpscaleItem'
+			screen_action: 'reOptimizeItem'
 		};
 
 		if (typeof action !== 'undefined') {
@@ -375,10 +375,6 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 
 		this.SetMessageProcessing(id);
 		this.processor.AjaxRequest(data);
-	}
-
-	StartUpscaleFlow(id, force, compressionType) {
-		this.Optimize(id, force, compressionType);
 	}
 
 	MarkCompleted(id) {

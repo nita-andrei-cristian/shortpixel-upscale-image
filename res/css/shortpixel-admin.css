@@ -57,16 +57,18 @@
   margin: 20px 0;
   display: inline-block;
 }
-.view-edit-media .sp-column-stats {
-  position: relative;
+.view-edit-media .spui-edit-media-actions {
+  margin-top: 14px;
+  line-height: 1.4;
 }
-.view-edit-media .sp-column-stats .sp-column-actions {
-  margin-right: 5px;
-  margin-top: 16px;
+.view-edit-media .spui-edit-media-actions .button {
+  margin: 0 6px 6px 0;
 }
-.view-edit-media .sp-column-stats .edit-media-stats li {
-  margin: 0;
-  line-height: 20px;
+.view-edit-media .spui-status-text {
+  font-size: 12px;
+  color: #50575e;
+  margin: 0 0 10px;
+  line-height: 1.4;
 }
 .view-edit-media .main-actions {
   display: inline-block;
@@ -77,8 +79,28 @@
   height: auto;
   float: none;
 }
+/* Disabled button state for both list and edit-media contexts */
+.sp-column-info a.button.disabled,
+.view-edit-media a.button.disabled {
+  opacity: 0.65;
+  cursor: default;
+  pointer-events: none;
+}
+/* Upscale Now button — full width in edit media sidebar */
+.spui-edit-media-actions a.button-smaller {
+  display: block;
+  text-align: center;
+  padding: 6px 15px;
+  height: auto;
+  box-sizing: border-box;
+}
+/* Upscale Now button in list column — keep inline */
+.sp-column-info a.button-smaller.optimize {
+  display: inline-block;
+  margin-top: 4px;
+}
 
-.spui-message img {
+.spio-message img {
   animation: cssload-spin 5000ms infinite linear;
   -o-animation: cssload-spin 5000ms infinite linear;
   -ms-animation: cssload-spin 5000ms infinite linear;
@@ -323,7 +345,7 @@
   width: 60px;
 }
 
-.fixed .column-wp-spui-ai {
+.fixed .column-wp-spio-ai {
   width: 5.5em;
 }
 

@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Model\AdminNotices;
+namespace ShortPixel\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class SpaiCDN extends \SPUI\Model\AdminNoticeModel
+class SpaiCDN extends \ShortPixel\Model\AdminNoticeModel
 {
 
 	protected $key = 'MSG_SPAICDN';
@@ -13,7 +13,7 @@ class SpaiCDN extends \SPUI\Model\AdminNoticeModel
 
 	protected function checkTrigger()
 	{
-		  if (\wpSPUI()->env()->plugin_active('spai') && \wpSPUI()->settings()->useCDN == true)
+		  if (\wpSPIO()->env()->plugin_active('spai') && \wpSPIO()->settings()->useCDN == true)
       {
           return true;
       }
@@ -22,7 +22,7 @@ class SpaiCDN extends \SPUI\Model\AdminNoticeModel
 
   protected function checkReset()
   {
-    if (\wpSPUI()->env()->plugin_active('spai') && \wpSPUI()->settings()->useCDN == true)
+    if (\wpSPIO()->env()->plugin_active('spai') && \wpSPIO()->settings()->useCDN == true)
     {
         return false;
     }
@@ -33,22 +33,22 @@ class SpaiCDN extends \SPUI\Model\AdminNoticeModel
 // @todo This message is not properly stringF'ed.
 	protected function getMessage()
 	{
-		$settings = \wpSPUI()->settings();
+		$settings = \wpSPIO()->settings();
 
 		//$unlisted = isset($settings->currentStats['foundUnlistedThumbs']) ? $settings->currentStats['foundUnlistedThumbs'] : null;
 		$unlisted_id = $this->getData('id');
 		$unlisted_name = $this->getData('name');
 		$unlistedFiles = (is_array($this->getData('filelist'))) ? $this->getData('filelist') : array();
 
-		$admin_url = esc_url(admin_url('options-general.php?page=wp-shortpixel-upscale-settings&part=webp'));
+		$admin_url = esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=webp'));
 
 
-		$message = __("Please deactivate the ShortPixel Adaptive Images plugin if CDN delivery is enabled in ShortPixel Image Upscaling. If both are activated, this can lead to duplicate processing and errors on your website.", 'shortpixel-upscale-image');
+		$message = __("Please deactivate the ShortPixel Adaptive Images plugin if CDN delivery is enabled in ShortPixel Image Optimization. If both are activated, this can lead to over-optimization and errors on your website.", 'shortpixel-image-optimiser');
 
 
     $action = 'Deactivate';
     $path = 'shortpixel-adaptive-images/short-pixel-ai.php';
-    $link = wp_nonce_url( admin_url( 'admin-post.php?action=spui_deactivate_conflict_plugin&plugin=' . urlencode( $path ) ), 'sp_deactivate_plugin_nonce' );
+    $link = wp_nonce_url( admin_url( 'admin-post.php?action=shortpixel_deactivate_conflict_plugin&plugin=' . urlencode( $path ) ), 'sp_deactivate_plugin_nonce' );
 
     $message .= sprintf('<p><a class="button button-primary" href="%s">%s</a></p>', $link, __('Deactivate ShortPixel Adaptive Images'));
 

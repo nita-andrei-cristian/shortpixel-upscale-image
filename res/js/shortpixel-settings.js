@@ -76,9 +76,7 @@ class ShortPixelSettings {
 
 		// ApiKeyField toggle
 		var keyField = this.root.querySelector('.apifield i.eye');
-		if (keyField !== null) {
-			keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
-		}
+		keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
 
 			var compressionRadios = this.root.querySelectorAll('.shortpixel-compression-options input[type="radio"]');
 			for (var i = 0; i < compressionRadios.length; i++)
@@ -190,27 +188,7 @@ class ShortPixelSettings {
 				return false;
 			}
 
-			if (typeof args.checks === 'undefined') {
-				console.error('Checks must be provided', args);
-				return false;
-			}
-
-			var filteredElements = [];
-			var filteredChecks = [];
-			Array.from(args.elements).forEach(function (element, index) {
-				if (element !== null && typeof args.checks[index] !== 'undefined') {
-					filteredElements.push(element);
-					filteredChecks.push(args.checks[index]);
-				}
-			});
-			args.elements = filteredElements;
-			args.checks = filteredChecks;
-
-			if (args.elements.length === 0 || args.warnings.length === 0) {
-				return false;
-			}
-
-			if (args.elements.length !== args.checks.length) {
+			if (typeof args.checks === 'undefined' || args.elements.length !== args.checks.length) {
 				console.error('Checks must be provided and same length as elements', args);
 				return false;
 			}
@@ -344,11 +322,11 @@ class ShortPixelSettings {
 
 	InitModeSwitcher() {
 		var switcher = document.getElementById('viewmode-toggles');
+		var checkbox = switcher.querySelector('input[type="checkbox"]');
+
 		if (null == switcher) {
 			return;
 		}
-
-		var checkbox = switcher.querySelector('input[type="checkbox"]');
 		if (this.root.classList.contains('advanced') || checkbox.checked) {
 			checkbox.checked = true;
 			this.current_mode = 'advanced';
@@ -382,10 +360,6 @@ class ShortPixelSettings {
 
 	InitAiEvents()
 	{
-			if (document.querySelector('#tab-ai') === null) {
-				return;
-			}
-
 			window.addEventListener('shortpixel.ui.settingsTabLoad', this.AiWindowLoadEvent);
 			window.addEventListener('shortpixelSettings.UpdateAiExampleEvent', this.UpdateAiExampleEvent );
 
@@ -444,7 +418,7 @@ class ShortPixelSettings {
 					callback : 'shortpixelSettings.AiImageSet',
 					
 				}
-				window.SPUIProcessor.AjaxRequest(data); 
+				window.ShortPixelProcessor.AjaxRequest(data); 
 
 				window.addEventListener('shortpixelSettings.AiImageSet', function (response) {
 
@@ -493,7 +467,7 @@ class ShortPixelSettings {
 						
 					}
 
-					window.SPUIProcessor.AjaxRequest(data); 
+					window.ShortPixelProcessor.AjaxRequest(data); 
 
 					window.addEventListener('shortpixelSettings.AiImageSet', function (response) {
 						
@@ -524,15 +498,15 @@ class ShortPixelSettings {
 		};
 
 				// Processor / Screen might not be loaded if the current screen is AI.
-		if (null === window.SPUIProcessor.screen)
+		if (null === window.ShortPixelProcessor.screen)
 			{
 					addEventListener('shortpixel.screen.loaded', function () {
-						window.SPUIProcessor.AjaxRequest(data);
+						window.ShortPixelProcessor.AjaxRequest(data);
 					} );
 			}
 			else
 			{
-				window.SPUIProcessor.AjaxRequest(data);
+				window.ShortPixelProcessor.AjaxRequest(data);
 			}
 	}
 
@@ -615,7 +589,7 @@ class ShortPixelSettings {
 
 			let results = json.settings.results;
 			//let anchor = document.querySelector('.wp-header-end');
-			//let screen = window.SPUIProcessor.GetScreen();
+			//let screen = window.ShortPixelProcessor.GetScreen();
 
 			//screen.AppendNotices(json.display_notices, anchor);
 			var messageBox = document.getElementById('settings-purge-message');
@@ -632,7 +606,7 @@ class ShortPixelSettings {
 
 		}, { 'once': true });
 
-		window.SPUIProcessor.AjaxRequest(data);
+		window.ShortPixelProcessor.AjaxRequest(data);
 
 	}
 
@@ -654,7 +628,7 @@ class ShortPixelSettings {
 		var messageBox = document.getElementById('settings-importexport-message');
 		messageBox.innerHTML = ''; // wipe previous
 
-		var value = document.getElementById('spui-tools-import').value;
+		var value = document.getElementById('spio-tools-import').value;
 		value = value.trim();
 
 		try {
@@ -707,7 +681,7 @@ class ShortPixelSettings {
 
 		}, { once: true });
 
-		window.SPUIProcessor.AjaxRequest(data);
+		window.ShortPixelProcessor.AjaxRequest(data);
 
 	}
 
@@ -742,7 +716,7 @@ class ShortPixelSettings {
 
 		}, { once: true });
 
-		window.SPUIProcessor.AjaxRequest(data);
+		window.ShortPixelProcessor.AjaxRequest(data);
 
 
 	}
@@ -754,7 +728,7 @@ class ShortPixelSettings {
 		data.screen_action = 'settings/changemode';
 		data.new_mode = new_mode;
 
-		window.SPUIProcessor.AjaxRequest(data);
+		window.ShortPixelProcessor.AjaxRequest(data);
 
 		this.root.classList.remove('simple', 'advanced');
 		this.root.classList.add(new_mode);
@@ -1016,22 +990,16 @@ class ShortPixelSettings {
 
 	async DoAjaxRequest(formData, responseOkCallBack, responseErrorCallback) {
 
-		formData.append('action', 'spui_settingsRequest');
+		formData.append('action', 'shortpixel_settingsRequest');
 		formData.append('ajaxSave', 'true');
 
 		formData.append('request_url', window.location.toString());
 
-		if (false === formData.has('nonce') && typeof SPUISettingsData !== 'undefined') {
-			formData.append('nonce', SPUISettingsData.nonceSettingsRequest);
-		}
-		else if (false === formData.has('nonce') && typeof SPUIProcessorData !== 'undefined') {
-			formData.append('nonce', SPUIProcessorData.nonce_settingsrequest);
+		if (false === formData.has('nonce')) {
+			formData.append('nonce', ShortPixelProcessorData.nonce_settingsrequest);
 		}
 
-		const url = this.GetAjaxUrl();
-		if (!url) {
-			throw new Error('Settings AJAX URL is missing.');
-		}
+		const url = ShortPixel.AJAX_URL;
 
 		if (typeof responseOkCallBack !== 'function') {
 			responseOkCallBack = (response) => { console.log(response); };
@@ -1056,22 +1024,6 @@ class ShortPixelSettings {
 		}
 
 
-	}
-
-	GetAjaxUrl() {
-		if (typeof SPUISettingsData !== 'undefined' && SPUISettingsData.ajaxUrl) {
-			return SPUISettingsData.ajaxUrl;
-		}
-
-		if (typeof SPUI !== 'undefined' && SPUI.AJAX_URL) {
-			return SPUI.AJAX_URL;
-		}
-
-		if (typeof ajaxurl !== 'undefined') {
-			return ajaxurl;
-		}
-
-		return null;
 	}
 
 	FormResponseEvent(json) {
@@ -1105,7 +1057,7 @@ class ShortPixelSettings {
 		if (json.display_notices) {
 
 			let anchor = document.querySelector('.wp-header-end');
-			let screen = window.SPUIProcessor.GetScreen();
+			let screen = window.ShortPixelProcessor.GetScreen();
 
 			screen.AppendNotices(json.display_notices, anchor);
 			/*					for (let i = 0; i < json.display_notices.length; i++)
@@ -1332,18 +1284,18 @@ class ShortPixelSettings {
 		if (!targetElem)
 			return;
 
-		var shade = document.getElementById('spuiSettingsModalShade');
-		var modal = document.getElementById('spuiSettingsModal');
+		var shade = document.getElementById('spioSettingsModalShade');
+		var modal = document.getElementById('spioSettingsModal');
 
 		shade.style.display = 'block';
-		modal.classList.remove('spui-hide');
+		modal.classList.remove('spio-hide');
 
-		var body = modal.querySelector('.spui-modal-body');
+		var body = modal.querySelector('.spio-modal-body');
 		body.innerHTML = ('afterbegin', targetElem.innerHTML); //.cloneNode()
 		body.style.background = '#fff';
 		shade.addEventListener('click', this.CloseModal.bind(this), { 'once': true });
 
-		modal.querySelector('.spui-close-help-button').addEventListener('click', this.CloseModal.bind(this), { 'once': true });
+		modal.querySelector('.spio-close-help-button').addEventListener('click', this.CloseModal.bind(this), { 'once': true });
 
 		if (body.querySelector('[data-action="ajaxrequest"]') !== null) {
 			body.querySelector('[data-action="ajaxrequest"]').addEventListener('click', this.SendModal.bind(this));
@@ -1352,17 +1304,17 @@ class ShortPixelSettings {
 	}
 
 	CloseModal(elem) {
-		var shade = document.getElementById('spuiSettingsModalShade');
-		var modal = document.getElementById('spuiSettingsModal');
+		var shade = document.getElementById('spioSettingsModalShade');
+		var modal = document.getElementById('spioSettingsModal');
 
 		shade.style.display = 'none';
-		modal.classList.add('spui-hide');
+		modal.classList.add('spio-hide');
 
 	}
 
 	SendModal(elem) {
-		var modal = document.getElementById('spuiSettingsModal');
-		var body = modal.querySelector('.spui-modal-body');
+		var modal = document.getElementById('spioSettingsModal');
+		var body = modal.querySelector('.spio-modal-body');
 		var inputs = body.querySelectorAll('input');
 
 		var data = {};
@@ -1387,14 +1339,14 @@ class ShortPixelSettings {
 
 		window.addEventListener('shortpixelSettings.receiveModal', this.ReceiveModal.bind(this), { 'once': true });
 
-		window.SPUIProcessor.AjaxRequest(data);
+		window.ShortPixelProcessor.AjaxRequest(data);
 
 	}
 
 	ReceiveModal(elem) {
 		if (typeof elem.detail.settings.results !== 'undefined') {
-			var modal = document.getElementById('spuiSettingsModal');
-			var body = modal.querySelector('.spui-modal-body');
+			var modal = document.getElementById('spioSettingsModal');
+			var body = modal.querySelector('.spio-modal-body');
 
 			body.innerHTML = elem.detail.settings.results;
 		}
@@ -1407,7 +1359,7 @@ class ShortPixelSettings {
 
 	SaveOnKey() {
 
-		var saveForm = document.getElementById('wp_spui_options');
+		var saveForm = document.getElementById('wp_shortpixel_options');
 		if (saveForm === null)
 			return false; // no form no save.
 

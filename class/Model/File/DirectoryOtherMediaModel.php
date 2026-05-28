@@ -1,18 +1,18 @@
 <?php
-namespace SPUI\Model\File;
+namespace ShortPixel\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Notices\NoticeController as Notice;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notice;
 
-use \SPUI\Model\File\DirectoryModel as DirectoryModel;
-use \SPUI\Model\Image\ImageModel as ImageModel;
+use \ShortPixel\Model\File\DirectoryModel as DirectoryModel;
+use \ShortPixel\Model\Image\ImageModel as ImageModel;
 
-use SPUI\Controller\QueueController as QueueController;
-use SPUI\Controller\OtherMediaController as OtherMediaController;
+use ShortPixel\Controller\QueueController as QueueController;
+use ShortPixel\Controller\OtherMediaController as OtherMediaController;
 
 // extends DirectoryModel. Handles ShortPixel_meta database table
 // Replacing main parts of shortpixel-folder
@@ -89,7 +89,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 			if (is_null(self::$stats))
 			{
 				global $wpdb;
-			 	$sql = 'SELECT SUM(CASE WHEN status = 2 OR status = -11 THEN 1 ELSE 0 END) optimized, SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) waiting, count(*) total, folder_id FROM  ' . $wpdb->prefix . 'spui_meta GROUP BY folder_id';
+			 	$sql = 'SELECT SUM(CASE WHEN status = 2 OR status = -11 THEN 1 ELSE 0 END) optimized, SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) waiting, count(*) total, folder_id FROM  ' . $wpdb->prefix . 'shortpixel_meta GROUP BY folder_id';
 
 				$result = $wpdb->get_results($sql, ARRAY_A);
 
@@ -124,7 +124,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 				global $wpdb;
 	      $sql = "SELECT SUM(CASE WHEN status = 2 OR status = -11 THEN 1 ELSE 0 END) optimized, "
 	          . "SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) waiting, count(*) total "
-	          . "FROM  " . $wpdb->prefix . "spui_meta "
+	          . "FROM  " . $wpdb->prefix . "shortpixel_meta "
 	          . "WHERE folder_id = %d";
 	      $sql = $wpdb->prepare($sql, $this->id);
 	      $res = $wpdb->get_row($sql, ARRAY_A);
@@ -161,7 +161,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
             'path' => $this->getPath(),
         );
         $format = array('%d', '%d', '%s', '%s', '%s', '%s');
-        $table = $wpdb->prefix . 'spui_folders';
+        $table = $wpdb->prefix . 'shortpixel_folders';
 
         $is_new = false;
 				$result = false;
@@ -296,27 +296,27 @@ class DirectoryOtherMediaModel extends DirectoryModel
       }
       elseif (! $this->exists())
       {
-				$message = sprintf(__('Folder %s does not exist! ', 'shortpixel-upscale-image'), $this->getPath());
+				$message = sprintf(__('Folder %s does not exist! ', 'shortpixel-image-optimiser'), $this->getPath());
 				$this->last_message = $message;
         Notice::addError( $message );
         return false;
       }
       elseif (! $this->is_writable())
       {
-				$message = sprintf(__('Folder %s is not writeable. Please check permissions and try again.','shortpixel-upscale-image'),$this->getPath());
+				$message = sprintf(__('Folder %s is not writeable. Please check permissions and try again.','shortpixel-image-optimiser'),$this->getPath());
 				$this->last_message = $message;
         Notice::addWarning( $message );
         return false;
       }
 
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
       $filter = ($time > 0)  ? array('date_newer' => $time) : array();
       $filter['exclude_files'] = array('.avif');
 			$filter['include_files'] = ImageModel::PROCESSABLE_EXTENSIONS;
 
       $files = $fs->getFilesRecursive($this, $filter);
 
-      \wpSPUI()->settings()->hasCustomFolders = time(); // note, check this against bulk when removing. Custom Media Bulk depends on having a setting.
+      \wpSPIO()->settings()->hasCustomFolders = time(); // note, check this against bulk when removing. Custom Media Bulk depends on having a setting.
 
     	$result = $this->addImages($files);
 
@@ -341,14 +341,14 @@ class DirectoryOtherMediaModel extends DirectoryModel
 	*/
 	public function checkDirectory($silent = false)
 	{
-			$fs = \wpSPUI()->filesystem();
+			$fs = \wpSPIO()->filesystem();
        $rootDir = $fs->getWPFileBase();
-       $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
+       $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
 			 $otherMediaController = OtherMediaController::getInstance();
 
        if (! $this->exists())
        {
-				 $message = sprintf(__('Could not be added, directory not found: %s ','shortpixel-upscale-image'),  $this->getPath() );
+				 $message = sprintf(__('Could not be added, directory not found: %s ','shortpixel-image-optimiser'),  $this->getPath() );
 				 $this->last_message = $message;
 
 				 if (false === $silent)
@@ -359,7 +359,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
        }
        elseif (! $this->isSubFolderOf($rootDir) && $this->getPath() != $rootDir->getPath() )
        {
-				 $message = sprintf(__('The %s folder cannot be processed as it\'s not inside the root path of your website (%s).','shortpixel-upscale-image'),$this->getPath(), $rootDir->getPath());
+				 $message = sprintf(__('The %s folder cannot be processed as it\'s not inside the root path of your website (%s).','shortpixel-image-optimiser'),$this->getPath(), $rootDir->getPath());
 				 $this->last_message = $message;
 
 				 if (false === $silent)
@@ -370,7 +370,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
        }
        elseif($this->isSubFolderOf($backupDir) || $this->getPath() == $backupDir->getPath() )
        {
-				 $message = __('This folder contains the ShortPixel Backups. Please select a different folder.','shortpixel-upscale-image');
+				 $message = __('This folder contains the ShortPixel Backups. Please select a different folder.','shortpixel-image-optimiser');
 				 $this->last_message = $message;
 
 				 if (false === $silent)
@@ -381,7 +381,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
        }
        elseif( $otherMediaController->checkIfMediaLibrary($this) )
        {
-				 $message = __('This folder contains Media Library images. To upscale Media Library images please go to <a href="upload.php?mode=list">Media Library list view</a> or to <a href="upload.php?page=wp-shortpixel-upscale-bulk">ShortPixel Bulk page</a>.','shortpixel-upscale-image');
+				 $message = __('This folder contains Media Library images. To optimize Media Library images please go to <a href="upload.php?mode=list">Media Library list view</a> or to <a href="upload.php?page=wp-short-pixel-bulk">ShortPixel Bulk page</a>.','shortpixel-image-optimiser');
 				 $this->last_message = $message;
 
 				 if (false === $silent)
@@ -392,7 +392,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
        }
        elseif (! $this->is_writable())
        {
-				 $message = sprintf(__('Folder %s is not writeable. Please check permissions and try again.','shortpixel-upscale-image'),$this->getPath());
+				 $message = sprintf(__('Folder %s is not writeable. Please check permissions and try again.','shortpixel-image-optimiser'),$this->getPath());
 				 $this->last_message = $message;
 
 				 if (false === $silent)
@@ -413,7 +413,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 
 							 if (false === $silent)
 							 {
-							  Notice::addError(sprintf(__('This folder is a subfolder of an already existing Other Media folder. Folder %s can not be added', 'shortpixel-upscale-image'), $this->getPath() ));
+							  Notice::addError(sprintf(__('This folder is a subfolder of an already existing Other Media folder. Folder %s can not be added', 'shortpixel-image-optimiser'), $this->getPath() ));
 							 }
 								return false;
 						 }
@@ -519,7 +519,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
   */
   public function addImages($files) {
 
-			if ( apply_filters('spui/othermedia/addfiles', true, $files, $this) === false)
+			if ( apply_filters('shortpixel/othermedia/addfiles', true, $files, $this) === false)
 			{
 				 return false;
 			}
@@ -528,7 +528,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 			$otherMediaControl = OtherMediaController::getInstance();
 			$activeFolders = $otherMediaControl->getActiveDirectoryIDS();
 
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
 			$updated = false;
 
       foreach($files as $fileObj)
@@ -555,7 +555,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 						}
 
 						// If in Db, but not optimized and autoprocess is on; add to queue for optimizing
-						if (\wpSPUI()->env()->is_autoprocess && $imageObj->isProcessable())
+						if (\wpSPIO()->env()->is_autoprocess && $imageObj->isProcessable())
 						{
 							 $queueControl->addItemToQueue($imageObj);
 						}
@@ -568,7 +568,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
              $imageObj->saveMeta();
 						 $updated = true;
 
-             if (\wpSPUI()->env()->is_autoprocess)
+             if (\wpSPIO()->env()->is_autoprocess)
              {
                 $queueControl->addItemToQueue($imageObj);
              }
@@ -590,7 +590,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
         //$folders = self::getFolders(array('path' => $path));
          global $wpdb;
 
-         $sql = 'SELECT * FROM ' . $wpdb->prefix . 'spui_folders where path = %s ';
+         $sql = 'SELECT * FROM ' . $wpdb->prefix . 'shortpixel_folders where path = %s ';
          $sql = $wpdb->prepare($sql, $path);
 
         $folder = $wpdb->get_row($sql);
@@ -626,7 +626,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
         else
           $this->name = $folder->name;
 
-        do_action('spui/othermedia/folder/load', $this->id, $this);
+        do_action('shortpixel/othermedia/folder/load', $this->id, $this);
 
 				// Making conclusions after action.
         if ($this->status == -1)

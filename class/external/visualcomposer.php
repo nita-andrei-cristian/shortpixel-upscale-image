@@ -5,12 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Visual Composer and compat class.
-class SPUIVisualComp
+class visualComp
 {
 
   public function __construct()
   {
-     add_filter('spui/init/automedialibrary', array($this, 'check_vcinline'));
+     add_filter('shortpixel/init/automedialibrary', array($this, 'check_vcinline'));
   }
 
   // autolibrary should not do things when VC is being inline somewhere.
@@ -24,4 +24,4 @@ class SPUIVisualComp
 
 } // Class
 
-$vc = new SPUIVisualComp();
+$vc = new visualComp();

@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Model;
+namespace ShortPixel\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Controller\ResponseController as ResponseController;
+use ShortPixel\Controller\ResponseController as ResponseController;
 
 
 class ResponseModel

@@ -1,7 +1,7 @@
 <?php
-namespace SPUI;
-use \SPUI\Helper\UiHelper as UiHelper;
-use SPUI\Helper\UtilHelper as UtilHelper;
+namespace ShortPixel;
+use \ShortPixel\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.

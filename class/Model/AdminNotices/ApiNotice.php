@@ -1,27 +1,27 @@
 <?php
-namespace SPUI\Model\AdminNotices;
+namespace ShortPixel\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Controller\ApiKeyController as ApiKeyController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\ApiKeyController as ApiKeyController;
 
 
-class ApiNotice extends \SPUI\Model\AdminNoticeModel
+class ApiNotice extends \ShortPixel\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_NO_APIKEY';
 
-  protected $exclude_screens = ['settings_page_wp-shortpixel-upscale-settings'];
+  protected $exclude_screens = ['settings_page_wp-shortpixel-settings'];
 
 	public function load()
 	{
-		$activationDate = \wpSPUI()->settings()->activationDate;
+		$activationDate = \wpSPIO()->settings()->activationDate;
 		if (! $activationDate)
 		{
 			 $activationDate = time();
-			 \wpSPUI()->settings()->activationDate = $activationDate;
+			 \wpSPIO()->settings()->activationDate = $activationDate;
 		}
 
 		parent::load();
@@ -52,10 +52,10 @@ class ApiNotice extends \SPUI\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$message = "<p>" . __('To start the upscaling process, you need to validate your API key on the '
-						. '<a href="options-general.php?page=wp-shortpixel-upscale-settings">ShortPixel Upscaler Settings</a> page in your WordPress admin.','shortpixel-upscale-image') . "
+		$message = "<p>" . __('To start the optimization process, you need to validate your API key on the '
+						. '<a href="options-general.php?page=wp-shortpixel-settings">ShortPixel Settings</a> page in your WordPress admin.','shortpixel-image-optimiser') . "
 		</p>
-		<p>" .  __('If you do not have an API key yet, just fill out the form and a key will be created.','shortpixel-upscale-image') . "</p>";
+		<p>" .  __('If you do not have an API key yet, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
 
 		return $message;
 	}

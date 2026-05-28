@@ -15,15 +15,15 @@ document.addEventListener("DOMContentLoaded", function(){
    {
 
        var helpMain = document.createElement('div');
-       helpMain.id = 'spui-inline-help';
-       helpMain.classList.add('spui-modal');
+       helpMain.id = 'spio-inline-help';
+       helpMain.classList.add('spio-modal');
 
        var title = document.createElement('div');
-       title.classList.add('spui-modal-title');
+       title.classList.add('spio-modal-title');
 
        var button = document.createElement('button');
        button.addEventListener('click', CloseHelpEvent);
-       button.classList.add('spui-close-help-button');
+       button.classList.add('spio-close-help-button');
        button.innerHTML = '&times';
 
        title.appendChild(button);
@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function(){
        helpMain.appendChild(body);
 
        var helpShade = document.createElement('div');
-       helpShade.id = 'spui-inline-shade';
-       helpShade.classList.add('spui-modal-shade');
+       helpShade.id = 'spio-inline-shade';
+       helpShade.classList.add('spio-modal-shade');
        helpShade.addEventListener('click', CloseHelpEvent);
 
        document.body.appendChild(helpShade);
@@ -51,13 +51,13 @@ document.addEventListener("DOMContentLoaded", function(){
    {
       event.preventDefault();
 
-      var id = document.getElementById('spui-inline-shade');
+      var id = document.getElementById('spio-inline-shade');
       if (id !== null)
       {
         id.remove();
       }
 
-      id = document.getElementById('spui-inline-help');
+      id = document.getElementById('spio-inline-help');
       if (id !== null)
       {
         id.remove();

@@ -1,14 +1,14 @@
 <?php
-namespace SPUI\Model\File;
+namespace ShortPixel\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Helper\UtilHelper as UtilHelper;
-use SPUI\Model\Image\CustomImageModel;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
+use ShortPixel\Model\Image\CustomImageModel;
 
 /* Model for Directories
 *
@@ -17,7 +17,7 @@ use SPUI\Model\Image\CustomImageModel;
 *
 */
 
-class DirectoryModel extends \SPUI\Model
+class DirectoryModel extends \ShortPixel\Model
 {
   // Directory info
   protected $path;
@@ -43,7 +43,7 @@ class DirectoryModel extends \SPUI\Model
   */
   public function __construct($path)
   {
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
 
       // Test if path actually has someting, otherwise just bail.
       if (strlen(trim($path ?? '')) == 0)
@@ -183,7 +183,7 @@ class DirectoryModel extends \SPUI\Model
 
      $install_dir = get_home_path();
      if($install_dir == '/') {
-       $install_dir = \wpSPUI()->filesystem()->getWPAbsPath();
+       $install_dir = \wpSPIO()->filesystem()->getWPAbsPath();
      }
 
      $install_dir = trailingslashit($install_dir);
@@ -466,7 +466,7 @@ class DirectoryModel extends \SPUI\Model
        if (! $fileInfo->isDot() && $fileInfo->isDir() && $fileInfo->isReadable())
        {
 
-				 if ('SPUI\Model\File\DirectoryOtherMediaModel' == get_called_class())
+				 if ('ShortPixel\Model\File\DirectoryOtherMediaModel' == get_called_class())
 				 {
 				 	$dir = new DirectoryOtherMediaModel($fileInfo->getRealPath());
 				 }
@@ -504,7 +504,7 @@ class DirectoryModel extends \SPUI\Model
   //** Note, use sparingly, recursive function
   public function getFolderSize()
   {
-      //  \wpSPUI()->filesystem()->getFilesRecursive($this)
+      //  \wpSPIO()->filesystem()->getFilesRecursive($this)
         $size = 0;
         $files = $this->getFiles();
 
@@ -573,7 +573,7 @@ class DirectoryModel extends \SPUI\Model
          return false;
 
        // This is a security measure to prevent unintended wipes.
-       $wpdir = \wpSPUI()->filesystem()->getWPUploadBase();
+       $wpdir = \wpSPIO()->filesystem()->getWPUploadBase();
        if (! $this->isSubFolderOf($wpdir))
         return false;
 

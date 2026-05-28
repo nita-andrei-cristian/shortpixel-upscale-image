@@ -1,18 +1,18 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Controller\AdminController as AdminController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\AdminController as AdminController;
 
 class Formidable
 {
     public function __construct()
     {
-        if (true === \wpSPUI()->env()->is_autoprocess )
+        if (true === \wpSPIO()->env()->is_autoprocess )
         {
           $this->addHooks();
         }
@@ -22,7 +22,7 @@ class Formidable
     protected function addHooks()
     {
 
-        add_filter('spui/media/uploadhook', array($this, 'checkFormUpload'), 10, 4);
+        add_filter('shortpixel/media/uploadhook', array($this, 'checkFormUpload'), 10, 4);
         add_action('frm_after_update_entry', array($this, 'formUpload'), 10, 2);
         add_action('frm_after_create_entry', array($this, 'formUpload'), 30, 2);
     }
@@ -110,7 +110,7 @@ class Formidable
 
     private function checkMediaLibrary($item_id)
     {
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
 
       $mediaItem = $fs->getMediaImage($item_id);
       if (is_object($mediaItem) && $mediaItem->isProcessable())

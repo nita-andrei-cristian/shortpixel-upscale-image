@@ -1,23 +1,23 @@
 <?php
-namespace SPUI\Model\Queue;
+namespace ShortPixel\Model\Queue;
 
 if (!defined('ABSPATH')) {
    exit; // Exit if accessed directly.
 }
 // Attempt to standardize what goes around in the queue and keep some overview.
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Model\Image\ImageModel as ImageModel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
 
-use SPUI\Controller\Api\ApiController as ApiController;
-use SPUI\Controller\Api\RequestManager as RequestManager;
-use SPUI\Model\Converter\Converter as Converter;
+use ShortPixel\Controller\Api\ApiController as ApiController;
+use ShortPixel\Controller\Api\RequestManager as RequestManager;
+use ShortPixel\Model\Converter\Converter as Converter;
 
-use SPUI\Controller\Optimizer\OptimizeController as OptimizeController;
-use SPUI\Controller\Optimizer\OptimizeAiController as OptimizeAiController;
-use SPUI\Controller\Optimizer\ActionController as ActionController;
-use SPUI\Helper\UiHelper;
-use SPUI\Model\AiDataModel;
+use ShortPixel\Controller\Optimizer\OptimizeController as OptimizeController;
+use ShortPixel\Controller\Optimizer\OptimizeAiController as OptimizeAiController;
+use ShortPixel\Controller\Optimizer\ActionController as ActionController;
+use ShortPixel\Helper\UiHelper;
+use ShortPixel\Model\AiDataModel;
 use stdClass;
 
 class QueueItem
@@ -248,11 +248,11 @@ class QueueItem
        $this->item_count = 0; 
    }
 
-   public function newReUpscaleAction($args = [])
+   public function newReOptimizeAction($args = [])
    {
       $this->newAction(); 
 
-       $this->data->action = 'reupscale'; 
+       $this->data->action = 'reoptimize'; 
        $this->data->next_actions = ['optimize'];
        $this->data->addKeepDataArgs(['compressionType', 'smartcrop']); // Each action it's own set of keep data.
        $this->item_count = 1;
@@ -270,11 +270,6 @@ class QueueItem
        }
 
        
-   }
-
-   public function newReOptimizeAction($args = [])
-   {
-      $this->newReUpscaleAction($args);
    }
 
    public function newRemoveLegacyAction()
@@ -403,7 +398,7 @@ class QueueItem
       }
       elseif (is_null($this->data()->compressionType))
       {
-         $this->data()->compressionType = \wpSPUI()->settings()->compressionType;
+         $this->data()->compressionType = \wpSPIO()->settings()->compressionType;
       }
 
       if (isset($args['smartcrop'])) 
@@ -478,7 +473,7 @@ class QueueItem
 
       // Former securi function, add timestamp to all URLS, for cache busting.
       $urls = $this->timestampURLS(array_values($urls), $imageModel->get('id'));
-      $this->data->urls = apply_filters('spui_image_urls', $urls, $item_id);
+      $this->data->urls = apply_filters('shortpixel_image_urls', $urls, $item_id);
 
       if (count($optimizeData['params']) > 0) {
          $this->data->paramlist = array_values($optimizeData['params']);
@@ -696,7 +691,6 @@ class QueueItem
 
       $paramlist['refresh'] = $args['refresh']; // When sending item first, do the refresh. This is the mimc the tries = 0 refresh option we don't have here. 
       $paramlist['upscale'] = $args['scale'];
-      $paramlist['optimize'] = $args['scale'];
 
       if (! is_null($args['attached_post_id']) && $args['attached_post_id'] > 0)
       {
@@ -713,12 +707,6 @@ class QueueItem
       $this->data->paramlist = $paramlist; 
       $this->data->tries = 0;
       $this->item_count = 1;
-      $this->data->addCount([
-         'creditCount' => 1,
-         'baseCount' => 1,
-         'webpCount' => 0,
-         'avifCount' => 0,
-      ]);
       
    }
 
@@ -753,7 +741,6 @@ class QueueItem
             $api = OptimizeAiController::getInstance();
             break;
          case 'restore':
-         case 'reupscale':
          case 'reoptimize': 
          case 'migrate':
          case 'png2jpg':

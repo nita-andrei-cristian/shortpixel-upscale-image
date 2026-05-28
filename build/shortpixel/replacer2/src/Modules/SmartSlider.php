@@ -1,7 +1,7 @@
 <?php
-namespace SPUI\Replacer\Modules;
+namespace ShortPixel\Replacer\Modules;
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class SmartSlider
@@ -25,7 +25,7 @@ class SmartSlider
              return; 
         }
 
-        add_action('spui/replacer/replace_urls', [$this, 'doReplaceQueries'], 10, 2);
+        add_action('shortpixel/replacer/replace_urls', [$this, 'doReplaceQueries'], 10, 2);
     }
 
 

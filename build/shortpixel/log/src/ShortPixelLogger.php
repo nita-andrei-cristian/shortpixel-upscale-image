@@ -1,5 +1,5 @@
 <?php
-namespace SPUI\ShortPixelLogger;
+namespace ShortPixel\ShortPixelLogger;
 
   /*** Logger class
   *
@@ -28,9 +28,9 @@ namespace SPUI\ShortPixelLogger;
 
 	 private $logFile; // pointer resource to the logFile.
 /*   protected $hooks = array(
-      'spui_image_exists' => array('numargs' => 3),
-      'spui_webp_image_base' => array('numargs' => 2),
-      'spui_image_urls' => array('numargs' => 2),
+      'shortpixel_image_exists' => array('numargs' => 3),
+      'shortpixel_webp_image_base' => array('numargs' => 2),
+      'shortpixel_image_urls' => array('numargs' => 2),
    ); // @todo monitor hooks, but this should be more dynamic. Do when moving to module via config.
 */
 
@@ -41,8 +41,8 @@ namespace SPUI\ShortPixelLogger;
    protected $template = 'view-debug-box';
 
    /** Debugger constructor
-   *  Two ways to activate the debugger. 1) Define SPUI_DEBUG in wp-config.php. Either must be true or a number corresponding to required LogLevel
-   *  2) Put SPUI_DEBUG in the request. Either true or number.
+   *  Two ways to activate the debugger. 1) Define SHORTPIXEL_DEBUG in wp-config.php. Either must be true or a number corresponding to required LogLevel
+   *  2) Put SHORTPIXEL_DEBUG in the request. Either true or number.
    */
    public function __construct()
    {
@@ -53,35 +53,35 @@ namespace SPUI\ShortPixelLogger;
       $this->namespace = substr($ns, 0, strpos($ns, '\\')); // try to get first part of namespace
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-      if (isset($_REQUEST['SPUI_DEBUG'])) // manual takes precedence over constants
+      if (isset($_REQUEST['SHORTPIXEL_DEBUG'])) // manual takes precedence over constants
       {
         $this->is_manual_request = true;
         $this->is_active = true;
 
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-        if ($_REQUEST['SPUI_DEBUG'] === 'true')
+        if ($_REQUEST['SHORTPIXEL_DEBUG'] === 'true')
         {
           $this->logLevel = DebugItem::LEVEL_INFO;
         }
         else {
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-          $this->logLevel = intval($_REQUEST['SPUI_DEBUG']);
+          $this->logLevel = intval($_REQUEST['SHORTPIXEL_DEBUG']);
         }
 
       }
-      else if ( (defined('SPUI_DEBUG') && SPUI_DEBUG > 0) )
+      else if ( (defined('SHORTPIXEL_DEBUG') && SHORTPIXEL_DEBUG > 0) )
       {
             $this->is_active = true;
-            if (SPUI_DEBUG === true)
+            if (SHORTPIXEL_DEBUG === true)
               $this->logLevel = DebugItem::LEVEL_INFO;
             else {
-              $this->logLevel = intval(SPUI_DEBUG);
+              $this->logLevel = intval(SHORTPIXEL_DEBUG);
             }
       }
 
-      if (defined('SPUI_DEBUG_TARGET') && SPUI_DEBUG_TARGET || $this->is_manual_request)
+      if (defined('SHORTPIXEL_DEBUG_TARGET') && SHORTPIXEL_DEBUG_TARGET || $this->is_manual_request)
       {
-          if (defined('SPUI_LOG_OVERWRITE')) // if overwrite, do this on init once.
+          if (defined('SHORTPIXEL_LOG_OVERWRITE')) // if overwrite, do this on init once.
             file_put_contents($this->logPath,'-- Log Reset -- ' .PHP_EOL);
 
       }

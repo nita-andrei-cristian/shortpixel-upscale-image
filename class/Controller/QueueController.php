@@ -1,26 +1,26 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
-use SPUI\Controller\Api\RequestManager;
+use ShortPixel\Controller\Api\RequestManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Model\Image\ImageModel as ImageModel;
-use SPUI\Model\Queue\QueueItem as QueueItem;
-use SPUI\Controller\Queue\QueueItems as QueueItems;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
+use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use ShortPixel\Controller\Queue\QueueItems as QueueItems;
 
-use SPUI\Controller\ApiKeyController as ApiKeyController;
-use SPUI\Controller\QuotaController as QuotaController;
+use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use ShortPixel\Controller\QuotaController as QuotaController;
 
-use SPUI\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
-use SPUI\Controller\Queue\CustomQueue as CustomQueue;
-use SPUI\Controller\Queue\Queue as Queue;
-use SPUI\Controller\Api\ApiController as ApiController;
+use ShortPixel\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
+use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
+use ShortPixel\Controller\Queue\Queue as Queue;
+use ShortPixel\Controller\Api\ApiController as ApiController;
 
-use SPUI\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\UiHelper as UiHelper;
 
 // Controller,  the glue between the Queue and the Optimizers.
 class QueueController
@@ -99,7 +99,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => false,
             'is_done' => true,
-            'message' => __('A duplicate of this item is already active in queue. ', 'shortpixel-upscale-image'),
+            'message' => __('A duplicate of this item is already active in queue. ', 'shortpixel-image-optimiser'),
 
         ]);
 
@@ -117,7 +117,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => false,
             'is_done' => false,
-            'message' =>__('Action has been added to queue and will be processed after current actions', 'shortpixel-upscale-image'),
+            'message' =>__('Action has been added to queue and will be processed after current actions', 'shortpixel-image-optimiser'),
           ]);
         }
 
@@ -127,7 +127,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => false,
             'is_done' => true,
-            'message' =>__('This item is already awaiting processing in queue', 'shortpixel-upscale-image'),
+            'message' =>__('This item is already awaiting processing in queue', 'shortpixel-image-optimiser'),
           ]); 
         }
 
@@ -144,7 +144,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => true,
             'is_done' => true,
-            'message' => __('No action found!', 'shortpixel-upscale-image'),
+            'message' => __('No action found!', 'shortpixel-image-optimiser'),
          ]);
       }
 
@@ -168,14 +168,14 @@ class QueueController
             if ($status->numitems > 0)
             {
               
-              $message = sprintf(__('Item %s added to Queue. %d items in Queue', 'shortpixel-upscale-image'), $imageModel->getFileName(), $status->numitems);
+              $message = sprintf(__('Item %s added to Queue. %d items in Queue', 'shortpixel-image-optimiser'), $imageModel->getFileName(), $status->numitems);
   
               // Check if background process is active / this needs activating.
               $cronController = CronController::getInstance();
               $cronController->checkNewJobs();
             }
             else {
-              $message = __('No items added to queue', 'shortpixel-upscale-image');
+              $message = __('No items added to queue', 'shortpixel-image-optimiser');
               //$json->status = 0;
             }
   
@@ -254,7 +254,7 @@ class QueueController
          $json = $this->getJsonResponse();
          $json->status = false;
          $json->error = AjaxController::APIKEY_FAILED;
-         $json->message =  __('Invalid API Key', 'shortpixel-upscale-image');
+         $json->message =  __('Invalid API Key', 'shortpixel-image-optimiser');
          $json->status = false;
          return $json;
       }
@@ -281,7 +281,7 @@ class QueueController
           $json = $this->getJsonResponse();
           $json->error = AjaxController::NOQUOTA;
           $json->status = false;
-          $json->message =   __('Quota Exceeded','shortpixel-upscale-image');
+          $json->message =   __('Quota Exceeded','shortpixel-image-optimiser');
           return $json;
         }
       } // No Quota Check 
@@ -338,7 +338,7 @@ class QueueController
   protected function runTick($Q)
   {
     $result = $Q->run();
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
 
     ResponseController::setQ($Q);
 
@@ -364,7 +364,7 @@ class QueueController
                 'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
                 'is_error' => true,
                 'is_done' => true,
-                'message' => __('No action found!', 'shortpixel-upscale-image'),
+                'message' => __('No action found!', 'shortpixel-image-optimiser'),
             ]);
             
             $Q->itemFailed($qItem, true); 
@@ -388,7 +388,7 @@ class QueueController
             Log::addWarn('ImageObject was empty when send to processing - ' . $item_id);
             $qItem->addResult([
                 'apiStatus' => RequestManager::STATUS_NOT_API,
-                'message' => __("File Error. Media Item could not be loaded with this ID ", 'shortpixel-upscale-image'),
+                'message' => __("File Error. Media Item could not be loaded with this ID ", 'shortpixel-image-optimiser'),
                 'fileStatus' => ImageModel::FILE_STATUS_ERROR,
                 'is_done' => true,
                 'is_error' => true,
@@ -400,7 +400,7 @@ class QueueController
           {
             $qItem->addResult([
                 'apiStatus' => RequestManager::STATUS_UNCHANGED,
-                'message' => __('Item is waiting (blocked)', 'shortpixel-upscale-image'),
+                'message' => __('Item is waiting (blocked)', 'shortpixel-image-optimiser'),
             ]);
             Log::addWarn('Encountered blocked item, processing success? ', $item_id);
             ResponseController::addData($item_id, 'fileName', $imageModel->getFileName());
@@ -511,30 +511,30 @@ class QueueController
       switch($result->qstatus)
       {
         case Queue::RESULT_PREPARING:
-          $json->message = sprintf(__('Prepared %s items', 'shortpixel-upscale-image'), $result->items );
+          $json->message = sprintf(__('Prepared %s items', 'shortpixel-image-optimiser'), $result->items );
         break;
         case Queue::RESULT_PREPARING_OVERLIMIT:
-          $json->message = sprintf(__('Prepared %s items - but went over limit! ', 'shortpixel-upscale-image'), $result->items );
+          $json->message = sprintf(__('Prepared %s items - but went over limit! ', 'shortpixel-image-optimiser'), $result->items );
         break;
         case Queue::RESULT_PREPARING_DONE:
-          $json->message = sprintf(__('Preparing is done, queue has %s items ', 'shortpixel-upscale-image'), $result->stats->total );
+          $json->message = sprintf(__('Preparing is done, queue has %s items ', 'shortpixel-image-optimiser'), $result->stats->total );
         break;
         case Queue::RESULT_EMPTY:
-            $json->message  = __('Queue returned no active items', 'shortpixel-upscale-image');
+            $json->message  = __('Queue returned no active items', 'shortpixel-image-optimiser');
         break;
         case Queue::RESULT_QUEUE_EMPTY:
-            $json->message = __('Queue empty and done', 'shortpixel-upscale-image');
+            $json->message = __('Queue empty and done', 'shortpixel-image-optimiser');
         break;
         case Queue::RESULT_ITEMS:
-          $json->message = sprintf(__("Fetched %d items",  'shortpixel-upscale-image'), count($result->items));
+          $json->message = sprintf(__("Fetched %d items",  'shortpixel-image-optimiser'), count($result->items));
           $json->results = $result->items;
         break;
         case Queue::RESULT_RECOUNT: // This one should probably not happen.
            $json->has_error = true;
-           $json->message = sprintf(__('Bulk preparation seems to be interrupted. Restart the queue or continue without accurate count', 'shortpixel-upscale-image'));
+           $json->message = sprintf(__('Bulk preparation seems to be interrupted. Restart the queue or continue without accurate count', 'shortpixel-image-optimiser'));
         break;
         default:
-           $json->message = sprintf(__('Unknown Status %s ', 'shortpixel-upscale-image'), $result->qstatus);
+           $json->message = sprintf(__('Unknown Status %s ', 'shortpixel-image-optimiser'), $result->qstatus);
         break;
       }
       $json->qstatus = $result->qstatus;
@@ -727,8 +727,8 @@ class QueueController
   // @todo - move this to the optimiser.
   public function thumbnailsChangedHook($post_id, $sizes)
   {
-     $fs = \wpSPUI()->filesystem();
-     $settings = \wpSPUI()->settings();
+     $fs = \wpSPIO()->filesystem();
+     $settings = \wpSPIO()->settings();
      $imageObj = $fs->getMediaImage($post_id);
 
      if (! is_object($imageObj))
@@ -768,7 +768,7 @@ class QueueController
 
 
 
-      if (\wpSPUI()->env()->is_autoprocess)
+      if (\wpSPIO()->env()->is_autoprocess)
       {
           $imageObj = $fs->getMediaImage($post_id, false);
           if($imageObj->isProcessable())
@@ -782,8 +782,8 @@ class QueueController
   // @todo - move this to the optimiser.
   public function scaledImageChangedHook($post_id, $removed = false)
   {
-      $fs = \wpSPUI()->filesystem();
-      $settings = \wpSPUI()->settings();
+      $fs = \wpSPIO()->filesystem();
+      $settings = \wpSPIO()->settings();
       $imageObj = $fs->getMediaImage($post_id);
 
 
@@ -817,7 +817,7 @@ class QueueController
 
       $imageObj->saveMeta();
 
-      if (false === $removed && \wpSPUI()->env()->is_autoprocess)
+      if (false === $removed && \wpSPIO()->env()->is_autoprocess)
       {
           $imageObj = $fs->getMediaImage($post_id, false);
           if($imageObj->isProcessable())
@@ -837,8 +837,8 @@ class QueueController
       return;
     }
 
-    $fs = \wpSPUI()->filesystem();
-    $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
+    $fs = \wpSPIO()->filesystem();
+    $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
     $fileLog = $fs->getFile($backupDir->getPath() . 'current_bulk_' . $type . '.log');
 
     $time = UiHelper::formatTs(time());

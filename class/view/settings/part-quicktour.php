@@ -1,7 +1,7 @@
 <?php
-namespace SPUI;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Helper\UiHelper as UiHelper;
+namespace ShortPixel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.

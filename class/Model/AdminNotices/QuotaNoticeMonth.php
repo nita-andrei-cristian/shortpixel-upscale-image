@@ -1,15 +1,15 @@
 <?php
-namespace SPUI\Model\AdminNotices;
+namespace ShortPixel\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Controller\StatsController as StatsController;
-use SPUI\Controller\AdminNoticesController as AdminNoticesController;
-use SPUI\Controller\QuotaController as QuotaController;
+use ShortPixel\Controller\StatsController as StatsController;
+use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
+use ShortPixel\Controller\QuotaController as QuotaController;
 
-class QuotaNoticeMonth extends \SPUI\Model\AdminNoticeModel
+class QuotaNoticeMonth extends \ShortPixel\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_UPGRADE_MONTH';
 
@@ -53,9 +53,9 @@ class QuotaNoticeMonth extends \SPUI\Model\AdminNoticeModel
 		$onetime_remaining = $quotaData->onetime->remaining; //$this->getData('onetime_remaining'); */
 
 		$message = '<p>' . sprintf(__("You add an average of %s %d images and thumbnails %s to your Media Library every month and you have <strong>a plan of %d images/month (and %d one-time images)</strong>.%s"
-					. " You may need to upgrade your plan to have all your images upscaled.", 'shortpixel-upscale-image'), '<strong>', $average, '</strong>', $month_total, $onetime_remaining, '<br>') . '</p>';
+					. " You may need to upgrade your plan to have all your images optimized.", 'shortpixel-image-optimiser'), '<strong>', $average, '</strong>', $month_total, $onetime_remaining, '<br>') . '</p>';
 
-		$message .= '  <button class="button button-primary" id="shortpixel-upgrade-advice" onclick="SPUI.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-upscale-image') . '</strong></button>';
+		$message .= '  <button class="button button-primary" id="shortpixel-upgrade-advice" onclick="ShortPixel.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>';
 
 		return $message;
 	}
@@ -63,7 +63,7 @@ class QuotaNoticeMonth extends \SPUI\Model\AdminNoticeModel
 	protected function getMonthAverage() {
 			$stats = StatsController::getInstance();
 
-			// Count how many months have some upscaled images.
+			// Count how many months have some optimized images.
 			for($i = 4, $count = 0; $i>=1; $i--) {
 					if($count == 0 && $stats->find('period', 'months', $i) == 0)
 					{

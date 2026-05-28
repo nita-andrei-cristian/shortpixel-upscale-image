@@ -1,11 +1,11 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 class UncodeController
 {
@@ -22,7 +22,7 @@ class UncodeController
 
 	 public function removedMetaData($attach_id, $filePath)
 	 {
-		  	$fs = \wpSPUI()->filesystem();
+		  	$fs = \wpSPIO()->filesystem();
 				$imageObj = $fs->getImage($attach_id, 'media', false);
 				$imageObj->saveMeta();
 
@@ -52,7 +52,7 @@ class UncodeController
     	// $height         - Height of the crop
     	// $attachment_key - Key of the crop in attachment_meta
 
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
       $mediaItem = $fs->getImage($media_id, 'media');
       if ($mediaItem->isProcessable())
       {

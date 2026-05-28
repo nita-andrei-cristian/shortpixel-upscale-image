@@ -1,15 +1,15 @@
 <?php 
-namespace SPUI\Model\Image;
+namespace ShortPixel\Model\Image;
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 /** Class for loading Image into memory as resource. Used for conversion like PNG . 
  * 
- * @package SPUI\Model\Image
+ * @package ShortPixel\Model\Image
  */
  
-Class Image extends \SPUI\Model\File\FileModel
+Class Image extends \ShortPixel\Model\File\FileModel
 {
 
         protected $image; // The image resource
@@ -31,7 +31,7 @@ Class Image extends \SPUI\Model\File\FileModel
 
         protected function checkLibrary()
         {
-            $env = \wpSPUI()->env(); 
+            $env = \wpSPIO()->env(); 
             if ($env->is_imagick_installed)
             {
                 $this->useLib = 'imagick'; 
@@ -201,7 +201,7 @@ Class Image extends \SPUI\Model\File\FileModel
             if (false === $bg)
             {
                 Log::addError('ImageCreateTrueColor failed');
-                $this->error['message'] = __('Creating an TrueColor Image failed - Possible library error', 'shortpixel-upscale-image');
+                $this->error['message'] = __('Creating an TrueColor Image failed - Possible library error', 'shortpixel-image-optimiser');
                 $this->error['error_code'] = -10;
             }
 

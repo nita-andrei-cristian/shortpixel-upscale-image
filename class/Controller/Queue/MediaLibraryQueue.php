@@ -1,16 +1,16 @@
 <?php
-namespace SPUI\Controller\Queue;
+namespace ShortPixel\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortQ\ShortQ as ShortQ;
-use SPUI\Controller\CacheController as CacheController;
-use SPUI\Helper\UtilHelper;
-use SPUI\Model\AiDataModel;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Model\Image\ImageModel as ImageModel;
+use ShortPixel\ShortQ\ShortQ as ShortQ;
+use ShortPixel\Controller\CacheController as CacheController;
+use ShortPixel\Helper\UtilHelper;
+use ShortPixel\Model\AiDataModel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
 
 
 class MediaLibraryQueue extends Queue
@@ -43,7 +43,7 @@ class MediaLibraryQueue extends Queue
      }
 
      // @todo  Here probably options thing should be replaced by querying custom_data from Q first and then set options
-     $this->options = apply_filters('spui/medialibraryqueue/options', $options);
+     $this->options = apply_filters('shortpixel/medialibraryqueue/options', $options);
 
 
      $this->q->setOptions($options);
@@ -129,7 +129,7 @@ class MediaLibraryQueue extends Queue
 
 
      $prepare = [];
-     $fastmode = apply_filters('spui/queue/fastmode', false);
+     $fastmode = apply_filters('shortpixel/queue/fastmode', false);
 
      global $wpdb;
 
@@ -138,7 +138,7 @@ class MediaLibraryQueue extends Queue
      if ( true === $fastmode)
      {
        // This will by definition not optimize everything is things like only-thumbnails are not done.
-       $sqlmeta .= ' and post_id not in (SELECT DISTINCT attach_id from ' . $wpdb->prefix. 'spui_postmeta where parent = %d and status = %d) ';
+       $sqlmeta .= ' and post_id not in (SELECT DISTINCT attach_id from ' . $wpdb->prefix. 'shortpixel_postmeta where parent = %d and status = %d) ';
      }
 
      $prepare[] = '_wp_attached_file';
@@ -192,7 +192,7 @@ class MediaLibraryQueue extends Queue
      $prepare = [];
      global $wpdb;
 
-     $sql = 'SELECT distinct attach_id from ' . $wpdb->prefix . 'spui_postmeta where status = %d ';
+     $sql = 'SELECT distinct attach_id from ' . $wpdb->prefix . 'shortpixel_postmeta where status = %d ';
      $prepare[] = ImageModel::FILE_STATUS_SUCCESS;
 
      if ($last_id > 0)
@@ -227,7 +227,7 @@ class MediaLibraryQueue extends Queue
        $prepare = [];
        global $wpdb;
 
-       $table = $wpdb->prefix . 'spui_aipostmeta';
+       $table = $wpdb->prefix . 'shortpixel_aipostmeta';
 
        $sql = ' SELECT attach_id from ' . $table . ' WHERE status = %d '; 
        $prepare[] = AiDataModel::AI_STATUS_GENERATED; 

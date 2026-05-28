@@ -1,11 +1,11 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\UiHelper as UiHelper;
 
 /**  Proto parent class for all controllers.
 *

@@ -1,11 +1,11 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\UiHelper as UiHelper;
 ?>
 
 <section id="tab-help" class="<?php echo ($this->display_part == 'help') ? 'active setting-tab' :'setting-tab'; ?>" data-part="help" >

@@ -1,6 +1,6 @@
 <?php
-namespace SPUI;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+namespace ShortPixel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </a>
     | <a href="mailto:help@shortpixel.com?subject=SPUI Feature Request"><?php _e('Feature Request', 'shortpixel-upscale-image'); ?>
     </a>
-    | <a href="https://wordpress.org/support/plugin/shortpixel-upscale-image/reviews/#new-post" target="_blank">   <?php _e('Rate Us', 'shortpixel-upscale-image'); ?><img src="<?php echo esc_attr(\wpSPUI()->plugin_url('res/img/stars.png')); ?>" width="80" /></a>
+    | <a href="https://wordpress.org/support/plugin/shortpixel-upscale-image/reviews/#new-post" target="_blank">   <?php _e('Rate Us', 'shortpixel-upscale-image'); ?><img src="<?php echo esc_attr(\wpSPIO()->plugin_url('res/img/stars.png')); ?>" width="80" /></a>
   </div>
 
 

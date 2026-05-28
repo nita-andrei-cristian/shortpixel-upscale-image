@@ -1,5 +1,5 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -8,39 +8,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 //return;
 ?>
 
-<div id="spuiHelpShade" class="spui-modal-shade" style="display:none;">
-			 <div id="spuiHelp" class="spui-modal spui-hide" style="min-width:610px;margin-left:-305px;">
-					 <div class="spui-modal-title">
-							 <button type="button" class="spui-close-help-button" onclick="jQuery.spuiHelpClose()">&times;</button>
+<div id="spioHelpShade" class="spio-modal-shade" style="display:none;">
+			 <div id="spioHelp" class="spio-modal spio-hide" style="min-width:610px;margin-left:-305px;">
+					 <div class="spio-modal-title">
+							 <button type="button" class="spio-close-help-button" onclick="jQuery.spioHelpClose()">&times;</button>
 					 </div>
-           <div class="spui-modal-body" style="height:auto;min-height:400px;padding:0;">
+           <div class="spio-modal-body" style="height:auto;min-height:400px;padding:0;">
 							 <iframe src="about:blank" width="100%" height="400" style="border:none"></iframe>
 					 </div>
 			 </div>
-			 <script  type="text/javascript" id="spui_help_js">
+			 <script  type="text/javascript" id="spio_help_js">
 					 jQuery(document).ready(function($)
 					 {
 
-					 $.spuiHelpInit = function(){
-				 		jQuery('div.spui-inline-help span').on('click', function(elm){ jQuery.spuiHelpOpen(elm)});
-				 		jQuery('div.spui-modal-shade').on('click', function(elm){ jQuery.spuiHelpClose()});
+					 $.spioHelpInit = function(){
+				 		jQuery('div.spio-inline-help span').on('click', function(elm){ jQuery.spioHelpOpen(elm)});
+				 		jQuery('div.spio-modal-shade').on('click', function(elm){ jQuery.spioHelpClose()});
 				 	}
 
-				 	$.spuiHelpOpen = function(evt) {
+				 	$.spioHelpOpen = function(evt) {
 
-				         //$("#shortPixelProposeUpgrade .spui-modal-body").html("");
-				         $("#spuiHelpShade").css("display", "block");
-				         $("#spuiHelp .spui-modal-body iframe").attr('src',  evt.target.dataset.link);
-				         $("#spuiHelp").removeClass('spui-hide');
+				         //$("#shortPixelProposeUpgrade .spio-modal-body").html("");
+				         $("#spioHelpShade").css("display", "block");
+				         $("#spioHelp .spio-modal-body iframe").attr('src',  evt.target.dataset.link);
+				         $("#spioHelp").removeClass('spio-hide');
 						 
 				     }
 
-				     $.spuiHelpClose = function(){
-				         jQuery("#spuiHelpShade").css("display", "none");
-				         $("#spuiHelp .spui-modal-body iframe").attr('src',  'about:blank');
-				         jQuery("#spuiHelp").addClass('spui-hide');
+				     $.spioHelpClose = function(){
+				         jQuery("#spioHelpShade").css("display", "none");
+				         $("#spioHelp .spio-modal-body iframe").attr('src',  'about:blank');
+				         jQuery("#spioHelp").addClass('spio-hide');
 				 	}
-					jQuery.spuiHelpInit()
+					jQuery.spioHelpInit()
 
 					;});
 			 </script>

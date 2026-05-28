@@ -1,11 +1,11 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Controller\OtherMediaController as OtherMediaController;
+use ShortPixel\Controller\OtherMediaController as OtherMediaController;
 
 // Gravity Forms integrations.
 class gravityForms
@@ -27,7 +27,7 @@ class gravityForms
   public function handleGravityFormsImageField($value) {
 
 
-			$fs = \wpSPUI()->filesystem();
+			$fs = \wpSPIO()->filesystem();
 			$otherMediaController = OtherMediaController::getInstance();
 			$uploadBase = $fs->getWPUploadBase();
 

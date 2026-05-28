@@ -1,6 +1,6 @@
 <?php
 // The data models.
-namespace SPUI\ShortPixelLogger;
+namespace ShortPixel\ShortPixelLogger;
 
 
 class DebugItem
@@ -32,7 +32,7 @@ class DebugItem
         if (is_object($this->message) || is_array($this->message))
         {
           $data[] = $this->message;
-          $this->message = __('[Data]', 'shortpixel-upscale-image');
+          $this->message = __('[Data]', 'shortpixel-image-optimiser');
         }
         if (is_array($data) && count($data) > 0)
         {

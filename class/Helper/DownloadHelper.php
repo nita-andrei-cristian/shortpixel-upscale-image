@@ -1,12 +1,12 @@
 <?php
-namespace SPUI\Helper;
+namespace ShortPixel\Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Controller\ResponseController as ResponseController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\ResponseController as ResponseController;
 
 class DownloadHelper
 {
@@ -90,7 +90,7 @@ class DownloadHelper
           fclose($file);
           */
 
-					$fs = \wpSPUI()->filesystem();
+					$fs = \wpSPIO()->filesystem();
 					$file = $fs->getFile($tempFile);
 
           
@@ -99,7 +99,7 @@ class DownloadHelper
           {
               Log::addError('Tmp File zero bytes', $tempFile); 
               ResponseController::addData('is_error', true);
-              Responsecontroller::addData('message', __('Temp file zero bytes', 'shortpixel-upscale-image'));
+              Responsecontroller::addData('message', __('Temp file zero bytes', 'shortpixel-image-optimiser'));
 
               $file->delete(); // Prevent it from hanging around 
               return false; 
@@ -112,7 +112,7 @@ class DownloadHelper
              {
                Log::addError('Failed to move Download', $args);
                ResponseController::addData('is_error', true);
-               Responsecontroller::addData('message', __('Failed to move download to destination!', 'shortpixel-upscale-image'));
+               Responsecontroller::addData('message', __('Failed to move download to destination!', 'shortpixel-image-optimiser'));
                return false;
              }
              else {
@@ -125,7 +125,7 @@ class DownloadHelper
 
       protected function moveDownload($fileObj, $destinationPath)
       {
-          $fs = \wpSPUI()->filesystem();
+          $fs = \wpSPIO()->filesystem();
 
           $destinationFile = $fs->getFile($destinationPath);
 
@@ -180,7 +180,7 @@ class DownloadHelper
       private function remoteGetMethod($url)
       {
             //get_temp_dir
-            $tmpfname = tempnam(get_temp_dir(), 'spuitmp');
+            $tmpfname = tempnam(get_temp_dir(), 'spiotmp');
 
             $downloadTimeout = $this->getMaxDownloadTime(); 
 
@@ -206,11 +206,11 @@ class DownloadHelper
 
 			private function setPreferredProtocol($url, $reset = false) {
 		      //switch protocol based on the formerly detected working protocol
-		      $settings = \wpSPUI()->settings();
+		      $settings = \wpSPIO()->settings();
 
 		      if($settings->downloadProto == '' || $reset) {
 		          //make a test to see if the http is working
-		          $testURL = 'http://' . SPUI_API . '/img/connection-test-image.png';
+		          $testURL = 'http://' . SHORTPIXEL_API . '/img/connection-test-image.png';
 		          $result = download_url($testURL, 10);
 		          $settings->downloadProto = is_wp_error( $result ) ? 'https' : 'http';
 

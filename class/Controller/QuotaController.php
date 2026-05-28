@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 class QuotaController
 {
@@ -32,7 +32,7 @@ class QuotaController
      */
     public function hasQuota()
     {
-      $settings = \wpSPUI()->settings();
+      $settings = \wpSPIO()->settings();
 
       if ($settings->quotaExceeded)
 			{
@@ -74,7 +74,7 @@ class QuotaController
 
     /**
      * Retrieve quota information for this account
-     * @return object quotadata SPUI format
+     * @return object quotadata SPIO format
      */
     public function getQuota()
     {
@@ -90,7 +90,7 @@ class QuotaController
           $quota = (object) [
               'unlimited' => isset($quotaData['Unlimited']) ? $quotaData['Unlimited'] : false,
               'monthly' => (object) [
-                'text' =>  sprintf(__('%s/month', 'shortpixel-upscale-image'), $quotaData['APICallsQuota']),
+                'text' =>  sprintf(__('%s/month', 'shortpixel-image-optimiser'), $quotaData['APICallsQuota']),
                 'total' =>  $quotaData['APICallsQuotaNumeric'],
                 'consumed' => $quotaData['APICallsMadeNumeric'],
                 'remaining' => max($quotaData['APICallsQuotaNumeric'] - $quotaData['APICallsMadeNumeric'], 0),
@@ -156,7 +156,7 @@ class QuotaController
      */
 		public function setQuotaExceeded()
 		{
-			  $settings = \wpSPUI()->settings();
+			  $settings = \wpSPIO()->settings();
 				$settings->quotaExceeded = 1;
 				$this->forceCheckRemoteQuota(); // remove the previous cache.
 		}
@@ -166,7 +166,7 @@ class QuotaController
      */
     private function resetQuotaExceeded()
     {
-        $settings = \wpSPUI()->settings();
+        $settings = \wpSPIO()->settings();
 
         AdminNoticesController::resetAPINotices();
 
@@ -193,13 +193,13 @@ class QuotaController
           $apiKey = $keyControl->forceGetApiKey();
         }
 
-        $settings = \wpSPUI()->settings();
+        $settings = \wpSPIO()->settings();
 
           if($settings->httpProto != 'https' && $settings->httpProto != 'http') {
               $settings->httpProto = 'https';
           }
 
-          $requestURL = $settings->httpProto . '://' . SPUI_API . '/v2/api-status.php';
+          $requestURL = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/api-status.php';
 
           $args = array(
               'timeout'=> 15, // wait for 15 secs.
@@ -229,10 +229,10 @@ class QuotaController
 
           $args['body']['host'] = parse_url(get_site_url(),PHP_URL_HOST);
           $argsStr .= "&host={$args['body']['host']}";
-					if (defined('SPUI_HTTP_AUTH_USER') && defined('SPUI_HTTP_AUTH_PASSWORD'))
+					if (defined('SHORTPIXEL_HTTP_AUTH_USER') && defined('SHORTPIXEL_HTTP_AUTH_PASSWORD'))
 					{
-						$args['body']['user'] = stripslashes(SPUI_HTTP_AUTH_USER);
-						$args['body']['pass'] = stripslashes(SPUI_HTTP_AUTH_PASSWORD);
+						$args['body']['user'] = stripslashes(SHORTPIXEL_HTTP_AUTH_USER);
+						$args['body']['pass'] = stripslashes(SHORTPIXEL_HTTP_AUTH_PASSWORD);
 						$argsStr .= '&user=' . urlencode($args['body']['user']) . '&pass=' . urlencode($args['body']['pass']);
 					}
           elseif(! is_null($settings->siteAuthUser) && strlen($settings->siteAuthUser)) {
@@ -252,7 +252,7 @@ class QuotaController
 
           //Try first HTTPS post. add the sslverify = false if https
           if($settings->httpProto === 'https') {
-              $args['sslverify'] = apply_filters('spui/system/sslverify', true);
+              $args['sslverify'] = apply_filters('shortpixel/system/sslverify', true);
           }
 
           $response = wp_remote_post($requestURL, $args);
@@ -267,7 +267,7 @@ class QuotaController
                   str_replace('http://', 'https://', $requestURL);
               // add or remove the sslverify
               if($settings->httpProto === 'https') {
-                  $args['sslverify'] = apply_filters('spui/system/sslverify', true);
+                  $args['sslverify'] = apply_filters('shortpixel/system/sslverify', true);
               } else {
                   unset($args['sslverify']);
               }
@@ -289,9 +289,9 @@ class QuotaController
 
           $defaultData = array(
               "APIKeyValid" => false,
-              "Message" => __('API Key could not be validated due to a connectivity error.<BR>Your firewall may be blocking us. Please contact your hosting provider and ask them to allow connections from your site to api.shortpixel.com (IP 176.9.21.94).<BR> If you still cannot validate your API Key after this, please <a href="https://shortpixel.com/contact" target="_blank">contact us</a> and we will try to help. ','shortpixel-upscale-image'),
-              "APICallsMade" => __('Information unavailable. Please check your API key.','shortpixel-upscale-image'),
-              "APICallsQuota" => __('Information unavailable. Please check your API key.','shortpixel-upscale-image'),
+              "Message" => __('API Key could not be validated due to a connectivity error.<BR>Your firewall may be blocking us. Please contact your hosting provider and ask them to allow connections from your site to api.shortpixel.com (IP 176.9.21.94).<BR> If you still cannot validate your API Key after this, please <a href="https://shortpixel.com/contact" target="_blank">contact us</a> and we will try to help. ','shortpixel-image-optimiser'),
+              "APICallsMade" => __('Information unavailable. Please check your API key.','shortpixel-image-optimiser'),
+              "APICallsQuota" => __('Information unavailable. Please check your API key.','shortpixel-image-optimiser'),
               "APICallsMadeOneTime" => 0,
               "APICallsQuotaOneTime" => 0,
               "APICallsMadeNumeric" => 0,
@@ -329,10 +329,10 @@ class QuotaController
 
           $dataArray = array(
               "APIKeyValid" => true,
-              "APICallsMade" => number_format($data->APICallsMade) . __(' credits','shortpixel-upscale-image'),
-              "APICallsQuota" => number_format($data->APICallsQuota) . __(' credits','shortpixel-upscale-image'),
-              "APICallsMadeOneTime" => number_format($data->APICallsMadeOneTime) . __(' credits','shortpixel-upscale-image'),
-              "APICallsQuotaOneTime" => number_format($data->APICallsQuotaOneTime) . __(' credits','shortpixel-upscale-image'),
+              "APICallsMade" => number_format($data->APICallsMade) . __(' credits','shortpixel-image-optimiser'),
+              "APICallsQuota" => number_format($data->APICallsQuota) . __(' credits','shortpixel-image-optimiser'),
+              "APICallsMadeOneTime" => number_format($data->APICallsMadeOneTime) . __(' credits','shortpixel-image-optimiser'),
+              "APICallsQuotaOneTime" => number_format($data->APICallsQuotaOneTime) . __(' credits','shortpixel-image-optimiser'),
               "APICallsMadeNumeric" => (int) max($data->APICallsMade, 0),
               "APICallsQuotaNumeric" => (int) max($data->APICallsQuota, 0),
               "APICallsMadeOneTimeNumeric" =>  (int) max($data->APICallsMadeOneTime, 0),

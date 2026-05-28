@@ -1,24 +1,24 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-//use SPUI\Controller\OptimizeController as OptimizeController;
-use SPUI\Controller\BulkController as BulkController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+//use ShortPixel\Controller\OptimizeController as OptimizeController;
+use ShortPixel\Controller\BulkController as BulkController;
 
-use SPUI\Controller\Queue\Queue as Queue;
-use SPUI\Controller\ResponseController as ResponseController;
+use ShortPixel\Controller\Queue\Queue as Queue;
+use ShortPixel\Controller\ResponseController as ResponseController;
 
-use SPUI\Model\Queue\QueueItem as QueueItem;
-use SPUI\Controller\Queue\QueueItems as QueueItems;
+use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use ShortPixel\Controller\Queue\QueueItems as QueueItems;
 
 /**
-* Actions and operations for the ShortPixel Image Upscaler plugin
+* Actions and operations for the ShortPixel Image Optimizer plugin
 */
-class SPUISingle extends SPUICommandBase
+class SpioSingle extends SpioCommandBase
 {
 
     /**
@@ -40,24 +40,24 @@ class SPUISingle extends SPUICommandBase
    *
    * ## EXAMPLES
    *
-   *   wp spui restore 123
-   *   wp spui restore 21 --type=custom
+   *   wp spio restore 123
+   *   wp spio restore 21 --type=custom
    *
    * @when after_wp_load
    */
   public function restore($args, $assoc_args)
   {
       //$controller = new QueueController();
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
 
       if (! isset($args[0]))
       {
-        \WP_CLI::Error(__('Specify an (Media Library) Item ID', 'shortpixel-upscale-image'));
+        \WP_CLI::Error(__('Specify an (Media Library) Item ID', 'shortpixel_image_optimiser'));
         return;
       }
 			if (! is_numeric($args[0]))
 			{
-				 \WP_CLI::Error(__('Item ID needs to be a number', 'shortpixel-upscale-image'));
+				 \WP_CLI::Error(__('Item ID needs to be a number', 'shortpixel-image-optimiser'));
 				 return;
 			}
 
@@ -68,7 +68,7 @@ class SPUISingle extends SPUICommandBase
 
       if ($imageModel === false)
 			{
-				 \WP_CLI::Error(__('No Image returned. Please check if the number and type are correct and the image exists', 'shortpixel-upscale-image'));
+				 \WP_CLI::Error(__('No Image returned. Please check if the number and type are correct and the image exists', 'shortpixel-image-optimiser'));
 				 return;
 			}
 
@@ -89,7 +89,7 @@ class SPUISingle extends SPUICommandBase
 				 $message = $result->message;
 			elseif (property_exists($result, 'result') )
       {
-        \WP_CLI::Error(sprintf(__("Result result exists, should not be", 'shortpixel-upscale-image'), $result) );
+        \WP_CLI::Error(sprintf(__("Result result exists, should not be", 'shortpixel_image_optimiser'), $result) );
       }
       else {
          $message = __('Operation didn\'t yield any messages');
@@ -102,7 +102,7 @@ class SPUISingle extends SPUICommandBase
 			}
       elseif (true === $result->is_error)
 			{
-        \WP_CLI::Error(sprintf(__("Restoring Item: %s", 'shortpixel-upscale-image'), $message) );
+        \WP_CLI::Error(sprintf(__("Restoring Item: %s", 'shortpixel_image_optimiser'), $message) );
 			}
       else {
         \WP_CLI::Error('Undetermined' . $message);
@@ -120,10 +120,10 @@ class SPUISingle extends SPUICommandBase
 	public function requestAlt($args, $assoc)
 	{
 		$queueController = $this->getQueueController();
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 
 		if (! isset($args[0])) {
-			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-upscale-image'));
+			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-image-optimiser'));
 			return;
 		}
 
@@ -132,7 +132,7 @@ class SPUISingle extends SPUICommandBase
 		$imageObj = $fs->getMediaImage($id);
 
 		if ($imageObj === false) {
-			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-upscale-image'));
+			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-image-optimiser'));
 		}
 
 		// @todo When completing this script probably as for AddSingleItem with requestAlt as action, then run queue, then remove/update item for getter.

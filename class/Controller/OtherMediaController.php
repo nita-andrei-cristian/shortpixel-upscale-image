@@ -1,21 +1,21 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
-use SPUI\Model\File\DirectoryModel as DirectoryModel;
+use ShortPixel\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
+use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
 
-use SPUI\Helper\InstallHelper as InstallHelper;
-use SPUI\Helper\UtilHelper as UtilHelper;
+use ShortPixel\Helper\InstallHelper as InstallHelper;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
 
 
 // Future contoller for the edit media metabox view.
-class OtherMediaController extends \SPUI\Controller
+class OtherMediaController extends \ShortPixel\Controller
 {
     private $folderIDCache;
     private static $hasFoldersTable;
@@ -42,13 +42,13 @@ class OtherMediaController extends \SPUI\Controller
     public function getFolderTable()
     {
         global $wpdb;
-        return $wpdb->prefix . 'spui_folders';
+        return $wpdb->prefix . 'shortpixel_folders';
     }
 
     public function getMetaTable()
     {
         global $wpdb;
-        return  $wpdb->prefix . 'spui_meta';
+        return  $wpdb->prefix . 'shortpixel_meta';
     }
 
     // Get CustomFolder for usage.
@@ -83,7 +83,7 @@ class OtherMediaController extends \SPUI\Controller
 
       global $wpdb;
 
-      $sql = 'SELECT id from ' . $wpdb->prefix  .'spui_folders where status <> -1';
+      $sql = 'SELECT id from ' . $wpdb->prefix  .'shortpixel_folders where status <> -1';
       $results = $wpdb->get_col($sql);
 
       $this->folderIDCache = $results;
@@ -94,7 +94,7 @@ class OtherMediaController extends \SPUI\Controller
 		{
       global $wpdb;
 
-      $sql = 'SELECT id from ' . $wpdb->prefix  .'spui_folders where status = -1';
+      $sql = 'SELECT id from ' . $wpdb->prefix  .'shortpixel_folders where status = -1';
       $results = $wpdb->get_col($sql);
 
 			return $results;
@@ -125,7 +125,7 @@ class OtherMediaController extends \SPUI\Controller
          $sql = $wpdb->prepare($sql, $path);
 
          $custom_id = $wpdb->get_var($sql);
-         $fs = \wpSPUI()->filesystem();
+         $fs = \wpSPIO()->filesystem();
 
          if (! is_null($custom_id))
          {
@@ -141,13 +141,13 @@ class OtherMediaController extends \SPUI\Controller
        if (! is_null(self::$hasCustomImages)) // prevent repeat
          return self::$hasCustomImages;
 
-			if (InstallHelper::checkTableExists('spui_meta') === false)
+			if (InstallHelper::checkTableExists('shortpixel_meta') === false)
 				$count = 0;
 			else
 			{
 				global $wpdb;
 
-				$sql = 'SELECT count(id) as count from ' . $wpdb->prefix . 'spui_meta';
+				$sql = 'SELECT count(id) as count from ' . $wpdb->prefix . 'shortpixel_meta';
         $count = $wpdb->get_var($sql);
 			 }
        if ($count == 0)
@@ -162,7 +162,7 @@ class OtherMediaController extends \SPUI\Controller
 
 		public function showMenuItem()
 		{
-			  $settings = \wpSPUI()->settings();
+			  $settings = \wpSPIO()->settings();
 				if ( $settings->showCustomMedia)
 				{
 					 return true;
@@ -172,7 +172,7 @@ class OtherMediaController extends \SPUI\Controller
 
 	   public function addDirectory($path)
     {
-       $fs = \wpSPUI()->filesystem();
+       $fs = \wpSPIO()->filesystem();
        $directory = new DirectoryOtherMediaModel($path);
 
 			 // Check if this directory is allowed.
@@ -248,7 +248,7 @@ class OtherMediaController extends \SPUI\Controller
 
         $args = wp_parse_args($args, $defaults);
 
-        $fs = \wpSPUI()->filesystem();
+        $fs = \wpSPIO()->filesystem();
 
         if (is_object($path_or_file)) // assume fileObject
         {
@@ -287,7 +287,7 @@ class OtherMediaController extends \SPUI\Controller
 
 				$args = wp_parse_args($args, $defaults);
 
-        $args['interval'] = apply_filters('spui/othermedia/refreshfolder_interval', $args['interval'], $args);
+        $args['interval'] = apply_filters('shortpixel/othermedia/refreshfolder_interval', $args['interval'], $args);
 				global $wpdb;
 
 				$folderTable = $this->getFolderTable();
@@ -329,14 +329,14 @@ class OtherMediaController extends \SPUI\Controller
 
 				if ($old_count == $new_count)
 				{
-					 $message = __('No new files added', 'shortpixel-upscale-image');
+					 $message = __('No new files added', 'shortpixel-image-optimiser');
 				}
 				elseif ($old_count < $new_count)
 				{
-					$message = sprintf(__(' %s files added', 'shortpixel-upscale-image'), ($new_count-$old_count));
+					$message = sprintf(__(' %s files added', 'shortpixel-image-optimiser'), ($new_count-$old_count));
 				}
 				else {
-					$message = sprintf(__(' %s files removed', 'shortpixel-upscale-image'), ($old_count-$new_count));
+					$message = sprintf(__(' %s files removed', 'shortpixel-image-optimiser'), ($old_count-$new_count));
 				}
 
 				$return['message'] = $message;
@@ -381,7 +381,7 @@ class OtherMediaController extends \SPUI\Controller
     /* Check if this directory is part of the MediaLibrary */
     public function checkifMediaLibrary(DirectoryModel $directory)
     {
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
       $uploadDir = $fs->getWPUploadBase();
 		  $wpUploadDir = wp_upload_dir(null, false);
 
@@ -426,11 +426,11 @@ class OtherMediaController extends \SPUI\Controller
       $error = array('is_error' => true, 'message' => '');
 
       if ( ! $this->userIsAllowed )  {
-          $error['message'] = __('You do not have sufficient permissions to access this page.','shortpixel-upscale-image');
+          $error['message'] = __('You do not have sufficient permissions to access this page.','shortpixel-image-optimiser');
           return $error;
       }
 
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
       $rootDirObj = $fs->getWPFileBase();
       $path = $rootDirObj->getPath();
 
@@ -454,7 +454,7 @@ class OtherMediaController extends \SPUI\Controller
       $dirObj = $fs->getDirectory($path);
       if ($dirObj->getPath() !== $rootDirObj->getPath() && ! $dirObj->isSubFolderOf($rootDirObj))
       {
-        $error['message'] = __('This directory seems not part of WordPress', 'shortpixel-upscale-image');
+        $error['message'] = __('This directory seems not part of WordPress', 'shortpixel-image-optimiser');
         return $error;
       }
 
@@ -496,7 +496,7 @@ class OtherMediaController extends \SPUI\Controller
                        );
 
 
-                       if($dirpath == trailingslashit(SPUI_BACKUP_FOLDER) || $this->checkifMediaLibrary($dir) )
+                       if($dirpath == trailingslashit(SHORTPIXEL_BACKUP_FOLDER) || $this->checkifMediaLibrary($dir) )
                        {
                           $folders[$i]['is_disabled']  = true;
                          // unset($subdirs[$index]);
@@ -509,7 +509,7 @@ class OtherMediaController extends \SPUI\Controller
           }
           elseif ($_POST['dir'] == '/')
           {
-            $error['message'] = __('No Directories found that can be added to Custom Folders', 'shortpixel-upscale-image');
+            $error['message'] = __('No Directories found that can be added to Custom Folders', 'shortpixel-image-optimiser');
             return $error;
           }
           else {
@@ -550,14 +550,14 @@ class OtherMediaController extends \SPUI\Controller
         else
           return array();
       }
-      $fs =  \wpSPUI()->fileSystem();
+      $fs =  \wpSPIO()->fileSystem();
 
       if ($args['only_count'])
         $selector = 'count(id) as id';
       else
         $selector = '*';
 
-      $sql = "SELECT " . $selector . "  FROM " . $wpdb->prefix . "spui_folders WHERE 1=1 ";
+      $sql = "SELECT " . $selector . "  FROM " . $wpdb->prefix . "shortpixel_folders WHERE 1=1 ";
       $prepare = array();
     //  $mask = array();
 
@@ -593,7 +593,7 @@ class OtherMediaController extends \SPUI\Controller
 
       private function hasFoldersTable()
       {
-				return InstallHelper::checkTableExists('spui_folders');
+				return InstallHelper::checkTableExists('shortpixel_folders');
       }
 
 

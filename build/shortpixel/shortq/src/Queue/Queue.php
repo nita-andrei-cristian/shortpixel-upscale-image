@@ -1,6 +1,6 @@
 <?php
-namespace SPUI\ShortQ\Queue;
-use SPUI\ShortQ\Item as Item;
+namespace ShortPixel\ShortQ\Queue;
+use ShortPixel\ShortQ\Item as Item;
 
 
 

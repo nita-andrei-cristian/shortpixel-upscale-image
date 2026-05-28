@@ -1,19 +1,19 @@
 <?php
-namespace SPUI\Controller\Front;
+namespace ShortPixel\Controller\Front;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Notices\NoticeController as Notices;
-use SPUI\Helper\UtilHelper as UtilHelper;
-use SPUI\Model\FrontImage as FrontImage;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notices;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
+use ShortPixel\Model\FrontImage as FrontImage;
 
-use SPUI\ShortPixelImgToPictureWebp as ShortPixelImgToPictureWebp;
+use ShortPixel\ShortPixelImgToPictureWebp as ShortPixelImgToPictureWebp;
 
 /** Handle everything that SP is doing front-wise */
-class PictureController extends \SPUI\Controller\Front\PageConverter
+class PictureController extends \ShortPixel\Controller\Front\PageConverter
 {
   // DeliverWebp option settings for front-end delivery of webp
   const WEBP_GLOBAL = 1;
@@ -27,7 +27,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
 
 	public function initWebpHooks()
   {
-    $webp_option = \wpSPUI()->settings()->deliverWebp;
+    $webp_option = \wpSPIO()->settings()->deliverWebp;
     if (false === $this->shouldConvert())
     {
        return false;
@@ -36,9 +36,9 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
 
 		if ($webp_option ) {  // @tood Replace this function with the one in ENV.
         if(UtilHelper::shortPixelIsPluginActive('shortpixel-adaptive-images/short-pixel-ai.php')) {
-            Notices::addWarning(__('Please deactivate the ShortPixel Image Upscaler\'s
-                <a href="options-general.php?page=wp-shortpixel-upscale-settings&part=webp">Serve WebP/AVIF images from locally hosted files (without using a CDN)</a>
-                option when the ShortPixel Adaptive Images plugin is active.','shortpixel-upscale-image'), true);
+            Notices::addWarning(__('Please deactivate the ShortPixel Image Optimizer\'s
+                <a href="options-general.php?page=wp-shortpixel-settings&part=webp">Serve WebP/AVIF images from locally hosted files (without using a CDN)</a>
+                option when the ShortPixel Adaptive Images plugin is active.','shortpixel-image-optimiser'), true);
         }
         elseif( $webp_option == self::WEBP_GLOBAL ){
             //add_action( 'wp_head', array($this, 'addPictureJs') ); // adds polyfill JS to the header || Removed. Browsers without picture support?
@@ -56,7 +56,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
 
             $hook = [$this, 'convertImgToPictureAddWebp'];
 
-            $filters = apply_filters('spui/front/picture_webp_filters', $filters);
+            $filters = apply_filters('shortpixel/front/picture_webp_filters', $filters);
             
             foreach($filters as $filter => $priority)
             {
@@ -87,7 +87,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
       if(function_exists('amp_is_request') && amp_is_request()) {
           //for AMP pages the <picture> tag is not allowed
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-          return $content . (isset($_GET['SPUI_DEBUG']) ? '<!-- SPDBG is AMP -->' : '');
+          return $content . (isset($_GET['SHORTPIXEL_DEBUG']) ? '<!-- SPDBG is AMP -->' : '');
       }
 
       $content = $this->convert($content);
@@ -101,7 +101,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
       // Don't do anything with the RSS feed.
       if (is_feed() || is_admin()) {
           //Log::addInfo('SPDBG convert is_feed or is_admin');
-          return $content; // . (isset($_GET['SPUI_DEBUG']) ? '<!--  -->' : '');
+          return $content; // . (isset($_GET['SHORTPIXEL_DEBUG']) ? '<!--  -->' : '');
       }
 
       $new_content = $this->testPictures($content);
@@ -187,7 +187,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
   */
   protected function convertImage($match)
   {
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
 
       $raw_image = $match[0];
 
@@ -252,7 +252,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
                 {
                   // FILTER: boolean, object, string, filedir
 								 // Return fileObj if you want to live.
-                  $thisfile = $fileWebp_exists = apply_filters('spui/front/webp_notfound', false, $thisfile, $image_url, $imageBase);
+                  $thisfile = $fileWebp_exists = apply_filters('shortpixel/front/webp_notfound', false, $thisfile, $image_url, $imageBase);
                 }
 
                 if ($thisfile !== false)
@@ -275,7 +275,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
 
               if (false === $fileAvif->exists())
               {
-                $fileAvif = apply_filters('spui/front/webp_notfound', false, $fileAvif, $image_url, $imageBase);
+                $fileAvif = apply_filters('shortpixel/front/webp_notfound', false, $fileAvif, $image_url, $imageBase);
               }
 
               if ($fileAvif !== false)
@@ -343,7 +343,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
   */
   protected function convertInlineStyle($matches, $content)
   {
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
     $allowed_exts = array('jpg', 'jpeg', 'gif', 'png');
     $converted = array();
 
@@ -393,13 +393,13 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
       }
       else
       {
-        $fileWebp_exists = apply_filters('spui/front/webp_notfound', false, $fileWebp, $url, $imageBase);
+        $fileWebp_exists = apply_filters('shortpixel/front/webp_notfound', false, $fileWebp, $url, $imageBase);
         if (false !== $fileWebp_exists)
         {
            $checkedFile = $image_base_url . $fsFile->getFileBase()  . '.webp';
         }
         else {
-          $fileWebp_exists = apply_filters('spui/front/webp_notfound', false, $fileWebpCompat, $url, $imageBase);
+          $fileWebp_exists = apply_filters('shortpixel/front/webp_notfound', false, $fileWebpCompat, $url, $imageBase);
           if (false !== $fileWebp_exists)
           {
              $checkedFile = $image_base_url . $fsFile->getFileName()  . '.webp';

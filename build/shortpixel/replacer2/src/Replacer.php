@@ -1,17 +1,17 @@
 <?php
 
-namespace SPUI\Replacer;
+namespace ShortPixel\Replacer;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
 use Helper\Functional;
-use SPUI\Replacer\Classes\Finder;
-use SPUI\Replacer\Classes\Setup;
-use SPUI\Replacer\Classes\Updater;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Replacer\Libraries\Unserialize\Unserialize;
+use ShortPixel\Replacer\Classes\Finder;
+use ShortPixel\Replacer\Classes\Setup;
+use ShortPixel\Replacer\Classes\Updater;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Replacer\Libraries\Unserialize\Unserialize;
 
 /** Module: Replacer.
  *
@@ -133,13 +133,13 @@ class Replacer
 		/** Fail-safe if base_url is a whole directory, don't go search/replace */
 		if (false === $this->fileIsRestricted($base_url) && is_dir($base_url)) {
 			Log::addError('Search Replace tried to replace to directory - ' . $base_url);
-			$errors[] = __('Fail Safe :: Source Location seems to be a directory.', 'shortpixel-upscale-image');
+			$errors[] = __('Fail Safe :: Source Location seems to be a directory.', 'shortpixel-image-optimiser');
 			return $errors;
 		}
 
 		if (strlen(trim($base_url)) == 0) {
 			Log::addError('Current Base URL emtpy - ' . $base_url);
-			$errors[] = __('Fail Safe :: Source Location returned empty string. Not replacing content', 'shortpixel-upscale-image');
+			$errors[] = __('Fail Safe :: Source Location returned empty string. Not replacing content', 'shortpixel-image-optimiser');
 			return $errors;
 		}
 
@@ -210,12 +210,12 @@ class Replacer
 		Log::addDebug('Doing meta search and replace -', array($search_urls, $replace_urls));
 		Log::addDebug('Searching with BaseuRL ' . $base_url);
 
-		do_action('spui/replacer/replace_urls', $search_urls, $replace_urls);
+		do_action('shortpixel/replacer/replace_urls', $search_urls, $replace_urls);
 		$updated = 0;
 
 		$updated += $this->doReplaceQuery($base_url, $search_urls, $replace_urls);
 
-		$replaceRuns = apply_filters('spui/replacer/custom_replace_query', array(), $base_url, $search_urls, $replace_urls);
+		$replaceRuns = apply_filters('shortpixel/replacer/custom_replace_query', array(), $base_url, $search_urls, $replace_urls);
 
 		foreach ($replaceRuns as $component => $run) {
 			Log::addDebug('Running additional replace for : ' . $component, $run);
@@ -282,7 +282,7 @@ class Replacer
 	{
 		global $wpdb;
 
-		$meta_options = apply_filters('spui/replacer/metadata_tables', array('post', 'comment', 'term', 'user', 'options'));
+		$meta_options = apply_filters('shortpixel/replacer/metadata_tables', array('post', 'comment', 'term', 'user', 'options'));
 		$number_of_updates = 0;
 
 		$meta_default = [
@@ -302,7 +302,7 @@ class Replacer
 
 		];
 
-		$table_options = apply_filters('spui/replacer/replacement_tables', $table_options);
+		$table_options = apply_filters('shortpixel/replacer/replacement_tables', $table_options);
 
 		// Exeception in user meta table.
 		$table_options['usermeta']['id'] = 'umeta_id';
@@ -344,7 +344,7 @@ class Replacer
 					$id = $row[$id_field];
 
 					// Content as how it's loading.
-					$content = apply_filters('spui/replacer/load_meta_value', $content, $row, $component);
+					$content = apply_filters('shortpixel/replacer/load_meta_value', $content, $row, $component);
 
 					// If content is null, break out of everything and don't replace this.
 					if (null === $content) {
@@ -353,7 +353,7 @@ class Replacer
 						$content = $this->replaceContent($content, $search_urls, $replace_urls);
 
 						// Content as how it's going to dbase.
-						$content = apply_filters('spui/replacer/save_meta_value', $content, $row, $component);
+						$content = apply_filters('shortpixel/replacer/save_meta_value', $content, $row, $component);
 
 						// Check if usual save should be prevented. This is for integrations.
 						if (true === $this->replace_settings['replacer_do_save']) {
@@ -414,7 +414,7 @@ class Replacer
 
 		if (is_string($content))  // let's check the normal one first.
 		{
-			$content = apply_filters('spui/replacer/content', $content, $search, $replace);
+			$content = apply_filters('shortpixel/replacer/content', $content, $search, $replace);
 			$content = str_replace($search, $replace, $content);
 		} elseif (is_wp_error($content)) // seen this.
 		{
@@ -487,7 +487,7 @@ class Replacer
 		}
 
 		// Allow this to be overridden due to specific server configs ( ie symlinks ) might get this flagged falsely.
-		$restricted = apply_filters('spui/file/basedir_check', $restricted);
+		$restricted = apply_filters('shortpixel/file/basedir_check', $restricted);
 
 		return $restricted;
 	}

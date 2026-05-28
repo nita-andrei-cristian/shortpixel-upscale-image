@@ -1,14 +1,14 @@
 <?php
-namespace SPUI\Controller\Queue;
+namespace ShortPixel\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 // Attempt to standardize what goes around in the queue and keep some overview.
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Model\Image\ImageModel as ImageModel;
-use SPUI\Model\Queue\QueueItem as QueueItem;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
+use ShortPixel\Model\Queue\QueueItem as QueueItem;
 
 class QueueItems
 {
@@ -65,7 +65,7 @@ class QueueItems
      */
     public static function getImageItemByID($id, $type)
     {
-        $fs = \wpSPUI()->filesystem();
+        $fs = \wpSPIO()->filesystem();
          $image = $fs->getMediaImage($id, $type);
          if (false !== $image)
          {

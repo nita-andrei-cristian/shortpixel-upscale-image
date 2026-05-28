@@ -1,16 +1,16 @@
 <?php
-namespace SPUI\Controller\Optimizer;
+namespace ShortPixel\Controller\Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Model\Queue\QueueItem as QueueItem;
+use ShortPixel\Model\Queue\QueueItem as QueueItem;
 use Shortpixel\Controller\Api\RequestManager as RequestManager;
-use SPUI\Controller\QueueController;
-use SPUI\Helper\UiHelper;
-use SPUI\Model\Image\ImageModel as ImageModel;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\QueueController;
+use ShortPixel\Helper\UiHelper;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 use stdClass;
 
 abstract class OptimizerBase
@@ -86,7 +86,7 @@ abstract class OptimizerBase
       {
 
         $qItem->addResult([
-            'message' => __("File Error. File could not be loaded with this ID ", 'shortpixel-upscale-image'),
+            'message' => __("File Error. File could not be loaded with this ID ", 'shortpixel-image-optimiser'),
             'apiStatus' => RequestManager::STATUS_NOT_API,
             'fileStatus' => ImageModel::FILE_STATUS_ERROR,
             'is_done' => true,
@@ -150,7 +150,7 @@ abstract class OptimizerBase
     protected function finishItemProcess(QueueItem $qItem, $args = [])
     {
         $queue = $this->getCurrentQueue($qItem); 
-        $fs = \wpSPUI()->filesystem();
+        $fs = \wpSPIO()->filesystem();
         
         // If the action is passed as direct action / out of queue, there might be no queueItem in DB
         if (is_object($qItem->getQueueItem()))
@@ -197,7 +197,7 @@ abstract class OptimizerBase
     {
       $imageModel = $qItem->imageModel; 
       $showItem = UiHelper::findBestPreview($imageModel); // find smaller / better preview
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
 
       $original = $optimized = false;
 

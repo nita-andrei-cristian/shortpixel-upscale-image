@@ -1,5 +1,5 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -19,29 +19,29 @@ $this->loadView('custom/part-othermedia-top');
 <!--- add Custom Folder -->
 <div class='addCustomFolder'>
 
-  <p class='add-folder-text'><strong><?php esc_html_e('Add a custom folder', 'shortpixel-upscale-image'); ?></strong></p>
+  <p class='add-folder-text'><strong><?php esc_html_e('Add a custom folder', 'shortpixel-image-optimiser'); ?></strong></p>
   <input type="text" name="addCustomFolderView" id="addCustomFolderView" class="regular-text" value="" disabled >&nbsp;
 
-  <a class="button open-selectfolder-modal" title="<?php esc_html_e('Select the images folder on your server.','shortpixel-upscale-image');?>" href="javascript:void(0);">
-      <?php esc_html_e('Select','shortpixel-upscale-image');?>
+  <a class="button open-selectfolder-modal" title="<?php esc_html_e('Select the images folder on your server.','shortpixel-image-optimiser');?>" href="javascript:void(0);">
+      <?php esc_html_e('Select','shortpixel-image-optimiser');?>
   </a>
-<input type="submit" name="save" id="saveAdvAddFolder" class="button button-primary hidden" title="<?php esc_html_e('Add this Folder','shortpixel-upscale-image');?>" value="<?php esc_html_e('Add this Folder','shortpixel-upscale-image');?>">
+<input type="submit" name="save" id="saveAdvAddFolder" class="button button-primary hidden" title="<?php esc_html_e('Add this Folder','shortpixel-image-optimiser');?>" value="<?php esc_html_e('Add this Folder','shortpixel-image-optimiser');?>">
 <p class="settings-info">
-    <?php printf(esc_html__('Use the Select... button to select site folders. ShortPixel will upscale images and PDFs from the specified folders and their subfolders. In the %s Custom Media list %s, under the Media menu, you can see the upscaling status for each image or PDF in these folders.','shortpixel-upscale-image'), '<a href="upload.php?page=wp-shortpixel-upscale-custom">', '</a>');?>
+    <?php printf(esc_html__('Use the Select... button to select site folders. ShortPixel will optimize images and PDFs from the specified folders and their subfolders. In the %s Custom Media list %s, under the Media menu, you can see the optimization status for each image or PDF in these folders.','shortpixel-image-optimiser'), '<a href="upload.php?page=wp-short-pixel-custom">', '</a>');?>
 </p>
 
 <div class="sp-modal-shade sp-folder-picker-shade" ></div>
     <div class="shortpixel-modal modal-folder-picker shortpixel-hide">
-        <div class="sp-modal-title"><?php esc_html_e('Select folder to add','shortpixel-upscale-image');?></div>
+        <div class="sp-modal-title"><?php esc_html_e('Select folder to add','shortpixel-image-optimiser');?></div>
         <div class="sp-folder-picker">
 
         </div>
-        <input type="button" class="button button-info select-folder-cancel" value="<?php esc_html_e('Cancel','shortpixel-upscale-image');?>" style="margin-right: 30px;">
-        <input type="button" class="button button-primary select-folder" value="<?php esc_html_e('Add','shortpixel-upscale-image');?>" disabled>
+        <input type="button" class="button button-info select-folder-cancel" value="<?php esc_html_e('Cancel','shortpixel-image-optimiser');?>" style="margin-right: 30px;">
+        <input type="button" class="button button-primary select-folder" value="<?php esc_html_e('Add','shortpixel-image-optimiser');?>" disabled>
 
         <span class='sp-folder-picker-selected'>&nbsp;</span>
         <div class="folder-message hidden"></div>
-        <div class='description'><?php _e('The greyed out folders are either already active in Custom Media folders or part of the WordPress Media Library', 'shortpixel-upscale-image'); ?></div>
+        <div class='description'><?php _e('The greyed out folders are either already active in Custom Media folders or part of the WordPress Media Library', 'shortpixel-image-optimiser'); ?></div>
     </div>
 
 
@@ -68,9 +68,9 @@ $this->loadView('custom/part-othermedia-top');
 			<div class='no-items'> <p>
 				<?php
 				if ($this->search === false):
-					printf(esc_html__('No folders available. ','shortpixel-upscale-image'), '<a href="upload.php?page=wp-shortpixel-upscale-custom&part=folders">', '</a>');
+					printf(esc_html__('No folders available. ','shortpixel-image-optimiser'), '<a href="upload.php?page=wp-short-pixel-custom&part=folders">', '</a>');
 				 else:
-					 echo esc_html__('Your search query didn\'t result in any images. ', 'shortpixel-upscale-image');
+					 echo esc_html__('Your search query didn\'t result in any images. ', 'shortpixel-image-optimiser');
 				endif; ?>
 			</p>
 			</div>

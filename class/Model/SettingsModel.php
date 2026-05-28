@@ -1,17 +1,17 @@
 <?php
-namespace SPUI\Model;
+namespace ShortPixel\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-class SettingsModel extends \SPUI\Model
+class SettingsModel extends \ShortPixel\Model
 {
 		private static $instance;
 
-		private $option_name = 'spui_settings';
+		private $option_name = 'spio_settings';
 
 		private $updated = false;
 
@@ -59,7 +59,7 @@ class SettingsModel extends \SPUI\Model
 				'useCDN' => ['s' => 'boolean', 'default' => false],
 				'cdn_css' => ['s' =>  'boolean', 'default' => false],
 				'cdn_js' => ['s' => 'boolean', 'default' => false],
-				'CDNDomain' => ['s' => 'string', 'default' => 'https://spcdn.shortpixel.ai/spui'],
+				'CDNDomain' => ['s' => 'string', 'default' => 'https://spcdn.shortpixel.ai/spio'],
         'redirectedSettings' => ['s' => 'int', 'default' => 0],
         'exif' => ['s' => 'int', 'default' => 1],
         'exif_ai' => ['s' => 'int', 'default' => 0],
@@ -88,8 +88,9 @@ class SettingsModel extends \SPUI\Model
         'ai_filename_context' => ['s' => 'string', 'default' => '', 'maxlength' => 200],
         'ai_use_exif' => ['s' => 'boolean', 'default' => true],
         'ai_language' => ['s' => 'string', 'default' => 'callback'],
-     
- 
+
+        // SPUI: default upscale factor used by media column action and bulk upscale (2, 4, or 8)
+        'defaultUpscaleFactor' => ['s' => 'int', 'default' => 2],
 
     );
 
@@ -197,16 +198,7 @@ class SettingsModel extends \SPUI\Model
            unset($settings['keepExif']);
         }
 
-        if (isset($settings['CDNDomain']) && is_string($settings['CDNDomain']))
-        {
-          $settings['CDNDomain'] = str_replace(
-            array('https://cdn.shortpixel.ai/spio', 'https://spcdn.shortpixel.ai/spio'),
-            array('https://cdn.shortpixel.ai/spui', 'https://spcdn.shortpixel.ai/spui'),
-            $settings['CDNDomain']
-          );
-        }
-
-        $settings = apply_filters('spui/settings/check', $settings);
+        $settings = apply_filters('shortpixel/settings/check', $settings);
         return $settings;
     }
 
@@ -319,3 +311,4 @@ class SettingsModel extends \SPUI\Model
 		}
 
 } // class
+

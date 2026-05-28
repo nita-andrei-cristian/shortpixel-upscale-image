@@ -1,22 +1,22 @@
 <?php
-namespace SPUI\Model\Image;
+namespace ShortPixel\Model\Image;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Controller\ResponseController as ResponseController;
-use SPUI\Controller\Api\ApiController as ApiController;
+use ShortPixel\Controller\ResponseController as ResponseController;
+use ShortPixel\Controller\Api\ApiController as ApiController;
 
-use SPUI\Model\File\FileModel as FileModel;
-use SPUI\Model\AccessModel as AccessModel;
-use SPUI\Helper\UtilHelper as UtilHelper;
+use ShortPixel\Model\File\FileModel as FileModel;
+use ShortPixel\Model\AccessModel as AccessModel;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
 
 
-use SPUI\Model\Converter\Converter as Converter;
+use ShortPixel\Model\Converter\Converter as Converter;
 
 /* ImageModel class.
 *
@@ -28,7 +28,7 @@ use SPUI\Model\Converter\Converter as Converter;
 * -- ShortPixel Class should be able to blindly call model for information, correct metadata and such.
 */
 
-abstract class ImageModel extends \SPUI\Model\File\FileModel
+abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 {
     // File Status Constants
     const FILE_STATUS_ERROR = -1;
@@ -126,7 +126,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
     abstract protected function getImprovements();
     abstract protected function getExcludePatterns(); // get the Exclude Pattern(s) for -this- image to compare.
 
-   // abstract protected function getUpscaleFileType();
+   // abstract protected function getOptimizeFileType();
 
     // Function to prevent image from doing anything automatically - after fatal error.
     abstract protected function preventNextTry($reason = '');
@@ -232,7 +232,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
     public function isProcessableFileType($type = 'webp')
     {
-        $settings = \wpSPUI()->settings();
+        $settings = \WPSPIO()->settings();
 
 				if ( AccessModel::getInstance()->isFeatureAvailable($type) === false)
 				{
@@ -341,64 +341,64 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
       switch($status)
       {
          case self::P_PROCESSABLE:
-            $message = __('Image Processable', 'shortpixel-upscale-image');
+            $message = __('Image Processable', 'shortpixel-image-optimiser');
          break;
          case self::P_FILE_NOT_EXIST:
-            $message = __('File does not exist', 'shortpixel-upscale-image');
+            $message = __('File does not exist', 'shortpixel-image-optimiser');
          break;
          case self::P_EXCLUDE_EXTENSION:
-            $message = __('Image Extension not processable', 'shortpixel-upscale-image');
+            $message = __('Image Extension not processable', 'shortpixel-image-optimiser');
          break;
          case self::P_EXCLUDE_EXTENSION_PDF:
-            $message = sprintf(__('PDF processing is not enabled in the %ssettings%s', 'shortpixel-upscale-image'), '<a href="' .  esc_url(admin_url('options-general.php?page=wp-shortpixel-upscale-settings&part=optimisation')) . '">', '</a>');
+            $message = sprintf(__('PDF processing is not enabled in the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="' .  esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=optimisation')) . '">', '</a>');
          break;
          case self::P_EXCLUDE_SIZE:
-            $message = __('Image Size Excluded', 'shortpixel-upscale-image');
+            $message = __('Image Size Excluded', 'shortpixel-image-optimiser');
          break;
          case self::P_EXCLUDE_FILESIZE: 
-            $message = __('Image Filesize excluded', 'shortpixel-upscale-image');
+            $message = __('Image Filesize excluded', 'shortpixel-image-optimiser');
           break;
          case self::P_EXCLUDE_PATH:
-            $message = __('Image Excluded', 'shortpixel-upscale-image');
+            $message = __('Image Excluded', 'shortpixel-image-optimiser');
          break;
          case self::P_IS_OPTIMIZED:
-            $message = __('Image is already upscaled', 'shortpixel-upscale-image');
+            $message = __('Image is already optimized', 'shortpixel-image-optimiser');
          break;
          case self::P_FILE_NOTWRITABLE:
-            $message = sprintf(__('Image %s (or related thumbnails) is not writable in %s', 'shortpixel-upscale-image'), $this->getFileName(), (string) $this->getFileDir());
+            $message = sprintf(__('Image %s (or related thumbnails) is not writable in %s', 'shortpixel-image-optimiser'), $this->getFileName(), (string) $this->getFileDir());
          break;
 				 case self::P_DIRECTORY_NOTWRITABLE:
-						$message = sprintf(__('Image directory %s is not writable', 'shortpixel-upscale-image'), (string) $this->getFileDir());
+						$message = sprintf(__('Image directory %s is not writable', 'shortpixel-image-optimiser'), (string) $this->getFileDir());
 				 break;
 				 case self::P_BACKUPDIR_NOTWRITABLE:
-				 		$message = __('Backup directory is not writable', 'shortpixel-upscale-image');
+				 		$message = __('Backup directory is not writable', 'shortpixel-image-optimiser');
 				 break;
 				 case self::P_BACKUP_EXISTS:
-				 		$message = __('Backup already exists', 'shortpixel-upscale-image');
+				 		$message = __('Backup already exists', 'shortpixel-image-optimiser');
 				 break;
 				 case self::P_OPTIMIZE_PREVENTED:
-				 		$message = __('Fatal error preventing processing', 'shortpixel-upscale-image');
+				 		$message = __('Fatal error preventing processing', 'shortpixel-image-optimiser');
 						if (property_exists($this, 'optimizePreventedReason'))
 						$message = $this->get('optimizePreventedReason');
 				 break;
 				 // Restorable Reasons
 				 case self::P_RESTORABLE:
-				 		$message = __('Image restorable', 'shortpixel-upscale-image');
+				 		$message = __('Image restorable', 'shortpixel-image-optimiser');
 				 break;
 				 case self::P_BACKUP_NOT_EXISTS:
-				 		$message = __('Backup does not exist', 'shortpixel-upscale-image');
+				 		$message = __('Backup does not exist', 'shortpixel-image-optimiser');
 				 break;
 				 case self::P_NOT_OPTIMIZED:
-				 		$message = __('Image is not upscaled', 'shortpixel-upscale-image');
+				 		$message = __('Image is not optimized', 'shortpixel-image-optimiser');
 				 break;
          case self::P_IMAGE_ZERO_SIZE:
-            $message = __('File seems empty, or failure on image size', 'shortpixel-upscale-image');
+            $message = __('File seems empty, or failure on image size', 'shortpixel-image-optimiser');
          break;
          case self::P_EXCLUDE_DATE: 
-             $message = __('Date is excluded', 'shortpixel-upscale-image');
+             $message = __('Date is excluded', 'shortpixel-image-optimiser');
           break; 
          default:
-            $message = __(sprintf('Unknown Issue, Code %s',  $this->processable_status), 'shortpixel-upscale-image');
+            $message = __(sprintf('Unknown Issue, Code %s',  $this->processable_status), 'shortpixel-image-optimiser');
          break;
       }
 
@@ -422,18 +422,18 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
         }
 
 
-				if (is_null($this->mime) && \wpSPUI()->env()->is_function_usable('finfo_open')) // Faster function for getting mime types
+				if (is_null($this->mime) && \wpSPIO()->env()->is_function_usable('finfo_open')) // Faster function for getting mime types
 					 {
 						 $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
 						 $this->mime = finfo_file($fileinfo, $this->getFullPath());
              // Deprecated from version 8.5
-             if (false === \wpSPUI()->env()->checkPHPversion('8.5') )
+             if (false === \wpSPIO()->env()->checkPHPversion('8.5') )
              {
 						  finfo_close($fileinfo);
              }
 					 	 //FILEINFO_MIME_TYPE
 					}
-					elseif(is_null($this->mime) && \wpSPUI()->env()->is_function_usable('mime_content_type')) {
+					elseif(is_null($this->mime) && \wpSPIO()->env()->is_function_usable('mime_content_type')) {
 						$this->mime = mime_content_type($this->getFullPath());
 					}
 					elseif(is_null($this->mime)) {
@@ -485,14 +485,14 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
       return $this->image_meta->$name;
     }
 
-		/* Get counts of what needs to be upscaled still
+		/* Get counts of what needs to be optimized still
 		* @param String What to count: thumbnails, webp, avif.
 		*/
 		public function getCountOptimizeData($param = 'thumbnails')
 		{
-				$upscaleData = $this->getOptimizeData();
+				$optimizeData = $this->getOptimizeData();
 
-				if (! isset($upscaleData['params']) || ! isset($upscaleData['urls']))
+				if (! isset($optimizeData['params']) || ! isset($optimizeData['urls']))
 				{
 					array([], 0);
 				}
@@ -500,18 +500,18 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 				$count = 0;
 				$urls = [];
 
-				$params = $upscaleData['params'];
+				$params = $optimizeData['params'];
 
 				if ($param == 'thumbnails')
 					$param = 'image';
 
-				// Take the upscaleData and take key - param column, then check if the param (image/webp/avif) is true (filter) .
+				// Take the optimizeData and take key - param column, then check if the param (image/webp/avif) is true (filter) .
 				$combinedArray = array_filter(array_combine(array_keys($params), array_column($params, $param)));
 
 				$count = count($combinedArray);
 				foreach($combinedArray as $sizeName => $unneeded)
 				{
-					 $urls[] = $upscaleData['paths'][$sizeName];
+					 $urls[] = $optimizeData['paths'][$sizeName];
 				}
 				return array($urls, $count);
 
@@ -519,14 +519,14 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
 	  protected function getImageType($type = 'webp')
 	  {
-	    $fs = \wpSPUI()->filesystem();
+	    $fs = \wpSPIO()->filesystem();
 			if ($this->getMeta($type) === self::FILETYPE_BIGGER)
 				return false;
 
 	    if (! is_null($this->getMeta($type)))
 	    {
 				// Filter to disable assumption(s) on the file basis of imageType.  Active when something has manually been deleted.
-				$metaCheck = apply_filters('spui/image/filecheck', false);
+				$metaCheck = apply_filters('shortpixel/image/filecheck', false);
 	      $filepath = $this->getFileDir() . $this->getMeta($type);
 	      $file = $fs->getFile($filepath);
 
@@ -538,11 +538,11 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
 			if ($type == 'webp')
 			{
-	    	$is_double = \wpSPUI()->env()->useDoubleWebpExtension();
+	    	$is_double = \wpSPIO()->env()->useDoubleWebpExtension();
 			}
 			if ($type == 'avif')
 			{
-				$is_double = \wpSPUI()->env()->useDoubleAvifExtension();
+				$is_double = \wpSPIO()->env()->useDoubleAvifExtension();
 			}
 
 			$double_filepath = $this->getFileDir() .  $this->getFileName() . '.' . $type;
@@ -648,7 +648,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
       return false;
     }
 
-    /* Returns the improvement of Image by optimization
+    /* Returns the improvement of Image by optimizing
     * @param boolean $int When true, returns only integer, otherwise a formatted number for display
     */
     public function getImprovement($int = false)
@@ -656,22 +656,22 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
         if ($this->isOptimized())
         {
             $original = $this->getMeta('originalSize');
-            $upscaled = $this->getMeta('compressedSize');
+            $optimized = $this->getMeta('compressedSize');
 
-            //$diff = $original - $upscaled;
-            if ($original <= 0 || $upscaled <= 0)
+            //$diff = $original - $optimized;
+            if ($original <= 0 || $optimized <= 0)
               return null;
 
             if (! $int)
             {
-              $number = round(100.0 * (1.0 - $upscaled / $original), 2);
+              $number = round(100.0 * (1.0 - $optimized / $original), 2);
             }
             else
             {
-              $number =  $original - $upscaled;
+              $number =  $original - $optimized;
             }
 
-            if ($number < 0) // It can be upscaled in smaller in some cases with smartcrop etc
+            if ($number < 0) // It can be optimized in smaller in some cases with smartcrop etc
             {
                return 0; 
             }
@@ -682,7 +682,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
     }
 
 
-    /** Handles an Upscaled Image in a general way
+    /** Handles an Optimized Image in a general way
     *
     * - This function doesn't handle any specifics like custom / thumbnails or anything else, just for a general image
     * - This function doesn't save metadata, that's job of subclass
@@ -695,7 +695,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
                 (
                     [url] =>
                     [originalSize] => 46188
-                    [upscaledSize] => 21200
+                    [optimizedSize] => 21200
                     [status] => 2
                 )
 
@@ -715,8 +715,8 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 		*/
     public function handleOptimized($results, $args = array())
     {
-        $settings = \wpSPUI()->settings();
-        $fs = \wpSPUI()->filesystem();
+        $settings = \wpSPIO()->settings();
+        $fs = \wpSPIO()->filesystem();
 
 				$defaults = array('isConverted' => false,
 				);
@@ -744,7 +744,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 								$response = [
 										'is_error' => true,
 										'issue_type' => ResponseController::ISSUE_BACKUP_CREATE,
-										'message' => __('Could not create backup. Please check file permissions', 'shortpixel-upscale-image'),
+										'message' => __('Could not create backup. Please check file permissions', 'shortpixel-image-optimiser'),
 										'fileName' => $this->getFileName(),
                 ];
 
@@ -767,7 +767,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
           if (true === in_array($status, $stati, true))
           {
             $copyok = true;
-            $upscaledSize = $this->getFileSize();
+            $optimizedSize = $this->getFileSize();
             $tempFile = null;
           }
           else
@@ -784,7 +784,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						
             if ($this->is_virtual())
             {
-                $filepath = apply_filters('spui/file/virtual/translate', $this->getFullPath(), $this);
+                $filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
                 $virtualFile = $fs->getFile($filepath);
                 // Seems stateless like google cloud doesn't like overwrites with declared delete
                 if ($this->virtual_status == self::$VIRTUAL_STATELESS)
@@ -801,7 +801,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
             }
             elseif (isset($tempFile))
             {
-                $upscaledSize  = $tempFile->getFileSize();
+                $optimizedSize  = $tempFile->getFileSize();
                 $copyok = $tempFile->move($this);
                 $this->setImageSize();
             }
@@ -813,7 +813,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
              $this->setMeta('status', self::FILE_STATUS_SUCCESS);
              $this->setMeta('tsOptimized', time());
-             $this->setMeta('compressedSize', $upscaledSize);
+             $this->setMeta('compressedSize', $optimizedSize);
              $this->setMeta('originalSize', $originalSize);
 
              if ($this->hasMeta('did_keepExif'))
@@ -841,7 +841,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
                    $this->setMeta('resizeWidth', $width );
                    $this->setMeta('resizeHeight', $height );
                    $this->setMeta('resize', true);
-									 $resizeType = ($settings->resizeType == 1) ? __('Cover', 'shortpixel-upscale-image') : __('Contain', 'shortpixel-upscale-image');
+									 $resizeType = ($settings->resizeType == 1) ? __('Cover', 'shortpixel-image-optimiser') : __('Contain', 'shortpixel-image-optimiser');
 									 $this->setMeta('resizeType', $resizeType);
                }
                else
@@ -855,7 +855,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						$response = array(
 								'is_error' => true,
 								'issue_type' => ResponseController::ISSUE_BACKUP_CREATE,
-								'message' => __('Could not copy upscaled image from temporary files. Check file permissions', 'shortpixel-upscale-image'),
+								'message' => __('Could not copy optimized image from temporary files. Check file permissions', 'shortpixel-image-optimiser'),
 								'fileName' => $this->getFileName(),
 						);
 
@@ -870,7 +870,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
     public function handleOptimizedFileType($downloadResult)
     {
-				 $fs = \wpSPUI()->filesystem();
+				 $fs = \wpSPIO()->filesystem();
 
           if (isset($downloadResult['webp']) && isset($downloadResult['webp']['file'])) // check if there is webp with same filename
           {
@@ -928,11 +928,11 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
     public function isRestorable()
     {
 
-			// Check for both upscaled and hasBackup, because even if status for some reason is not upscaled, but backup is there, restore anyhow.
+			// Check for both optimized and hasBackup, because even if status for some reason is not optimized, but backup is there, restore anyhow.
         if (! $this->isOptimized() && ! $this->hasBackup())
         {
 					 $this->restorable_status = self::P_NOT_OPTIMIZED;
-           return false;  // not upscaled, done.
+           return false;  // not optimized, done.
         }
         elseif ($this->hasBackup() && ($this->is_virtual() || ($this->is_writable() && $this->is_directory_writable()) ))
         {
@@ -950,7 +950,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						  $response = array(
 									'is_error' => true,
 									'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-									'message' => __('This file can\'t be restored, not writable', 'shortpixel-upscale-image'),
+									'message' => __('This file can\'t be restored, not writable', 'shortpixel-image-optimiser'),
 
 							);
 							ResponseController::addData($this->get('id'), $response);
@@ -963,7 +963,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 							$response = array(
 									'is_error' => true,
 									'issue_type' => ResponseController::ISSUE_DIRECTORY_NOTWRITABLE,
-									'message' => __('This file can\'t be restored, directory is not writable', 'shortpixel-upscale-image'),
+									'message' => __('This file can\'t be restored, directory is not writable', 'shortpixel-image-optimiser'),
 
 							);
 							ResponseController::addData($this->get('id'), $response);
@@ -977,7 +977,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						$response = array(
 								'is_error' => true,
 								'issue_type' => ResponseController::ISSUE_BACKUP_EXISTS,
-								'message' => __('Can\'t restore, backup file doesn\'t exist', 'shortpixel-upscale-image'),
+								'message' => __('Can\'t restore, backup file doesn\'t exist', 'shortpixel-image-optimiser'),
 
 						);
 						ResponseController::addData($this->get('id'), $response);
@@ -1014,7 +1014,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						$response = array(
 								'is_error' => true,
 								'issue_type' => ResponseController::ISSUE_BACKUP_EXISTS,
-								'message' => __('BackupFile not readable. Check file and/or file permissions', 'shortpixel-upscale-image'),
+								'message' => __('BackupFile not readable. Check file and/or file permissions', 'shortpixel-image-optimiser'),
 						);
 						ResponseController::addData($this->get('id'), $response);
 
@@ -1026,7 +1026,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						 $response = array(
 								 'is_error' => true,
 								 'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-								 'message' => __('The backup file is not writable. Check file and/or file permissions', 'shortpixel-upscale-image'),
+								 'message' => __('The backup file is not writable. Check file and/or file permissions', 'shortpixel-image-optimiser'),
 
 						 );
 						 ResponseController::addData($this->get('id'), $response);
@@ -1039,7 +1039,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						 $response = array(
 								 'is_error' => true,
 								 'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-								 'message' => __('Target file not writable. Check file permissions', 'shortpixel-upscale-image'),
+								 'message' => __('Target file not writable. Check file permissions', 'shortpixel-image-optimiser'),
 
 						 );
 						 ResponseController::addData($this->get('id'), $response);
@@ -1055,7 +1055,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 					$response = array(
 							'is_error' => true,
 							'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-							'message' => __('Moving Backup file failed', 'shortpixel-upscale-image'),
+							'message' => __('Moving Backup file failed', 'shortpixel-image-optimiser'),
 
 					);
 					ResponseController::addData($this->get('id'), $response);
@@ -1101,10 +1101,10 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
     protected function handleWebp(FileModel $tempFile)
     {
-         $fs = \wpSPUI()->filesystem();
+         $fs = \wpSPIO()->filesystem();
 				 if ($this->is_virtual())
 				 {
-					 	$fullpath = apply_filters('spui/file/virtual/translate', $this->getFullPath(), $this);
+					 	$fullpath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 						$fileObj = $fs->getFile($fullpath);
 						$fileDir = $fileObj->getFileDir();
 				 }
@@ -1115,7 +1115,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
          $target = $fs->getFile( (string) $fileDir . $this->getFileBase() . '.webp');
 
             // only copy when this constant is set.
-            if( true === \wpSPUI()->env()->useDoubleWebpExtension() ) {
+            if( true === \wpSPIO()->env()->useDoubleWebpExtension() ) {
                  $target = $fs->getFile((string) $fileDir . $this->getFileName() . '.webp'); // double extension, if exists.
             }
 
@@ -1142,10 +1142,10 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
     protected function handleAvif(FileModel $tempFile)
     {
-         $fs = \wpSPUI()->filesystem();
+         $fs = \wpSPIO()->filesystem();
 				 if ($this->is_virtual())
 				 {
-						$fullpath = apply_filters('spui/file/virtual/translate', $this->getFullPath(), $this);
+						$fullpath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 						$fileObj = $fs->getFile($fullpath);
 						$fileDir = $fileObj->getFileDir();
 				 }
@@ -1156,7 +1156,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
             $target = $fs->getFile( (string) $fileDir . $this->getFileBase() . '.avif');
 
 						// only copy when this constant is set.
-            if( true === \wpSPUI()->env()->useDoubleAvifExtension() ) {
+            if( true === \wpSPIO()->env()->useDoubleAvifExtension() ) {
                  $target = $fs->getFile((string) $fileDir . $this->getFileName() . '.avif'); // double extension, if exists.
             }
 
@@ -1207,7 +1207,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
        if ('pdf' === $this->getExtension())
        {
-         $settings = \wpSPUI()->settings();
+         $settings = \wpSPIO()->settings();
          if (! $settings->optimizePdfs )
          {
            $this->processable_status = self::P_EXCLUDE_EXTENSION_PDF;
@@ -1454,7 +1454,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
                 Log::addWarn('Backup Failed, File is restorable, try to recover. ' . $this->getFullPath() );
                 $this->restore();
 
-								$this->error_message = __('Backup already exists, but image is recoverable and the plugin will rollback. Will retry to upscale again. ', 'shortpixel-upscale-image');
+								$this->error_message = __('Backup already exists, but image is recoverable and the plugin will rollback. Will retry to optimize again. ', 'shortpixel-image-optimiser');
             }
 /*						elseif ($backupFile->getFileSize() > $this->getFileSize() && ! $backupFile->is_virtual() ) // Where there is a backup and it's bigger, assume some hickup, but there is backup so hooray
 						{
@@ -1463,11 +1463,11 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						} */
             else
             {
-              $this->preventNextTry(__('Fatal Issue: The Backup file already exists. The backup seems not restorable, or the original file is bigger than the backup, indicating an error.', 'shortpixel-upscale-image'));
+              $this->preventNextTry(__('Fatal Issue: The Backup file already exists. The backup seems not restorable, or the original file is bigger than the backup, indicating an error.', 'shortpixel-image-optimiser'));
 
               Log::addError('The backup file already exists and it is bigger than the original file. BackupFile Size: ' . $backupFile->getFileSize() . ' This Filesize: ' . $this->getFileSize(), $this->fullpath);
 
-              $this->error_message = __('Backup not possible: it already exists and the original file is bigger.', 'shortpixel-upscale-image');
+              $this->error_message = __('Backup not possible: it already exists and the original file is bigger.', 'shortpixel-image-optimiser');
             }
 
             return false;
@@ -1475,20 +1475,20 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
           exit('Fatal error, createbackup protection - this should never reach');
        }
        $directory = $this->getBackupDirectory(true);
-       $fs = \wpSPUI()->filesystem();
+       $fs = \wpSPIO()->filesystem();
 
        // @Deprecated
-       if(apply_filters('spui_skip_backup', false, $this->getFullPath(), $this->is_main_file)){
+       if(apply_filters('shortpixel_skip_backup', false, $this->getFullPath(), $this->is_main_file)){
            return true;
        }
-       if(apply_filters('spui/image/skip_backup', false, $this->getFullPath(), $this->is_main_file)){
+       if(apply_filters('shortpixel/image/skip_backup', false, $this->getFullPath(), $this->is_main_file)){
            return true;
        }
 
        if (! $directory)
        {
           Log::addWarn('Could not create Backup Directory for ' . $this->getFullPath());
-          $this->error_message = __('Could not create backup Directory', 'shortpixel-upscale-image');
+          $this->error_message = __('Could not create backup Directory', 'shortpixel-image-optimiser');
           return false;
        }
 
@@ -1521,12 +1521,12 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 
     protected function fs()
     {
-       return \wpSPUI()->filesystem();
+       return \wpSPIO()->filesystem();
     }
 
 		protected function createParamList($args = array())
 		{
-			$settings = \wpSPUI()->settings();
+			$settings = \wpSPIO()->settings();
 
 		 $resize = false;
 		 $hasResizeSizes = (intval($settings->resizeImages) > 0) ? true : false;
@@ -1660,7 +1660,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 		 $result['webp']  = ($imageOk && $this->isProcessableFileType('webp')) ? true : false;
 		 $result['avif']  = ($imageOk && $this->isProcessableFileType('avif')) ? true : false;
 
-     $result = apply_filters('spui/image/imageparamlist', $result, $this->id, $this);
+     $result = apply_filters('shortpixel/image/imageparamlist', $result, $this->id, $this);
 		 return $result;
 
 		}

@@ -1,15 +1,15 @@
 <?php
 
-namespace SPUI\Model;
+namespace ShortPixel\Model;
 
-use SPUI\Model\Image\ImageModel as ImageModel;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class FrontImage
@@ -139,7 +139,7 @@ class FrontImage
 			return false;
 		}
 
-		$preventArray = apply_filters('spui/front/preventclasses', array('sp-no-webp', 'rev-sildebg'));
+		$preventArray = apply_filters('shortpixel/front/preventclasses', array('sp-no-webp', 'rev-sildebg'));
 
 		foreach ($preventArray as $classname) {
 			if (false !== strpos($this->class, $classname)) {
@@ -246,7 +246,7 @@ class FrontImage
 			return false;
 		}
 
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 		$fileObj = $fs->getFile($src);
 		$fileDir = $fileObj->getFileDir();
 		$this->imageBase = $fileObj->getFileDir();

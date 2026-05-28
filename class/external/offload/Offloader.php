@@ -1,8 +1,8 @@
 <?php
 
-namespace SPUI\External\Offload;
+namespace ShortPixel\External\Offload;
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.

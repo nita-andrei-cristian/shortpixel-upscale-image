@@ -1,12 +1,12 @@
 <?php 
-namespace SPUI\Replacer\Classes; 
+namespace ShortPixel\Replacer\Classes; 
 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class Updater

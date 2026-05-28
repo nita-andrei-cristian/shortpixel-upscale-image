@@ -1,18 +1,18 @@
 <?php
-namespace SPUI\Controller\View;
+namespace ShortPixel\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Helper\UiHelper as UiHelper;
-use SPUI\Helper\UtilHelper as UtilHelper;
-use SPUI\Model\MultiSettingsModel as MultiSettingsModel;
+use ShortPixel\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
+use ShortPixel\Model\MultiSettingsModel as MultiSettingsModel;
 
-class MultiSiteViewController extends \SPUI\ViewController
+class MultiSiteViewController extends \ShortPixel\ViewController
 {
 
       protected $template = 'view-network-settings'; // template name to include when loading.
@@ -45,7 +45,7 @@ class MultiSiteViewController extends \SPUI\ViewController
              'picture_method' => 'hooks',
           );
 
-        $delivery = get_site_option('spui_site_delivery');
+        $delivery = get_site_option('spio_site_delivery');
 
         $delivery = wp_parse_args($delivery_defaults, $delivery);
 

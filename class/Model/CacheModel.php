@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Model;
+namespace ShortPixel\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 /* Model for storing cached data

@@ -1,13 +1,12 @@
 <?php
-namespace SPUI\Controller\Api;
+namespace ShortPixel\Controller\Api;
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Controller\ApiKeyController as ApiKeyController;
-use SPUI\Controller\Optimizer\OptimizeAiController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\ApiKeyController as ApiKeyController;
 
-use SPUI\Controller\Queue\QueueItems as QueueItems;
-use \SPUI\Model\Queue\QueueItem as QueueItem;
-use SPUI\Model\Image\ImageModel as ImageModel;
+use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use \ShortPixel\Model\Queue\QueueItem as QueueItem;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +18,7 @@ class AiController extends RequestManager
 {
 
     protected $main_url;
-    protected $auth_token = 'spui_ai_jwt_token';
+    protected $auth_token = 'spio_ai_jwt_token';
 
     const AI_STATUS_INVALID_URL = 2;
     const AI_STATUS_OVERQUOTA = 3; 
@@ -32,14 +31,11 @@ class AiController extends RequestManager
 
     public function processMediaItem(QueueItem $qItem)
     {
-      $qItem->addResult($this->returnFailure(self::STATUS_FAIL, OptimizeAiController::getDisabledMessage()));
-      return;
-
       $imageObj = $qItem->imageModel; 
       
       if (! is_object($imageObj))
       {
-        $qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-upscale-image')));
+        $qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-image-optimiser')));
         return;
       }
 
@@ -47,9 +43,9 @@ class AiController extends RequestManager
 
       //$request = $this->getRequest($requestArgs);
       $requestBody = [
-        'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
+        'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
         'item_id' => $qItem->item_id,
-        'source' => 1, // SPUI
+        'source' => 1, // SPIO
       ];
 
       if ($qItem->data()->action == 'requestAlt')
@@ -142,14 +138,14 @@ class AiController extends RequestManager
         
         if (false === $apiData)
         {
-            return $this->returnRetry(RequestManager::STATUS_CONNECTION_ERROR, __('AI Api returned without any data. ', 'shortpixel-upscale-image')) ;
+            return $this->returnRetry(RequestManager::STATUS_CONNECTION_ERROR, __('AI Api returned without any data. ', 'shortpixel-image-optimiser')) ;
         }
 
         if ($qItem->data()->action == 'requestAlt')
         {
             if (false === $id && false === $is_error)
             {
-               return $this->returnRetry(RequestManager::STATUS_WAITING, __('Response without result object', 'shortpixel-upscale-image'));
+               return $this->returnRetry(RequestManager::STATUS_WAITING, __('Response without result object', 'shortpixel-image-optimiser'));
             }
             
             
@@ -158,15 +154,15 @@ class AiController extends RequestManager
               $remote_id = intval($id);
               $qItem->addResult(['remote_id' => $remote_id]);
               
-              return $this->returnSuccess(['remote_id' => $remote_id], RequestManager::STATUS_SUCCESS, __('Request for image SEO data sent to ShortPixel AI', 'shortpixel-upscale-image'));  
+              return $this->returnSuccess(['remote_id' => $remote_id], RequestManager::STATUS_SUCCESS, __('Request for image SEO data sent to ShortPixel AI', 'shortpixel-image-optimiser'));  
             }
             elseif(self::AI_STATUS_OVERQUOTA === $status)
             {
-               return $this->returnFailure(RequestManager::STATUS_ERROR, sprintf(esc_html__('Your AI quota for this month has been exceeded. We would love to hear your feedback — please share it with us %shere%s.', 'shortpixel-upscale-image'), '<a href="https://shortpixel.com/contact" target="_blank">', '</a>'));
+               return $this->returnFailure(RequestManager::STATUS_ERROR, sprintf(esc_html__('Your AI quota for this month has been exceeded. We would love to hear your feedback — please share it with us %shere%s.', 'shortpixel-image-optimiser'), '<a href="https://shortpixel.com/contact" target="_blank">', '</a>'));
             }
             elseif(self::AI_STATUS_INVALID_URL === $status)
             {
-                return $this->returnFailure(RequestManager::STATUS_FAIL, __('No URL or Invalid URL', 'shortpixel-upscale-image'));
+                return $this->returnFailure(RequestManager::STATUS_FAIL, __('No URL or Invalid URL', 'shortpixel-image-optimiser'));
             }
             else
             {
@@ -200,7 +196,7 @@ class AiController extends RequestManager
                       }
                   case '1':
                  
-                     return $this->returnOk(RequestManager::STATUS_WAITING, __('Waiting for result', 'shortpixel-upscale-image'));
+                     return $this->returnOk(RequestManager::STATUS_WAITING, __('Waiting for result', 'shortpixel-image-optimiser'));
                   break; 
                   case '2':  // Success of some kind. 
                   default: 
@@ -243,7 +239,7 @@ class AiController extends RequestManager
          }
       }
       
-      return $this->returnSuccess(['aiData' => $aiData], RequestManager::STATUS_SUCCESS, __('Retrieved AI Image SEO data', 'shortpixel-upscale-image')); ;
+      return $this->returnSuccess(['aiData' => $aiData], RequestManager::STATUS_SUCCESS, __('Retrieved AI Image SEO data', 'shortpixel-image-optimiser')); ;
     }
 
     protected function doRequest(QueueItem $item, $requestParameters)
@@ -269,7 +265,7 @@ class AiController extends RequestManager
           if ($token !== false)
           {
              delete_transient($this->auth_token);
-             return $this->returnRetry($code, __('Authentication token failure - Reset - Please wait', 'shortpixel-upscale-image'));
+             return $this->returnRetry($code, __('Authentication token failure - Reset - Please wait', 'shortpixel-image-optimiser'));
           }
        }
        return parent::returnFailure($code, $message);

@@ -1,6 +1,6 @@
 <?php
-namespace SPUI\Replacer\Modules;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+namespace ShortPixel\Replacer\Modules;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class Breakdance
@@ -22,12 +22,12 @@ class Breakdance
       {
          if ($this->checkRequiredFunctions())
          {
-               add_filter('spui/replacer/custom_replace_query', array($this, 'addBreakdance'), 10, 4);
-				       add_filter('spui/replacer/load_meta_value', array($this, 'loadContent'),10,3);
-               add_filter('spui/replacer/save_meta_value', array($this, 'saveContent'), 10,3);
+               add_filter('shortpixel/replacer/custom_replace_query', array($this, 'addBreakdance'), 10, 4);
+				       add_filter('shortpixel/replacer/load_meta_value', array($this, 'loadContent'),10,3);
+               add_filter('shortpixel/replacer/save_meta_value', array($this, 'saveContent'), 10,3);
           }
           else {
-              add_filter('spui/replacer/load_meta_value', array($this, 'abortOnContent'),10,3);
+              add_filter('shortpixel/replacer/load_meta_value', array($this, 'abortOnContent'),10,3);
           }
      }
     }

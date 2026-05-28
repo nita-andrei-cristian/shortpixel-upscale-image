@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 class ErrorController
 {
@@ -17,7 +17,7 @@ class ErrorController
 
 			public static function start()
 			{
-					if (true === \wpSPUI()->env()->is_debug)
+					if (true === \wpSPIO()->env()->is_debug)
 					{
 				 		register_shutdown_function(array(self::class, 'checkErrors'));
 					}

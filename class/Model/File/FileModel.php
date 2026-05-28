@@ -1,12 +1,12 @@
 <?php
-namespace SPUI\Model\File;
+namespace ShortPixel\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Helper\UtilHelper as UtilHelper;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
 
 
 /* FileModel class.
@@ -19,7 +19,7 @@ use SPUI\Helper\UtilHelper as UtilHelper;
 * - Every file can have a backup counterpart.
 *
 */
-class FileModel extends \SPUI\Model
+class FileModel extends \ShortPixel\Model
 {
 
   // File info
@@ -77,7 +77,7 @@ class FileModel extends \SPUI\Model
 
 		$this->checkTrustedMode();
 
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
 
     if ($fs->pathIsUrl($path)) // Asap check for URL's to prevent remote wrappers from running.
     {
@@ -143,8 +143,8 @@ class FileModel extends \SPUI\Model
 
     }
 
-    $this->exists = apply_filters('spui_image_exists', $this->exists, $this->fullpath, $this); //legacy
-    $this->exists = apply_filters('spui/file/exists',  $this->exists, $this->fullpath, $this);
+    $this->exists = apply_filters('shortpixel_image_exists', $this->exists, $this->fullpath, $this); //legacy
+    $this->exists = apply_filters('shortpixel/file/exists',  $this->exists, $this->fullpath, $this);
     return $this->exists;
   }
 
@@ -413,7 +413,7 @@ class FileModel extends \SPUI\Model
         $destination->setFileInfo(); // refresh info.
       }
       //
-      do_action('spui/filesystem/addfile', array($destinationPath, $destination, $this, $is_new));
+      do_action('shortpixel/filesystem/addfile', array($destinationPath, $destination, $this, $is_new));
       return $status;
   }
 
@@ -549,7 +549,7 @@ class FileModel extends \SPUI\Model
         Log::addWarn('Could not establish FileDir ' . $this->fullpath);
         return false;
     }
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
 
     if (is_null($this->backupDirectory))
     {
@@ -583,7 +583,7 @@ class FileModel extends \SPUI\Model
   {
     $original_path = $path;
 
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
 
     if ($fs->pathIsUrl($path))
     {
@@ -627,7 +627,7 @@ class FileModel extends \SPUI\Model
 
       $path = $this->relativeToFullPath($path);
     }
-    $path = apply_filters('spui/filesystem/processFilePath', $path, $original_path);
+    $path = apply_filters('shortpixel/filesystem/processFilePath', $path, $original_path);
     /* This needs some check here on malformed path's, but can't be test for existing since that's not a requirement.
     if (file_exists($path) === false) // failed to process path to something workable.
     {
@@ -733,7 +733,7 @@ class FileModel extends \SPUI\Model
           }
      }
 
-     $restricted = apply_filters('spui/file/basedir_check', $restricted, $path, $basedirs);
+     $restricted = apply_filters('shortpixel/file/basedir_check', $restricted, $path, $basedirs);
      $this->is_restricted = $restricted;
 
      return $restricted;
@@ -758,13 +758,13 @@ class FileModel extends \SPUI\Model
 		 }
 
      $url = str_replace(array('http:', 'https:'), '', $url);
-     $fs = \wpSPUI()->filesystem();
+     $fs = \wpSPIO()->filesystem();
 
 		 // The site URL domain is included in the URL string
      if (strpos($url, $site_url) !== false)
      {
        // try to replace URL for Path
-       $abspath =  \wpSPUI()->filesystem()->getWPAbsPath();
+       $abspath =  \wpSPIO()->filesystem()->getWPAbsPath();
        $path = str_replace($site_url, rtrim($abspath->getPath(),'/'), $url);
 
        if (! $fs->pathIsUrl($path)) // test again.
@@ -781,7 +781,7 @@ class FileModel extends \SPUI\Model
 		 * Return could be true, or fileModel virtual constant
 		 */
 
-     $result = apply_filters('spui/image/urltopath', false, $url, $this->getRawFullPath());
+     $result = apply_filters('shortpixel/image/urltopath', false, $url, $this->getRawFullPath());
 
 		 if ($result === false)
 		 {
@@ -843,7 +843,7 @@ class FileModel extends \SPUI\Model
         return $path;
 
       // Path contains upload basedir. This happens when upload dir is outside of usual WP.
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
       $uploadDir = $fs->getWPUploadBase();
       $abspath = $fs->getWPAbsPath();
 

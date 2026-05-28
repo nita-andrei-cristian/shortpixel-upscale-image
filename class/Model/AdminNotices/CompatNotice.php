@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Model\AdminNotices;
+namespace ShortPixel\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class CompatNotice extends \SPUI\Model\AdminNoticeModel
+class CompatNotice extends \ShortPixel\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_COMPAT';
 	protected $errorLevel = 'warning';
@@ -30,13 +30,13 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 		if (! is_array($conflicts))
 			$conflicts = array();
 
-		$message = __("The following plugins are not compatible with ShortPixel and may cause unexpected results: ",'shortpixel-upscale-image');
+		$message = __("The following plugins are not compatible with ShortPixel and may cause unexpected results: ",'shortpixel-image-optimiser');
 		$message .= '<ul class="sp-conflict-plugins">';
 		foreach($conflicts as $plugin) {
 				//ShortPixelVDD($plugin);
 				$action = $plugin['action'];
 				$link = ( $action == 'Deactivate' )
-						? wp_nonce_url( admin_url( 'admin-post.php?action=spui_deactivate_conflict_plugin&plugin=' . urlencode( $plugin['path'] ) ), 'sp_deactivate_plugin_nonce' )
+						? wp_nonce_url( admin_url( 'admin-post.php?action=shortpixel_deactivate_conflict_plugin&plugin=' . urlencode( $plugin['path'] ) ), 'sp_deactivate_plugin_nonce' )
 						: $plugin['href'];
 				$message .= '<li class="sp-conflict-plugins-list"><strong>' . $plugin['name'] . '</strong>';
 				$message .= '<a href="' . $link . '" class="button button-primary">' . $action . '</a>';
@@ -60,16 +60,16 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
   }
 
 	protected function getConflictingPlugins() {
-			$settings = \wpSPUI()->settings();
+			$settings = \wpSPIO()->settings();
 
 			$conflictPlugins = array(
-					'WP Smush - Image Upscaling'
+					'WP Smush - Image Optimization'
 							=> array(
 											'action'=>'Deactivate',
 											'data'=>'wp-smushit/wp-smush.php',
 											'page'=>'wp-smush-bulk'
 							),
-					'Imagify Image Upscaler'
+					'Imagify Image Optimizer'
 							=> array(
 											'action'=>'Deactivate',
 											'data'=>'imagify/imagify.php',
@@ -81,13 +81,13 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 											'data'=>'tiny-compress-images/tiny-compress-images.php',
 											'page'=>'tinify'
 							),
-					'Kraken.io Image Upscaler'
+					'Kraken.io Image Optimizer'
 							=> array(
 											'action'=>'Deactivate',
-											'data'=>'kraken-image-upscaler/kraken.php',
+											'data'=>'kraken-image-optimizer/kraken.php',
 											'page'=>'wp-krakenio'
 							),
-					'Optimus - WordPress Image Upscaler'
+					'Optimus - WordPress Image Optimizer'
 							=> array(
 											'action'=>'Deactivate',
 											'data'=>'optimus/optimus.php',
@@ -97,17 +97,17 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 											'action' => 'Deactivate',
 											'data' => 'phoenix-media-rename/phoenix-media-rename.php',
 					),
-					'EWWW Image Upscaler'
+					'EWWW Image Optimizer'
 							=> array(
 											'action'=>'Deactivate',
-											'data'=>'ewww-image-upscaler/ewww-image-upscaler.php',
-											'page'=>'ewww-image-upscaler%2F'
+											'data'=>'ewww-image-optimizer/ewww-image-optimizer.php',
+											'page'=>'ewww-image-optimizer%2F'
 							),
-					'EWWW Image Upscaler Cloud'
+					'EWWW Image Optimizer Cloud'
 							=> array(
 											'action'=>'Deactivate',
-											'data'=>'ewww-image-upscaler-cloud/ewww-image-upscaler-cloud.php',
-											'page'=>'ewww-image-upscaler-cloud%2F'
+											'data'=>'ewww-image-optimizer-cloud/ewww-image-optimizer-cloud.php',
+											'page'=>'ewww-image-optimizer-cloud%2F'
 							),
 					'ImageRecycle pdf & image compression'
 							=> array(
@@ -115,10 +115,10 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 											'data'=>'imagerecycle-pdf-image-compression/wp-image-recycle.php',
 											'page'=>'option-image-recycle'
 							),
-					'CheetahO Image Upscaler'
+					'CheetahO Image Optimizer'
 							=> array(
 											'action'=>'Deactivate',
-											'data'=>'cheetaho-image-upscaler/cheetaho.php',
+											'data'=>'cheetaho-image-optimizer/cheetaho.php',
 											'page'=>'cheetaho'
 							),
 					'Zara 4 Image Compression'
@@ -127,11 +127,11 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 											'data'=>'zara-4/zara-4.php',
 											'page'=>'zara-4'
 							),
-					'CW Image Upscaler'
+					'CW Image Optimizer'
 							=> array(
 											'action'=>'Deactivate',
-											'data'=>'cw-image-upscaler/cw-image-upscaler.php',
-											'page'=>'cw-image-upscaler'
+											'data'=>'cw-image-optimizer/cw-image-optimizer.php',
+											'page'=>'cw-image-optimizer'
 							),
 					'Simple Image Sizes'
 							=> array(
@@ -145,7 +145,7 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 						),
             'Resmushit' => [
                     'action' => 'Deactivate',
-                    'data' => 'resmushit-image-upscaler/resmushit.php',
+                    'data' => 'resmushit-image-optimizer/resmushit.php',
             ],
 						'Swift Performance'
 							=> array(
@@ -172,7 +172,7 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 					*/
 			);
 			if($settings->processThumbnails) {
-					$details = __('Details: recreating image files may require re-upscaling of the resulting thumbnails, even if they were previously upscaled. Please use <a href="https://wordpress.org/plugins/regenerate-thumbnails-advanced/" target="_blank">reGenerate Thumbnails Advanced</a> instead.','shortpixel-upscale-image');
+					$details = __('Details: recreating image files may require re-optimization of the resulting thumbnails, even if they were previously optimized. Please use <a href="https://wordpress.org/plugins/regenerate-thumbnails-advanced/" target="_blank">reGenerate Thumbnails Advanced</a> instead.','shortpixel-image-optimiser');
 
 					$conflictPlugins = array_merge($conflictPlugins, array(
 							'Regenerate Thumbnails'
@@ -224,7 +224,7 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 
   private function checkSwiftActive()
   {
-     if ( function_exists('swift3_check_option') && true == swift3_check_option('upscale-images', 'on'))
+     if ( function_exists('swift3_check_option') && true == swift3_check_option('optimize-images', 'on'))
      {
         return true;
      }

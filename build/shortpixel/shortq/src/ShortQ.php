@@ -1,7 +1,7 @@
 <?php
-namespace SPUI\ShortQ;
-//use \SPUI\ShortQ\Queue;
-//use \SPUI\ShortQ\DataProvider;
+namespace ShortPixel\ShortQ;
+//use \ShortPixel\ShortQ\Queue;
+//use \ShortPixel\ShortQ\DataProvider;
 
 // init
 class ShortQ

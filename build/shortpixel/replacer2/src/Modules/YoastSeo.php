@@ -1,6 +1,6 @@
 <?php
-namespace SPUI\Replacer\Modules;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+namespace ShortPixel\Replacer\Modules;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 // Integration to reset indexes of Yoast  (used for Og:image) when something is converted.
 class YoastSeo
@@ -24,7 +24,7 @@ class YoastSeo
 			 global $wpdb;
 			 $this->yoastTable = $wpdb->prefix . 'yoast_indexable';
 
-			 add_action('spui/replacer/replace_urls', array($this, 'removeIndexes'),10,2);
+			 add_action('shortpixel/replacer/replace_urls', array($this, 'removeIndexes'),10,2);
 		}
 	}
 

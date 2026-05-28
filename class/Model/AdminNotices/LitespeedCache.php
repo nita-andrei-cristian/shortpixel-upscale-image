@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\Model\AdminNotices;
+namespace ShortPixel\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class LitespeedCache extends \SPUI\Model\AdminNoticeModel
+class LitespeedCache extends \ShortPixel\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_LITESPEED_WEBP';
   protected $errorLevel = 'warning';
@@ -35,12 +35,12 @@ class LitespeedCache extends \SPUI\Model\AdminNoticeModel
     }
 
     // We already have this.
-    if (true === \wpSPUI()->env()->useDoubleWebpExtension())
+    if (true === \wpSPIO()->env()->useDoubleWebpExtension())
     {
       return false;
     }
 
-    $settings = \wpSPUI()->settings();
+    $settings = \wpSPIO()->settings();
 
     if (!$settings->createWebp) // if not active, return.
     {
@@ -62,7 +62,7 @@ class LitespeedCache extends \SPUI\Model\AdminNoticeModel
 
       $linkurl = 'https://shortpixel.com/knowledge-base/article/how-to-deliver-the-webps-generated-with-shortpixel-with-the-litespeed-cache-plugin/';
 
-      $message = '<p>' . sprintf(__("ShortPixel has detected that you are using the Litespeed cache with WebP Image Replacement enabled. You must %s enable the double WebP extension constant %s for WebP delivery to work correctly in this case.", 'shortpixel-upscale-image'), '<a href="' . $linkurl . '" target="_blank">', '</a>') . '</p>';
+      $message = '<p>' . sprintf(__("ShortPixel has detected that you are using the Litespeed cache with WebP Image Replacement enabled. You must %s enable the double WebP extension constant %s for WebP delivery to work correctly in this case.", 'shortpixel-image-optimiser'), '<a href="' . $linkurl . '" target="_blank">', '</a>') . '</p>';
 
 
       return $message;

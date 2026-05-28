@@ -1,14 +1,14 @@
 <?php
-namespace SPUI\Model;
+namespace ShortPixel\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Helper\InstallHelper;
-use SPUI\Helper\UtilHelper;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Notices\NoticeController as Notice;
+use ShortPixel\Helper\InstallHelper;
+use ShortPixel\Helper\UtilHelper;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notice;
 
 // Class to handle the Database Table Data, store AI relevant data etc. 
 class AiDataModel
@@ -428,7 +428,7 @@ class AiDataModel
 
     private function isExifProcesssable()
     {
-        $fs = \wpSPUI()->filesystem(); 
+        $fs = \wpSPIO()->filesystem(); 
         $imageModel = $fs->getMediaImage($this->attach_id); 
 
         if (false === $imageModel->isSomethingOptimized())
@@ -464,22 +464,22 @@ class AiDataModel
         switch($this->processable_status)
         {
             case self::P_PROCESSABLE:
-                $message = __('AI is processable', 'shortpixel-upscale-image');
+                $message = __('AI is processable', 'shortpixel-image-optimiser');
             break; 
             case self::P_ALREADYDONE:
-                $message = __('This image already has generated data', 'shortpixel-upscale-image');
+                $message = __('This image already has generated data', 'shortpixel-image-optimiser');
             break; 
             case self::P_EXIFAI:
-                $message = __('Image Exif settings restrict AI usage', 'shortpixel-upscale-image');
+                $message = __('Image Exif settings restrict AI usage', 'shortpixel-image-optimiser');
             break; 
             case self::P_EXTENSION:
-                 $message = __('File Extension not supported', 'shortpixel-upscale-image');
+                 $message = __('File Extension not supported', 'shortpixel-image-optimiser');
             break; 
             case self::P_NOJOB:
-                $message = __('No fields to generate', 'shortpixel-upscale-image'); 
+                $message = __('No fields to generate', 'shortpixel-image-optimiser'); 
             break; 
             default:
-                 $message = sprintf(__('Status %s unknown', 'shortpixel-upscale-image'), $this->processable_status);
+                 $message = sprintf(__('Status %s unknown', 'shortpixel-image-optimiser'), $this->processable_status);
             break; 
         }
 
@@ -488,7 +488,7 @@ class AiDataModel
 
     protected function isExtensionIncluded()
     {
-        $fs = \wpSPUI()->filesystem(); 
+        $fs = \wpSPIO()->filesystem(); 
         $imageModel = $fs->getMediaImage($this->attach_id); 
         
         // Gif removed here, since we (temporarily don't support it)
@@ -532,7 +532,7 @@ class AiDataModel
     private static function getTableName()
     {
          global $wpdb; 
-         return $wpdb->prefix . 'spui_aipostmeta';
+         return $wpdb->prefix . 'shortpixel_aipostmeta';
     }
 
     protected function updateRecord($data = [])

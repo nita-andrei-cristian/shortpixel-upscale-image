@@ -1,11 +1,11 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 class cacheRemover
 {
@@ -34,7 +34,7 @@ class cacheRemover
 
 		public function addHooks()
 		{
-			add_action('spui/image/optimised', array($this, 'flushCache'));
+			add_action('shortpixel/image/optimised', array($this, 'flushCache'));
 		}
 
     /** Checks which cache plugins are active on the moment a flush is needed */
@@ -84,7 +84,7 @@ class cacheRemover
         // important - first check the available cache plugins
         $this->checkCaches();
         
-        $bool = apply_filters('spui/external/flush_cache', true, $post_id, $imageItem);
+        $bool = apply_filters('shortpixel/external/flush_cache', true, $post_id, $imageItem);
         if (false === $bool)
         {
            return false;

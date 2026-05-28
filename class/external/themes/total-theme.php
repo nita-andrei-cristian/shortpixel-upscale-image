@@ -1,11 +1,11 @@
 <?php
-namespace SPUI\External\Themes;
+namespace ShortPixel\External\Themes;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 class TotalTheme
 {
@@ -18,7 +18,7 @@ class TotalTheme
 
   public function resizeImage($attachment_id, $size)
   {
-    $image = \wpSPUI()->filesystem()->getMediaImage($attachment_id);
+    $image = \wpSPIO()->filesystem()->getMediaImage($attachment_id);
 
     if (! is_object($image))
     {

@@ -21,7 +21,7 @@ class ShortPixelScreenBase
 	constructor(MainScreen, processor)
 	{
 		 this.processor = processor;
-		 this.strings = spui_screenStrings;
+		 this.strings = spio_screenStrings;
 	}
 
 	// Function for subclasses to add more init. Seperated because of screens that need to call Process functions when starting.

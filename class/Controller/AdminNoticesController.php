@@ -1,25 +1,25 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Notices\NoticeController as Notices;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notices;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\ViewController as ViewController;
+use ShortPixel\ViewController as ViewController;
 
-use SPUI\Model\AccessModel as AccessModel;
+use ShortPixel\Model\AccessModel as AccessModel;
 
-// Use SPUI\Model\ApiKeyModel as ApiKeyModel
+// Use ShortPixel\Model\ApiKeyModel as ApiKeyModel
 
 /**
  * Controller for automatic Notices about status of the plugin.
  * This controller is bound for automatic fire. Regular procedural notices should just be queued using the Notices modules.
  * Called in admin_notices.
  */
-class AdminNoticesController extends \SPUI\Controller
+class AdminNoticesController extends \ShortPixel\Controller
 {
     protected static $instance;
 
@@ -44,7 +44,7 @@ class AdminNoticesController extends \SPUI\Controller
     protected $adminNotices; // Models
 
     private $remote_message_endpoint = 'https://api.shortpixel.com/v2/notices.php'; 
-    private $remote_readme_endpoint = 'https://plugins.svn.wordpress.org/shortpixel-upscale-image/trunk/readme.txt';
+    private $remote_readme_endpoint = 'https://plugins.svn.wordpress.org/shortpixel-image-optimiser/trunk/readme.txt';
 
     private $silent_mode = false;
 
@@ -53,10 +53,10 @@ class AdminNoticesController extends \SPUI\Controller
         add_action('admin_notices', array($this, 'displayNotices'), 50); // notices occured before page load
         add_action('admin_footer', array($this, 'displayNotices'));  // called in views.
 
-        add_action('in_plugin_update_message-' . plugin_basename(SPUI_PLUGIN_FILE), array($this, 'pluginUpdateMessage') , 50, 2 );
+        add_action('in_plugin_update_message-' . plugin_basename(SHORTPIXEL_PLUGIN_FILE), array($this, 'pluginUpdateMessage') , 50, 2 );
 
         // no persistent notifications with this flag set.
-        if (defined('SPUI_SILENT_MODE') && SPUI_SILENT_MODE === true)
+        if (defined('SHORTPIXEL_SILENT_MODE') && SHORTPIXEL_SILENT_MODE === true)
         {
             $this->silent_mode = true;
             return;
@@ -127,22 +127,22 @@ class AdminNoticesController extends \SPUI\Controller
 
     public function displayNotices()
     {
-        if (! \wpSPUI()->env()->is_screen_to_use)
+        if (! \wpSPIO()->env()->is_screen_to_use)
         {
             if(get_current_screen()->base !== 'dashboard') // ugly exception for dashboard.
             {
                 return; // suppress all when not our screen.
             }
             else {
-              \wpSPUI()->load_style('shortpixel-notices');
-              \wpSPUI()->load_style('notices-module');
+              \wpSPIO()->load_style('shortpixel-notices');
+              \wpSPIO()->load_style('notices-module');
             }
         }
 
         $access = AccessModel::getInstance();
         $screen = get_current_screen();
-        $screen_id = \wpSPUI()->env()->screen_id;
-        $is_our_screen = \wpSPUI()->env()->is_our_screen; 
+        $screen_id = \wpSPIO()->env()->screen_id;
+        $is_our_screen = \wpSPIO()->env()->is_our_screen; 
 
         $noticeControl = Notices::getInstance();
 
@@ -191,7 +191,7 @@ class AdminNoticesController extends \SPUI\Controller
     /* General function to check on Hook for admin notices if there is something to show globally */
     public function check_admin_notices()
     {
-        if (! \wpSPUI()->env()->is_screen_to_use)
+        if (! \wpSPIO()->env()->is_screen_to_use)
         {
             if(get_current_screen()->base !== 'dashboard') // ugly exception for dashboard.
                 return; // suppress all when not our screen.
@@ -204,7 +204,7 @@ class AdminNoticesController extends \SPUI\Controller
     {
         foreach($this->definedNotices as $className)
         {
-            $ns = '\SPUI\Model\AdminNotices\\' . $className;
+            $ns = '\ShortPixel\Model\AdminNotices\\' . $className;
             $class = new $ns();
 
             $this->adminNotices[$class->getKey()] = $class;
@@ -213,10 +213,10 @@ class AdminNoticesController extends \SPUI\Controller
         // Init the notice icons
         $noticeControl = Notices::getInstance();
         $noticeControl->loadIcons(array(
-            'normal' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/slider.png', SPUI_PLUGIN_FILE) . '">',
-            'success' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-cool.png', SPUI_PLUGIN_FILE) . '">',
-            'warning' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SPUI_PLUGIN_FILE) . '">',
-            'error' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SPUI_PLUGIN_FILE) . '">',
+            'normal' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/slider.png', SHORTPIXEL_PLUGIN_FILE) . '">',
+            'success' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-cool.png', SHORTPIXEL_PLUGIN_FILE) . '">',
+            'warning' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SHORTPIXEL_PLUGIN_FILE) . '">',
+            'error' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SHORTPIXEL_PLUGIN_FILE) . '">',
         ));
 
     }
@@ -261,7 +261,7 @@ class AdminNoticesController extends \SPUI\Controller
 
     /**
      * 
-     * @var SPUI\Controller\functon
+     * @var ShortPixel\Controller\functon
      */
     public function getRemoteOffer()
     {
@@ -301,7 +301,7 @@ class AdminNoticesController extends \SPUI\Controller
     protected function doRemoteNotices()
     {
          // Don't load on ajax, or other complicated things
-        if (! \wpSPUI()->env()->is_screen_to_use)
+        if (! \wpSPIO()->env()->is_screen_to_use)
         {
            return;
         }
@@ -387,7 +387,7 @@ class AdminNoticesController extends \SPUI\Controller
         //$stats = $this->countAllIfNeeded($this->_settings->currentStats, 300);
         $statsController = StatsController::getInstance();
         $apiKeyController = ApiKeyController::getInstance();
-        $settings = \wpSPUI()->settings();
+        $settings = \wpSPIO()->settings();
 
         $webpActive = ($settings->createWebp) ? true : false;
         $avifActive =  ($settings->createAvif) ? true : false;
@@ -400,7 +400,7 @@ class AdminNoticesController extends \SPUI\Controller
             'blocking' => true,
             'headers' => array(),
             'body' => array("params" => json_encode(array(
-                'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
+                'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
                 'key' => $apiKeyController->forceGetApiKey(),
                 'm1' => $statsController->find('period', 'months', '1'),
                 'm2' => $statsController->find('period', 'months', '2'),
@@ -411,7 +411,7 @@ class AdminNoticesController extends \SPUI\Controller
                 'webp' => $webpActive,
                 'avif' => $avifActive,
                 /* */
-                'iconsUrl' => base64_encode(wpSPUI()->plugin_url('res/img'))
+                'iconsUrl' => base64_encode(wpSPIO()->plugin_url('res/img'))
             ))),
             'cookies' => array()
 
@@ -421,7 +421,7 @@ class AdminNoticesController extends \SPUI\Controller
         $proposal = wp_remote_post("https://shortpixel.com/propose-upgrade-frag", $args);
 
         if(is_wp_error( $proposal )) {
-            $proposal = array('body' => __('Error. Could not contact ShortPixel server for proposal', 'shortpixel-upscale-image'));
+            $proposal = array('body' => __('Error. Could not contact ShortPixel server for proposal', 'shortpixel-image-optimiser'));
         }
         die( $proposal['body'] );
 
@@ -429,10 +429,10 @@ class AdminNoticesController extends \SPUI\Controller
 
     private function get_remote_notices()
     {
-        $transient_name = 'spui_remote_notice';
+        $transient_name = 'shortpixel_remote_notice';
         $transient_duration = DAY_IN_SECONDS;
 
-        if (\wpSPUI()->env()->is_debug)
+        if (\wpSPIO()->env()->is_debug)
             $transient_duration = 180;
 
         $keyControl = new apiKeyController();
@@ -442,7 +442,7 @@ class AdminNoticesController extends \SPUI\Controller
         $url = $this->remote_message_endpoint;
         $url = add_query_arg(array(  // has url
             'key' => $keyControl->forceGetApiKey(),
-            'version' => SPUI_IMAGE_OPTIMISER_VERSION,
+            'version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
             'target' => 3,
         ), $url);
 
@@ -491,11 +491,11 @@ class AdminNoticesController extends \SPUI\Controller
      *   Stolen from SPAI, Thanks.
      */
     private function get_update_notice($data, $response) {
-        $transient_name = 'spui_update_notice_' . $response->new_version;
+        $transient_name = 'shortpixel_update_notice_' . $response->new_version;
 
         $transient_duration = DAY_IN_SECONDS;
 
-        if (\wpSPUI()->env()->is_debug)
+        if (\wpSPIO()->env()->is_debug)
             $transient_duration = 30;
 
         $update_notice  = get_transient( $transient_name );
@@ -537,7 +537,7 @@ class AdminNoticesController extends \SPUI\Controller
 
         // foreach ( $check_for_notices as $id => $check_version ) {
 
-        if ( version_compare( SPUI_IMAGE_OPTIMISER_VERSION, $new_version, '>' ) ) {
+        if ( version_compare( SHORTPIXEL_IMAGE_OPTIMISER_VERSION, $new_version, '>' ) ) {
             return '';
         }
 
@@ -608,7 +608,7 @@ class AdminNoticesController extends \SPUI\Controller
 
             foreach($versions as $version => $line)
             {
-                if (version_compare(SPUI_IMAGE_OPTIMISER_VERSION, $version, '<') && version_compare($version, $new_version, '<='))
+                if (version_compare(SHORTPIXEL_IMAGE_OPTIMISER_VERSION, $version, '<') && version_compare($version, $new_version, '<='))
                 {
                     $notice .= '<span>';
                     $notice .= $this->markdown2html( $line );
@@ -624,7 +624,7 @@ class AdminNoticesController extends \SPUI\Controller
 
     /*private function replace_readme_constants( $content, $response ) {
             $constants    = [ '{{ NEW VERSION }}', '{{ CURRENT VERSION }}', '{{ PHP VERSION }}', '{{ REQUIRED PHP VERSION }}' ];
-            $replacements = [ $response->new_version, SPUI_IMAGE_OPTIMISER_VERSION, PHP_VERSION, $response->requires_php ];
+            $replacements = [ $response->new_version, SHORTPIXEL_IMAGE_OPTIMISER_VERSION, PHP_VERSION, $response->requires_php ];
 
             return str_replace( $constants, $replacements, $content );
     } */

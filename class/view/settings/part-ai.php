@@ -1,6 +1,6 @@
 <?php
 
-namespace SPUI;
+namespace ShortPixel;
 
 if (! defined('ABSPATH')) {
   exit; // Exit if accessed directly.

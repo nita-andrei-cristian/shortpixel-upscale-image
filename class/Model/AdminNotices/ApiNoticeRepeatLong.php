@@ -1,14 +1,14 @@
 <?php
-namespace SPUI\Model\AdminNotices;
+namespace ShortPixel\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Controller\AdminNoticesController as AdminNoticesController;
-use SPUI\Controller\ApiKeyController as ApiKeyController;
+use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
+use ShortPixel\Controller\ApiKeyController as ApiKeyController;
 
-class ApiNoticeRepeatLong extends \SPUI\Model\AdminNoticeModel
+class ApiNoticeRepeatLong extends \ShortPixel\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_NO_APIKEY_REPEAT_LONG';
 	protected $errorLevel = 'warning';
@@ -23,7 +23,7 @@ class ApiNoticeRepeatLong extends \SPUI\Model\AdminNoticeModel
 			}
 
 			// Is set by general ApiNotice. If not set, don't bother with the repeat.
-			$activationDate = \wpSPUI()->settings()->activationDate;
+			$activationDate = \wpSPIO()->settings()->activationDate;
 			if (! $activationDate)
 			{
 				 return false;
@@ -57,7 +57,7 @@ class ApiNoticeRepeatLong extends \SPUI\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$message = __("Your image gallery is not upscaled. It takes 2 minutes to <a href='https://shortpixel.com/wp-apikey' target='_blank'>get your API key</a> and activate your ShortPixel plugin.",'shortpixel-upscale-image') . "<BR><BR>";
+		$message = __("Your image gallery is not optimized. It takes 2 minutes to <a href='https://shortpixel.com/wp-apikey' target='_blank'>get your API key</a> and activate your ShortPixel plugin.",'shortpixel-image-optimiser') . "<BR><BR>";
 
 		return $message;
 	}

@@ -1,21 +1,21 @@
 <?php
 
-namespace SPUI\Model\Image;
+namespace ShortPixel\Model\Image;
 
-use SPUI\Helper\DownloadHelper as DownloadHelper;
-use SPUI\Helper\UtilHelper as UtilHelper;
+use ShortPixel\Helper\DownloadHelper as DownloadHelper;
+use ShortPixel\Helper\UtilHelper as UtilHelper;
 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use \SPUI\Model\File\FileModel as FileModel;
+use \ShortPixel\Model\File\FileModel as FileModel;
 
 // Represent a thumbnail image / limited image in mediaLibrary.
-class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
+class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 {
 
 	public $name;
@@ -86,8 +86,8 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 	public function getRetina()
 	{
 		if ($this->is_virtual()) {
-			$fs = \wpSPUI()->filesystem();
-			$filepath = apply_filters('spui/file/virtual/translate', $this->getFullPath(), $this);
+			$fs = \wpSPIO()->filesystem();
+			$filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 			$virtualFile = $fs->getFile($filepath);
 
 			$filebase = $virtualFile->getFileBase();
@@ -95,7 +95,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 			$extension = $virtualFile->getExtension();
 
 			// This function needs an hard check on file exists, which might not be wanted.
-			if (false === \wpSPUI()->env()->useVirtualHeavyFunctions()) {
+			if (false === \wpSPIO()->env()->useVirtualHeavyFunctions()) {
 				return false;
 			}
 		} else {
@@ -184,7 +184,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 
 	public function getURL()
 	{
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 
 		if ($this->size == 'original' && ! $this->get('is_retina')) {
 			$url = wp_get_original_image_url($this->id);
@@ -275,7 +275,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 		}
 	}
 
-	/** Function to check if said thumbnail is a WP-native or something SPUI added as unlisted
+	/** Function to check if said thumbnail is a WP-native or something SPIO added as unlisted
 	 *
 	 *
 	 */
@@ -293,7 +293,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 	protected function isSizeExcluded()
 	{
 
-		$excludeSizes = \wpSPUI()->settings()->excludeSizes;
+		$excludeSizes = \wpSPIO()->settings()->excludeSizes;
 
 		if (is_array($excludeSizes) && in_array($this->name, $excludeSizes)) {
 			$this->processable_status = self::P_EXCLUDE_SIZE;
@@ -336,7 +336,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 
 	protected function excludeThumbnails()
 	{
-		return (! \wpSPUI()->settings()->processThumbnails);
+		return (! \wpSPIO()->settings()->processThumbnails);
 	}
 
 	public function hasBackup($args = array())
@@ -389,7 +389,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 	{
 		global $wpdb;
 
-		$sql = 'SELECT id FROM ' . $wpdb->prefix . 'spui_postmeta WHERE attach_id = %d AND size = %s';
+		$sql = 'SELECT id FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE attach_id = %d AND size = %s';
 		$sql = $wpdb->prepare($sql, $this->id, $this->size);
 
 		$id = $wpdb->get_var($sql);
@@ -404,8 +404,8 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 	public function restore()
 	{
 		if ($this->is_virtual()) {
-			$fs = \wpSPUI()->filesystem();
-			$filepath = apply_filters('spui/file/virtual/translate', $this->getFullPath(), $this);
+			$fs = \wpSPIO()->filesystem();
+			$filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 
 			$this->setVirtualToReal($filepath);
 		}
@@ -484,8 +484,8 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 	{
 		if ($this->is_virtual()) // download remote file to backup.
 		{
-			$fs = \wpSPUI()->filesystem();
-			$filepath = apply_filters('spui/file/virtual/translate', $this->getFullPath(), $this);
+			$fs = \wpSPIO()->filesystem();
+			$filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 
 			$result = false;
 			if ($this->virtual_status == self::$VIRTUAL_REMOTE) {
@@ -514,13 +514,13 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 			}
 
 			if ($result == false) {
-				$this->preventNextTry(__('Fatal Issue: Remote virtual file could not be downloaded for backup', 'shortpixel-upscale-image'));
+				$this->preventNextTry(__('Fatal Issue: Remote virtual file could not be downloaded for backup', 'shortpixel-image-optimiser'));
 				if (! isset($url))
 				{
 					 $url = 'Unknown'; 
 				}
 				Log::addError('Remote file download failed from : ' . $url . ' to: ' . $filepath, $this->getURL());
-				$this->error_message = __('Remote file could not be downloaded' . $this->getFullPath(), 'shortpixel-upscale-image');
+				$this->error_message = __('Remote file could not be downloaded' . $this->getFullPath(), 'shortpixel-image-optimiser');
 
 				return false;
 			}
@@ -534,7 +534,7 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 	// @todo This is a breach of pattern to realize checking for changes to the main image path on conversion / duplicates.
 	private function getMainFile()
 	{
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 		return $fs->getMediaImage($this->id, true, true);
 	}
 } // class

@@ -1,13 +1,13 @@
 <?php
-namespace SPUI\Model\Converter;
+namespace ShortPixel\Model\Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Model\Queue\QueueItem as QueueItem; 
-use SPUI\Helper\UtilHelper as UtilHelper;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Model\Queue\QueueItem as QueueItem; 
+use ShortPixel\Helper\UtilHelper as UtilHelper;
 
 class BMPConverter extends MediaLibraryConverter
 {
@@ -44,7 +44,7 @@ class BMPConverter extends MediaLibraryConverter
   public function handleConvertedFilter($optimizeData)
   {
     $this->setupReplacer();
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
 
     $extension = $this->imageModel->getExtension();
     $replacementBase = $this->imageModel->getMeta()->convertMeta()->getReplacementImageBase();
@@ -120,7 +120,7 @@ class BMPConverter extends MediaLibraryConverter
     $params = array(
       'restore' => true,
     );
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
 
     $this->setupReplacer();
 

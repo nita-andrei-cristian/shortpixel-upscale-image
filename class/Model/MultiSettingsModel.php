@@ -1,18 +1,18 @@
 <?php
-namespace SPUI\Model;
+namespace ShortPixel\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class MultiSettingsModel extends \SPUI\Model\SettingsModel
+class MultiSettingsModel extends \ShortPixel\Model\SettingsModel
 {
 
   private static $instance;
-  private $option_name = 'spui_wpmu';
+  private $option_name = 'spio_wpmu';
   private $updated = false;
 
 

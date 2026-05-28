@@ -1,23 +1,23 @@
 <?php
 
-namespace SPUI\External\Offload;
+namespace ShortPixel\External\Offload;
 
-use SPUI\Model\File\FileModel as FileModel;
+use ShortPixel\Model\File\FileModel as FileModel;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Notices\NoticeController as Notice;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notice;
 
 class InfiniteUploads
 {
 	
 		public function __construct()
 		{
-		//	add_filter('spui/image/urltopath', array($this, 'checkIfOffloaded'), 10, 3);
-		//	add_filter('spui/file/virtual/translate', array($this, 'getLocalPathByURL'));
+		//	add_filter('shortpixel/image/urltopath', array($this, 'checkIfOffloaded'), 10, 3);
+		//	add_filter('shortpixel/file/virtual/translate', array($this, 'getLocalPathByURL'));
 		}
 
 

@@ -1,24 +1,24 @@
 <?php
 
-namespace SPUI;
+namespace ShortPixel;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Controller\QueueController as QueueController;
-use SPUI\Controller\Optimizer\OptimizeAiController as OptimizeAiController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\QueueController as QueueController;
+use ShortPixel\Controller\OptimizeAiController as OptimizeAiController;
 
-use SPUI\Controller\BulkController as BulkController;
+use ShortPixel\Controller\BulkController as BulkController;
 
-use SPUI\Controller\Queue\Queue as Queue;
-use SPUI\Controller\Api\ApiController as ApiController;
-use SPUI\Controller\ResponseController as ResponseController;
+use ShortPixel\Controller\Queue\Queue as Queue;
+use ShortPixel\Controller\Api\ApiController as ApiController;
+use ShortPixel\Controller\ResponseController as ResponseController;
 
-use SPUI\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\UiHelper as UiHelper;
 
-use SPUI\Controller\Queue\QueueItems as QueueItems;
+use ShortPixel\Controller\Queue\QueueItems as QueueItems;
 
 
 
@@ -31,9 +31,9 @@ class WpCliController
 
 	public function __construct()
 	{
-		$log = \SPUI\ShortPixelLogger\ShortPixelLogger::getInstance();
-		if (\SPUI\ShortPixelLogger\ShortPixelLogger::debugIsActive())
-			$log->setLogPath(SPUI_BACKUP_FOLDER . "/spui_log_wpcli");
+		$log = \ShortPixel\ShortPixelLogger\ShortPixelLogger::getInstance();
+		if (\ShortPixel\ShortPixelLogger\ShortPixelLogger::debugIsActive())
+			$log->setLogPath(SHORTPIXEL_BACKUP_FOLDER . "/shortpixel_log_wpcli");
 
 		$this->initCommands();
 	}
@@ -51,17 +51,17 @@ class WpCliController
 
 	protected function initCommands()
 	{
-		\WP_CLI::add_command('spui', '\SPUI\SPUISingle');
-		\WP_CLI::add_command('spui bulk', '\SPUI\SPUIBulk');
+		\WP_CLI::add_command('spio', '\ShortPixel\SpioSingle');
+		\WP_CLI::add_command('spio bulk', '\ShortPixel\SpioBulk');
 	}
 } // class WpCliController
 
 /**
- * ShortPixel Image Upscaler
+ * ShortPixel Image Optimizer
  *
  *
  */
-class SPUICommandBase
+class SpioCommandBase
 {
 
 	protected static $runs = 0;
@@ -91,8 +91,8 @@ class SPUICommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spui [bulk] add 123
-	 *   wp spui [bulk] add 21 --type=custom --halt
+	 *   wp spio [bulk] add 123
+	 *   wp spio [bulk] add 21 --type=custom --halt
 	 *
 	 * @when after_wp_load
 	 */
@@ -103,16 +103,16 @@ class SPUICommandBase
 		$type = isset($assoc['type']) ? sanitize_text_field($assoc['type']) : 'media';
 
 		if (! isset($args[0])) {
-			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-upscale-image'));
+			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-image-optimiser'));
 			return;
 		}
 		$id = intval($args[0]);
 
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 		$imageObj = $fs->getImage($id, $type);
 
 		if ($imageObj === false) {
-			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-upscale-image'));
+			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-image-optimiser'));
 		}
 
 		$result = $controller->addItemtoQueue($imageObj);
@@ -124,14 +124,14 @@ class SPUICommandBase
 			$message = $result->message;
 		}
 		if ($result->is_error) {
-			\WP_CLI::Error(sprintf(__("while adding item: %s", 'shortpixel-upscale-image'), $message));
+			\WP_CLI::Error(sprintf(__("while adding item: %s", 'shortpixel_image_optimiser'), $message));
 		} else {
 			\WP_CLI::Success($message);
 
 			if (! isset($assoc['halt'])) {
 				$this->run($args, $assoc);
 			} else {
-				\WP_CLI::Line(__('You can upscale images via the run command', 'shortpixel-upscale-image'));
+				\WP_CLI::Line(__('You can optimize images via the run command', 'shortpixel-image-optimiser'));
 			}
 		}
 
@@ -171,9 +171,9 @@ class SPUICommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spui [bulk] run													  | Complete all processes
-	 *   wp spui [bulk] run --ticks=20 --wait=3				| Ticks and wait time.
-	 *   wp spui [bulk] run --queue=media							| Only run a specific queue.
+	 *   wp spio [bulk] run													  | Complete all processes
+	 *   wp spio [bulk] run --ticks=20 --wait=3				| Ticks and wait time.
+	 *   wp spio [bulk] run --queue=media							| Only run a specific queue.
 	 *
 	 *
 	 * @when after_wp_load
@@ -272,7 +272,7 @@ class SPUICommandBase
 				}
 			}
 
-			// Result after optimization items and such.
+			// Result after optimizing items and such.
 			if (property_exists($qresult, 'results') && is_array($qresult->results)) {
 				foreach ($qresult->results as $result) {
 					// Non-result results can happen ( ie. with PNG conversion ). Probably just ignore.
@@ -358,7 +358,7 @@ class SPUICommandBase
 				}
 
 				$outputTable[] = array('name' => ' ', 'improvement' => ' ');
-				$outputTable[] = array('name' => __('Total', 'shortpixel-upscale-image'), 'improvement' => $improvements['totalpercentage'] . '%');
+				$outputTable[] = array('name' => __('Total', 'shortpixel-image-optimiser'), 'improvement' => $improvements['totalpercentage'] . '%');
 
 				\WP_CLI\Utils\format_items('table', $outputTable, array('name', 'improvement'));
 
@@ -411,7 +411,7 @@ class SPUICommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spui [bulk] status [--show-debug]
+	 *   wp spio [bulk] status [--show-debug]
 	 *
 	 */
 	public function status($args, $assoc)
@@ -432,9 +432,9 @@ class SPUICommandBase
 				'fatal errors' => $stats->fatal_errors,
 				'done' => $stats->done,
 				'total' => $stats->total,
-				'preparing' => ($stats->is_preparing) ? __('Yes', 'shortpixel-upscale-image') : __('No', 'shortpixel-upscale-image'),
-				'running' => ($stats->is_running) ? __('Yes', 'shortpixel-upscale-image') : __('No', 'shortpixel-upscale-image'),
-				'finished' => ($stats->is_finished) ? __('Yes', 'shortpixel-upscale-image') : __('No', 'shortpixel-upscale-image'),
+				'preparing' => ($stats->is_preparing) ? __('Yes', 'shortpixel-image-optimiser') : __('No', 'shortpixel-image-optimiser'),
+				'running' => ($stats->is_running) ? __('Yes', 'shortpixel-image-optimiser') : __('No', 'shortpixel-image-optimiser'),
+				'finished' => ($stats->is_finished) ? __('Yes', 'shortpixel-image-optimiser') : __('No', 'shortpixel-image-optimiser'),
 			);
 
 			$items[] = $item;
@@ -457,12 +457,12 @@ class SPUICommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spui [bulk] settings
+	 *   wp spio [bulk] settings
 	 *
 	 */
 	public function settings()
 	{
-		$settings = \wpSPUI()->settings();
+		$settings = \WPspio()->settings();
 
 		$items = array();
 		$fields = array('setting', 'value');
@@ -491,7 +491,7 @@ class SPUICommandBase
 	 *
 	 * ## EXAMPLES
 	 *
-	 *   wp spui [bulk] clear
+	 *   wp spio [bulk] clear
 	 */
 	public function clear($args, $assoc)
 	{
@@ -503,7 +503,7 @@ class SPUICommandBase
 			$queue->resetQueue();
 		}
 
-		\WP_CLI::Success(__('Queue(s) cleared', 'shortpixel-upscale-image'));
+		\WP_CLI::Success(__('Queue(s) cleared', 'shortpixel-image-optimiser'));
 	}
 
 
@@ -517,14 +517,14 @@ class SPUICommandBase
 			if ($colored) {
 				$values = array('%g', '%n');
 			}
-			$res =  vsprintf(__('%sYes%s', 'shortpixel-upscale-image'), $values);
+			$res =  vsprintf(__('%sYes%s', 'shortpixel-image-optimiser'), $values);
 			if ($colored)
 				$res = \WP_CLI::colorize($res);
 		} else {
 			if ($colored) {
 				$values = array('%r', '');
 			}
-			$res = vsprintf(__('%sNo%s', 'shortpixel-upscale-image'), $values);
+			$res = vsprintf(__('%sNo%s', 'shortpixel-image-optimiser'), $values);
 			if ($colored)
 				$res = \WP_CLI::colorize($res);
 		}
@@ -593,4 +593,4 @@ class SPUICommandBase
 
 		return $string;
 	}
-} // Class SPUICommandBase
+} // Class SpioCommandBase

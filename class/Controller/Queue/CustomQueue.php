@@ -1,13 +1,13 @@
 <?php
-namespace SPUI\Controller\Queue;
+namespace ShortPixel\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortQ\ShortQ as ShortQ;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Model\Image\ImageModel as ImageModel;
+use ShortPixel\ShortQ\ShortQ as ShortQ;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
 
 class CustomQueue extends Queue
 {
@@ -30,7 +30,7 @@ class CustomQueue extends Queue
          'enqueue_limit' => 120,
       );
 
-     $options = apply_filters('spui/customqueue/options', $options);
+     $options = apply_filters('shortpixel/customqueue/options', $options);
      $this->q->setOptions($options);
    }
 
@@ -79,7 +79,7 @@ class CustomQueue extends Queue
    {
 
       global $wpdb; 
-      $table = $wpdb->prefix . 'spui_meta'; 
+      $table = $wpdb->prefix . 'shortpixel_meta'; 
       list($start_date, $end_date) = parent::addFilters($filters);
 
       
@@ -147,7 +147,7 @@ class CustomQueue extends Queue
    protected function getFilterQueryData()
    {
       global $wpdb; 
-      $table = $wpdb->prefix . 'spui_meta'; 
+      $table = $wpdb->prefix . 'shortpixel_meta'; 
 
       return [
           'date_field' => 'ts_added', 
@@ -165,7 +165,7 @@ class CustomQueue extends Queue
      $limit = $this->q->getOption('enqueue_limit');
      $prepare = array();
      $items = array();
-     $fastmode = apply_filters('spui/queue/fastmode', false);
+     $fastmode = apply_filters('shortpixel/queue/fastmode', false);
 
      $options = $this->getOptions(); 
 
@@ -190,7 +190,7 @@ class CustomQueue extends Queue
 
      global $wpdb;
 
-     $folderSQL = ' SELECT id FROM ' . $wpdb->prefix . 'spui_folders where status >= 0 ';
+     $folderSQL = ' SELECT id FROM ' . $wpdb->prefix . 'shortpixel_folders where status >= 0 ';
      $folderRow = $wpdb->get_col($folderSQL);
 
      // No Active Folders, No Items.
@@ -200,7 +200,7 @@ class CustomQueue extends Queue
      // List of prepared (%d) for the folders.
      $query_arr = join( ',', array_fill( 0, count( $folderRow ), '%d' ) );
 
-     $sql = 'SELECT id FROM ' . $wpdb->prefix . 'spui_meta WHERE folder_id in ( ';
+     $sql = 'SELECT id FROM ' . $wpdb->prefix . 'shortpixel_meta WHERE folder_id in ( ';
 
      $sql .= $query_arr . ') ';
      // Query anything else than success, since that is done.
@@ -254,7 +254,7 @@ class CustomQueue extends Queue
      $prepare = [];
      $items = [];
 
-     $sql = 'SELECT id FROM ' . $wpdb->prefix . 'spui_meta WHERE status = %d  ';
+     $sql = 'SELECT id FROM ' . $wpdb->prefix . 'shortpixel_meta WHERE status = %d  ';
      $prepare[] = ImageModel::FILE_STATUS_SUCCESS;
 
      if ($last_id > 0)

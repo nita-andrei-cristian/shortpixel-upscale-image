@@ -1,17 +1,17 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Model\ApiKeyModel as ApiKeyModel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Model\ApiKeyModel as ApiKeyModel;
 
 /* Main function of this controller is to load key on runtime
 This should probably in future incorporate some apikey checking functions that shouldn't be in model.
 */
-class ApiKeyController extends \SPUI\Controller
+class ApiKeyController extends \ShortPixel\Controller
 {
     private static $instance;
 

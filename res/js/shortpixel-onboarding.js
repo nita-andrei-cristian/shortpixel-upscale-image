@@ -1,318 +1,363 @@
 'use strict';
 
-class SPUIOnboarding {
-	root;
-	onboardingRoot;
-	onboardingForm;
-	settings;
-	isSubmitting = false;
+class ShortPixelOnboarding
+{
 
-	constructor(data) {
-		this.root = data.root;
-		this.onboardingRoot = this.root.querySelector('#tab-nokey');
-		this.onboardingForm = (this.onboardingRoot !== null) ? this.onboardingRoot.closest('form') : null;
-		this.settings = data.settings || null;
-		this.Init();
-	}
+    root;
+    settings;
+    buttons = [];
+    steps = [];
+    step_counter;
+    stepdots;
 
-	Init() {
-		if (this.onboardingRoot !== null) {
-			this.onboardingRoot.dataset.spuiOnboardingReady = '1';
-		}
+    constructor(data)
+    {
+       this.root = data.root;
+       this.settings = data.settings;
+       this.Init();
 
-		this.InitActions();
-	}
+    }
 
-	InitActions() {
-		if (this.onboardingRoot === null) {
-			return;
-		}
+    Init()
+    {
+      this.InitActions();
+    }
 
-		this.InitNewKeySwitch();
 
-		var addButton = this.onboardingRoot.querySelector('button[name="add-key"]');
-		if (addButton !== null) {
-			addButton.addEventListener('click', this.AddKeyEvent.bind(this));
-		}
+    InitActions()
+    {
+         this.InitNewKeySwitch();
 
-		let inputs = ['pluginemail', 'new-key'];
-		for (let i = 0; i < inputs.length; i++) {
-			var input = document.getElementById(inputs[i]);
-			if (input !== null) {
-				input.addEventListener('keypress', this.EnterKeyPressEvent.bind(this));
-				input.addEventListener('focus', this.ActivateInputPanelEvent.bind(this));
-			}
-		}
-	}
+         var addButton = this.root.querySelector('button[name="add-key"]');
+         addButton.addEventListener('click', this.AddKeyEvent.bind(this));
 
-	InitNewKeySwitch() {
-		var panels = this.onboardingRoot.querySelectorAll('.onboarding-join-wrapper settinglist');
-		for (var i = 0; i < panels.length; i++) {
-			panels[i].addEventListener('click', this.NewKeyPanelEvent.bind(this));
-			panels[i].addEventListener('keydown', this.NewKeyPanelKeyEvent.bind(this));
-		}
-	}
+         let inputs = ['pluginemail', 'new-key']; 
+         for (let i = 0; i < inputs.length; i++)
+         {
+             var input = document.getElementById(inputs[i]); 
+             if (input !== null)
+             {
+               input.addEventListener('keypress', this.EnterKeyPressEvent.bind(this));
+             }
+         }
+      
+         var quickTour = this.root.querySelector('.quick-tour');
+         if (quickTour !== null)
+         {
+            this.InitQuickTour();
+         }
+    }
 
-	NewKeyPanelKeyEvent(event) {
-		if (event.key !== 'Enter' && event.key !== ' ') {
-			return;
-		}
+    InitNewKeySwitch()
+    {
+        var panels = this.root.querySelectorAll('.onboarding-join-wrapper settinglist');
+        for (var i = 0; i < panels.length; i++)
+        {
+           panels[i].addEventListener('click', this.NewKeyPanelEvent.bind(this));
+        }
+    }
 
-		event.preventDefault();
-		this.NewKeyPanelEvent(event);
-	}
+    EnterKeyPressEvent(event)
+    {
+       if (event.keyCode === 13)
+       {
+          event.preventDefault(); 
+          this.AddKeyEvent(event);
+          return false;
+       }
 
-	EnterKeyPressEvent(event) {
-		if (event.keyCode === 13) {
-			event.preventDefault();
-			this.AddKeyEvent(event);
-			return false;
-		}
-	}
+    }
 
-	ActivateInputPanelEvent(event) {
-		var panel = event.target.closest('settinglist');
-		if (panel !== null) {
-			this.ActivatePanel(panel);
-		}
-	}
+    NewKeyPanelEvent(event)
+    {
+      // event.preventDefault();
 
-	NewKeyPanelEvent(event) {
-		let target = event.target;
-		if (event.target.tagName.toLowerCase() !== 'settinglist') {
-			target = event.target.closest('settinglist');
-		}
+       let target = event.target;
+       if (event.target.tagName !== 'settinglist')
+       {
+          target = event.target.closest('settinglist');
+       }
 
-		if (target === null || target.classList.contains('now-active')) {
-			return true;
-		}
+       if (target.classList.contains('now-active'))
+       {
+          return true;
+       }
 
-		var panels = this.onboardingRoot.querySelectorAll('.onboarding-join-wrapper settinglist');
-		this.ActivatePanel(target);
-		return true;
-	}
+       var panels = this.root.querySelectorAll('.onboarding-join-wrapper settinglist');
+       for (var i = 0; i < panels.length; i++)
+       {
+          panels[i].classList.remove('now-active');
+       }
 
-	ActivatePanel(target) {
-		var panels = this.onboardingRoot.querySelectorAll('.onboarding-join-wrapper settinglist');
-		for (var i = 0; i < panels.length; i++) {
-			panels[i].classList.remove('now-active');
-			panels[i].setAttribute('aria-pressed', 'false');
-		}
+       target.classList.add('now-active');
 
-		target.classList.add('now-active');
-		target.setAttribute('aria-pressed', 'true');
-	}
+    }
 
-	AddKeyEvent(event) {
-		event.preventDefault();
+    AddKeyEvent(event)
+    {
+       event.preventDefault();
 
-		if (this.isSubmitting) {
-			return false;
-		}
+       var activePanel = this.root.querySelector('settinglist.now-active');
+       var formData = new FormData();
+       var submit = true;
+       // Form Nonce.
+       var spNonce = this.root.querySelector('input[name="sp-nonce"]').value;
 
-		var activePanel = this.onboardingRoot.querySelector('settinglist.now-active');
-		var existingPanel = this.onboardingRoot.querySelector('settinglist.existing-customer');
-		var apiKeyInput = (existingPanel !== null) ? existingPanel.querySelector('input[name="login_apiKey"]') : null;
+       formData.append('sp-nonce', spNonce);
 
-		if (apiKeyInput !== null && apiKeyInput.value.trim().length > 0) {
-			activePanel = existingPanel;
-			this.ActivatePanel(existingPanel);
-		}
+       if (activePanel.classList.contains('new-customer'))
+       {
+          let email = activePanel.querySelector('input[name="pluginemail"]');
+          let tos = activePanel.querySelector('input[name="tos"]');
 
-		var nonceInput = (this.onboardingForm !== null) ? this.onboardingForm.querySelector('input[name="sp-nonce"]') : null;
+          email.classList.remove('invalid');
+          tos.classList.remove('invalid');
 
-		if (activePanel === null || nonceInput === null) {
-			this.ShowSubmitError('The onboarding form is incomplete. Please refresh the page and try again.');
-			return false;
-		}
+          if (false === this.IsEmailValid(email.value))
+          {
+             email.classList.add('invalid');
+             activePanel.querySelector('#pluginemail-error').style.display = 'block';
+             submit = false;
+          }
+          if (false === tos.checked)
+          {
+             tos.classList.add('invalid');
+             jQuery(".tos-robo").fadeIn(400,function(){jQuery(".tos-hand").fadeIn();});
+             submit = false;
+          }
+          else {
+             formData.append(email.name, email.value);
+             formData.append('screen_action', 'action_request_new_key');
+          }
 
-		var formData = new FormData();
-		var submit = true;
+       }
+       else if(activePanel.classList.contains('existing-customer'))
+       {
+           let apiKey = activePanel.querySelector('input[name="login_apiKey"]');
+           formData.append('apiKey', apiKey.value);
+           formData.append('screen_action', 'action_addkey');
+       }
 
-		formData.append('sp-nonce', nonceInput.value);
+       if (true === submit)
+       {
+          let button = this.root.querySelector('.onboard-submit button');
+          button.classList.add('submitting');
+          this.settings.DoAjaxRequest(formData, this.FormAddKeyResponse, this.FormAddKeyResponse).then( (json) => {
+              this.FormAddKeyResponse(json);
+          }) ;
 
-		if (activePanel.classList.contains('new-customer')) {
-			let email = activePanel.querySelector('input[name="pluginemail"]');
-			let tos = activePanel.querySelector('input[name="tos"]');
+       }
 
-			email.classList.remove('invalid');
-			tos.classList.remove('invalid');
+    }
 
-			if (false === this.IsEmailValid(email.value)) {
-				email.classList.add('invalid');
-				activePanel.querySelector('#pluginemail-error').style.display = 'block';
-				submit = false;
-			}
+    FormAddKeyResponse(json)
+    {
+        var anchor = this.root.querySelector('.submit-errors');
+        anchor.innerHTML = '';
 
-			if (false === tos.checked) {
-				tos.classList.add('invalid');
-				jQuery('.tos-robo').fadeIn(400, function () { jQuery('.tos-hand').fadeIn(); });
-				submit = false;
-			}
-			else {
-				formData.append(email.name, email.value);
-				formData.append('screen_action', 'action_request_new_key');
-			}
-		}
-		else if (activePanel.classList.contains('existing-customer')) {
-			let apiKey = activePanel.querySelector('input[name="login_apiKey"]');
-			apiKey.classList.remove('invalid');
-			if (apiKey.value.trim().length === 0) {
-				apiKey.classList.add('invalid');
-				this.ShowSubmitError('Please enter your API key before continuing.');
-				submit = false;
-			}
-			formData.append('apiKey', apiKey.value);
-			formData.append('screen_action', 'action_addkey');
-		}
+        let button = this.root.querySelector('.onboard-submit button');
+        button.classList.remove('submitting');
 
-		if (true === submit) {
-			let button = this.onboardingRoot.querySelector('.onboard-submit button');
-			this.isSubmitting = true;
-			button.classList.add('submitting');
-			this.DoAjaxRequest(formData)
-				.then((json) => {
-					this.FormAddKeyResponse(json);
-				})
-				.catch((error) => {
-					this.ResetSubmitButton();
-					this.ShowSubmitError(error.message || 'The request failed. Please refresh the page and try again.');
-				});
-		}
-	}
+        if (json.display_notices)
+        {
+          for (let i = 0; i < json.display_notices.length; i++)
+          {
+            anchor.innerHTML += json.display_notices[i];
+          }
 
-	FormAddKeyResponse(json) {
-		var anchor = this.onboardingRoot.querySelector('.submit-errors');
-		anchor.innerHTML = '';
+          anchor.classList.add('is-visible');
+        }
 
-		this.ResetSubmitButton();
+        window.setTimeout(function () {
 
-		if (!json) {
-			this.ShowSubmitError('The server returned an empty response. Please refresh the page and try again.');
-			return;
-		}
+          if (json.redirect)
+          {
+             if (json.redirect == 'reload')
+             {
+                  window.location.reload();
+             }
+             else {
+                 window.location.href = json.redirect;
+             }
+          }
+        },3000);
+    }
 
-		if (json.display_notices) {
-			for (let i = 0; i < json.display_notices.length; i++) {
-				anchor.innerHTML += json.display_notices[i];
-			}
+    IsEmailValid(email) {
+        var regex = /^\S+@\S+\.\S+$/;
+        return regex.test(email);
+    }
 
-			anchor.classList.add('is-visible');
-		}
+    InitQuickTour()
+    {
+         var buttons = this.root.querySelectorAll('.quick-tour .navigation button');
+         for (var i = 0; i < buttons.length; i++)
+         {
+            let button = buttons[i];
+            button.addEventListener('click', this.QuickTourActionEvent.bind(this));
+            button.disable = () => { button.classList.add('hide'); };
+            button.enable = () => { button.classList.remove('hide'); };
+            button.showNext = () => { button.classList.remove('show-start'); button.classList.add('show-next'); };
+            this.buttons.push(button);
+         }
 
-		window.setTimeout(function () {
-			if (json.redirect) {
-				if (json.redirect == 'reload') {
-					window.location.reload();
-				}
-				else {
-					window.location.href = json.redirect;
-				}
-			}
-		}, 3000);
-	}
+         var stepdots = this.root.querySelectorAll('.quick-tour .navigation .stepdot');
+         for (var i = 0;  i < stepdots.length; i++)
+         {
+            let stepdot = stepdots[i];
+            stepdot.addEventListener('click', this.QuickTourActionEvent.bind(this));
+            stepdot.disable = () => { button.classList.remove('active'); };
+            stepdot.enable = () => { button.classList.add('active'); };
 
-	ResetSubmitButton() {
-		this.isSubmitting = false;
+         }
 
-		let button = this.onboardingRoot.querySelector('.onboard-submit button');
-		if (button !== null) {
-			button.classList.remove('submitting');
-		}
-	}
+         this.stepdots = stepdots;
 
-	ShowSubmitError(message) {
-		var anchor = this.onboardingRoot.querySelector('.submit-errors');
-		if (anchor === null) {
-			return;
-		}
+         var closeButtons = this.root.querySelectorAll('.quick-tour .close');
+         for (var i = 0; i < closeButtons.length; i++)
+         {
+           closeButtons[i].addEventListener('click', this.QuickTourCloseEvent.bind(this));
 
-		anchor.innerHTML = '<div class="notice notice-error is_ajax"><p>' + this.EscapeHtml(message) + '</p></div>';
-		anchor.classList.add('is-visible');
-	}
+         }
 
-	EscapeHtml(string) {
-		var node = document.createElement('div');
-		node.textContent = string;
-		return node.innerHTML;
-	}
+         this.steps = this.root.querySelectorAll('.quick-tour .steps .step');
+         this.step_counter = this.root.querySelector('.quick-tour .navigation .step_count');
 
-	IsEmailValid(email) {
-		var regex = /^\S+@\S+\.\S+$/;
-		return regex.test(email);
-	}
+         this.step_counter.innerText = '1/' + this.steps.length;
 
-	async DoAjaxRequest(formData) {
-		formData.append('action', 'spui_settingsRequest');
-		formData.append('ajaxSave', 'true');
-		formData.append('request_url', window.location.toString());
+         this.root.classList.add('active-step-' + 0);
+    }
 
-		if (false === formData.has('nonce') && typeof SPUIOnboardingData !== 'undefined') {
-			formData.append('nonce', SPUIOnboardingData.nonceSettingsRequest);
-		}
-		else if (false === formData.has('nonce') && typeof SPUIProcessorData !== 'undefined') {
-			formData.append('nonce', SPUIProcessorData.nonce_settingsrequest);
-		}
+    QuickTourActionEvent(event)
+    {
+       event.preventDefault();
 
-		const ajaxUrl = this.GetAjaxUrl();
-		if (!ajaxUrl) {
-			throw new Error('The onboarding AJAX URL is missing. Please refresh the page and try again.');
-		}
+       var target = event.target;
+       if (target.type !== 'button' && false == target.classList.contains('stepdot'))
+       {
+          target = target.closest('button');
+       }
 
-		const response = await fetch(ajaxUrl, {
-			method: 'POST',
-			body: formData
-		});
+       for (var i = 0; i < this.steps.length; i++)
+       {
+          if (this.steps[i].classList.contains('active'))
+          {
+             var current_step_number = i;
+             var current_step = this.steps[i];
+             break;
+          }
+       }
 
-		if (!response.ok) {
-			throw new Error('The server rejected the onboarding request.');
-		}
+       var next_step_number = current_step_number+1;
+       var previous_step_number = current_step_number-1;
 
-		return response.json();
-	}
+      //var previous_button = this.buttons[0];
+      var next_button = this.buttons[0];
+      var end_button = this.buttons[1];
 
-	GetAjaxUrl() {
-		if (typeof SPUIOnboardingData !== 'undefined' && SPUIOnboardingData.ajaxUrl) {
-			return SPUIOnboardingData.ajaxUrl;
-		}
+       if (target.classList.contains('next') && next_step_number < this.steps.length)
+       {
+            this.QuickTourSwitchToItem(next_step_number);
+            var new_step = next_step_number;
+       }
+    /*   else if (previous_step_number >= 0 && target.classList.contains('previous'))
+       {
+          this.QuickTourSwitchToItem(previous_step_number);
+          var new_step = previous_step_number;
+       } */
+       else if (target.classList.contains('stepdot')) {
 
-		if (typeof SPUI !== 'undefined' && SPUI.AJAX_URL) {
-			return SPUI.AJAX_URL;
-		}
+          var new_step = event.target.dataset.step;
+          if (new_step !== current_step_number)
+          {
+            this.QuickTourSwitchToItem(new_step);
+          }
+       }
+       else {
+         console.log('no steps done', event.target, next_step_number, previous_step_number);
+         return;
+       }
 
-		if (typeof ajaxurl !== 'undefined') {
-			return ajaxurl;
-		}
+       // Somebody click on active dot.
+       if (new_step == current_step_number)
+       {
+          return;
+       }
 
-		return null;
-	}
-}
+       current_step.classList.remove('active');
+       this.root.classList.remove('active-step-' + current_step_number);
+       this.step_counter.innerText = (new_step +1) + '/' + this.steps.length;
 
-function spuiBootOnboarding(data) {
-	if (!data || !data.root) {
-		return;
-	}
+       if (new_step == (this.steps.length-1))
+       {
+          next_button.disable();
+          end_button.enable();
+       }
+       else {
+          end_button.disable();
+          if (new_step > 0)
+          {
+              next_button.showNext();
+          }
+          next_button.enable();
+          if (new_step == 1)
+          {
+            for (var i = 0; i < this.stepdots.length; i++)
+            {
+               this.stepdots[i].classList.remove('active','hide');
+            }
+          }
+       }
 
-	var onboardingRoot = data.root.querySelector('#tab-nokey');
-	if (onboardingRoot === null || onboardingRoot.dataset.spuiOnboardingReady === '1') {
-		return;
-	}
+      this.stepdots[new_step-1].classList.add('active');
+      if (current_step_number > 0)
+        this.stepdots[current_step_number-1].classList.remove('active');
+             /* if (new_step < 0)
+       {
+          previous_button.disable();
+       }
+       else {
+          previous_button.enable();
+       } */
+    }
 
-	new SPUIOnboarding(data);
+    QuickTourSwitchToItem(item_number)
+    {
+       this.steps[item_number].classList.add('active');
+       if (typeof this.steps[item_number].dataset.screen !== 'undefined')
+       {
+           var ev = new CustomEvent('click');
+           var menuItem = this.root.querySelector('menu ul [data-menu-link="' + this.steps[item_number].dataset.screen + '"]');
+           if (menuItem !== null)
+           {
+              menuItem.dispatchEvent(ev);
+           }
+       }
+
+       this.root.classList.add('active-step-' + item_number);
+    }
+
+    QuickTourCloseEvent(event)
+    {
+       event.preventDefault();
+
+       var formData = new FormData();
+       var spNonce = this.root.querySelector('input[name="sp-nonce"]').value;
+       formData.append('sp-nonce', spNonce);
+       formData.append('screen_action', 'action_end_quick_tour');
+
+       this.QuickTourSwitchToItem(0);
+
+       this.settings.DoAjaxRequest(formData, null, null).then( (json) => {
+           this.root.querySelector('.quick-tour').remove();
+           window.location.reload();
+
+       }) ;
+
+    }
+
 }
 
 document.addEventListener('shortpixel.settings.loaded', function (event) {
-	spuiBootOnboarding(event.detail);
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-	var root = document.querySelector('.wrap.is-shortpixel-settings-page');
-	if (root === null) {
-		return;
-	}
-
-	spuiBootOnboarding({
-		root: root,
-		settings: null
-	});
+  var s = new ShortPixelOnboarding(event.detail);
 });

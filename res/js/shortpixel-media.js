@@ -12,13 +12,13 @@
 
 		createFilters: function() {
 			 var filters = {};
-			 var optimizedfilter = spui_media.mediafilters.optimized;
+			 var optimizedfilter = spio_media.mediafilters.optimized;
 
 			 for (const [key,value] of Object.entries(optimizedfilter))
 			 {
 				  filters[key] =  {
 						 text: value,
-						 props: { 'spui_status': key },
+						 props: { 'shortpixel_status': key },
 						 priority: 10,
 					}
 			 };

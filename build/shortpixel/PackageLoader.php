@@ -1,5 +1,5 @@
 <?php
-namespace SPUI\Build;
+namespace ShortPixel\Build;
 
 class PackageLoader
 {

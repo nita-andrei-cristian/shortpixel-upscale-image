@@ -1,8 +1,8 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
-use SPUI\Controller\Optimizer\OptimizeAiController;
-use SPUI\Helper\UiHelper;
+use ShortPixel\Controller\Optimizer\OptimizeAiController;
+use ShortPixel\Helper\UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -22,27 +22,27 @@ $approx = $this->view->approx;
 
       <div class='load wrapper' >
          <div class='loading'>
-             <span><img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></span>
+             <span><img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></span>
              <span>
-             <p><?php esc_html_e('Please wait, ShortPixel is checking the images to be processed...','shortpixel-upscale-image'); ?><br>
-               <span class="number" data-stats-total="total">x</span> <?php esc_html_e('items found', 'shortpixel-upscale-image'); ?></p>
+             <p><?php esc_html_e('Please wait, ShortPixel is checking the images to be processed...','shortpixel-image-optimiser'); ?><br>
+               <span class="number" data-stats-total="total">x</span> <?php esc_html_e('items found', 'shortpixel-image-optimiser'); ?></p>
            </span>
          </div>
 
 
 				 <div class='loading skip'>
 					<nav>
-					 <span><p><button class='button' data-action="SkipPreparing"><?php _e('Start now', 'shortpixel-upscale-image'); ?></button></p>
+					 <span><p><button class='button' data-action="SkipPreparing"><?php _e('Start now', 'shortpixel-image-optimiser'); ?></button></p>
 
 					 </span>
 					 <span>
-					 <p><?php _e("Clicking this button will start upscaling of the items added to the queue. The remaining items can be processed in a new bulk. After completion, you can start bulk and the system will continue with the unprocessed images.",'shortpixel-upscale-image'); ?></p>
+	 						 <p><?php _e("Clicking this button will start optimization of the items added to the queue. The remaining items can be processed in a new bulk. After completion, you can start bulk and the system will continue with the unprocessed images.",'shortpixel-image-optimiser'); ?></p>
 						</span>
 					</nav>
 				</div>
 
         <div class='loading overlimit'>
-              <p><?php _e('ShortPixel has detected that there are no more resources available during preparation. The plugin will try to complete the process, but may be slower. Increase memory, disable heavy plugins or reduce the number of prepared items per load.', 'shortpixel-upscale-image'); ?></p>
+              <p><?php _e('ShortPixel has detected that there are no more resources available during preparation. The plugin will try to complete the process, but may be slower. Increase memory, disable heavy plugins or reduce the number of prepared items per load.', 'shortpixel-image-optimiser'); ?></p>
 
         </div>
       </div>
@@ -50,17 +50,17 @@ $approx = $this->view->approx;
        <div class="interface wrapper">
 
 	   <h3 class="heading">
-        <?php esc_html_e('ShortPixel Bulk Upscaling - Select Images', 'shortpixel-upscale-image'); ?>
+        <?php esc_html_e('ShortPixel Bulk Optimization - Select Images', 'shortpixel-image-optimiser'); ?>
       </h3>
 
-      <p class='description'><?php esc_html_e('Select the type of images that ShortPixel should upscale for you.','shortpixel-upscale-image'); ?></p>
+      <p class='description'><?php esc_html_e('Select the type of images that ShortPixel should optimize for you.','shortpixel-image-optimiser'); ?></p>
 				 <div class="option-block">
 
-					<!-- <h2><?php esc_html_e('Upscale:','shortpixel-upscale-image'); ?> </h2> -->
-				<!--	 <p><?php printf(esc_html__('ShortPixel has %sestimated%s the number of images that can still be upscaled. %sAfter you select the options, the plugin will calculate exactly how many images to upscale.','shortpixel-upscale-image'), '<b>','</b>', '<br />'); ?></p>
+					<!-- <h2><?php esc_html_e('Optimize:','shortpixel-image-optimiser'); ?> </h2> -->
+				<!--	 <p><?php printf(esc_html__('ShortPixel has %sestimated%s the number of images that can still be optimized. %sAfter you select the options, the plugin will calculate exactly how many images to optimize.','shortpixel-image-optimiser'), '<b>','</b>', '<br />'); ?></p>
 
 					 <?php if ($approx->media->isLimited): ?>
-						 <h4 class='count_limited'><?php esc_html_e('ShortPixel has detected a high number of images. This estimates are limited for performance reasons. On the next step an accurate count will be produced', 'shortpixel-upscale-image'); ?></h4>
+						 <h4 class='count_limited'><?php esc_html_e('ShortPixel has detected a high number of images. This estimates are limited for performance reasons. On the next step an accurate count will be produced', 'shortpixel-image-optimiser'); ?></h4>
 					 <?php endif; ?>
 				 -->
 
@@ -73,61 +73,52 @@ $approx = $this->view->approx;
 	            </div>
 
 
-	            <h4><label for="media_checkbox"><?php esc_html_e('Media Library','shortpixel-upscale-image'); ?></label></h4>
+	            <h4><label for="media_checkbox"><?php esc_html_e('Media Library','shortpixel-image-optimiser'); ?></label></h4>
 	            <div class='option'>
-	              <label><?php esc_html_e('Images (estimate)', 'shortpixel-upscale-image'); ?></label>
+	              <label><?php esc_html_e('Images (estimate)', 'shortpixel-image-optimiser'); ?></label>
 	              <span class="number" ><?php echo esc_html($approx->media->items) ?></span>
 	            </div>
 
-							<?php if (\wpSPUI()->settings()->processThumbnails == 1): ?>
+							<?php if (\wpSPIO()->settings()->processThumbnails == 1): ?>
 		            <div class='option'>
-		              <label><?php esc_html_e('Thumbnails (estimate)','shortpixel-upscale-image'); ?></label> <span class="number" ><?php echo esc_html($approx->media->thumbs) ?> </span>
+		              <label><?php esc_html_e('Thumbnails (estimate)','shortpixel-image-optimiser'); ?></label> <span class="number" ><?php echo esc_html($approx->media->thumbs) ?> </span>
 		            </div>
 							<?php endif; ?>
 	         </div>
 
-					<div class='scale-options optiongroup'>
-						<h4><?php esc_html_e('Upscale factor', 'shortpixel-upscale-image'); ?></h4>
-						<div class='option'>
-							<label><input type="radio" name="bulk_scale" value="2" checked> <?php esc_html_e('2x', 'shortpixel-upscale-image'); ?></label>
-							<label><input type="radio" name="bulk_scale" value="3"> <?php esc_html_e('3x', 'shortpixel-upscale-image'); ?></label>
-							<label><input type="radio" name="bulk_scale" value="4"> <?php esc_html_e('4x', 'shortpixel-upscale-image'); ?></label>
-						</div>
-					</div>
 
-
-					<?php if (! \wpSPUI()->settings()->processThumbnails): ?>
+					<?php if (! \wpSPIO()->settings()->processThumbnails): ?>
 					<div class='thumbnails optiongroup'>
 						<div class='switch_button'>
 							<label>
-								<input type="checkbox" class="switch" id="thumbnails_checkbox" <?php checked(\wpSPUI()->settings()->processThumbnails); ?>>
+								<input type="checkbox" class="switch" id="thumbnails_checkbox" <?php checked(\wpSPIO()->settings()->processThumbnails); ?>>
 								<div class="the_switch">&nbsp; </div>
 							</label>
 						</div>
-						<h4><label for="thumbnails_checkbox"><?php esc_html_e('Process Image Thumbnails','shortpixel-upscale-image'); ?></label></h4>
+						<h4><label for="thumbnails_checkbox"><?php esc_html_e('Process Image Thumbnails','shortpixel-image-optimiser'); ?></label></h4>
 						<div class='option'>
-							<label><?php esc_html_e('Thumbnails (estimate)','shortpixel-upscale-image'); ?></label>
+							<label><?php esc_html_e('Thumbnails (estimate)','shortpixel-image-optimiser'); ?></label>
 							 <span class="number" ><?php echo esc_html($approx->media->total) ?> </span>
 						</div>
 
-						<p><?php esc_html_e('It is recommended to process the WordPress thumbnails. These are the small images that are most often used in posts and pages.This option changes the global ShortPixel settings of your site.','shortpixel-upscale-image'); ?></p>
+						<p><?php esc_html_e('It is recommended to process the WordPress thumbnails. These are the small images that are most often used in posts and pages.This option changes the global ShortPixel settings of your site.','shortpixel-image-optimiser'); ?></p>
 
 					</div>
 				<?php endif; ?>
 
 				<?php
-				$upscaleAiController = OptimizeAiController::getInstance(); 
-				if (false && true === $upscaleAiController->isAiEnabled()):  ?>
+				$optimizeAiController = OptimizeAiController::getInstance(); 
+				if (true === $optimizeAiController->isAiEnabled()):  ?>
 			 <div class='ai-images optiongroup'>
 				<div class='switch_button'>
 				<label>
 		               <input type="checkbox" class="switch" id="autoai_checkbox" name="autoai_checkbox"
-		                <?php checked(\wpSPUI()->settings()->autoAIBulk); ?>  />
+		                <?php checked(\wpSPIO()->settings()->autoAIBulk); ?>  />
 		               <div class="the_switch">&nbsp; </div>
 	             </label>
 				 <h4><label for="autoai_checkbox">
-					<?php printf(esc_html__('Use ShortPixel AI to generate image SEO data for all Media Library images, according to the %ssettings%s', 'shortpixel-upscale-image'), '<a href="options-general.php?page=wp-shortpixel-upscale-settings&part=ai">', '</a>' ); ?>
-              				<span class='new'><?php _e('New!', 'shortpixel-upscale-image'); ?></span>
+					<?php printf(esc_html__('Use ShortPixel AI to generate image SEO data for all Media Library images, according to the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-shortpixel-settings&part=ai">', '</a>' ); ?>
+              				<span class='new'><?php _e('New!', 'shortpixel-image-optimiser'); ?></span>
 				 </label></h4>
 
 				</div>	
@@ -135,12 +126,12 @@ $approx = $this->view->approx;
 				<div class='switch_button indent'>
 				<label>
 		               <input type="checkbox" class="switch" id="aipreserve_checkbox" name="aipreserve_checkbox"
-		                <?php checked(\wpSPUI()->settings()->aiPreserve); ?>  />
+		                <?php checked(\wpSPIO()->settings()->aiPreserve); ?>  />
 		               <div class="the_switch">&nbsp; </div>
 	             </label>
 				 <h4><label for="aipreserve_checkbox">
-					<?php printf(esc_html__('Prevent overriding any of the existing data with the one generated by AI', 'shortpixel-upscale-image'), '<a href="options-general.php?page=wp-shortpixel-upscale-settings&part=ai">', '</a>' ); ?>
-              				<span class='new'><?php _e('New!', 'shortpixel-upscale-image'); ?></span>
+					<?php printf(esc_html__('Prevent overriding any of the existing data with the one generated by AI', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-shortpixel-settings&part=ai">', '</a>' ); ?>
+              				<span class='new'><?php _e('New!', 'shortpixel-image-optimiser'); ?></span>
 				 </label></h4>
 
 				</div>	
@@ -149,16 +140,16 @@ $approx = $this->view->approx;
 
 			<?php endif ?>
 			
-	         <div class="custom-images optiongroup" style="display:none" data-check-visibility data-control="data-check-custom-hascustom" >
+	         <div class="custom-images optiongroup"  data-check-visibility data-control="data-check-custom-hascustom" >
 	           <div class='switch_button'>
 	             <label>
 	               <input type="checkbox" class="switch" id="custom_checkbox" checked>
 	               <div class="the_switch">&nbsp; </div>
 	             </label>
 	           </div>
-	           <h4><label for="custom_checkbox"><?php esc_html_e('Custom Media images','shortpixel-upscale-image') ?></label></h4>
+	           <h4><label for="custom_checkbox"><?php esc_html_e('Custom Media images','shortpixel-image-optimiser') ?></label></h4>
 	            <div class='option'>
-	              <label><?php esc_html_e('Images (estimate)','shortpixel-upscale-image'); ?></label>
+	              <label><?php esc_html_e('Images (estimate)','shortpixel-image-optimiser'); ?></label>
 	               <span class="number" ><?php echo esc_html($approx->custom->images) ?></span>
 	            </div>
 	         </div>
@@ -171,7 +162,7 @@ $approx = $this->view->approx;
 	             <label>
 	               <input type="checkbox" class="switch" id="limit_items" name='limit_items' >
 	               <div class="the_switch">&nbsp; </div>
-				   <?php printf(esc_html__('Limit Items to %s and then start', 'shortpixel-upscale-image'), 
+				   <?php printf(esc_html__('Limit Items to %s and then start', 'shortpixel-image-optimiser'), 
 				'<input type="text" name="limit_numitems" value="1000">'); ?>
 				</div>	
 				</label>
@@ -188,39 +179,40 @@ $approx = $this->view->approx;
 
 				<label for="advanced-settings" class='advanced-label'>     
 					<span class='collap-arrow'><?php echo UIHelper::getIcon('res/images/icon/chevron.svg'); ?></span> 
-					<span class='title'><?php esc_html_e('Advanced Settings', 'shortpixel-upscale-image'); ?></span>
+					<span class='title'><?php esc_html_e('Advanced Settings', 'shortpixel_image_optimizer'); ?></span>
 					<hr>
 				</label>
 
 				<div class='collap-content'>
 
 				<div class="option-block selection-settings">
-					 <h2><?php esc_html_e('Options','shortpixel-upscale-image') ?>: </h2>
-		         <div class='optiongroup' style="display:none" >
+					 <h2><?php esc_html_e('Options','shortpixel-image-optimiser') ?>: </h2>
+						 <p><?php esc_html_e('Enable these options if you also want to create WebP/AVIF files. These options change the global ShortPixel settings of your site.','shortpixel-image-optimiser'); ?></p>
+		         <div class='optiongroup'  >
 		           <div class='switch_button'>
 
 		             <label>
 		               <input type="checkbox" class="switch" id="webp_checkbox" name="webp_checkbox"
-		                <?php checked(\wpSPUI()->settings()->createWebp); ?>  />
+		                <?php checked(\wpSPIO()->settings()->createWebp); ?>  />
 		               <div class="the_switch">&nbsp; </div>
 		             </label>
 
 		           </div>
 			   <h4><label for="webp_checkbox">
-					 <?php printf(esc_html__('Also create WebP versions of the images' ,'shortpixel-upscale-image') ); ?>
+					 <?php printf(esc_html__('Also create WebP versions of the images' ,'shortpixel-image-optimiser') ); ?>
 				 </label></h4>
-				<div class="option"><?php esc_html_e('The total number of WebP images will be calculated in the next step.','shortpixel-upscale-image'); ?></div>
+				<div class="option"><?php esc_html_e('The total number of WebP images will be calculated in the next step.','shortpixel-image-optimiser'); ?></div>
 		       </div>
 
 
 					 <?php
 					 $avifEnabled = $this->access()->isFeatureAvailable('avif');
-					 $createAvifChecked = (\wpSPUI()->settings()->createAvif == 1 && $avifEnabled === true) ? true : false;
+					 $createAvifChecked = (\wpSPIO()->settings()->createAvif == 1 && $avifEnabled === true) ? true : false;
 					 $disabled = ($avifEnabled === false) ? 'disabled' : '';
 					 ?>
 
 
-		       <div class='optiongroup' style="display:none">
+		       <div class='optiongroup'>
 		         <div class='switch_button'>
 
 		           <label>
@@ -230,12 +222,12 @@ $approx = $this->view->approx;
 		           </label>
 
 		         </div>
-		         <h4><label for="avif_checkbox"><?php esc_html_e('Also create AVIF versions of the images','shortpixel-upscale-image'); ?></label></h4>
+		         <h4><label for="avif_checkbox"><?php esc_html_e('Also create AVIF versions of the images','shortpixel-image-optimiser'); ?></label></h4>
 				<?php if ($avifEnabled == true): ?>
-				<div class="option"><?php esc_html_e('The total number of AVIF images will be calculated in the next step.','shortpixel-upscale-image'); ?></div>
+				<div class="option"><?php esc_html_e('The total number of AVIF images will be calculated in the next step.','shortpixel-image-optimiser'); ?></div>
 		     </div>
 			<?php else : ?>
-				<div class="option warning"><?php printf(esc_html__('The creation of AVIF files is not possible with this license type. %s Read more %s ','shortpixel-upscale-image'), '<a href="https://shortpixel.com/knowledge-base/article/how-does-the-unlimited-plan-work/" target="_blank">', '</a>'); ?>
+				<div class="option warning"><?php printf(esc_html__('The creation of AVIF files is not possible with this license type. %s Read more %s ','shortpixel-image-optimiser'), '<a href="https://shortpixel.com/knowledge-base/article/how-does-the-unlimited-plan-work/" target="_blank">', '</a>'); ?>
 				</div>
 			<?php endif;  ?>
 
@@ -244,36 +236,36 @@ $approx = $this->view->approx;
 
             <label>
               <input type="checkbox" class="switch" id="background_checkbox" name="background_checkbox"
-               <?php checked(\wpSPUI()->settings()->doBackgroundProcess); ?>  data-action="ChangeBackgroundProcessSettingEvent" data-event="change"/>
+               <?php checked(\wpSPIO()->settings()->doBackgroundProcess); ?>  data-action="ChangeBackgroundProcessSettingEvent" data-event="change"/>
               <div class="the_switch">&nbsp; </div>
             </label>
 
           </div>
           <h4><label for="background_checkbox">
 
-            <?php printf(esc_html__('Background Mode' ,'shortpixel-upscale-image') ); ?>
+            <?php printf(esc_html__('Background Mode' ,'shortpixel-image-optimiser') ); ?>
           </label></h4>
-            <?php $link = 'https://shortpixel.com/knowledge-base/article/background-processing-using-cron-jobs-in-shortpixel-image-upscaler/'; ?>
-         <div class="option"><?php printf(esc_html__('Utilize this feature to upscale images without the need to keep a browser window open. Please be aware that on websites with low traffic or shared hosting, this method of upscaling might be considerably slower. If you observe a significant increase in server resource usage or processing time, consider switching to browser-based upscaling. %sRead more%s.','shortpixel-upscale-image'), '<strong><a href="' . esc_attr($link) . '" target="_blank">', '</a></strong>'); ?>
+            <?php $link = 'https://shortpixel.com/knowledge-base/article/background-processing-using-cron-jobs-in-shortpixel-image-optimizer/'; ?>
+         <div class="option"><?php printf(esc_html__('Utilize this feature to optimize images without the need to keep a browser window open. Please be aware that on websites with low traffic or shared hosting, this method of optimization might be considerably slower. If you observe a significant increase in server resource usage or processing time, consider switching to browser-based optimization. %sRead more%s.','shortpixel-image-optimiser'), '<strong><a href="' . esc_attr($link) . '" target="_blank">', '</a></strong>'); ?>
          </div>
          <div class='option warning
-         <?php echo (\wpSPUI()->settings()->doBackgroundProcess) ? '' : 'hidden' ?>'>
-         <p><?php _e('I understand that background upscaling may pause if there are no visitors on the website.', 'shortpixel-upscale-image'); ?></p></div>
+         <?php echo (\wpSPIO()->settings()->doBackgroundProcess) ? '' : 'hidden' ?>'>
+         <p><?php _e('I understand that background optimization may pause if there are no visitors on the website.', 'shortpixel-image-optimiser'); ?></p></div>
 
        </div>
 
-	  <!-- <h2><?php _e('Limit bulk', 'shortpixel-upscale-image'); ?></h2> -->
+	  <!-- <h2><?php _e('Limit bulk', 'shortpixel-image-optimiser'); ?></h2> -->
 
 <div class='bulk-date-picker optiongroup'>
-	<?php printf(esc_html__('%sOptional: Upscale items between %s  %s and %s ', 'shortpixel-upscale-image'), 
+	<?php printf(esc_html__('%sOptional: Optimize items between %s  %s and %s ', 'shortpixel-image-optimiser'), 
 	'<h4>', 
 	'</h4>',
 	'<span class="date-picker-container">
 		
-	<label><input type="text" name="start-date" id="bulk-start-date" value="" placeholder="' . __('Start date' ,'shortpixel-upscale-image') . '" /></label></span>', 
+	<label><input type="text" name="start-date" id="bulk-start-date" value="" placeholder="' . __('Start date' ,'shortpixel-image-optimiser') . '" /></label></span>', 
 	'<span class="date-picker-container">
 	
-	<label><input type="text" name="end-date" id="bulk-end-date" value="" placeholder="' . __('End date' ,'shortpixel-upscale-image') . '" /></label></span>'
+	<label><input type="text" name="end-date" id="bulk-end-date" value="" placeholder="' . __('End date' ,'shortpixel-image-optimiser') . '" /></label></span>'
 	); ?>
 </div>
 		</div> <!-- option block -->
@@ -288,25 +280,25 @@ $approx = $this->view->approx;
 
  	 	 <div class="option-block all-round">
        <div class='optiongroup' data-check-visibility="false" data-control="data-check-approx-total">
-          <h3><?php esc_html_e('No images found', 'shortpixel-upscale-image'); ?></h3>
-          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any optimizable images.','shortpixel-upscale-image'); ?></p>
+          <h3><?php esc_html_e('No images found', 'shortpixel-image-optimiser'); ?></h3>
+          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any optimizable images.','shortpixel-image-optimiser'); ?></p>
        </div>
 
-       <h4 class='approx'><?php esc_html_e('An estimate of not yet upscaled images in this installation', 'shortpixel-upscale-image'); ?> :
+       <h4 class='approx'><?php esc_html_e('An estimate of unoptimized images in this installation', 'shortpixel-image-optimiser'); ?> :
 			<span data-check-approx-total><?php echo esc_html($approx->total->images) ?></span> </h4>
 
-       <div><p><?php printf(__('In the next step, the plugin will calculate the total number of images to be upscaled, and your bulk process will be prepared. The processing %s will not start yet %s, but a summary of the images to be upscaled will be displayed.', 'shortpixel-upscale-image'),'<b>','</b>'); ?></p></div>
+       <div><p><?php printf(__('In the next step, the plugin will calculate the total number of images to be optimized, and your bulk process will be prepared. The processing %s will not start yet %s, but a summary of the images to be optimized will be displayed.', 'shortpixel-image-optimiser'),'<b>','</b>'); ?></p></div>
 		 </div>
 
       <nav>
         <button class="button" type="button" data-action="FinishBulk">
 					<span class='dashicons dashicons-arrow-left'></span>
-					<p><?php esc_html_e('Back', 'shortpixel-upscale-image'); ?></p>
+					<p><?php esc_html_e('Back', 'shortpixel-image-optimiser'); ?></p>
 				</button>
 
         <button class="button-primary button" type="button" data-action="CreateBulk" data-panel="summary" data-check-disable data-control="data-check-total-total">
 					<span class='dashicons dashicons-arrow-right'></span>
-					<p><?php esc_html_e('Calculate', 'shortpixel-upscale-image'); ?></p>
+					<p><?php esc_html_e('Calculate', 'shortpixel-image-optimiser'); ?></p>
 				</button>
       </nav>
 

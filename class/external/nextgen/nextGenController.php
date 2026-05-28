@@ -1,18 +1,18 @@
 <?php
-namespace SPUI;
+namespace ShortPixel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Notices\NoticeController as Notice;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notice;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
-use SPUI\Controller\OtherMediaController as OtherMediaController;
-use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use ShortPixel\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
+use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
 
-use SPUI\NextGenViewController as NextGenViewController;
+use ShortPixel\NextGenViewController as NextGenViewController;
 
 // @integration NextGen Gallery
 class NextGenController
@@ -25,7 +25,7 @@ class NextGenController
 // ngg_created_new_gallery
   public function __construct()
   {
-    add_filter('spui/init/optimize_on_screens', array($this, 'add_screen_loads'), 10, 2);
+    add_filter('shortpixel/init/optimize_on_screens', array($this, 'add_screen_loads'), 10, 2);
 
     add_action('plugins_loaded', array($this, 'hooks'));
     add_action('deactivate_nextgen-gallery/nggallery.php', array($this, 'resetNotification'));
@@ -46,9 +46,9 @@ class NextGenController
     {
 			add_action('ngg_delete_image', array($this, 'OnDeleteImage'),10, 2); // this works only on single images!
 
-      add_action('spui/othermedia/folder/load', array($this, 'loadFolder'), 10, 2);
+      add_action('shortpixel/othermedia/folder/load', array($this, 'loadFolder'), 10, 2);
       // Off because this causes bad UX ( refresh folder but no images added)
-			//add_action('spui/othermedia/addfiles', array($this, 'checkAddFiles'), 10, 3);
+			//add_action('shortpixel/othermedia/addfiles', array($this, 'checkAddFiles'), 10, 3);
 
       add_filter( 'ngg_manage_images_columns', array( $controller, 'nggColumns' ) );
       add_filter( 'ngg_manage_images_number_of_columns', array( $controller, 'nggCountColumns' ) );
@@ -83,7 +83,7 @@ class NextGenController
 
   public function optimizeNextGen()
   {
-		 if (true === $this->enableOverride || \wpSPUI()->settings()->includeNextGen == 1)
+		 if (true === $this->enableOverride || \wpSPIO()->settings()->includeNextGen == 1)
 		 {
 		 	 return true;
 		 }
@@ -174,7 +174,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
 
   /** Tries to find a nextgen gallery for a shortpixel folder.
   * Purpose is to test if this folder is a nextgen gallery
-  * Problem is that NG stores folders in a short format, not from root while SPUI stores whole path
+  * Problem is that NG stores folders in a short format, not from root while SPIO stores whole path
   * Assumption: The last two directory names should lead to an unique gallery and if so, it's nextgen
   * @param $id int Folder ID
   * @param $directory DirectoryOtherMediaModel  Directory Object
@@ -226,7 +226,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
   public function getGalleries($id = null)
   {
     global $wpdb;
-    $fs = \wpSPUI()->filesystem();
+    $fs = \wpSPIO()->filesystem();
     $homepath = $fs->getWPFileBase();
 
 		$sql = "SELECT path FROM {$wpdb->prefix}ngg_gallery";
@@ -254,7 +254,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
   * Enabled checks are not an external class issue, so must be done before calling.
   */
    public function addNextGenGalleriesToCustom($silent = true) {
-      $fs = \wpSPUI()->filesystem();
+      $fs = \wpSPIO()->filesystem();
       $homepath = $fs->getWPFileBase();
 
       //add the NextGen galleries to custom folders
@@ -300,7 +300,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
       if (count($ngGalleries) > 0)
       {
         // put timestamp to this setting.
-        $settings = \wpSPUI()->settings();
+        $settings = \wpSPIO()->settings();
         $settings->hasCustomFolders = time();
       }
 
@@ -310,7 +310,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
   public function handleImageUpload($image)
   {
     $otherMedia = OtherMediaController::getInstance();
-    //$fs = \wpSPUI()->filesystem();
+    //$fs = \wpSPIO()->filesystem();
 
     if ($this->optimizeNextGen() === true) {
           $imageFsPath = $this->getImageAbspath($image);

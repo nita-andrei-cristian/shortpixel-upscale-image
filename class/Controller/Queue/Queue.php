@@ -1,23 +1,23 @@
 <?php
-namespace SPUI\Controller\Queue;
+namespace ShortPixel\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\Model\Image\ImageModel as ImageModel;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Controller\CacheController as CacheController;
-use SPUI\Controller\Optimizer\OptimizeAiController;
-use SPUI\Controller\ResponseController as ResponseController;
-use SPUI\Model\Converter\Converter as Converter;
-use SPUI\Controller\Queue\QueueItems as QueueItems;
-use SPUI\Model\Queue\QueueItem as QueueItem;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Controller\CacheController as CacheController;
+use ShortPixel\Controller\Optimizer\OptimizeAiController;
+use ShortPixel\Controller\ResponseController as ResponseController;
+use ShortPixel\Model\Converter\Converter as Converter;
+use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use ShortPixel\Model\Queue\QueueItem as QueueItem;
 
 
-use SPUI\Helper\UiHelper as UiHelper;
-use SPUI\Model\AiDataModel;
-use SPUI\ShortQ\ShortQ as ShortQ;
+use ShortPixel\Helper\UiHelper as UiHelper;
+use ShortPixel\Model\AiDataModel;
+use ShortPixel\ShortQ\ShortQ as ShortQ;
 
 abstract class Queue
 {
@@ -26,7 +26,7 @@ abstract class Queue
     protected static $results;
     protected static $isInQueue = [];
 
-    const PLUGIN_SLUG = 'SPUI';
+    const PLUGIN_SLUG = 'SPIO';
 
     // Result status for Run function
     const RESULT_ITEMS = 1;
@@ -116,7 +116,7 @@ abstract class Queue
        $result->qstatus = $this->getQStatus($numitems);
        $result->numitems = $numitems;
 
-       do_action('spui_start_image_optimisation', $imageModel->get('id'), $imageModel);
+       do_action('shortpixel_start_image_optimisation', $imageModel->get('id'), $imageModel);
        return $result;
     }
 
@@ -133,7 +133,7 @@ abstract class Queue
       $this->checkQueueCache($item_id);
       
 
-      do_action('spui_start_image_optimisation', $item_id, $qItem->imageModel);
+      do_action('shortpixel_start_image_optimisation', $item_id, $qItem->imageModel);
       return $result;
     }
 
@@ -340,13 +340,13 @@ abstract class Queue
 
     protected function prepareItems($items)
     {
-        do_action('spui/queue/prepare_items', $items);
+        do_action('shortpixel/queue/prepare_items', $items);
 
         $return = array('items' => 0, 'images' => 0, 'results' => 0,
       'overlimit' => false);
 
-				$settings = \wpSPUI()->settings();
-        $env = \wpSPUI()->env();
+				$settings = \wpSPIO()->settings();
+        $env = \wpSPIO()->env();
         $queueOptions = $this->getOptions();
 
           if (count($items) == 0)
@@ -356,7 +356,7 @@ abstract class Queue
               return $return;
           }
 
-          $fs = \wpSPUI()->filesystem();
+          $fs = \wpSPIO()->filesystem();
 
           $queue = array();
           $imageCount = $webpCount = $avifCount = $baseCount = 0;
@@ -438,30 +438,11 @@ abstract class Queue
 											 continue;
 										}
 
-                    if ('media' === $mediaItem->get('type'))
-                    {
-                      $scale = isset($queueOptions['scale']) ? (int) $queueOptions['scale'] : 2;
-                      $scaleMaxWidths = [2 => 1200, 3 => 1200, 4 => 1024];
-                      $extension = $mediaItem->getExtension();
-                      $maxWidth = isset($scaleMaxWidths[$scale]) ? $scaleMaxWidths[$scale] : $scaleMaxWidths[2];
-                      $maxWidth = (int) apply_filters('spui/bulk/upscale_max_width', $maxWidth, $scale);
-                      if (! in_array($extension, ['jpg', 'jpeg', 'png'], true) || (int) $mediaItem->get('width') > $maxWidth)
-                      {
-                        continue;
-                      }
-                    }
-
                     $qItem = QueueItems::getImageItem($mediaItem);
-                    $scale = isset($queueOptions['scale']) ? (int) $queueOptions['scale'] : 2;
-                    if (! in_array($scale, [2, 3, 4], true))
-                    {
-                      $scale = 2;
-                    }
-                    $qItem->newScaleImageAction([
-                      'is_preview' => false,
-                      'refresh' => true,
-                      'scale' => $scale,
-                    ]);
+                    // SPUI: use scale_image action with the configured default factor
+                    $spuiScale = (int) \wpSPIO()->settings()->defaultUpscaleFactor;
+                    if ($spuiScale <= 0) { $spuiScale = 2; }
+                    $qItem->newScaleImageAction(['scale' => $spuiScale]);
 
 									 if ($mediaItem->getParent() !== false)
 						 			 {
@@ -491,7 +472,7 @@ abstract class Queue
 
                     $counterUpdated = true; 
                     $this->checkQueueCache($item_id);
-                    do_action('spui_start_image_optimisation', $mediaItem);
+                    do_action('shortpixel_start_image_optimisation', $mediaItem);
 
                 }
                 else

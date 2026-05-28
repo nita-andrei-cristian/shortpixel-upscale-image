@@ -1,62 +1,36 @@
 <?php
-namespace SPUI;
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template files receive local context variables from their controller.
+namespace ShortPixel;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-
-$datastring= '';
-if (property_exists($this->view, 'infoData'))
-{
-
-	 foreach($this->view->infoData as $key => $data)
-	 {
-		 	$datastring .= ' data-' . $key . '="' . $data . '"';
-	 }
+$spui_datastring = '';
+if ( property_exists( $this->view, 'infoData' ) ) {
+  foreach ( $this->view->infoData as $spui_key => $spui_data ) {
+    $spui_datastring .= ' data-' . esc_attr( $spui_key ) . '="' . esc_attr( $spui_data ) . '"';
+  }
 }
-
 ?>
 
-<div class='sp-column-info <?php echo property_exists($this->view, 'infoClass') ? $this->view->infoClass : '' ?>'
-	 	  <?php echo $datastring; ?>
-			id='shortpixel-data-<?php echo esc_attr($this->view->id );?>'>
-<?php	if (isset($this->view->list_actions))
-	{
-	   echo $this->view->list_actions;
-	}
-	
-	?>
-<div class='statusText'>
-<?php if (property_exists($this->view,'text') && ! is_null($this->view->text) && strlen($this->view->text) > 0):  ?>
-    
+<div class='sp-column-info <?php echo esc_attr( property_exists( $this->view, 'infoClass' ) ? $this->view->infoClass : '' ); ?>'
+     <?php echo wp_kses_data( $spui_datastring ); ?>
+     id='spui-data-<?php echo esc_attr( $this->view->id ); ?>'>
 
-<?php 	  if (property_exists($this->view, 'ai_icon'))
-{
-	// ugly workaround. 
-	ob_start(); 
- 	$this->loadView('view-list-ai-media', false);
-	$aiView = ob_get_contents();
-	
-	$this->view->text = str_replace('<!-- eofsngline -->', $aiView, $this->view->text);
-	ob_end_clean(); 
+  <?php if ( isset( $this->view->list_actions ) ) : ?>
+    <?php echo wp_kses_post( $this->view->list_actions ); ?>
+  <?php endif; ?>
 
-	
-	
-} ?>
-	<?php  echo  $this->view->text;  ?>  
+  <div class='statusText'>
+    <?php if ( property_exists( $this->view, 'text' ) && ! is_null( $this->view->text ) && strlen( $this->view->text ) > 0 ) : ?>
+      <?php echo wp_kses_post( $this->view->text ); ?>
+    <?php endif; ?>
+  </div>
 
-</div>
-<?php endif;
-
-
-if (property_exists($this->view, 'actions')):
-  $this->loadView('snippets/part-single-actions', false);
-endif;
-
-
-
-?>
+  <?php if ( property_exists( $this->view, 'actions' ) ) : ?>
+    <?php $this->loadView( 'snippets/part-single-actions', false ); ?>
+  <?php endif; ?>
 
 </div>

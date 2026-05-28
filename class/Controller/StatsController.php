@@ -1,18 +1,18 @@
 <?php
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
 
-use SPUI\Model\StatsModel as StatsModel;
-use SPUI\Controller\Queue\StatsQueue as StatsQueue;
-use SPUI\Model\Image\ImageModel as ImageModel;
+use ShortPixel\Model\StatsModel as StatsModel;
+use ShortPixel\Controller\Queue\StatsQueue as StatsQueue;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
 
 
-class StatsController extends \SPUI\Controller
+class StatsController extends \ShortPixel\Controller
 {
 
     protected $model;
@@ -80,7 +80,7 @@ class StatsController extends \SPUI\Controller
       else {
 
           global $wpdb;
-          $sql = 'select round(AVG(100-(compressed_size / original_size * 100))) from ' . $wpdb->prefix  . 'spui_postmeta 
+          $sql = 'select round(AVG(100-(compressed_size / original_size * 100))) from ' . $wpdb->prefix  . 'shortpixel_postmeta 
                   where status = %d and compressed_size > 0 and original_size > 0 order by id desc limit 1000';
           $sql = $wpdb->prepare($sql, ImageModel::FILE_STATUS_SUCCESS);
 
@@ -116,7 +116,7 @@ class StatsController extends \SPUI\Controller
                'thumbsTotal'); // according to database.
        $totalThumbsOptimized = $this->find('media', 'thumbs');
 
-       $excludedThumbnails = \wpSPUI()->settings()->excludeSizes;
+       $excludedThumbnails = \wpSPIO()->settings()->excludeSizes;
        $excludeCount = (is_array($excludedThumbnails)) ? count($excludedThumbnails) : 0;
 
         // Totalthumbs - thumbsOptimized - minus amount of excluded (guess)

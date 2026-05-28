@@ -1,6 +1,6 @@
 <?php
 
-namespace SPUI;
+namespace ShortPixel;
 
 if (! defined('ABSPATH')) {
   exit; // Exit if accessed directly.
@@ -10,12 +10,12 @@ if (! defined('ABSPATH')) {
 
 <section id="tab-optimisation" class="<?php echo ($this->display_part == 'optimisation') ? 'active setting-tab' : 'setting-tab'; ?>" data-part="optimisation">
 
-  <?php if (true === \wpSPUI()->env()->useTrustedMode()) : ?>
+  <?php if (true === \wpSPIO()->env()->useTrustedMode()) : ?>
     <div class='compression-notice warning'>
       <p>
         <?php esc_html_e('Trusted file mode is active. This means that ShortPixel will depend on the metadata and not check the filesystem while loading the UI. Information may be incorrect and errors may occur during upscaling.', 'shortpixel-upscale-image'); ?>
       </p>
-      <?php if (true === \SPUI\Pantheon::IsActive()) : ?>
+      <?php if (true === \ShortPixel\Pantheon::IsActive()) : ?>
         <p><?php esc_html_e('(You are on Pantheon. This setting was automatically activated)', 'shortpixel-upscale-image'); ?></p>
       <?php endif; ?>
     </div>
@@ -124,6 +124,50 @@ if (! defined('ABSPATH')) {
           </content>
         </setting>
       <?php endif; ?>
+
+    </gridbox>
+
+    <gridbox class='width_half'>
+
+      <setting>
+        <content>
+          <name><?php esc_html_e('Default Upscale Factor', 'shortpixel-upscale-image'); ?></name>
+          <info>
+            <?php esc_html_e('Sets the upscale factor applied when using the "Upscale Now" button in the media library and during bulk upscaling.', 'shortpixel-upscale-image'); ?>
+          </info>
+
+          <div class='upscale-factor-options' style="margin-top: 8px; display: flex; gap: 16px;">
+
+            <?php foreach ([2 => '2×', 4 => '4×', 8 => '8×'] as $factor => $label) : ?>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <input type="radio"
+                       name="defaultUpscaleFactor"
+                       value="<?php echo esc_attr($factor); ?>"
+                       <?php checked((int) $view->data->defaultUpscaleFactor, $factor); ?>
+                       class="spui-upscale-factor-radio"
+                />
+                <?php echo esc_html($label); ?>
+              </label>
+            <?php endforeach; ?>
+
+          </div>
+
+          <div id="spui-upscale-8x-warning" class="compression-notice warning" style="margin-top: 10px; <?php echo ((int) $view->data->defaultUpscaleFactor === 8) ? '' : 'display:none;'; ?>">
+            <p><?php esc_html_e('8× upscaling produces very large output files. Some images may exceed server upload limits or take significantly longer to process.', 'shortpixel-upscale-image'); ?></p>
+          </div>
+
+          <script>
+          (function() {
+            document.querySelectorAll('.spui-upscale-factor-radio').forEach(function(radio) {
+              radio.addEventListener('change', function() {
+                var warn = document.getElementById('spui-upscale-8x-warning');
+                if (warn) { warn.style.display = (this.value === '8') ? '' : 'none'; }
+              });
+            });
+          })();
+          </script>
+        </content>
+      </setting>
 
     </gridbox>
   </settinglist>

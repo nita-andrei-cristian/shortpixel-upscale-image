@@ -1,34 +1,33 @@
 <?php
 
-namespace SPUI\Controller;
+namespace ShortPixel\Controller;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use SPUI\Controller\Api\RequestManager;
-use SPUI\Controller\View\ListMediaViewController as ListMediaViewController;
-use SPUI\Controller\View\OtherMediaViewController as OtherMediaViewController;
-use SPUI\Controller\View\OtherMediaFolderViewController as OtherMediaFolderViewController;
+use ShortPixel\Controller\Api\RequestManager;
+use ShortPixel\Controller\View\ListMediaViewController as ListMediaViewController;
+use ShortPixel\Controller\View\OtherMediaViewController as OtherMediaViewController;
+use ShortPixel\Controller\View\OtherMediaFolderViewController as OtherMediaFolderViewController;
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Notices\NoticeController as Notices;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Notices\NoticeController as Notices;
 
-//use SPUI\Controller\BulkController as BulkController;
-use SPUI\Helper\UiHelper as UiHelper;
-use SPUI\Helper\InstallHelper as InstallHelper;
-use SPUI\Helper\UtilHelper;
+//use ShortPixel\Controller\BulkController as BulkController;
+use ShortPixel\Helper\UiHelper as UiHelper;
+use ShortPixel\Helper\InstallHelper as InstallHelper;
+use ShortPixel\Helper\UtilHelper;
 
-use SPUI\Model\Image\ImageModel as ImageModel;
-use SPUI\Model\AccessModel as AccessModel;
-use SPUI\Controller\Optimizer\OptimizeAiController;
+use ShortPixel\Model\Image\ImageModel as ImageModel;
+use ShortPixel\Model\AccessModel as AccessModel;
 
 // @todo This should probably become settingscontroller, for saving
-use SPUI\Controller\View\SettingsViewController as SettingsViewController;
-use SPUI\Controller\Queue\QueueItems as QueueItems;
-use SPUI\Model\AiDataModel;
-use SPUI\Model\Queue\QueueItem;
-use SPUI\ViewController;
+use ShortPixel\Controller\View\SettingsViewController as SettingsViewController;
+use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use ShortPixel\Model\AiDataModel;
+use ShortPixel\Model\Queue\QueueItem;
+use ShortPixel\ViewController;
 
 // Class for containing all Ajax Related Actions.
 class AjaxController
@@ -94,7 +93,7 @@ class AjaxController
 
 		if (false === $is_processor) {
 			$json = new \stdClass;
-			$json->message = __('Processor is active in another window', 'shortpixel-upscale-image');
+			$json->message = __('Processor is active in another window', 'shortpixel-image-optimiser');
 			$json->status = false;
 			$json->error = self::PROCESSOR_ACTIVE; // processor active
 			$this->send($json);
@@ -110,7 +109,7 @@ class AjaxController
 		$result = '';
 
 
-		$item = \wpSPUI()->filesystem()->getImage($id, $type);
+		$item = \wpSPIO()->filesystem()->getImage($id, $type);
 
 		$this->checkImageAccess($item);
 
@@ -179,7 +178,7 @@ class AjaxController
 		$this->checkProcessorKey();
 
 		$json = new \stdClass;
-		$json->message = __('Became processor', 'shortpixel-upscale-image');
+		$json->message = __('Became processor', 'shortpixel-image-optimiser');
 		$json->status = true;
 		$this->send($json);
 	}
@@ -241,11 +240,8 @@ class AjaxController
 			case 'restoreItem':
 				$json = $this->restoreItem($json, $data);
 				break;
-			case 'reUpscaleItem':
-				$json = $this->reUpscaleItem($json, $data);
-				break;
 			case 'reOptimizeItem':
-				$json = $this->reUpscaleItem($json, $data);
+				$json = $this->reOptimizeItem($json, $data);
 				break;
 			case 'settings/purgecdncache': 
 				$json = $this->purgeCDNCache($json, $data); 
@@ -448,7 +444,7 @@ class AjaxController
 		 $view->addData([
 			'previewImage' => $previewImage, 
 			'originalImage' => $originalImage, 
-			'placeholderImage' => \wpSPUI()->plugin_url('res/img/bulk/placeholder.svg'), 
+			'placeholderImage' => \wpSPIO()->plugin_url('res/img/bulk/placeholder.svg'), 
 			'item_id' => $item_id, 
 			'post_title' => $post->post_title, 
 			'action_name' => $action_name, 
@@ -510,9 +506,11 @@ class AjaxController
 			$qItem->newRemoveBackgroundAction(array_merge(['is_preview' => $is_preview], $args));
 
 		}
-		elseif ('scale' == $action_name) 		// For image scaling: 		
+		elseif ('scale' == $action_name) 		// For image scaling:
 		{
-			$args['scale'] = isset($_POST['scale']) ? intval($_POST['scale']) : 2; 
+			$defaultFactor = (int) \wpSPIO()->settings()->defaultUpscaleFactor;
+			if ($defaultFactor <= 0) { $defaultFactor = 2; }
+			$args['scale'] = isset($_POST['scale']) ? intval($_POST['scale']) : $defaultFactor;
 
 			$optimizer = $qItem->getApiController('scale_image');
 			$qItem->newScaleImageAction(array_merge(['is_preview' => $is_preview], $args));
@@ -592,7 +590,7 @@ class AjaxController
 				$result = [
 					'is_error' => true, 
 					'is_done' => true, 
-					'message' => __('Limit of attempts exceeded. Possible connection issue. Try again later. ', 'shortpixel-upscale-image'),
+					'message' => __('Limit of attempts exceeded. Possible connection issue. Try again later. ', 'shortpixel-image-optimiser'),
 				]; 
 				
 				Log::addTemp('Timeout 15x');
@@ -609,7 +607,7 @@ class AjaxController
 
 	protected function getMediaItem($id, $type)
 	{
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 		return $fs->getImage($id, $type);
 	}
 
@@ -659,10 +657,18 @@ class AjaxController
 			$args['forceExclusion'] =  true;
 		}
 
+		// SPUI: force upscale action — scale factor read from settings (defaultUpscaleFactor)
+		$defaultFactor = (int) \wpSPIO()->settings()->defaultUpscaleFactor;
+		if ($defaultFactor <= 0) { $defaultFactor = 2; }
+		$args['action'] = 'scale_image';
+		$args['scale']  = $defaultFactor;
+
+		/* Original SPIO optimize logic — kept for reference:
 		if (false !== $compressionType)
 		{
-			 $args['compressionType'] = $compressionType; 
+			 $args['compressionType'] = $compressionType;
 		}
+		*/
 
 		$json->$type->results = [$control->addItemToQueue($mediaItem, $args)];
 		$json->$type->qstatus = $control->getLastQueueStatus();
@@ -675,7 +681,7 @@ class AjaxController
 
 		$purge =  isset($_POST['purge']) ? sanitize_text_field($_POST['purge']) : 'cssjs'; 
 
-		$CDNController = new \SPUI\Controller\Front\CDNController();
+		$CDNController = new \ShortPixel\Controller\Front\CDNController();
 		$result = $CDNController->purgeCDN(['purge' => $purge]);
 
 		$json->settings->results = $result;
@@ -689,7 +695,7 @@ class AjaxController
 	{
 		$action = (isset($_POST['actionType'])) ? sanitize_text_field($_POST['actionType']) : 'export'; 
 		$this->checkActionAccess($action, 'is_admin_user');
-		$settings = \wpSPUI()->settings();
+		$settings = \wpSPIO()->settings();
 
 		if ('import' === $action)
 		{
@@ -699,7 +705,7 @@ class AjaxController
 
 			if (false === $importdata || 0 == strlen($importdata))
 			{
-				 $json->settings->results = ['is_error' => true, 'message' => __('Import contained empty field', 'shortpixel-upscale-image')];
+				 $json->settings->results = ['is_error' => true, 'message' => __('Import contained empty field', 'shortpixel-image-optimiser')];
 			}
 			elseif (true ===  UtilHelper::validateJson($importdata) )
 			{
@@ -713,7 +719,7 @@ class AjaxController
 				{
 					if (false === $settings->exists($name))
 					{
-						$messages[] = sprintf(__('Field with name %s does not exist in current version', 'shortpixel-upscale-image'), $name);
+						$messages[] = sprintf(__('Field with name %s does not exist in current version', 'shortpixel-image-optimiser'), $name);
 					}
 					else
 					{
@@ -722,14 +728,14 @@ class AjaxController
 					}
 				}
 
-				$messages[] = sprintf(__('%s settings imported! Reload page to see changes', 'shortpixel-upscale-image'), $counter); 
+				$messages[] = sprintf(__('%s settings imported! Reload page to see changes', 'shortpixel-image-optimiser'), $counter); 
 				$json->settings->results = ['is_error' => false, 'messages' => $messages];
 		 
 			}
 			else
 			{
 				$json->settings->results = ['is_error' => true, 
-				'message' => sprintf(__('Invalid JSON sent: %s', 'shortpixel-upscale-image'), json_last_error_msg())];
+				'message' => sprintf(__('Invalid JSON sent: %s', 'shortpixel-image-optimiser'), json_last_error_msg())];
 			}
 
 		}
@@ -738,7 +744,7 @@ class AjaxController
 			$data = $settings->getExport(); 
 			
 			$json->settings->exportData = json_encode($data);
-			$json->settings->message = __('Export completed. Copy the string below', 'shortpixel-upscale-image');
+			$json->settings->message = __('Export completed. Copy the string below', 'shortpixel-image-optimiser');
 			
 		}
 		
@@ -755,13 +761,13 @@ class AjaxController
 
 		$this->checkImageAccess($imageModel);
 
-		$imageModel->markCompleted(__('This item has been manually marked as completed', 'shortpixel-upscale-image'), ImageModel::FILE_STATUS_MARKED_DONE);
+		$imageModel->markCompleted(__('This item has been manually marked as completed', 'shortpixel-image-optimiser'), ImageModel::FILE_STATUS_MARKED_DONE);
 
 		$qItem = QueueItems::getImageItem($imageModel);
 		$qItem->addResult([
 			'fileStatus' => ImageModel::FILE_STATUS_SUCCESS, 
 			'item_id' => $id, 
-			'message' => __('Item marked as completed', 'shortpixel-upscale-image'), 
+			'message' => __('Item marked as completed', 'shortpixel-image-optimiser'), 
 			'is_done' => true, 
 			'is_error' => false, 
 		]);
@@ -771,7 +777,7 @@ class AjaxController
 		$json->$type->result = new \stdClass;
 
 		$json->$type->result->item_id = $id;
-		$json->$type->result->message = __('Item marked as completed', 'shortpixel-upscale-image');
+		$json->$type->result->message = __('Item marked as completed', 'shortpixel-image-optimiser');
 		$json->$type->result->is_done = true;
 		$json->$type->result->is_error = false;
 */
@@ -796,7 +802,7 @@ class AjaxController
 		$qItem->addResult([
 			'fileStatus' => ImageModel::FILE_STATUS_SUCCESS, 
 			'item_id' => $id, 
-			'message' => __('Item unmarked', 'shortpixel-upscale-image'), 
+			'message' => __('Item unmarked', 'shortpixel-image-optimiser'), 
 			'is_done' => true, 
 			'is_error' => false, 
 		]);
@@ -823,7 +829,7 @@ class AjaxController
 		$qItem->addResult([
 			'fileStatus' => ImageModel::FILE_STATUS_SUCCESS, 
 			'item_id' => $id, 
-			'message' => __('Item removed from queue', 'shortpixel-upscale-image'), 
+			'message' => __('Item removed from queue', 'shortpixel-image-optimiser'), 
 			'is_done' => true, 
 			'is_error' => false, 
 		]);
@@ -842,13 +848,13 @@ class AjaxController
 	{
 
 		// Get and remove Meta
-		$mediaItem = \wpSPUI()->filesystem()->getImage($imageId, 'media');
+		$mediaItem = \wpSPIO()->filesystem()->getImage($imageId, 'media');
 
 		$mediaItem->onDelete();
 
 		// Flush and reaquire image to make sure it doesn't stay previous state.
-		\wpSPUI()->filesystem()->flushImage($mediaItem);
-		$mediaItem = \wpSPUI()->filesystem()->getImage($imageId, 'media', false);
+		\wpSPIO()->filesystem()->flushImage($mediaItem);
+		$mediaItem = \wpSPIO()->filesystem()->getImage($imageId, 'media', false);
 
 		// Optimize
 		$control = new QueueController();
@@ -882,7 +888,7 @@ class AjaxController
 		return $json;
 	}
 
-	protected function reUpscaleItem($json, $data)
+	protected function reOptimizeItem($json, $data)
 	{
 		$id = $data['id'];
 		$type = $data['type'];
@@ -893,7 +899,7 @@ class AjaxController
 
 		$this->checkImageAccess($imageModel);
 
-		$args = ['action' => 'reupscale', 'compressionType' => $compressionType];
+		$args = ['action' => 'reoptimize', 'compressionType' => $compressionType];
 
 		// Smartcrop is not always passed, only add here when passed otherwise to defaults.
 		if ($actionType == ImageModel::ACTION_SMARTCROP || $actionType == ImageModel::ACTION_SMARTCROPLESS) 
@@ -915,19 +921,6 @@ class AjaxController
 
 	protected function requestAlt($json, $data)
 	{
-		$type = $data['type'];
-		$json->$type->results = [(object) [
-			'apiStatus' => RequestManager::STATUS_FAIL,
-			'message' => OptimizeAiController::getDisabledMessage(),
-			'is_error' => true,
-			'is_done' => true,
-			'apiName' => 'ai',
-		]];
-		$json->$type->qstatus = false;
-		$json->status = true;
-
-		return $json;
-
 		$id = $data['id'];
 		$type = $data['type'];
 
@@ -1019,7 +1012,7 @@ class AjaxController
 		$bulkControl = BulkController::getInstance();
 
 		if (false !== $bulkControl->getAnyCustomOperation()) {
-				$json->redirect = add_query_arg(['page' => 'wp-shortpixel-upscale-settings', 'part' => 'tools'], admin_url('options-general.php'));
+			$json->redirect = add_query_arg(['page' => 'wp-shortpixel-settings', 'part' => 'tools'], admin_url('options-general.php'));
 		}
 
 		$bulkControl->finishBulk('media');
@@ -1058,28 +1051,14 @@ class AjaxController
 		$bulkControl = BulkController::getInstance();
 		// This is where the settings start to break and double. This info is also needs inside the process. 
 		$doMedia = filter_var(sanitize_text_field($_POST['mediaActive']), FILTER_VALIDATE_BOOLEAN);
-		$doCustom = filter_var(sanitize_text_field($_POST['customActive']), FILTER_VALIDATE_BOOLEAN);
 		$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
-		$bulkScale = isset($_POST['bulkScale']) ? absint($_POST['bulkScale']) : 2;
-		if (! in_array($bulkScale, [2, 3, 4], true))
-		{
-			$bulkScale = 2;
-		}
-		$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi, 'scale' => $bulkScale]);
+		$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi]);
 
 		$stats = $bulkControl->createNewBulk('media', $mediaArgs);
 		$json->media->stats = $stats;
 
-		if ($doCustom)
-		{
-			$stats = $bulkControl->createNewBulk('custom', $args);
-			$json->custom->stats = $stats;
-		}
-		else
-		{
-			$queueControl = new QueueController(['is_bulk' => true]);
-			$json->custom->stats = $queueControl->getQueue('custom')->getStats();
-		}
+		$stats = $bulkControl->createNewBulk('custom', $args);
+		$json->custom->stats = $stats;
 
 		$json = $this->applyBulkSelection($json, $data);
 		return $json;
@@ -1100,17 +1079,17 @@ class AjaxController
 		// Can be hidden
 		if (isset($_POST['thumbsActive'])) {
 			$doThumbs = filter_var(sanitize_text_field($_POST['thumbsActive']), FILTER_VALIDATE_BOOLEAN);
-			\wpSPUI()->settings()->processThumbnails = $doThumbs;
+			\wpSPIO()->settings()->processThumbnails = $doThumbs;
 		}
 
-		\wpSPUI()->settings()->createWebp = $doWebp;
-		\wpSPUI()->settings()->createAvif = $doAvif;
-		\wpSPUI()->settings()->doBackgroundProcess = $backgroundProcess;
-		\wpSPUI()->settings()->autoAIBulk = $doAi;
+		\wpSPIO()->settings()->createWebp = $doWebp;
+		\wpSPIO()->settings()->createAvif = $doAvif;
+		\wpSPIO()->settings()->doBackgroundProcess = $backgroundProcess;
+		\wpSPIO()->settings()->autoAIBulk = $doAi;
 
 		if (false === is_null($aiPreserve))
 		{
-			\wpSPUI()->settings()->aiPreserve = $aiPreserve;
+			\wpSPIO()->settings()->aiPreserve = $aiPreserve;
 		}
 
 		$bulkControl = BulkController::getInstance();
@@ -1238,19 +1217,13 @@ class AjaxController
 
 	protected function getNewAiImagePreview($data)
 	{
-		$this->send((object) [
-			'message' => OptimizeAiController::getDisabledMessage(),
-			'is_error' => true,
-			'status' => false,
-		]);
-
 		$item_id = $data['id'];
 		$settingsData = isset($_POST['settingsData']) ? $_POST['settingsData'] : null; 
 
 		if (! is_null($settingsData))
 		{
 			 $json = json_decode(stripslashes($settingsData), true);
-			 $settings = \wpSPUI()->settings(); 
+			 $settings = \wpSPIO()->settings(); 
 			 //$settingsData = array_map('sanitize_text_field', $json); 
 			 $settingsData = $settings->getSanitizedData($json, false);
 		}
@@ -1260,16 +1233,16 @@ class AjaxController
 		}
 
 		$result_json = [
-			'error' => __('Something went wrong', 'shortpixel-upscale-image'), 
+			'error' => __('Something went wrong', 'shortpixel-image-optimiser'), 
 			'is_error' => true, 
 		];
 
-		$imageModel = \wpSPUI()->filesystem()->getMediaImage($item_id); 
+		$imageModel = \wpSPIO()->filesystem()->getMediaImage($item_id); 
 		
 
 		if (false === $imageModel)
 		{
-			 $result_json['message'] = __('This image could not be loaded', 'shortpixel-upscale-image'); 
+			 $result_json['message'] = __('This image could not be loaded', 'shortpixel-image-optimiser'); 
 			 $this->send((object) $result_json);
 		}
 
@@ -1323,8 +1296,8 @@ class AjaxController
 						 $aiData['item_id'] = $qItem->item_id;
 						 $aiData['time_generated'] = time(); 
 
-						 set_transient('spui_settings_ai_example', $aiData, MONTH_IN_SECONDS);
-						 set_transient('spui_settings_ai_example_id', $qItem->item_id, MONTH_IN_SECONDS); 
+						 set_transient('spio_settings_ai_example', $aiData, MONTH_IN_SECONDS);
+						 set_transient('spio_settings_ai_example_id', $qItem->item_id, MONTH_IN_SECONDS); 
 						 
 						 $aiData['aiData'] = true; // for the JS check
 						 $this->send((object) $aiData);
@@ -1359,7 +1332,7 @@ class AjaxController
 	protected function getSettingsAiExample($data)
 	{
 		 
-		$id = get_transient('spui_settings_ai_example_id');
+		$id = get_transient('spio_settings_ai_example_id');
 
 		if (false === $id || ! is_numeric($id))
 		{
@@ -1372,7 +1345,7 @@ class AjaxController
 			$attach_id = $id; 
 		}
 		
-		$imageModel = \wpSPUI()->fileSystem()->getMediaImage($attach_id);
+		$imageModel = \wpSPIO()->fileSystem()->getMediaImage($attach_id);
 
         if (is_null($attach_id) || false === $imageModel)
         {
@@ -1387,7 +1360,7 @@ class AjaxController
         }
         else
         {
-		  $transient = get_transient('spui_settings_ai_example'); 
+		  $transient = get_transient('spio_settings_ai_example'); 
 		  if (is_array($transient) && $transient['item_id'] == $id)
 		  { 
 			 $generated = $transient; 
@@ -1421,7 +1394,7 @@ class AjaxController
 	protected function setSettingsAiImage($data)
 	{
 		 $id = $data['id']; 
-		 set_transient('spui_settings_ai_example_id', $id, MONTH_IN_SECONDS); 
+		 set_transient('spio_settings_ai_example_id', $id, MONTH_IN_SECONDS); 
 
 		 return $this->getSettingsAiExample($data);
 	}
@@ -1438,12 +1411,12 @@ class AjaxController
 
 			$json->status = false;
 			$json->id = $id;
-			$json->message = __('Error - item to compare could not be found or no access', 'shortpixel-upscale-image');
+			$json->message = __('Error - item to compare could not be found or no access', 'shortpixel-image-optimiser');
 			$this->send($json);
 		}
 
 		$ret = array();
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 		$imageObj = $fs->getImage($id, $type);
 
 		$this->checkImageAccess($imageObj);
@@ -1503,14 +1476,14 @@ class AjaxController
 
 		if (false === $folder_id) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('An error has occured: no folder id', 'shortpixel-upscale-image');
+			$json->folder->message = __('An error has occured: no folder id', 'shortpixel-image-optimiser');
 		}
 
 		$folderObj = $otherMediaController->getFolderByID($folder_id);
 
 		if (false === $folderObj) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-upscale-image');
+			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-image-optimiser');
 		}
 
 		$result = $folderObj->refreshFolder(true);
@@ -1520,9 +1493,9 @@ class AjaxController
 		} else { // result is stats
 			$stats = $result;
 			if ($stats['new'] > 0) {
-				$message = sprintf(__('%s new files found ( %s waiting %s upscaled)', 'shortpixel-upscale-image'), $stats['new'], $stats['waiting'], $stats['optimized']);
+				$message = sprintf(__('%s new files found ( %s waiting %s optimized)', 'shortpixel-image-optimiser'), $stats['new'], $stats['waiting'], $stats['optimized']);
 			} else {
-				$message = sprintf(__('No new files found ( %s waiting %s upscaled)', 'shortpixel-upscale-image'), $stats['waiting'], $stats['optimized']);
+				$message = sprintf(__('No new files found ( %s waiting %s optimized)', 'shortpixel-image-optimiser'), $stats['waiting'], $stats['optimized']);
 			}
 
 			$json->folder->message = $message;
@@ -1547,14 +1520,14 @@ class AjaxController
 
 		if ($dirObj === false) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-upscale-image');
+			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-image-optimiser');
 			return;
 		}
 
 		$dirObj->delete();
 
 		$json->status = true;
-		$json->folder->message = __('Folder has been removed', 'shortpixel-upscale-image');
+		$json->folder->message = __('Folder has been removed', 'shortpixel-image-optimiser');
 		$json->folder->is_done = true;
 		$json->folder->action = 'remove';
 		$json->folder->id = $folder_id;
@@ -1567,7 +1540,7 @@ class AjaxController
 	{
 		$relpath = isset($_POST['relpath']) ? sanitize_text_field($_POST['relpath']) : null;
 
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 
 		$customFolderBase = $fs->getWPFileBase();
 		$basePath = $customFolderBase->getPath();
@@ -1581,7 +1554,7 @@ class AjaxController
 
 		if (false === $result) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('Failed to add Folder', 'shortpixel-upscale-image');
+			$json->folder->message = __('Failed to add Folder', 'shortpixel-image-optimiser');
 		} else {
 			$control = new OtherMediaFolderViewController();
 			$itemView = $control->singleItemView($result);
@@ -1648,7 +1621,7 @@ class AjaxController
 		if ($result === false) {
 			$json->folder->is_done = true;
 			$json->folder->result = new \stdClass;
-			$json->folder->result->message = __('All Folders have been scanned!', 'shortpixel-upscale-image');
+			$json->folder->result->message = __('All Folders have been scanned!', 'shortpixel_image_optimiser');
 		} else {
 
 			$json->folder->result = $result;
@@ -1663,7 +1636,7 @@ class AjaxController
 		$this->checkNonce('ajax_request');
 		$this->checkActionAccess($action, 'is_editor');
 
-		$dirObj = \wpSPUI()->filesystem()->getDirectory(SPUI_BACKUP_FOLDER);
+		$dirObj = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
 
 		$size = $dirObj->getFolderSize();
 		echo UiHelper::formatBytes($size);
@@ -1693,7 +1666,7 @@ class AjaxController
 
 		$quota = $quotaController->getQuota();
 
-		$settings = \wpSPUI()->settings();
+		$settings = \wpSPIO()->settings();
 
 		$sendback = wp_get_referer();
 		// sanitize the referring webpage location
@@ -1703,7 +1676,7 @@ class AjaxController
 		if (! $settings->quotaExceeded) {
 			$result['status'] = 'has-quota';
 		} else {
-			Notices::addWarning(__('You have no available image credits. If you just bought a package, please note that sometimes it takes a few minutes for the payment processor to send us the payment confirmation.', 'shortpixel-upscale-image'));
+			Notices::addWarning(__('You have no available image credits. If you just bought a package, please note that sometimes it takes a few minutes for the payment processor to send us the payment confirmation.', 'shortpixel-image-optimiser'));
 		}
 
 		wp_send_json($result);
@@ -1715,11 +1688,11 @@ class AjaxController
 	{
 		$logFile = $data['logFile'] . '.log';
 		$type = $data['type'];
-		$fs = \wpSPUI()->filesystem();
+		$fs = \wpSPIO()->filesystem();
 
 		if (is_null($logFile)) {
 			$json->$type->is_error = true;
-			$json->$type->result = __('Could not load log file', 'shortpixel-upscale-image');
+			$json->$type->result = __('Could not load log file', 'shortpixel-image-optimiser');
 			return $json;
 		}
 
@@ -1733,7 +1706,7 @@ class AjaxController
 
 		if (false === $log) {
 			$json->$type->is_error = true;
-			$json->$type->result = __('Log file does not exist', 'shortpixel-upscale-image');
+			$json->$type->result = __('Log file does not exist', 'shortpixel-image-optimiser');
 			return $json;
 		}
 
@@ -1742,14 +1715,14 @@ class AjaxController
 		$lines = array_filter(explode(';', $content));
 
 		$headers = [
-			__('Time', 'shortpixel-upscale-image'),
-			__('Filename', 'shortpixel-upscale-image'),
-			__('ID', 'shortpixel-upscale-image'),
-			__('Error', 'shortpixel-upscale-image'),
+			__('Time', 'shortpixel-image-optimiser'),
+			__('Filename', 'shortpixel-image-optimiser'),
+			__('ID', 'shortpixel-image-optimiser'),
+			__('Error', 'shortpixel-image-optimiser'),
 		];
 
 		if ('custom' == $logType) {
-			array_splice($headers, 3, 0, __('Info', 'shortpixel-upscale-image'));
+			array_splice($headers, 3, 0, __('Info', 'shortpixel-image-optimiser'));
 		}
 
 		foreach ($lines as $index => $line) {
@@ -1766,7 +1739,7 @@ class AjaxController
 				// replaces the image id with a link to image.
 				$line['link'] = esc_url(admin_url('post.php?post=' . trim($id) . '&action=edit'));
 			} elseif ($logType === 'custom') {
-				$base = esc_url(admin_url('upload.php?page=wp-shortpixel-upscale-custom'));
+				$base = esc_url(admin_url('upload.php?page=wp-short-pixel-custom'));
 				$line['link'] = add_query_arg('s', sanitize_text_field($filename), $base);
 			}
 
@@ -1789,7 +1762,7 @@ class AjaxController
 		}
 		$lines = array_values(array_filter($lines));
 		array_unshift($lines, $headers);
-		$json->$type->title = sprintf(__('Bulk ran on %s', 'shortpixel-upscale-image'), $date);
+		$json->$type->title = sprintf(__('Bulk ran on %s', 'shortpixel-image-optimiser'), $date);
 		$json->$type->results = $lines;
 		return $json;
 	}
@@ -1802,7 +1775,7 @@ class AjaxController
 			$action = isset($_POST['screen_action']) ? sanitize_text_field($_POST['screen_action']) : false;
 
 			$json = new \stdClass;
-			$json->message = __('Nonce is missing or wrong - Try to refresh the page', 'shortpixel-upscale-image');
+			$json->message = __('Nonce is missing or wrong - Try to refresh the page', 'shortpixel-image-optimiser');
 			$json->item_id = $id;
 			$json->action = $action;
 			$json->status = false;
@@ -1820,7 +1793,7 @@ class AjaxController
 
 		if ($bool === false) {
 			$json = new \stdClass;
-			$json->message = __('This user is not allowed to perform this action', 'shortpixel-upscale-image');
+			$json->message = __('This user is not allowed to perform this action', 'shortpixel-image-optimiser');
 			$json->action = $action;
 			$json->status = false;
 			$json->error = self::NO_ACCESS;
@@ -1835,7 +1808,7 @@ class AjaxController
 	{
 
 		// defaults 
-		$message = __('This user is not allowed to edit this image', 'shortpixel-upscale-image');
+		$message = __('This user is not allowed to edit this image', 'shortpixel-image-optimiser');
 
 		$accessModel = AccessModel::getInstance();
 		if (is_object($mediaItem)) {
@@ -1847,7 +1820,7 @@ class AjaxController
 			$id = false;
 			if (! is_object($mediaItem))
 			{
-				$message = __('Image does not exist or could not be loaded', 'shortpixel-upscale-image');
+				$message = __('Image does not exist or could not be loaded', 'shortpixel-image-optimiser');
 			}
 		}
 
@@ -1883,7 +1856,7 @@ class AjaxController
 	{
 		if (1 === wp_verify_nonce($_POST['tools-nonce'], 'remove-all')) {
 			InstallHelper::hardUninstall();
-			$json->settings->results = __('All Data has been removed. The plugin has been deactivated', 'shortpixel-upscale-image');
+			$json->settings->results = __('All Data has been removed. The plugin has been deactivated', 'shortpixel-image-optimiser');
 		} else {
 			Log::addError('RemoveAll detected with wrong nonce');
 		}
@@ -1897,18 +1870,18 @@ class AjaxController
 	{
 		if (wp_verify_nonce($_POST['tools-nonce'], 'empty-backup')) {			
 
-			$fs = \wpSPUI()->filesystem(); 
+			$fs = \wpSPIO()->filesystem(); 
 			
 			$fs->moveLogFiles(); 
 
-			$dir = \wpSPUI()->filesystem()->getDirectory(SPUI_BACKUP_FOLDER);
+			$dir = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
 			$dir->recursiveDelete(); 
 
 			$fs->moveLogFiles(['to_temp' => false]);
 
-			$json->settings->results = __('The backups have been removed. You can close the window', 'shortpixel-upscale-image');
+			$json->settings->results = __('The backups have been removed. You can close the window', 'shortpixel-image-optimiser');
 		} else {
-			$json->settings->results = __('Error: Invalid Nonce in empty backups', 'shortpixel-upscale-image');
+			$json->settings->results = __('Error: Invalid Nonce in empty backups', 'shortpixel-image-optimiser');
 		}
 
 		return $json;

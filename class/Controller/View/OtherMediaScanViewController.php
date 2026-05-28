@@ -1,16 +1,16 @@
 <?php
-namespace SPUI\Controller\View;
+namespace ShortPixel\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
-use SPUI\Helper\InstallHelper as InstallHelper;
-use SPUI\Controller\OtherMediaController as OtherMediaController;
+use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use ShortPixel\Helper\InstallHelper as InstallHelper;
+use ShortPixel\Controller\OtherMediaController as OtherMediaController;
 
 
-class OtherMediaScanViewController extends \SPUI\ViewController
+class OtherMediaScanViewController extends \ShortPixel\ViewController
 {
 
   protected $template = 'view-other-media-scan';
@@ -31,7 +31,7 @@ class OtherMediaScanViewController extends \SPUI\ViewController
   public function load()
   {
 
-      $this->view->title = __('Scan for new files', 'shortpixel-upscale-image');
+      $this->view->title = __('Scan for new files', 'shortpixel-image-optimiser');
       $this->view->pagination = false;
 
       $this->view->show_search = false;

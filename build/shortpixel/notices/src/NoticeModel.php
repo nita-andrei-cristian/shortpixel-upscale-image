@@ -1,5 +1,5 @@
 <?php
-namespace SPUI\Notices;
+namespace ShortPixel\Notices;
 
 class NoticeModel //extends ShortPixelModel
 {
@@ -279,7 +279,7 @@ class NoticeModel //extends ShortPixelModel
             </label>
              <div class="detail-content-wrapper"><p class="detail-content">%s</p></div>
           <label for="check-%s" class="hide-details"><span>%s</span></label>
-            </div>', $id, $id, __('See Details', 'shortpixel-upscale-image'), $this->parseDetails(), $id, __('Hide Details', 'shortpixel-upscale-image') );
+            </div>', $id, $id, __('See Details', 'shortpixel-image-optimiser'), $this->parseDetails(), $id, __('Hide Details', 'shortpixel-image-optimiser') );
 
       $output .= $details;
 
@@ -288,7 +288,7 @@ class NoticeModel //extends ShortPixelModel
 
     if ($this->is_removable)
     {
-        $output .= sprintf('<button type="button" id="button-%s" class="notice-dismiss" data-dismiss="%s" ><span class="screen-reader-text">%s</span></button>', $id,  $this->suppress_period, __('Dismiss this notice', 'shortpixel-upscale-image') );
+        $output .= sprintf('<button type="button" id="button-%s" class="notice-dismiss" data-dismiss="%s" ><span class="screen-reader-text">%s</span></button>', $id,  $this->suppress_period, __('Dismiss this notice', 'shortpixel-image-optimiser') );
 
        if (! $this->is_persistent)
        {
@@ -335,7 +335,7 @@ class NoticeModel //extends ShortPixelModel
       {
           $nonce = wp_create_nonce('dismiss');
           $url = wp_json_encode(admin_url('admin-ajax.php'));
-          $js = "function spui_notice_dismiss(event) {
+          $js = "function shortpixel_notice_dismiss(event) {
                     event.preventDefault();
                     var target = event.target;
                     if (target.tagName !== 'button') // tricky this
@@ -371,7 +371,7 @@ class NoticeModel //extends ShortPixelModel
       }
 
       // This all needs to be formalized in a better script, regardless of class, also in proper scope.
-      $js .=  ' jQuery("#' . $this->id . '").find(".notice-dismiss, .notice-dismiss-action").on("click", spui_notice_dismiss); ';
+      $js .=  ' jQuery("#' . $this->id . '").find(".notice-dismiss, .notice-dismiss-action").on("click", shortpixel_notice_dismiss); ';
 
       return "\n jQuery(document).ready(function(){ \n" . $js . "\n});";
   }

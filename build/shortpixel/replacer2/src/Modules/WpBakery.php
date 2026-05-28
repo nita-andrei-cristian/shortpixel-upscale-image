@@ -1,5 +1,5 @@
 <?php
-namespace SPUI\Replacer\Modules;
+namespace ShortPixel\Replacer\Modules;
 // Note! This class doubles as integration for both Visual Composer *and* WP Bakery. They both need URLENCODE.
 class WpBakery
 {
@@ -19,7 +19,7 @@ class WpBakery
     {
       if ($this->bakery_is_active())   // elementor is active
       {
-        add_filter('spui/replacer/custom_replace_query', array($this, 'addURLEncoded'), 10, 4); // custom query for elementor \ // problem
+        add_filter('shortpixel/replacer/custom_replace_query', array($this, 'addURLEncoded'), 10, 4); // custom query for elementor \ // problem
       }
     }
 
@@ -45,6 +45,6 @@ class WpBakery
        if (did_action('vc_plugins_loaded') || defined('VCV_VERSION'))
           $bool = true;
 
-        return apply_filters('spui/externals/urlencode_is_active', $bool); // manual override
+        return apply_filters('shortpixel/externals/urlencode_is_active', $bool); // manual override
     }
 }
