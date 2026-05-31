@@ -82,9 +82,9 @@ class ShortPixelFeedback {
             $html .= '</div><!-- .shortpixel-deactivate-options -->';
         }
         $html .= '<hr/>';
-        $html .= '<span title="' . __( 'Un-check this if you don\\\'t plan to use ShortPixel in the future on this website. You might also want to run a Bulk Delete SP Metadata before removing the plugin (Media Library -> Bulk ShortPixel).', 'shortpixel-image-optimiser' )
+        $html .= '<span title="' . __( 'Un-check this if you don\\\'t plan to use ShortPixel in the future on this website. You might also want to run a Bulk Delete SP Metadata before removing the plugin (Media Library -> Bulk Upscale).', 'shortpixel-image-optimiser' )
             . '">'
-            . sprintf(esc_html__(  'If you want to completely uninstall ShortPixel from your site, please go to %s Settings → ShortPixel → Tools %s.', 'shortpixel-image-optimiser' ),'<a href="' . esc_url(admin_url('/options-general.php?page=wp-shortpixel-settings&part=tools'))  . '">', '</a>') . '</span><br>';
+            . sprintf(esc_html__(  'If you want to completely uninstall ShortPixel from your site, please go to %s Settings → Shortpixel Image Upscale → Tools %s.', 'shortpixel-image-optimiser' ),'<a href="' . esc_url(admin_url('/options-general.php?page=wp-shortpixel-settings&part=tools'))  . '">', '</a>') . '</span><br>';
         $html .= '<hr/>';
         $html .= '</div><!-- .shortpixel-deactivate-form-body -->';
         $html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . esc_html__( 'Submitting form', 'shortpixel-image-optimiser' ) . '</p>';

@@ -237,7 +237,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
            'files' =>   array('title' => __('Files', 'shortpixel-image-optimiser'),
                             'sortable' => false,
                             'orderby' => 'files',
-                            'title_context' => __('Images in folder - optimized / unoptimized ','shortpixel-image-optimiser'),
+                            'title_context' => __('Images in folder - upscaled / not upscaled ','shortpixel-image-optimiser'),
                             ),
            'date' =>    array('title' => __('Last change', 'shortpixel-image-optimiser'),
                             'sortable' => true,

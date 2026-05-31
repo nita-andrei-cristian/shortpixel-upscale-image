@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       </div>
     <h3 class="heading">
-       <?php esc_html_e('The ShortPixel Bulk Processing is finished' ,'shortpixel-image-optimiser'); ?>
+       <?php esc_html_e('The ShortPixel Bulk Upscale is finished' ,'shortpixel-image-optimiser'); ?>
     </h3>
 
       <div class='dashboard-text'>
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class='bulk-summary' data-check-visibility="false" data-control='data-check-total-customOperation'>
 		<p class='finished-paragraph'>
-			<?php printf(__('Congratulations, ShortPixel has optimized %s %s images and thumbs %s for your website! Yay to faster loading websites! %s', 'shortpixel-image-optimiser'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
+			<?php printf(__('ShortPixel has upscaled %s %s images and thumbnails %s for your website. %s', 'shortpixel-image-optimiser'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
 			?>
 		</p>
 	</div>
@@ -150,7 +150,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
     <nav>
-      <button class='button finish' type="button" data-action="FinishBulk" id="FinishBulkButton"><?php esc_html_e('Finish Bulk Process','shortpixel-image-optimiser'); ?></button>
+      <button class='button finish' type="button" data-action="FinishBulk" id="FinishBulkButton"><?php esc_html_e('Finish Bulk Upscale','shortpixel-image-optimiser'); ?></button>
     </nav>
 
 

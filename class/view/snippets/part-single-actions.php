@@ -19,6 +19,10 @@ foreach ( $this->view->actions as $actionName => $action ) :
       case 'button-secondary':
         $classes = " button-smaller button button-secondary $actionName ";
         break;
+      case 'action-button':
+        // Like SPAATG's shortpixel-ai-action-button — no button-smaller, full padding.
+        $classes = " button button-secondary $actionName ";
+        break;
     }
   }
 
@@ -38,6 +42,7 @@ foreach ( $this->view->actions as $actionName => $action ) :
 
   if ( $itemId > 0 ) {
     $actionAttrs .= ' data-spui-action-id="' . esc_attr( $itemId ) . '" data-spui-action-name="' . esc_attr( $actionName ) . '"';
+    $actionAttrs .= ' data-item_id="' . esc_attr( $itemId ) . '" data-opener="edit"';
   }
 
   if ( ! empty( $action['icon_html'] ) ) {

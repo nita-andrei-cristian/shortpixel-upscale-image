@@ -39,7 +39,7 @@ class NextGenViewController extends \ShortPixel\ViewController
 		 	 wp_enqueue_style('dashicons');
 
 
-       return __('ShortPixel Compression','shortpixel-image-optimiser');
+       return __('ShortPixel Upscale','shortpixel-image-optimiser');
    }
 
 	 public function loadComparer()

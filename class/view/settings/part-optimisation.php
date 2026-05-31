@@ -129,43 +129,28 @@ if (! defined('ABSPATH')) {
 
     <gridbox class='width_half'>
 
-      <setting>
-        <content>
+      <setting class='default-upscale-factor'>
+        <content class='nextline'>
           <name><?php esc_html_e('Default Upscale Factor', 'shortpixel-upscale-image'); ?></name>
           <info>
             <?php esc_html_e('Sets the upscale factor applied when using the "Upscale Now" button in the media library and during bulk upscaling.', 'shortpixel-upscale-image'); ?>
           </info>
 
-          <div class='upscale-factor-options' style="margin-top: 8px; display: flex; gap: 16px;">
+          <div class='upscale-factor-options' role="radiogroup" aria-label="<?php esc_attr_e('Default Upscale Factor', 'shortpixel-upscale-image'); ?>">
 
-            <?php foreach ([2 => '2×', 4 => '4×', 8 => '8×'] as $factor => $label) : ?>
-              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <?php foreach ([2 => '2×', 3 => '3×', 4 => '4×'] as $factor => $label) : ?>
+              <label class='upscale-factor-option'>
                 <input type="radio"
                        name="defaultUpscaleFactor"
                        value="<?php echo esc_attr($factor); ?>"
                        <?php checked((int) $view->data->defaultUpscaleFactor, $factor); ?>
                        class="spui-upscale-factor-radio"
                 />
-                <?php echo esc_html($label); ?>
+                <span><?php echo esc_html($label); ?></span>
               </label>
             <?php endforeach; ?>
 
           </div>
-
-          <div id="spui-upscale-8x-warning" class="compression-notice warning" style="margin-top: 10px; <?php echo ((int) $view->data->defaultUpscaleFactor === 8) ? '' : 'display:none;'; ?>">
-            <p><?php esc_html_e('8× upscaling produces very large output files. Some images may exceed server upload limits or take significantly longer to process.', 'shortpixel-upscale-image'); ?></p>
-          </div>
-
-          <script>
-          (function() {
-            document.querySelectorAll('.spui-upscale-factor-radio').forEach(function(radio) {
-              radio.addEventListener('change', function() {
-                var warn = document.getElementById('spui-upscale-8x-warning');
-                if (warn) { warn.style.display = (this.value === '8') ? '' : 'none'; }
-              });
-            });
-          })();
-          </script>
         </content>
       </setting>
 

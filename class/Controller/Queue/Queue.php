@@ -426,8 +426,11 @@ abstract class Queue
                 }
 
                 // @todo This whole structure on ai / not-ai for enqueue is getting messy 
-                if ($mediaItem->isProcessable() && 
+                $spui_already_scaled = (bool) get_post_meta( $mediaItem->get('id'), '_spui_scaled', true );
+                if ($mediaItem->isProcessable() &&
                     $mediaItem->isOptimizePrevented() === false &&
+                    ! $mediaItem->isOptimized() &&
+                    ! $spui_already_scaled && // SPUI: skip already-upscaled images in bulk
                      ! $operation &&
                     true === $enqueueRegular
                   ) // Checking will be done when processing queue.

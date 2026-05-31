@@ -110,12 +110,28 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		}
 	}
 
+	/** Called from an <a> action link where event.target may be the <span> child. */
+	OpenEditorById(id, action_name, opener)
+	{
+		opener = opener || 'edit';
+		let mockEvent = {
+			target: { dataset: { item_id: String(id), opener: opener } },
+			preventDefault: function() {}
+		};
+		this.OpenEditorEvent(mockEvent, action_name);
+	}
+
 	OpenEditorEvent(event, action_name)
 	{
-		let item_id = event.target.dataset.item_id; 
-		var opener = event.target.dataset.opener; 
+		// event.target may be the inner <span> — walk up to find item_id
+		let target = event.target;
+		while (target && !target.dataset.item_id && target.parentElement) {
+			target = target.parentElement;
+		}
+		let item_id = target ? target.dataset.item_id : null;
+		var opener  = target ? target.dataset.opener  : 'edit';
 
-		event.preventDefault(); 
+		event.preventDefault();
 		
 		let backgroundShade = document.createElement('div');
 		backgroundShade.id = 'shortpixel-media-modal-shade';

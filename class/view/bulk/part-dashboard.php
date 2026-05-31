@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   <!--
   <div class="bulk-welcome">
     <h3 class="heading">
-      <?php printf(esc_html__('ShortPixel Bulk Image Optimization', 'shortpixel-image-optimiser')); ?>
+      <?php printf(esc_html__('ShortPixel Bulk Image Upscaling', 'shortpixel-image-optimiser')); ?>
     </h3>
     <?php echo UIHelper::getIcon('res/images/illustration/bulk_welcome.svg'); ?>
   </div>
@@ -33,13 +33,13 @@ if ( ! defined( 'ABSPATH' ) ) {
           <div class='the-circle' style='background-image: url("<?php echo $view->dashboard_icon ?>");'>&nbsp;</div>
       </a>
       <?php //if (false !== $view->dashboard_title): ?>
-       <h3 class='title-offer'><?php echo ( (false !== $view->dashboard_title) ? $view->dashboard_title : "Ready to start optimizing?"); ?></h3>
+       <h3 class='title-offer'><?php echo ( (false !== $view->dashboard_title) ? $view->dashboard_title : "Ready to start upscaling?"); ?></h3>
       <?php //endif; ?>
 
 
 
         <button type="button" class="button-primary button start" id="start-optimize" data-action="open-panel" data-panel="selection" <?php echo ($this->view->error) ? "disabled" : ''; ?>  >
-            <?php esc_html_e('Start Optimization','shortpixel-image-optimiser'); ?>
+            <?php esc_html_e('Start Upscaling','shortpixel-image-optimiser'); ?>
         </button>
 
 			<div class='dashboard-text'>

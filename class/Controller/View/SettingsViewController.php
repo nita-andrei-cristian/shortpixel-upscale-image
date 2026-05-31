@@ -51,7 +51,7 @@ class SettingsViewController extends \ShortPixel\ViewController
        'cmyk2rgb' => 'CMYKtoRGBconversion',
      );
 
-     protected $display_part = 'overview';
+     protected $display_part = 'optimisation';
      protected $all_display_parts = array('overview', 'optimisation','exclusions', 'processing', 'webp','ai', 'integrations', 'debug', 'tools', 'help');
      protected $form_action = 'save-settings';
      protected $view_mode = 'simple'; // advanced or simple
@@ -404,7 +404,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
 				$wpdb->query($sql);
 
-				$message = __('Item blocks have been removed. It is recommended to create a backup before trying to optimize image.', 'shortpixel-image-optimiser');
+				$message = __('Item blocks have been removed. It is recommended to create a backup before trying to upscale the image.', 'shortpixel-image-optimiser');
 
 				Notice::addSuccess($message);
 				$this->doRedirect();
@@ -584,7 +584,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 						/*
 						$mainblock->ok = false;
             $mainblock->header = __('Issue with API Key', 'shortpixel-image-optimiser');
-            $mainblock->message = __('Add your API Key to start optimizing', 'shortpixel-image-optimiser');
+            $mainblock->message = __('Add your API Key to start upscaling', 'shortpixel-image-optimiser');
             $mainblock->cocktail = false;
             $mainblock->icon = 'alert';
 						*/
@@ -600,7 +600,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
              if ($media_total > 0)
              {
-						         $mainblock->message = sprintf(esc_html__('%s media items %s optimized', 'shortpixel-image-optimiser'), $media_total, $custom_text);
+						         $mainblock->message = sprintf(esc_html__('%s media items %s upscaled', 'shortpixel-image-optimiser'), $media_total, $custom_text);
                      $total_sum = intval($media_total) + intval($custom_text);
                      $mainblock->optimized = sprintf(esc_html__('%s', 'shortpixel-image-optimiser'), $total_sum);
              }
@@ -698,7 +698,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
           $this->disable_heavy_features = (false === \wpSPIO()->env()->useVirtualHeavyFunctions()) ? true : false;
 
-          $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'overview';
+          $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'optimisation';
       }
 
       protected function settingLink($args)

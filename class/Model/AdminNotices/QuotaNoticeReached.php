@@ -88,12 +88,12 @@ class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
 			$totalOptimized = $statsControl->find('total', 'images');
 			$totalImagesToOptimize = number_format($statsControl->totalImagesToOptimize());
 
-			$message .= '<p>' . sprintf(__('The plugin has optimized <strong>%s images</strong> and has been stopped because it has reached the available quota limit.','shortpixel-image-optimiser'),
+			$message .= '<p>' . sprintf(__('The plugin has upscaled <strong>%s images</strong> and has been stopped because it has reached the available quota limit.','shortpixel-image-optimiser'),
 						$creditsUsed);
 
 			if($totalImagesToOptimize > 0) {
 
-						$message .= sprintf(__('<strong> %s images and thumbnails</strong> have not been optimized by ShortPixel yet.','shortpixel-image-optimiser'), $totalImagesToOptimize  );
+						$message .= sprintf(__('<strong> %s images and thumbnails</strong> have not been upscaled by ShortPixel yet.','shortpixel-image-optimiser'), $totalImagesToOptimize  );
 				}
 
 			 $message .= sprintf('</p>

@@ -1,6 +1,6 @@
-=== ShortPixel Image Optimizer - Optimize Images, Convert WebP & AVIF ===
+=== ShortPixel Upscale Image - AI Image Upscaling for WordPress ===
 Contributors: ShortPixel
-Tags: convert webp, optimize images, image optimization, resize, compress images
+Tags: image upscale, ai upscaling, upscale images, resize images, retina images
 Requires at least: 4.8.0
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -8,22 +8,22 @@ Stable tag: 6.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Optimize images & PDFs smartly. Create and compress next-gen WebP and AVIF formats. Smart crop and resize.
+Upscale images smartly with AI. Improve image clarity, resize with control, and prepare sharper visuals for modern displays.
 
 == Description ==
 
-###🚀 The Ultimate Image Optimization Plugin for WordPress###
+###🚀 The Ultimate AI Image Upscaling Plugin for WordPress###
 
-**⚡ Boost your site’s speed instantly! Optimize images and PDFs with one click, bulk compress to WebP and AVIF, use lazy loading, and resize images.**
+**⚡ Upscale images with one click, improve clarity for retina displays, and manage image resizing from inside WordPress.**
 
 Increase your website's SEO ranking, number of visitors, and ultimately your sales by optimising any image or PDF document on your website.
 
-The <a href="https://shortpixel.com" target="_blank">ShortPixel</a> plugin is a lightweight, user-friendly, install-and-forget solution for image optimization.
+The <a href="https://shortpixel.com" target="_blank">ShortPixel</a> plugin is a lightweight, user-friendly, install-and-forget solution for AI image upscaling.
 It is designed to work with any website type, whether it's a small blog or a large WooCommerce-powered online store with tens of thousands of products.
 Additionally, it's an excellent choice for agencies, offering unlimited image optimization credits for a flat monthly fee.
 
 = 🎬 Ready for a Quick DEMO of our Top Image Optimization Tool? =
-Test our plugin <a href="https://demo.tastewp.com/shortpixel-image-optimiser" target="_blank">here</a>.
+Test our plugin <a href="https://demo.tastewp.com/shortpixel-upscale-image" target="_blank">here</a>.
 Make an instant <a href="https://shortpixel.com/image-compression-test" target="_blank">image compression test</a> of your site or <a href="https://shortpixel.com/online-image-compression" target="_blank">compress some images</a> to test our optimization algorithms.
 
 == 💡 Why is ShortPixel the best choice for image optimization or PDF compression? ==
@@ -155,8 +155,8 @@ Check out <a href="https://shortpixel.com/pricing" target="_blank">our prices</a
 > ★★★★★ **The secret sauce for a WordPress website.**  [mark1mark](https://wordpress.org/support/topic/the-secret-sauce-for-a-wordpress-website/)
 > ★★★★★ **A must have plugin, great support!** [ElColo13](https://wordpress.org/support/topic/a-must-have-plugin-great-support/)
 > ★★★★★ **Excellent Plugin! Even Better Customer Service!**  [scaliendo](https://wordpress.org/support/topic/great-plugin-great-support-508/)
-> ★★★★★ **Great image compression, solid plugin, equally great support.** [matters1959](https://wordpress.org/support/topic/support-shortpixel-image-optimiser/)
-> [more testimonials](https://wordpress.org/support/plugin/shortpixel-image-optimiser/reviews/?filter=5)
+> ★★★★★ **Great image compression, solid plugin, equally great support.** [matters1959](https://wordpress.org/support/topic/support-shortpixel-upscale-image/)
+> [more testimonials](https://wordpress.org/support/plugin/shortpixel-upscale-image/reviews/?filter=5)
 
 [youtube https://www.youtube.com/watch?v=FVPWeNsJWss]
 
@@ -312,7 +312,7 @@ where `APIKEY` is the API Key received upon sign up.
     Absolutely! Sometimes you'll need to make sure you whitelist some IPs, just <a href="https://shortpixel.com/contact">contact us</a> and we'll assist you with that.
 
 = Where do I report security bugs found in this plugin? =
-Please report security bugs found in the source code of the ShortPixel Image Optimizer plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/shortpixel-image-optimiser). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+Please report security bugs found in the source code of the ShortPixel Upscale Image plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/shortpixel-upscale-image). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 = Does the plugin use any external services =
 This plugin integrates with Chatbase ([https://www.chatbase.co](https://www.chatbase.co/)) to provide AI-powered chat support directly within the plugin interface. This integration allows plugin users to ask questions and receive automated assistance. The only data collected is the Country(no city and no exact location) and the message itself.
@@ -1015,7 +1015,7 @@ Release date: November 21, 2024
 * Language: Many of the plugin strings have been updated or changed and we thank the translation teams for their efforts..
 
 = EARLIER VERSIONS =
-* please refer to the <a href="https://github.com/short-pixel-optimizer/shortpixel-image-optimiser/blob/master/changelog.txt" target="_blank">changelog.txt</a> file inside the plugin archive.
+* please refer to the <a href="https://github.com/short-pixel-optimizer/shortpixel-upscale-image/blob/master/changelog.txt" target="_blank">changelog.txt</a> file inside the plugin archive.
 
 == Upgrade Notice ==
 
@@ -1026,4 +1026,3 @@ Release date: November 21, 2024
 = 4.22.9 =
 
 * This version contains a fix for the WP Offload Media plugin version 2.6.0 and above. Please ensure you're running the latest WP Offload Media plugin and check that everything works correctly after upgrading.
-

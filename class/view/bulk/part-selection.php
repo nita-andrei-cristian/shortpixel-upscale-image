@@ -36,7 +36,7 @@ $approx = $this->view->approx;
 
 					 </span>
 					 <span>
-	 						 <p><?php _e("Clicking this button will start optimization of the items added to the queue. The remaining items can be processed in a new bulk. After completion, you can start bulk and the system will continue with the unprocessed images.",'shortpixel-image-optimiser'); ?></p>
+	 						 <p><?php _e("Clicking this button will start upscaling the items added to the queue. The remaining items can be processed in a new bulk. After completion, you can start bulk and the system will continue with the unprocessed images.",'shortpixel-image-optimiser'); ?></p>
 						</span>
 					</nav>
 				</div>
@@ -50,10 +50,10 @@ $approx = $this->view->approx;
        <div class="interface wrapper">
 
 	   <h3 class="heading">
-        <?php esc_html_e('ShortPixel Bulk Optimization - Select Images', 'shortpixel-image-optimiser'); ?>
+        <?php esc_html_e('ShortPixel Bulk Upscale - Select Images', 'shortpixel-image-optimiser'); ?>
       </h3>
 
-      <p class='description'><?php esc_html_e('Select the type of images that ShortPixel should optimize for you.','shortpixel-image-optimiser'); ?></p>
+      <p class='description'><?php esc_html_e('Select the type of images that ShortPixel should upscale for you.','shortpixel-image-optimiser'); ?></p>
 				 <div class="option-block">
 
 					<!-- <h2><?php esc_html_e('Optimize:','shortpixel-image-optimiser'); ?> </h2> -->
@@ -246,18 +246,18 @@ $approx = $this->view->approx;
             <?php printf(esc_html__('Background Mode' ,'shortpixel-image-optimiser') ); ?>
           </label></h4>
             <?php $link = 'https://shortpixel.com/knowledge-base/article/background-processing-using-cron-jobs-in-shortpixel-image-optimizer/'; ?>
-         <div class="option"><?php printf(esc_html__('Utilize this feature to optimize images without the need to keep a browser window open. Please be aware that on websites with low traffic or shared hosting, this method of optimization might be considerably slower. If you observe a significant increase in server resource usage or processing time, consider switching to browser-based optimization. %sRead more%s.','shortpixel-image-optimiser'), '<strong><a href="' . esc_attr($link) . '" target="_blank">', '</a></strong>'); ?>
+         <div class="option"><?php printf(esc_html__('Utilize this feature to upscale images without the need to keep a browser window open. Please be aware that on websites with low traffic or shared hosting, this method of upscaling might be considerably slower. If you observe a significant increase in server resource usage or processing time, consider switching to browser-based processing. %sRead more%s.','shortpixel-image-optimiser'), '<strong><a href="' . esc_attr($link) . '" target="_blank">', '</a></strong>'); ?>
          </div>
          <div class='option warning
          <?php echo (\wpSPIO()->settings()->doBackgroundProcess) ? '' : 'hidden' ?>'>
-         <p><?php _e('I understand that background optimization may pause if there are no visitors on the website.', 'shortpixel-image-optimiser'); ?></p></div>
+         <p><?php _e('I understand that background upscaling may pause if there are no visitors on the website.', 'shortpixel-image-optimiser'); ?></p></div>
 
        </div>
 
 	  <!-- <h2><?php _e('Limit bulk', 'shortpixel-image-optimiser'); ?></h2> -->
 
 <div class='bulk-date-picker optiongroup'>
-	<?php printf(esc_html__('%sOptional: Optimize items between %s  %s and %s ', 'shortpixel-image-optimiser'), 
+	<?php printf(esc_html__('%sOptional: Upscale items between %s  %s and %s ', 'shortpixel-image-optimiser'), 
 	'<h4>', 
 	'</h4>',
 	'<span class="date-picker-container">
@@ -281,13 +281,13 @@ $approx = $this->view->approx;
  	 	 <div class="option-block all-round">
        <div class='optiongroup' data-check-visibility="false" data-control="data-check-approx-total">
           <h3><?php esc_html_e('No images found', 'shortpixel-image-optimiser'); ?></h3>
-          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any optimizable images.','shortpixel-image-optimiser'); ?></p>
+          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any images ready for upscaling.','shortpixel-image-optimiser'); ?></p>
        </div>
 
-       <h4 class='approx'><?php esc_html_e('An estimate of unoptimized images in this installation', 'shortpixel-image-optimiser'); ?> :
+       <h4 class='approx'><?php esc_html_e('An estimate of images not yet upscaled in this installation', 'shortpixel-image-optimiser'); ?> :
 			<span data-check-approx-total><?php echo esc_html($approx->total->images) ?></span> </h4>
 
-       <div><p><?php printf(__('In the next step, the plugin will calculate the total number of images to be optimized, and your bulk process will be prepared. The processing %s will not start yet %s, but a summary of the images to be optimized will be displayed.', 'shortpixel-image-optimiser'),'<b>','</b>'); ?></p></div>
+       <div><p><?php printf(__('In the next step, the plugin will calculate the total number of images to be upscaled, and your bulk process will be prepared. The processing %s will not start yet %s, but a summary of the images to be upscaled will be displayed.', 'shortpixel-image-optimiser'),'<b>','</b>'); ?></p></div>
 		 </div>
 
       <nav>

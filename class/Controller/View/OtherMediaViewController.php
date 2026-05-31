@@ -67,7 +67,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
           $this->view->filter = $this->getFilter();
 
-					$this->view->title = __('Custom Media optimized by ShortPixel', 'shortpixel-image-optimiser');
+					$this->view->title = __('Custom Media upscaled by ShortPixel', 'shortpixel-image-optimiser');
 					$this->view->show_search = true;
 
     //      $this->checkQueue();
@@ -511,9 +511,9 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
             $options = array(
                 'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-                'optimized' => __('Optimized', 'shortpixel-image-optimiser'),
-                'unoptimized' => __('Unoptimized', 'shortpixel-image-optimiser'),
-                'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
+                'optimized' => __('Upscaled', 'shortpixel-image-optimiser'),
+                'unoptimized' => __('Not Upscaled', 'shortpixel-image-optimiser'),
+                'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
 
             );
 

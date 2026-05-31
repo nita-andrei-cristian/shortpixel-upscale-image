@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div class="panel-container">
 
     <!--<h3 class="heading"><span>
-      <?php esc_html_e('ShortPixel Bulk Optimization - Summary','shortpixel-image-optimiser'); ?>
+      <?php esc_html_e('ShortPixel Bulk Upscale - Summary','shortpixel-image-optimiser'); ?>
     </h3>
 
-    <p class='description'><?php esc_html_e('Welcome to the bulk optimization wizard, where you can select the images that ShortPixel will optimize in the background for you.','shortpixel-image-optimiser'); ?></p>
+    <p class='description'><?php esc_html_e('Welcome to the bulk upscaling wizard, where you can select the images that ShortPixel will upscale in the background for you.','shortpixel-image-optimiser'); ?></p>
 -->
 
     <?php 
@@ -203,7 +203,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         else
         {
           ?>
-            <p><?php esc_html_e('Start Bulk Optimization', 'shortpixel-image-optimiser'); ?></p>
+            <p><?php esc_html_e('Start Bulk Upscaling', 'shortpixel-image-optimiser'); ?></p>
           <?php 
         } ?>
 				

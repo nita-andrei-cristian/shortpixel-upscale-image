@@ -23,7 +23,7 @@ $this->loadView('custom/part-othermedia-top');
   <span>
     <select name='bulk-actions'>
      <option><?php _e('Bulk Actions', 'shortpixel-image-optimiser'); ?></option>
-     <option value='optimize'><?php _e('Optimize','shortpixel-image-optimiser'); ?></option>
+     <option value='optimize'><?php _e('Upscale','shortpixel-image-optimiser'); ?></option>
      <option value='restore'><?php _e('Restore', 'shortpixel-image-optimiser'); ?></option>
      <option value="mark-completed"><?php _e('Mark completed', 'shortpixel-image-optimiser'); ?></option>
    </select> <button class='button' type='button' name='doBulkAction'><?php _e('Apply', 'shortpixel-image-optimiser'); ?></button>
@@ -67,7 +67,7 @@ $this->loadView('custom/part-othermedia-top');
              {
                $folder_url = esc_url(add_query_arg('part', 'folders', $this->url));
 
-               printf(esc_html__('No images available. Go to %s Folders %s to configure additional folders to be optimized.','shortpixel-image-optimiser'), '<a href="'. esc_url($folder_url) . '">', '</a>');
+               printf(esc_html__('No images available. Go to %s Folders %s to configure additional folders to be upscaled.','shortpixel-image-optimiser'), '<a href="'. esc_url($folder_url) . '">', '</a>');
 
              } ?>
           </p>

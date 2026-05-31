@@ -18,8 +18,8 @@ $type_display =   ($item->get('is_nextgen') ) ? __('Nextgen', 'shortpixel-image-
 $stat = $item->getStats();
 
 
-$fullstatus = esc_html__("Optimized",'shortpixel-image-optimiser') . ": " . $stat['optimized'] . "\n"
-      . "" . esc_html__("Unoptimized",'shortpixel-image-optimiser') . ": " . $stat['waiting'] . "\n"
+$fullstatus = esc_html__("Upscaled",'shortpixel-image-optimiser') . ": " . $stat['optimized'] . "\n"
+      . "" . esc_html__("Not Upscaled",'shortpixel-image-optimiser') . ": " . $stat['waiting'] . "\n"
       ;
 
 

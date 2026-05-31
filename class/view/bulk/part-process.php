@@ -17,7 +17,7 @@ $settings = \wpSPIO()->settings();
 
     <div class='process_heading'>
     <h3 class="heading">
-      <?php esc_html_e('ShortPixel Bulk Process is in progress','shortpixel-image-optimiser'); ?>
+      <?php esc_html_e('ShortPixel Bulk Upscale is in progress','shortpixel-image-optimiser'); ?>
 
       <div class='average-optimization  shortpixel-hide'>
          <!-- <p><?php esc_html_e('Average this run','shortpixel-image-optimiser'); ?></p> -->
@@ -217,7 +217,7 @@ $settings = \wpSPIO()->settings();
 			      </div>
 		        <div class="image result">
 		          <img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
-						<p><?php esc_html_e('Optimized Image', 'shortpixel-image-optimiser'); ?>
+						<p><?php esc_html_e('Upscaled Image', 'shortpixel-image-optimiser'); ?>
 								- <span data-result="improvements-totalpercentage"></span>% <?php _e('smaller', 'shortpixel-image-optimiser'); ?>
 						</p>
 						<?php $this->loadView('snippets/part-svgloader', false); ?>
@@ -235,7 +235,7 @@ $settings = \wpSPIO()->settings();
 							<div class="image result">
 								<img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 								<?php $this->loadView('snippets/part-svgloader', false); ?>
-							<p class='improvement-item'><?php esc_html_e('Optimized Image','shortpixel-image-optimiser'); ?>
+							<p class='improvement-item'><?php esc_html_e('Upscaled Image','shortpixel-image-optimiser'); ?>
 								- <span data-result="improvements-totalpercentage"></span>% <?php _e('smaller', 'shortpixel-image-optimiser'); ?>
 							</p>
 							</div>

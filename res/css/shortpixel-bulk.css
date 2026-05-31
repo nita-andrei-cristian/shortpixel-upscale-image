@@ -502,6 +502,7 @@
   font-size: 26px;
   height: 26px;
   margin-right: 8px;
+  vertical-align: middle;
 }
 .wrap.is-shortpixel-bulk-page .button .icon {
   margin-right: 4px;
@@ -513,7 +514,7 @@
   margin: 0;
   display: inline;
   font-size: 14px;
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 .wrap.is-shortpixel-bulk-page .button-primary {
   background: #1ABDCA;

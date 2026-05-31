@@ -445,10 +445,13 @@ class OptimizeController extends OptimizerBase
            $fileArray['type'] = $tmpFile->getMime();  // @todo 
            $fileArray['size'] = $tmpFile->getFileSize(); 
 
-           $new_attach_id = media_handle_sideload($fileArray, $attached_post_id, $newPostTitle); 
+           $new_attach_id = media_handle_sideload($fileArray, $attached_post_id, $newPostTitle);
 
-         //  $new_attach_id = media_sideload_image($url, $attached_post_id, '', 'id'); // Add to WP, return attach_id
-           
+           // SPUI: mark the original attachment as scaled so bulk skips it.
+           if ( ! is_wp_error($new_attach_id) ) {
+             update_post_meta($item_id, '_spui_scaled', (int) $new_attach_id);
+           }
+
            $qItem->addResult(['new_attach_id' => $new_attach_id] );
 
            $tmpFile->delete();

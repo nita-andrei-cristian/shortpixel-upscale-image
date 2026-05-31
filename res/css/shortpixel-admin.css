@@ -79,25 +79,98 @@
   height: auto;
   float: none;
 }
-/* Disabled button state for both list and edit-media contexts */
-.sp-column-info a.button.disabled,
-.view-edit-media a.button.disabled {
-  opacity: 0.65;
-  cursor: default;
+/* shortpixel-upscale-interface — mirrors SPAATG's shortpixel-ai-interface */
+.shortpixel-upscale-interface {
+  line-height: 1;
+  margin: 8px 0;
+}
+.shortpixel-upscale-interface .spui-action-button.button.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 34px;
+  height: auto;
+  max-width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #F4FBFC;
+  color: #116C7E;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  box-shadow: none;
+  transition: background 0.1s ease-in-out;
+}
+.shortpixel-upscale-interface .spui-action-button.button.button-secondary:hover,
+.shortpixel-upscale-interface .spui-action-button.button.button-secondary:focus {
+  background: #D9F9FF;
+  color: #116C7E;
+  border: 0;
+  box-shadow: none;
+}
+.shortpixel-upscale-interface .spui-action-icon {
+  flex: 0 0 auto;
+  width: 23px;
+  height: 23px;
+  margin: 0;
+  float: none;
+}
+/* Inline icon in status text (success / caption lines) */
+.spui-caption-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  margin: 0 3px 2px 0;
+  float: none;
+}
+.shortpixel-upscale-interface span {
+  vertical-align: middle;
+  margin: 0 4px;
+}
+.shortpixel-upscale-interface .spui-action-button span {
+  margin: 0;
+}
+/* Disabled state */
+.sp-column-info a.disabled,
+.shortpixel-upscale-interface .button.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
   pointer-events: none;
 }
-/* Upscale Now button — full width in edit media sidebar */
-.spui-edit-media-actions a.button-smaller {
-  display: block;
-  text-align: center;
-  padding: 6px 15px;
+/* Global bare selector (outside interface wrapper) */
+.spui-action-button.button.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 34px;
   height: auto;
-  box-sizing: border-box;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #F4FBFC;
+  color: #116C7E;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: none;
 }
-/* Upscale Now button in list column — keep inline */
-.sp-column-info a.button-smaller.optimize {
-  display: inline-block;
-  margin-top: 4px;
+.spui-action-button.button.button-secondary:hover,
+.spui-action-button.button.button-secondary:focus {
+  background: #D9F9FF;
+  color: #116C7E;
+  border: 0;
+  box-shadow: none;
+}
+/* Media sidebar: full width */
+.media-sidebar .shortpixel-upscale-interface {
+  width: 100%;
+  text-align: right;
 }
 
 .spio-message img {

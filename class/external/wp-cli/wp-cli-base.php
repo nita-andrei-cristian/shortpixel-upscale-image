@@ -131,7 +131,7 @@ class SpioCommandBase
 			if (! isset($assoc['halt'])) {
 				$this->run($args, $assoc);
 			} else {
-				\WP_CLI::Line(__('You can optimize images via the run command', 'shortpixel-image-optimiser'));
+				\WP_CLI::Line(__('You can upscale images via the run command', 'shortpixel-image-optimiser'));
 			}
 		}
 

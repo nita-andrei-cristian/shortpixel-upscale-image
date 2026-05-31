@@ -123,7 +123,7 @@ class BulkViewController extends \ShortPixel\ViewController
             $label = __('Bulk Restore', 'shortpixel-image-optimiser');
           break;
           case 'migrate':
-            $label = __('Bulk Migrate Optimization Data', 'shortpixel-image-optimiser');
+            $label = __('Bulk Migrate Upscale Data', 'shortpixel-image-optimiser');
           break;
           case 'removeLegacy':
             $label = __('Bulk Remove Legacy Data', 'shortpixel-image-optimiser');
@@ -174,8 +174,8 @@ class BulkViewController extends \ShortPixel\ViewController
 	// Double with ApiNotice . @todo Fix.
 	protected function getActivationNotice()
 	{
-		$message = "<p>" . __('In order to start the optimization process, you need to validate your API Key in the '
-						. '<a href="options-general.php?page=wp-shortpixel-settings">ShortPixel Settings</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
+		$message = "<p>" . __('In order to start the upscaling process, you need to validate your API Key in the '
+						. '<a href="options-general.php?page=wp-shortpixel-settings">Shortpixel Image Upscale</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
 		return $message;
@@ -334,7 +334,7 @@ class BulkViewController extends \ShortPixel\ViewController
 								$bulkName  = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');
 							 break;
 							 default:
-							 	$bulkName .= __('Optimization', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Upscale', 'shortpixel-image-optimiser');
 							 break;
 					}
 

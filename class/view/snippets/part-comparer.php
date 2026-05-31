@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
             <div class="side-by-side" style="text-align: center; display:inline-block;">
                 <img class="spUploadCompareOptimized" style="margin: 10px"/><br>
-                Optimized
+                Upscaled
             </div>
         </div>
       </div>

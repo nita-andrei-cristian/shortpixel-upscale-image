@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: ShortPixel Image Optimizer
+ * Plugin Name: ShortPixel Upscale Image
  * Plugin URI: https://shortpixel.com/
- * Description: ShortPixel optimizes images automatically, while guarding the quality of your images. Check your <a href="/wp-admin/options-general.php?page=wp-shortpixel-settings" target="_blank">Settings &gt; ShortPixel</a> page on how to start optimizing your image library and make your website load faster.
+ * Description: ShortPixel upscales images automatically while preserving visual quality. Check your <a href="/wp-admin/options-general.php?page=wp-shortpixel-settings" target="_blank">Settings &gt; Shortpixel Image Upscale</a> page to start upscaling your image library.
  * Version: 6.4.4
- * Author: ShortPixel - Convert WebP/AVIF & Optimize Images
+ * Author: ShortPixel - AI Image Upscaling
  * Author URI: https://shortpixel.com
- * GitHub Plugin URI: https://github.com/short-pixel-optimizer/shortpixel-image-optimiser
- * Text Domain: shortpixel-image-optimiser
+ * GitHub Plugin URI: https://github.com/short-pixel-optimizer/shortpixel-upscale-image
+ * Text Domain: shortpixel-upscale-image
  * Domain Path: /lang
  */
 

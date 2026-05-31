@@ -43,7 +43,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
   {
     add_filter( 'manage_media_columns', array( $this, 'headerColumns' ) );//add media library column header
     add_action( 'manage_media_custom_column', array( $this, 'doColumn' ), 10, 2 );//generate the media library column
-    //Sort and filter on ShortPixel Compression column
+    // Sort and filter on the ShortPixel upscale column
     //add_filter( 'manage_upload_sortable_columns', array( $this, 'registerSortable') );
 
     add_action('restrict_manage_posts', array( $this, 'mediaAddFilterDropdown'));
@@ -54,7 +54,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function headerColumns($defaults)
   {
-    $defaults['wp-shortPixel'] = __('ShortPixel Compression', 'shortpixel-image-optimiser');
+    $defaults['wp-shortPixel'] = __('ShortPixel Upscale', 'shortpixel-image-optimiser');
 
 
     return $defaults;
@@ -212,9 +212,9 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
       $options = array(
           'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-          'optimized' => __('Optimized', 'shortpixel-image-optimiser'),
-          'unoptimized' => __('Unoptimized', 'shortpixel-image-optimiser'),
-					'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
+          'optimized' => __('Upscaled', 'shortpixel-image-optimiser'),
+          'unoptimized' => __('Not Upscaled', 'shortpixel-image-optimiser'),
+					'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
       );
 
       echo  "<select name='shortpixel_status' id='shortpixel_status'>\n";

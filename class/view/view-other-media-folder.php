@@ -27,7 +27,7 @@ $this->loadView('custom/part-othermedia-top');
   </a>
 <input type="submit" name="save" id="saveAdvAddFolder" class="button button-primary hidden" title="<?php esc_html_e('Add this Folder','shortpixel-image-optimiser');?>" value="<?php esc_html_e('Add this Folder','shortpixel-image-optimiser');?>">
 <p class="settings-info">
-    <?php printf(esc_html__('Use the Select... button to select site folders. ShortPixel will optimize images and PDFs from the specified folders and their subfolders. In the %s Custom Media list %s, under the Media menu, you can see the optimization status for each image or PDF in these folders.','shortpixel-image-optimiser'), '<a href="upload.php?page=wp-short-pixel-custom">', '</a>');?>
+    <?php printf(esc_html__('Use the Select... button to select site folders. ShortPixel will upscale images and PDFs from the specified folders and their subfolders. In the %s Custom Media list %s, under the Media menu, you can see the upscale status for each image or PDF in these folders.','shortpixel-image-optimiser'), '<a href="upload.php?page=wp-short-pixel-custom">', '</a>');?>
 </p>
 
 <div class="sp-modal-shade sp-folder-picker-shade" ></div>

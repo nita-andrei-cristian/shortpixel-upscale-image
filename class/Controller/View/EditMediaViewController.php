@@ -176,7 +176,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
         $tsOptimized = $imageObj->getMeta('tsOptimized');
         if ($tsOptimized !== null)
-          $stats[] = array(__("Optimized on :", 'shortpixel-image-optimiser') . "<br /> ", UiHelper::formatTS($tsOptimized) );
+          $stats[] = array(__("Upscaled on :", 'shortpixel-image-optimiser') . "<br /> ", UiHelper::formatTS($tsOptimized) );
 
 				if ($imageObj->isOptimized())
 				{
@@ -239,7 +239,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
           $debugInfo[] = array(__('Status (ShortPixel)'), $imageObj->getMeta('status') . ' '   );
 
 					$debugInfo[] = array(__('Processable'), $processable);
-          $debugInfo[] = array(__('Optimized'), $optimized);
+          $debugInfo[] = array(__('Upscaled'), $optimized);
 					$debugInfo[] = array(__('Avif/Webp needed'), $anyFileType);
 					$debugInfo[] = array(__('Restorable'), $restorable);
 					$debugInfo[] = array(__('Record'), $hasrecord);
@@ -260,7 +260,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
 					if (isset($urls))
 					{
-						 $debugInfo[] = array(__('To Optimize URLS'),  $urls);
+						 $debugInfo[] = array(__('Upscale URLs'),  $urls);
 					}
 
           $item = QueueItems::getImageItem($imageObj);
@@ -318,7 +318,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 						if ($imageObj->hasBackup())
 							$backupText = __('Backup File :');
 						else {
-							$backupText = __('Target Backup File after optimization (no backup) ');
+							$backupText = __('Target Backup File after upscaling (no backup) ');
 						}
             $debugInfo[] = array( $backupText, (string) $backupFile . '(' . UiHelper::formatBytes($backupFile->getFileSize()) . ')' );
 
@@ -385,7 +385,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 							else {
 								$backupFile = $fs->getFile($fs->getBackupDirectory($thumbObj) . $thumbObj->getBackupFileName());
 								$backup = $backupFile->getFullPath();
-								$backupText = __('Target Backup File after optimization (no backup) ');
+								$backupText = __('Target Backup File after upscaling (no backup) ');
 							}
 
               $width = $thumbObj->get('width');

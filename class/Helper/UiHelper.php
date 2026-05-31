@@ -48,10 +48,12 @@ class UiHelper
     return $output;
   }
 
-  // SPUI: simplified — status communicated via Upscale button state in getActions().
+  // SPUI: success text shown in the media column when the image has already been upscaled.
   public static function renderSuccessText($imageObj)
   {
-    return '';
+    $iconUrl = esc_url( plugins_url( 'res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE ) );
+    return '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> '
+         . esc_html__( 'This image has been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
   }
 
   public static function compressionTypeToText($type)
@@ -86,51 +88,46 @@ class UiHelper
   // SPUI: single "Upscale Now" button — disabled when in queue, not processable, or no quota.
   public static function getActions($mediaItem)
   {
-    $actions     = [];
-    $id          = $mediaItem->get('id');
-    $keyControl  = ApiKeyController::getInstance();
-    $quotaControl = QuotaController::getInstance();
+    $actions         = [];
+    $id              = $mediaItem->get('id');
+    $keyControl      = ApiKeyController::getInstance();
+    $quotaControl    = QuotaController::getInstance();
     $queueController = new QueueController();
-    $access      = AccessModel::getInstance();
+    $access          = AccessModel::getInstance();
 
-    if (! $keyControl->keyIsVerified())   { return []; }
-    if (! $access->imageIsEditable($mediaItem)) { return []; }
-    if ($id === 0)                         { return []; }
+    if (! $keyControl->keyIsVerified())          { return []; }
+    if (! $access->imageIsEditable($mediaItem))  { return []; }
+    if ($id === 0)                               { return []; }
 
-    // Always show the button; set disabled + title to communicate state.
+    // Always show the Upscale Now button; set disabled + title to communicate state.
     $action = self::getAction('optimize', $id);
 
     if (! $quotaControl->hasQuota())
     {
       $action['disabled'] = true;
-      $action['title']    = __('No upscale quota available', 'shortpixel-image-optimiser');
+      $action['title']    = __('No upscale quota available', 'shortpixel-upscale-image');
     }
     elseif ($queueController->isItemInQueue($mediaItem))
     {
       $action['disabled'] = true;
-      $action['title']    = __('Upscaling in progress…', 'shortpixel-image-optimiser');
-    }
-    elseif ($mediaItem->isOptimizePrevented())
-    {
-      $action['disabled'] = true;
-      $action['title']    = $mediaItem->getReason('processable');
+      $action['title']    = __('Upscaling in progress…', 'shortpixel-upscale-image');
     }
     elseif (! $mediaItem->isProcessable())
     {
       $action['disabled'] = true;
-      $action['title']    = $mediaItem->getProcessableReason();
+      $action['title']    = $mediaItem->getReason('processable');
     }
 
     $actions['optimize'] = $action;
     return $actions;
   }
 
-  // SPUI: simplified — only shows hard errors. Normal state communicated via button in getActions().
+  // SPUI: status text shown above/below the action button in the media column.
   public static function getStatusText($mediaItem)
   {
-    $keyControl  = ApiKeyController::getInstance();
-    $settings    = \wpSPIO()->settings();
-    $text        = '';
+    $keyControl   = ApiKeyController::getInstance();
+    $quotaControl = QuotaController::getInstance();
+    $text         = '';
 
     if (! $keyControl->keyIsVerified())
     {
@@ -151,6 +148,29 @@ class UiHelper
     elseif ($mediaItem->getMeta('status') < 0)
     {
       $text = $mediaItem->getMeta('errorMessage');
+    }
+    elseif ($mediaItem->isOptimized() || get_post_meta($mediaItem->get('id'), '_spui_scaled', true))
+    {
+      // Success state: icon + confirmation text.
+      $iconUrl = esc_url( plugins_url( 'res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE ) );
+      $text    = '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> '
+               . esc_html__( 'This image has been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+    }
+    elseif (! $quotaControl->hasQuota())
+    {
+      $text = sprintf(
+        /* translators: %s: URL to ShortPixel pricing page */
+        __( 'No upscale quota available. <a href="%s" target="_blank">Extend your quota</a>.', 'shortpixel-upscale-image' ),
+        esc_url( 'https://shortpixel.com/login/' . $keyControl->getKeyForDisplay() )
+      );
+    }
+    elseif (! $mediaItem->isProcessable())
+    {
+      $reason = $mediaItem->getReason('processable');
+      if ($reason)
+      {
+        $text = esc_html($reason);
+      }
     }
 
     return $text;
@@ -206,10 +226,10 @@ class UiHelper
     switch($name)
     {
       case 'optimize':
-         $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ')';
+         // SPUI: opens the editor preview popup (scale action).
+         $action['function'] = 'window.ShortPixelProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
          $action['type']  = 'js';
-         // SPUI: renamed from "Optimize Now" to "Upscale Now"
-         $action['text'] = __('Upscale Now', 'shortpixel-image-optimiser');
+         $action['text'] = __('Upscale Now', 'shortpixel-upscale-image');
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
       break;
@@ -288,6 +308,14 @@ class UiHelper
         $action['type'] = 'js';
         $action['text'] = __('Compare', 'shortpixel-image-optimiser');
         $action['display'] = 'inline';
+     break;
+     case 're-upscale':
+        // SPUI: Re-upscale button shown after a successful upscale.
+        $action['function'] = 'window.ShortPixelProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
+        $action['type']     = 'js';
+        $action['text']     = __('Re-upscale', 'shortpixel-upscale-image');
+        $action['display']  = 'button';
+        $action['is-optimizable'] = true;
      break;
      case 're-upscale-glossy':
         $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
