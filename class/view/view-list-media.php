@@ -17,7 +17,7 @@ if ( property_exists( $this->view, 'infoData' ) ) {
 
 <div class='sp-column-info <?php echo esc_attr( property_exists( $this->view, 'infoClass' ) ? $this->view->infoClass : '' ); ?>'
      <?php echo wp_kses_data( $spui_datastring ); ?>
-     id='spui-data-<?php echo esc_attr( $this->view->id ); ?>'>
+     id='shortpixel-data-<?php echo esc_attr( $this->view->id ); ?>'>
 
   <?php if ( isset( $this->view->list_actions ) ) : ?>
     <?php echo wp_kses_post( $this->view->list_actions ); ?>

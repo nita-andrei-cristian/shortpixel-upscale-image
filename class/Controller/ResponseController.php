@@ -210,13 +210,13 @@ class ResponseController
 		private static function formatRegularItem($item, $text)
 		{
 
-			  if (! $item->is_done && $item->apiStatus == ApiController::STATUS_UNCHANGED)
+			 if (! $item->is_done && $item->apiStatus == ApiController::STATUS_UNCHANGED)
 				{
-					 	$text = sprintf(__('Optimizing - waiting for results (%d/%d)','shortpixel-image-optimiser'), $item->images_done, $item->images_total);
+					 	$text = sprintf(__('Upscaling - waiting for results (%d/%d)','shortpixel-image-optimiser'), $item->images_done, $item->images_total);
 				}
 				if (! $item->is_done && $item->apiStatus == ApiController::STATUS_ENQUEUED)
 				{
-				  	$text = sprintf(__('Optimizing - Item has been sent to ShortPixel (%d/%d)','shortpixel-image-optimiser'), $item->images_done, $item->images_total);
+				  	$text = sprintf(__('Upscaling - Item has been sent to ShortPixel (%d/%d)','shortpixel-image-optimiser'), $item->images_done, $item->images_total);
 				}
 
 				switch($item->apiStatus)

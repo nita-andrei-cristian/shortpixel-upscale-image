@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 ?>
-<div id='spui-data-<?php echo esc_attr( $view->id ); ?>' class='column-spui view-edit-media'
+<div id='shortpixel-data-<?php echo esc_attr( $view->id ); ?>' class='column-spui view-edit-media'
   data-imagewidth="<?php echo esc_attr( $view->image['width'] ); ?>"
   data-imageheight="<?php echo esc_attr( $view->image['height'] ); ?>"
   data-extension="<?php echo esc_attr( $view->image['extension'] ); ?>"

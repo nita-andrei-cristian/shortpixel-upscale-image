@@ -27,16 +27,7 @@ var ShortPixel = function() {
         //are we on media list?
         if( jQuery('table.wp-list-table.media').length > 0) {
             //register a bulk action
-            jQuery('select[name^="action"] option:last-child').before('<option value="shortpixel-optimize">' + _spTr.optimizeWithSP
-                + '</option><option value="shortpixel-optimize"> → ' + _spTr.optimize
-                + '</option><option value="shortpixel-lossy"> → ' + _spTr.redoLossy
-                + '</option><option value="shortpixel-glossy"> → ' + _spTr.redoGlossy
-                + '</option><option value="shortpixel-lossless"> → ' + _spTr.redoLossless
-                + '</option><option value="shortpixel-restore"> → ' + _spTr.restoreOriginal
-				+ '</option><option value="shortpixel-smartcrop"> → ' + _spTr.redoSmartcrop
-				+ '</option><option value="shortpixel-smartcropless"> → ' + _spTr.redoSmartcropless
-                + '</option><option value="shortpixel-generateai"> → ' + _spTr.generateAI 
-                + '</option><option value="shortpixel-mark-completed"> → ' + _spTr.markCompleted
+            jQuery('select[name^="action"] option:last-child').before('<option value="shortpixel-optimize">' + _spTr.optimize
                 + '</option>');
         }
 
