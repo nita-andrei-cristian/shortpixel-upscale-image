@@ -83,6 +83,8 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
       public function dometaBox($post)
       {
+          UiHelper::setOutputHandler('edit-media');
+
           $this->post_id = $post->ID;
 					$this->view->debugInfo = array();
 					$this->view->id = $this->post_id;

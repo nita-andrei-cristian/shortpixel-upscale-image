@@ -59,16 +59,17 @@
 }
 .view-edit-media .spui-edit-media-actions {
   margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #dcdcde;
   line-height: 1.4;
 }
 .view-edit-media .spui-edit-media-actions .button {
   margin: 0 6px 6px 0;
 }
 .view-edit-media .spui-status-text {
-  font-size: 12px;
   color: #50575e;
   margin: 0 0 10px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 .view-edit-media .main-actions {
   display: inline-block;

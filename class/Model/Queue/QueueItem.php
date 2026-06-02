@@ -684,7 +684,7 @@ class QueueItem
       }
       else
       {
-         $paramlist['newFileName'] = $originalFile->getFileBase() . '_noscale' . $originalFile->getExtension(); 
+         $paramlist['newFileName'] = UiHelper::buildUpscaleFileName($originalFile, $args['scale']); 
       }
 
       $paramlist['newPostTitle'] = $args['newPostTitle'];

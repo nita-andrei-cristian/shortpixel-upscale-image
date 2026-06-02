@@ -290,6 +290,41 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 				});
 			}
 
+			let newFileNameInput = modal.querySelector('input[name="new_filename"]');
+			let scaleInputs = modal.querySelectorAll('input[name="scale"]');
+			if (null !== newFileNameInput && scaleInputs.length > 0)
+			{
+				const buildUpscaleFileName = (scaleValue) => {
+					let fileBase = newFileNameInput.dataset.fileBase || '';
+					let extension = newFileNameInput.dataset.fileExtension || '';
+					return fileBase + '_upscale_' + scaleValue + 'x.' + extension;
+				};
+
+				newFileNameInput.addEventListener('input', () => {
+					newFileNameInput.dataset.userEdited = (newFileNameInput.value !== newFileNameInput.dataset.generatedValue) ? '1' : '0';
+				});
+
+				for (let i = 0; i < scaleInputs.length; i++)
+				{
+					scaleInputs[i].addEventListener('change', (event) => {
+						let nextValue = buildUpscaleFileName(event.target.value);
+						let isGenerated = newFileNameInput.value === newFileNameInput.dataset.generatedValue;
+						let isUserEdited = newFileNameInput.dataset.userEdited === '1';
+
+						if (isGenerated || ! isUserEdited)
+						{
+							newFileNameInput.value = nextValue;
+						}
+
+						newFileNameInput.dataset.generatedValue = nextValue;
+						if (newFileNameInput.value === nextValue)
+						{
+							newFileNameInput.dataset.userEdited = '0';
+						}
+					});
+				}
+			}
+
 			
 
 
@@ -1044,7 +1079,6 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 	}
 
 } // class
-
 
 
 

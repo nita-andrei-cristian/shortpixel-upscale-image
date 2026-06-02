@@ -760,6 +760,12 @@ div.spio-modal-title {
   padding-top: 8px;
   padding-bottom: 14px;
 }
+.wrap.is-shortpixel-settings-page .setting-tab setting.default-upscale-factor name {
+  color: #000;
+}
+.wrap.is-shortpixel-settings-page .setting-tab setting.default-upscale-factor info {
+  color: #116C7E;
+}
 .wrap.is-shortpixel-settings-page .setting-tab setting.default-upscale-factor .upscale-factor-options {
   display: flex;
   flex-wrap: wrap;

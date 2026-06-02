@@ -51,9 +51,42 @@ class UiHelper
   // SPUI: success text shown in the media column when the image has already been upscaled.
   public static function renderSuccessText($imageObj)
   {
+    $message = esc_html__( 'This image has been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+    $editUrl = '';
+
+    if (is_object($imageObj) && method_exists($imageObj, 'get'))
+    {
+      $itemId = intval($imageObj->get('id'));
+      if ($itemId > 0)
+      {
+        $editUrl = esc_url(get_edit_post_link($itemId, ''));
+      }
+    }
+
+    $messageHtml = ($editUrl !== '')
+      ? '<a href="' . $editUrl . '">' . $message . '</a>'
+      : $message;
+
+    if (self::$outputMode === 'list-media')
+    {
+      return '<p>' . $messageHtml . '<i class="shortpixel-icon ai" title="' . esc_attr($message) . '"></i></p>';
+    }
+
     $iconUrl = esc_url( plugins_url( 'res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE ) );
-    return '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> '
-         . esc_html__( 'This image has been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+    $text = '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> ' . $messageHtml;
+
+    return $text;
+  }
+
+  public static function buildUpscaleFileName($fileObj, $scale = null)
+  {
+    $scale = intval($scale);
+    if ($scale <= 0)
+    {
+      $scale = 2;
+    }
+
+    return $fileObj->getFileBase() . '_upscale_' . $scale . 'x.' . $fileObj->getExtension();
   }
 
   public static function compressionTypeToText($type)
@@ -99,8 +132,10 @@ class UiHelper
     if (! $access->imageIsEditable($mediaItem))  { return []; }
     if ($id === 0)                               { return []; }
 
-    // Always show the Upscale Now button; set disabled + title to communicate state.
-    $action = self::getAction('optimize', $id);
+    $isUpscaled = $mediaItem->isOptimized() || get_post_meta($id, '_spui_scaled', true);
+
+    // Reuse the same editor action after a successful upscale, but keep internal identifiers untouched.
+    $action = ($isUpscaled) ? self::getAction('re-upscale', $id) : self::getAction('optimize', $id);
 
     if (! $quotaControl->hasQuota())
     {
@@ -118,7 +153,7 @@ class UiHelper
       $action['title']    = $mediaItem->getReason('processable');
     }
 
-    $actions['optimize'] = $action;
+    $actions[($isUpscaled) ? 're-upscale' : 'optimize'] = $action;
     return $actions;
   }
 
@@ -151,10 +186,7 @@ class UiHelper
     }
     elseif ($mediaItem->isOptimized() || get_post_meta($mediaItem->get('id'), '_spui_scaled', true))
     {
-      // Success state: icon + confirmation text.
-      $iconUrl = esc_url( plugins_url( 'res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE ) );
-      $text    = '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> '
-               . esc_html__( 'This image has been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+      $text = self::renderSuccessText($mediaItem);
     }
     elseif (! $quotaControl->hasQuota())
     {
@@ -171,6 +203,11 @@ class UiHelper
       {
         $text = esc_html($reason);
       }
+    }
+    elseif (self::$outputMode === 'list-media')
+    {
+      $message = esc_html__( 'This image has not been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+      $text = '<p>' . $message . '<i class="shortpixel-icon no-ai" title="' . esc_attr($message) . '"></i></p>';
     }
 
     return $text;
@@ -230,7 +267,15 @@ class UiHelper
          $action['function'] = 'window.ShortPixelProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
          $action['type']  = 'js';
          $action['text'] = __('Upscale Now', 'shortpixel-upscale-image');
-         $action['display'] = 'button';
+         if (self::$outputMode === 'list-media')
+         {
+           $action['display'] = 'button';
+         }
+         else
+         {
+           $action['display'] = 'action-button';
+           $action['custom_classes'] = 'spui-action-button';
+         }
          $action['is-optimizable'] = true;
       break;
       case 'forceOptimize':
@@ -313,8 +358,16 @@ class UiHelper
         // SPUI: Re-upscale button shown after a successful upscale.
         $action['function'] = 'window.ShortPixelProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
         $action['type']     = 'js';
-        $action['text']     = __('Re-upscale', 'shortpixel-upscale-image');
-        $action['display']  = 'button';
+        $action['text']     = __('Upscale again', 'shortpixel-upscale-image');
+        if (self::$outputMode === 'list-media')
+        {
+          $action['display'] = 'button';
+        }
+        else
+        {
+          $action['display']  = 'action-button';
+          $action['custom_classes'] = 'spui-action-button';
+        }
         $action['is-optimizable'] = true;
      break;
      case 're-upscale-glossy':

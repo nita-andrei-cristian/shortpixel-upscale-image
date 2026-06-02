@@ -34,13 +34,15 @@ if ( ! defined( 'ABSPATH' ) ) {
   </div>
 <?php endif; ?>
 
-<?php if ( property_exists( $this->view, 'text' ) && strlen( $this->view->text ) > 0 ) : ?>
-  <p class="spui-status-text"><?php echo wp_kses_post( $this->view->text ); ?></p>
-<?php endif; ?>
-
-<?php if ( isset( $this->view->actions ) && count( $this->view->actions ) > 0 ) : ?>
+<?php if ( ( property_exists( $this->view, 'text' ) && strlen( $this->view->text ) > 0 ) || ( isset( $this->view->actions ) && count( $this->view->actions ) > 0 ) ) : ?>
 <div class='spui-edit-media-actions shortpixel-upscale-interface' data-spui-actions="<?php echo esc_attr( $view->id ); ?>">
-  <?php $this->loadView( 'snippets/part-single-actions', false ); ?>
+  <?php if ( property_exists( $this->view, 'text' ) && strlen( $this->view->text ) > 0 ) : ?>
+    <p class="spui-status-text"><?php echo wp_kses_post( $this->view->text ); ?></p>
+  <?php endif; ?>
+
+  <?php if ( isset( $this->view->actions ) && count( $this->view->actions ) > 0 ) : ?>
+    <?php $this->loadView( 'snippets/part-single-actions', false ); ?>
+  <?php endif; ?>
 </div>
 <?php endif; ?>
 

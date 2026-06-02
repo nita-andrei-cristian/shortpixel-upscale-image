@@ -51,6 +51,7 @@ class NextGenViewController extends \ShortPixel\ViewController
    public function loadItem( $nextGenObj ) {
 
        $this->view = new \stdClass; // reset every row
+       UiHelper::setOutputHandler('list-media');
 
        $otherMediaController = OtherMediaController::getInstance();
        $mediaItem = $otherMediaController->getCustomImageByPath($nextGenObj->imagePath);

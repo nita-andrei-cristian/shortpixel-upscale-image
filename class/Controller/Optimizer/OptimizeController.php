@@ -447,9 +447,10 @@ class OptimizeController extends OptimizerBase
 
            $new_attach_id = media_handle_sideload($fileArray, $attached_post_id, $newPostTitle);
 
-           // SPUI: mark the original attachment as scaled so bulk skips it.
+           // SPUI: mark both the source and the generated attachment as scaled.
            if ( ! is_wp_error($new_attach_id) ) {
              update_post_meta($item_id, '_spui_scaled', (int) $new_attach_id);
+             update_post_meta($new_attach_id, '_spui_scaled', (int) $item_id);
            }
 
            $qItem->addResult(['new_attach_id' => $new_attach_id] );

@@ -77,6 +77,8 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   protected function loadItem($id)
   {
+     UiHelper::setOutputHandler('list-media');
+
      $fs = \wpSPIO()->filesystem();
      $mediaItem = $fs->getMediaImage($id);
 

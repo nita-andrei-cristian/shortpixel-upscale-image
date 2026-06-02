@@ -16,6 +16,12 @@ $fileName = $originalImage->getFileName();
 $placeholderImage = $this->data['placeholderImage'];
 $post_title = $this->data['post_title'];
 $action_name = $this->data['action_name'];
+$defaultScale = isset($this->data['defaultScale']) ? intval($this->data['defaultScale']) : 2;
+
+if (! in_array($defaultScale, [2, 3, 4], true))
+{
+	$defaultScale = 2;
+}
 
 switch($action_name)
 {
@@ -27,7 +33,7 @@ switch($action_name)
 
 	case 'scale':
 		$modal_title = __('AI Image Upscale', 'shortpixel-image-optimiser');
-		$suggestedFileName = $originalImage->getFileBase() . '_upscale.' . $originalImage->getExtension();
+		$suggestedFileName = \ShortPixel\Helper\UiHelper::buildUpscaleFileName($originalImage, $defaultScale);
 
 	break;
 }
@@ -41,14 +47,14 @@ $scale_sizes =
  ];
 
  $scaleOptions = '';
- $checked = 2; // this should be dynamified at some.
+ $checked = $defaultScale;
  foreach($scale_sizes as $scaleName => $max_size)
  {
-	$checked = ($checked == $scaleName) ? 'checked' : '';
+	$isChecked = ((string) $checked === (string) $scaleName) ? 'checked' : '';
 	$disabled = ($max_size <= $image_width) ? ' disabled ' : '';
 
 	 $scaleOptions .= sprintf('<li><input type="radio" name="scale" value="%s" %s > %s </li>',
-	 $scaleName, $checked . $disabled, $scaleName . 'x'
+	 $scaleName, $isChecked . $disabled, $scaleName . 'x'
 	);
  }
 
@@ -131,7 +137,7 @@ $scale_sizes =
 		<section class='new_file_title wrapper'>
 			<span>
 				<p><?php _e('New File Name', 'shortpixel-image-optimiser'); ?></p>
-				<input type="text" name="new_filename" value="<?php echo esc_attr($suggestedFileName) ?>">
+				<input type="text" name="new_filename" value="<?php echo esc_attr($suggestedFileName) ?>" data-file-base="<?php echo esc_attr($originalImage->getFileBase()); ?>" data-file-extension="<?php echo esc_attr($originalImage->getExtension()); ?>" data-generated-value="<?php echo esc_attr($suggestedFileName); ?>">
 			</span>
 
 			<span>

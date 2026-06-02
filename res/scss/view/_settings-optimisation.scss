@@ -184,6 +184,14 @@
 				padding-bottom: 14px;
 			}
 
+			name {
+				color: #000;
+			}
+
+			info {
+				color: $blue_dark;
+			}
+
 			.upscale-factor-options {
 				display: flex;
 				flex-wrap: wrap;

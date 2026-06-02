@@ -448,6 +448,7 @@ class AjaxController
 			'item_id' => $item_id, 
 			'post_title' => $post->post_title, 
 			'action_name' => $action_name, 
+			'defaultScale' => intval(\wpSPIO()->settings()->defaultUpscaleFactor),
 			]
 		 ); 
 
