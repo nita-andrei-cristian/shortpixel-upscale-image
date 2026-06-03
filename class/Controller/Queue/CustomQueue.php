@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel\Controller\Queue;
+namespace SPUI\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortQ\ShortQ as ShortQ;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortQ\ShortQ as ShortQ;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
 class CustomQueue extends Queue
 {
@@ -30,7 +30,7 @@ class CustomQueue extends Queue
          'enqueue_limit' => 120,
       );
 
-     $options = apply_filters('shortpixel/customqueue/options', $options);
+     $options = apply_filters('spui/customqueue/options', $options);
      $this->q->setOptions($options);
    }
 
@@ -165,7 +165,7 @@ class CustomQueue extends Queue
      $limit = $this->q->getOption('enqueue_limit');
      $prepare = array();
      $items = array();
-     $fastmode = apply_filters('shortpixel/queue/fastmode', false);
+     $fastmode = apply_filters('spui/queue/fastmode', false);
 
      $options = $this->getOptions(); 
 

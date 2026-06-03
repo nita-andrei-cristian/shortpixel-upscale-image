@@ -2,37 +2,37 @@
  * Short Pixel WordPress Plugin javascript
  */
 // init checks bulkProcess on each page. initSettings is when the settings View is being loaded.
-jQuery(document).ready(function(){ShortPixel.init(); });
+jQuery(document).ready(function(){SPUI.init(); });
 
 function delayedInit() {
-    if(typeof ShortPixel !== 'undefined' && ShortPixel.didInit == false) {
+    if(typeof SPUI !== 'undefined' && SPUI.didInit == false) {
 
-        console.error('ShortPixel: Delayed Init. Check your installation for errors');
-        ShortPixel.init();
+        console.error('SPUI: Delayed Init. Check your installation for errors');
+        SPUI.init();
     } else {
         setTimeout(delayedInit, 10000);
     }
 }
 setTimeout(delayedInit, 10000);
 
-var ShortPixel = function() {
+var SPUI = function() {
 
 	 var updateTimer;
 
 	// The InitSettings usually runs before these settings, making everything complicated (@todo)
     function init() {
 
-        if (typeof ShortPixel.API_IS_ACTIVE !== 'undefined') return; //was initialized by the 10 sec. setTimeout, rare but who knows, might happen on very slow connections...
+        if (typeof SPUI.API_IS_ACTIVE !== 'undefined') return; //was initialized by the 10 sec. setTimeout, rare but who knows, might happen on very slow connections...
 
         //are we on media list?
         if( jQuery('table.wp-list-table.media').length > 0) {
             //register a bulk action
-            jQuery('select[name^="action"] option:last-child').before('<option value="shortpixel-optimize">' + _spTr.optimize
+            jQuery('select[name^="action"] option:last-child').before('<option value="shortpixel-optimize">' + spuiTr.optimize
                 + '</option>');
         }
 
         // Extracting the protected Array from within the 0 element of the parent array
-        ShortPixel.setOptions(ShortPixelConstants[0]);
+        SPUI.setOptions(SPUIConstants[0]);
 
 				/*if (jQuery('#shortpixel-form-request-key').length > 0)
 				{
@@ -41,9 +41,9 @@ var ShortPixel = function() {
 						jQuery('#request_key').on('click', jQuery.proxy(this.newApiKey, this));
 				} */
 
-        if (window.ShortPixelProcessor)
+        if (window.SPUIProcessor)
 				{
-          window.ShortPixelProcessor.Load(ShortPixel['HAS_QUOTA']);
+          window.SPUIProcessor.Load(SPUI['HAS_QUOTA']);
 				}
         this.didInit = true;
 
@@ -60,7 +60,7 @@ var ShortPixel = function() {
     }
     function setOptions(options) {
         for(var opt in options) {
-            ShortPixel[opt] = options[opt];
+            SPUI[opt] = options[opt];
         }
     }
 /*
@@ -71,13 +71,13 @@ var ShortPixel = function() {
 */
     function updateSignupEmail() {
 
-				clearTimeout( ShortPixel.updateTimer );
+				clearTimeout( SPUI.updateTimer );
 
-				ShortPixel.updateTimer = setTimeout( function() {
+				SPUI.updateTimer = setTimeout( function() {
 
         var email = jQuery('#pluginemail').val().trim();
 				var $submit = jQuery('#request_key');
-				var isValid = ShortPixel.isEmailValid(email)
+				var isValid = SPUI.isEmailValid(email)
         if(isValid) {
             jQuery('#request_key').removeClass('disabled');
 						$submit.removeClass('disabled');
@@ -146,23 +146,23 @@ var ShortPixel = function() {
             };
         }
 
-        ShortPixel.enableResize("#resize");
+        SPUI.enableResize("#resize");
 
         jQuery("#resize").on('change', function(){ enableResize(this); });
         jQuery(".resize-sizes").on('blur', function(e){
             var elm = jQuery(e.target);
 
-            if(ShortPixel.resizeSizesAlert == elm.val())
+            if(SPUI.resizeSizesAlert == elm.val())
               return; // returns if check in progress, presumed.
 
-            ShortPixel.resizeSizesAlert = elm.val();
+            SPUI.resizeSizesAlert = elm.val();
             var minSize = jQuery("#min-" + elm.attr('name')).val();
             var niceName = jQuery("#min-" + elm.attr('name')).data('nicename');
             if(elm.val() < Math.min(minSize, 1024)) { // @todo is this correct? This will always be < 1024, and give first error
                 if(minSize > 1024) {
-                    alert( SPstringFormat(_spTr.pleaseDoNotSetLesser1024,niceName) );
+                    alert( SPstringFormat(spuiTr.pleaseDoNotSetLesser1024,niceName) );
                 } else {
-                    alert( SPstringFormat(_spTr.pleaseDoNotSetLesserSize, niceName, niceName, minSize) );
+                    alert( SPstringFormat(spuiTr.pleaseDoNotSetLesserSize, niceName, niceName, minSize) );
                 }
                 e.preventDefault();
                 //elm.val(this.defaultValue);
@@ -199,20 +199,20 @@ var ShortPixel = function() {
     }
 
     function initSettings() {
-      //  ShortPixel.adjustSettingsTabs();
-        ShortPixel.setupGeneralTab(); // certain alerts.
+      //  SPUI.adjustSettingsTabs();
+        SPUI.setupGeneralTab(); // certain alerts.
 
 
 
         jQuery("article.sp-tabs a.tab-link").on('click', function(e){
             var theID = jQuery(e.target).data("id");
-            ShortPixel.switchSettingsTab( theID );
+            SPUI.switchSettingsTab( theID );
         });
 
 				// Init active tab
 			/*	var activeTab = document.querySelector('section.sel-tab');
 				if (activeTab !== null);
-				ShortPixel.switchSettingsTab(activeTab.getAttribute('id')); */
+				SPUI.switchSettingsTab(activeTab.getAttribute('id')); */
     }
 
     // Switch between settings tabs.
@@ -230,7 +230,7 @@ var ShortPixel = function() {
         var uri = window.location.href.toString();
         if (uri.indexOf("?") > 0) {
             var clean_uri = uri.substring(0, uri.indexOf("?"));
-            clean_uri += '?' + jQuery.param({'page':'wp-shortpixel-settings', 'part': tab});
+            clean_uri += '?' + jQuery.param({'page':'shortpixel-upscale-settings', 'part': tab});
           //  window.history.replaceState({}, document.title, clean_uri);
         }
 
@@ -239,7 +239,7 @@ var ShortPixel = function() {
             jQuery('section .wp-shortpixel-tab-content').fadeOut(50);
             jQuery(section).addClass("sel-tab");
 
-            jQuery(section).find('.wp-shortpixel-tab-content').fadeIn(50, ShortPixel.adjustSettingsTabs);
+            jQuery(section).find('.wp-shortpixel-tab-content').fadeIn(50, SPUI.adjustSettingsTabs);
 
 						var event = new CustomEvent('shortpixel.ui.settingsTabLoad', { detail : {tabName: tab, section: section }});
 						window.dispatchEvent(event);
@@ -262,12 +262,12 @@ var ShortPixel = function() {
 
     function checkQuota() {
         var data = {
-          action:'shortpixel_check_quota',
-          nonce: ShortPixelConstants[0].nonce_ajaxrequest,
+          action:'spui_check_quota',
+          nonce: SPUIConstants[0].nonce_ajaxrequest,
           return_json: true
         };
 
-        jQuery.post(ShortPixel.AJAX_URL, data, function(result) {
+        jQuery.post(SPUI.AJAX_URL, data, function(result) {
             window.location.href = result.redirect;
         });
     }
@@ -290,7 +290,7 @@ var ShortPixel = function() {
         var browseResponse = "";
         jQuery.ajax({
             type: "POST",
-            url: ShortPixel.AJAX_URL,
+            url: SPUI.AJAX_URL,
             data: browseData,
             success: function(response) {
                  browseResponse = response;
@@ -303,7 +303,7 @@ var ShortPixel = function() {
 
     function newApiKey(event) {
 				event.preventDefault();
-        ShortPixel.updateSignupEmail();
+        SPUI.updateSignupEmail();
 
         if(!jQuery("#tos").is( ":checked" )) {
             event.preventDefault();
@@ -327,20 +327,20 @@ var ShortPixel = function() {
 
     function proposeUpgrade() {
         //first open the popup window with the spinner
-        jQuery("#shortPixelProposeUpgrade .sp-modal-body").addClass('sptw-modal-spinner');
-        jQuery("#shortPixelProposeUpgrade .sp-modal-body").html("");
-        jQuery("#shortPixelProposeUpgradeShade").css("display", "block");
-        jQuery("#shortPixelProposeUpgrade").removeClass('shortpixel-hide');
-        jQuery("#shortPixelProposeUpgradeShade").on('click', this.closeProposeUpgrade);
+        jQuery("#spuiProposeUpgrade .sp-modal-body").addClass('sptw-modal-spinner');
+        jQuery("#spuiProposeUpgrade .sp-modal-body").html("");
+        jQuery("#spuiProposeUpgradeShade").css("display", "block");
+        jQuery("#spuiProposeUpgrade").removeClass('shortpixel-hide');
+        jQuery("#spuiProposeUpgradeShade").on('click', this.closeProposeUpgrade);
         //get proposal from server
-        var browseData = { 'action': 'shortpixel_propose_upgrade', nonce: ShortPixelConstants[0].nonce_ajaxrequest};
+        var browseData = { 'action': 'spui_propose_upgrade', nonce: SPUIConstants[0].nonce_ajaxrequest};
         jQuery.ajax({
             type: "POST",
-            url: ShortPixel.AJAX_URL,
+            url: SPUI.AJAX_URL,
             data: browseData,
             success: function(response) {
-                jQuery("#shortPixelProposeUpgrade .sp-modal-body").removeClass('sptw-modal-spinner');
-                jQuery("#shortPixelProposeUpgrade .sp-modal-body").html(response);
+                jQuery("#spuiProposeUpgrade .sp-modal-body").removeClass('sptw-modal-spinner');
+                jQuery("#spuiProposeUpgrade .sp-modal-body").html(response);
             },
 						complete: function(response, status)
 						{
@@ -350,10 +350,10 @@ var ShortPixel = function() {
     }
 
     function closeProposeUpgrade() {
-        jQuery("#shortPixelProposeUpgradeShade").css("display", "none");
-        jQuery("#shortPixelProposeUpgrade").addClass('shortpixel-hide');
-        if(ShortPixel.toRefresh) {
-            ShortPixel.checkQuota();
+        jQuery("#spuiProposeUpgradeShade").css("display", "none");
+        jQuery("#spuiProposeUpgrade").addClass('shortpixel-hide');
+        if(SPUI.toRefresh) {
+            SPUI.checkQuota();
         }
     }
 
@@ -408,7 +408,7 @@ var ShortPixel = function() {
         }
         if(this.comparerData.jsLoaded === false) {
              jQuery.getScript(this.WP_PLUGIN_URL + '/res/js/jquery.twentytwenty.min.js', function(){
-                ShortPixel.comparerData.jsLoaded = 2;
+                SPUI.comparerData.jsLoaded = 2;
 
             });
             this.comparerData.jsLoaded = 1;
@@ -419,14 +419,14 @@ var ShortPixel = function() {
                   var type = 'media';  // default.
             jQuery.ajax({
                 type: "POST",
-                url: ShortPixel.AJAX_URL,
-								data: { action: 'shortpixel_ajaxRequest', screen_action : 'getComparerData', id : id, type: type, nonce: ShortPixelProcessorData.nonce_ajaxrequest },
+                url: SPUI.AJAX_URL,
+								data: { action: 'spui_ajaxRequest', screen_action : 'getComparerData', id : id, type: type, nonce: SPUIProcessorData.nonce_ajaxrequest },
                 success: function(response) {
                   //  data = JSON.parse(response);
 
-                    jQuery.extend(ShortPixel.comparerData, response);
-                    if(ShortPixel.comparerData.jsLoaded == 2) {
-                        ShortPixel.displayComparerPopup(ShortPixel.comparerData.width, ShortPixel.comparerData.height, ShortPixel.comparerData.origUrl, ShortPixel.comparerData.optUrl);
+                    jQuery.extend(SPUI.comparerData, response);
+                    if(SPUI.comparerData.jsLoaded == 2) {
+                        SPUI.displayComparerPopup(SPUI.comparerData.width, SPUI.comparerData.height, SPUI.comparerData.origUrl, SPUI.comparerData.optUrl);
                     }
                 }
             });
@@ -443,7 +443,7 @@ var ShortPixel = function() {
         var modalShade = jQuery('.sp-modal-shade');
 
         if(!sideBySide) {
-            jQuery("#spCompareSlider").html('<img alt="' +  _spTr.originalImage + '" class="spUploadCompareOriginal"/><img alt="' +  _spTr.optimizedImage + '" class="spUploadCompareOptimized"/>');
+            jQuery("#spCompareSlider").html('<img alt="' +  spuiTr.originalImage + '" class="spUploadCompareOriginal"/><img alt="' +  spuiTr.optimizedImage + '" class="spUploadCompareOptimized"/>');
         }
         //calculate the modal size
         width = Math.max(350, Math.min(800, (width < 350 ? (width + 25) * 2 : (height < 150 ? width + 25 : width))));
@@ -467,9 +467,9 @@ var ShortPixel = function() {
         }
 
         // Close Options
-        jQuery(".sp-close-button").on('click',  { modal: modal}, ShortPixel.closeComparerPopup);
-        jQuery(document).on('keyup.sp_modal_active', { modal: modal}, ShortPixel.closeComparerPopup );
-        jQuery('.sp-modal-shade').on('click', { modal: modal},  ShortPixel.closeComparerPopup, );
+        jQuery(".sp-close-button").on('click',  { modal: modal}, SPUI.closeComparerPopup);
+        jQuery(document).on('keyup.sp_modal_active', { modal: modal}, SPUI.closeComparerPopup );
+        jQuery('.sp-modal-shade').on('click', { modal: modal},  SPUI.closeComparerPopup, );
 
         //change images srcs
         var imgOpt = jQuery(".spUploadCompareOptimized", modal);
@@ -552,7 +552,7 @@ var ShortPixel = function() {
         returnedStatusSearching: 0, // How often this status has come back in a row from server.
 
     }
-}(); // End of ShortPixel
+}(); // End of SPUI
 
 // first is string to replace, rest are arguments.
 function SPstringFormat() {

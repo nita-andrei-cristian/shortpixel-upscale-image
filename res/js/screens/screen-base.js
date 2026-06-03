@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelScreenBase
+class SPUIScreenBase
 {
 	isCustom = true;
 	isMedia = true;
@@ -21,7 +21,7 @@ class ShortPixelScreenBase
 	constructor(MainScreen, processor)
 	{
 		 this.processor = processor;
-		 this.strings = spio_screenStrings;
+		 this.strings = spui_screenStrings;
 	}
 
 	// Function for subclasses to add more init. Seperated because of screens that need to call Process functions when starting.

@@ -1,16 +1,16 @@
 <?php
 
-namespace ShortPixel\Model\Converter;
+namespace SPUI\Model\Converter;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPUI\Helper\UtilHelper as UtilHelper;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Queue\QueueItem as QueueItem;
 
 class ApiConverter extends MediaLibraryConverter
 {
@@ -21,7 +21,7 @@ class ApiConverter extends MediaLibraryConverter
 
 	public function isConvertable()
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$extension = $this->imageModel->getExtension();
 
 		// If extension is in list of allowed Api Converts.
@@ -107,18 +107,18 @@ class ApiConverter extends MediaLibraryConverter
 
 		$this->setupReplacer();
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		$extension = $this->imageModel->getExtension();
 
 		if ('heic' === $extension) {
-			$placeholderFile = $fs->getFile(\wpSPIO()->plugin_path('res/img/fileformat-heic-placeholder.jpg'));
+			$placeholderFile = $fs->getFile(\wpSPUI()->plugin_path('res/img/fileformat-heic-placeholder.jpg'));
 		} elseif ('tiff' === $extension || 'tif' === $extension) {
-			$placeholderFile = $fs->getFile(\wpSPIO()->plugin_path('res/img/fileformat-tiff-placeholder.jpg'));
+			$placeholderFile = $fs->getFile(\wpSPUI()->plugin_path('res/img/fileformat-tiff-placeholder.jpg'));
 		} elseif ('bmp' === $extension) {
-			$placeholderFile = $fs->getFile(\wpSPIO()->plugin_path('res/img/fileformat-bmp-placeholder.jpg'));
+			$placeholderFile = $fs->getFile(\wpSPUI()->plugin_path('res/img/fileformat-bmp-placeholder.jpg'));
 		} else { // wrong file better than no file.
-			$placeholderFile = $fs->getFile(\wpSPIO()->plugin_path('res/img/fileformat-heic-placeholder.jpg'));
+			$placeholderFile = $fs->getFile(\wpSPUI()->plugin_path('res/img/fileformat-heic-placeholder.jpg'));
 		}
 
 		// Convert runs when putting imageModel to queue format in the Queue classs. This could run without optimization (before) taking place and when accidentally running it more than once results in duplicate files / backups (img-1, img-2 etc). Check placeholder and baseName to prevent this. Assume already done when it has it .
@@ -162,7 +162,7 @@ class ApiConverter extends MediaLibraryConverter
 			}
 
 			// Don't offload until the API file has been returned properly.
-			do_action('shortpixel/converter/prevent-offload', $this->imageModel->get('id'));
+			do_action('spui/converter/prevent-offload', $this->imageModel->get('id'));
 
 			// Turning off replacer, since it's always called off in Api?
 			//	$this->setTarget($destinationFile);
@@ -197,7 +197,7 @@ class ApiConverter extends MediaLibraryConverter
 	public function restore()
 	{
 		/*$params = array('restore' => true);
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
 
 			$this->setupReplacer();
 
@@ -231,7 +231,7 @@ class ApiConverter extends MediaLibraryConverter
 	public function handleConverted($optimizeData)
 	{
 		$this->setupReplacer();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		$extension = $this->imageModel->getExtension();
 		$replacementBase = $this->imageModel->getMeta()->convertMeta()->getReplacementImageBase();

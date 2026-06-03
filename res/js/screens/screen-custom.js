@@ -1,6 +1,6 @@
 'use strict';
 // MainScreen as an option for delegate functions
-class ShortPixelScreen extends ShortPixelScreenItemBase
+class SPUIScreen extends SPUIScreenItemBase
 {
     isCustom = true;
     isMedia = true;
@@ -292,7 +292,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
 
       if (null === this.folderTree)
       {
-        this.folderTree = new ShortPixelFolderTree(picker, this.processor);
+        this.folderTree = new SPUIFolderTree(picker, this.processor);
         picker.addEventListener('shortpixel-folder.selected', this.HandleFolderSelectedEvent.bind(this));
       }
 

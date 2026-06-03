@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
-use ShortPixel\Notices\NoticeController as Notices;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notice;
+use SPUI\Notices\NoticeController as Notices;
 
 
 abstract class AdminNoticeModel

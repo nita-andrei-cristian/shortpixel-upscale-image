@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\QuotaController as QuotaController;
 
 // Central place for user / access checking, roles etc.
 class AccessModel
@@ -42,7 +42,7 @@ class AccessModel
 					'actions' => array(),
 			);
 
-		 $spioCaps = apply_filters('shortpixel/init/permissions', $spioCaps);
+		 $spioCaps = apply_filters('spui/init/permissions', $spioCaps);
 		 // $this->cap_actions = bla.
 		 $this->caps = $spioCaps;
 

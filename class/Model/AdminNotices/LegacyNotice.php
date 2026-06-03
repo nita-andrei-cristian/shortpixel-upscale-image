@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class LegacyNotice extends \ShortPixel\Model\AdminNoticeModel
+class LegacyNotice extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_CONVERT_LEGACY';
 

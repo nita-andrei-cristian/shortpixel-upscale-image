@@ -1,9 +1,9 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 use PHPCSExtra\Universal\Sniffs\CodeAnalysis\NoEchoSprintfSniff;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </button>
 
 			<div class='dashboard-text'>
-         <a class='button button-primary' type="button" href="<?php echo admin_url('options-general.php?page=wp-shortpixel-settings&part=help'); ?>" target="_blank">
+         <a class='button button-primary' type="button" href="<?php echo admin_url('options-general.php?page=shortpixel-upscale-settings&part=help'); ?>" target="_blank">
          <span class='icon white'><?php echo UIHelper::getIcon('res/images/icon/help-circle.svg', ['width' => '16']); ?></span> 
          <span><?php _e('Help','shortpixel-image-optimiser'); ?></span>
          </a> 

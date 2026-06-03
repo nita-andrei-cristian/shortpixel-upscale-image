@@ -1,20 +1,20 @@
 <?php
 
-namespace ShortPixel\Controller\Front;
+namespace SPUI\Controller\Front;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\ApiKeyController;
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\FrontImage as FrontImage;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Replacer\Replacer as Replacer;
+use SPUI\Controller\ApiKeyController;
+use SPUI\Helper\UtilHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\FrontImage as FrontImage;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Replacer\Replacer as Replacer;
 
 
-class CDNController extends \ShortPixel\Controller\Front\PageConverter
+class CDNController extends \SPUI\Controller\Front\PageConverter
 {
 
 	protected $cdn_domain;
@@ -52,7 +52,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 		$this->startOutputBuffer('processFront');
 
 
-		$this->regex_exclusions = apply_filters('shortpixel/front/cdn/regex_exclude', [
+		$this->regex_exclusions = apply_filters('spui/front/cdn/regex_exclude', [
 			'*gravatar.com*',
 			'/data:image\/.*/',
 			'*' . $this->cdn_domain . '*', 
@@ -67,7 +67,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 		]);
 
 		// string || preg
-		$this->replace_method = apply_filters('shortpixel/front/cdn/replace_method', 'preg'); 
+		$this->replace_method = apply_filters('spui/front/cdn/replace_method', 'preg'); 
 	}
 
 
@@ -115,7 +115,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 	public function purgeCDN($args = [])
 	{
 		$purge = $args['purge']; 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 	//	$purge_domain = 'https://no-cdn.shortpixel.ai/purge-cdn-cache-bulk'; 
 
 		$result = [
@@ -162,7 +162,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 		$action = isset($args['action']) ? $args['action'] : ''; 
 		$purge_domain = 'https://no-cdn.shortpixel.ai'; 
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$apiKeyController = ApiKeyController::getInstance();
 
 		$site_domain = parse_url(get_site_url());
@@ -187,8 +187,8 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 
 	protected function createArguments($args = [])
 	{
-		$settings = \wpSPIO()->settings();
-		$env = \wpSPIO()->env();
+		$settings = \wpSPUI()->settings();
+		$env = \wpSPUI()->env();
 
 
 		$compressionType = $settings->compressionType;
@@ -238,7 +238,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 
 	protected function addWPHooks()
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		if (true === $settings->cdn_js) {
 
@@ -271,7 +271,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 		// 3 Probably check if Src is from local domain, otherwise not replace (?)
 		//$this->setCDNArgument('retauto', 'ret_auto'); // for each of this type.
 
-		$version = \wpSPIO()->settings()->cdn_purge_version;
+		$version = \wpSPUI()->settings()->cdn_purge_version;
 
 		$replaceBlocks = [];
 		$block =  $this->getReplaceBlock($src);
@@ -294,7 +294,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 			return $src;
 		}
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$checkExtensions = []; 
 		$fonts = ['.ttf', '.woff', '.woff2', '.otf']; 
 
@@ -434,7 +434,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 	{
 		if ($CDNDomain === false)
 		{
-			$settings = \wpSPIO()->settings();
+			$settings = \wpSPUI()->settings();
 			$cdn_domain = $settings->CDNDomain;
 		}
 		else
@@ -474,7 +474,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 	 */
 	protected function filterFonts($replaceBlocks)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		if (true === $settings->cdn_css)
 		{
@@ -613,7 +613,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 			// Take Parsed URL and add CDN info to add
 			$url = $replaceBlock->url;
 			$url = str_replace(['http://', 'https://'], '', $url); // always remove scheme
-			$url = apply_filters('shortpixel/front/cdn/url', $url);
+			$url = apply_filters('spui/front/cdn/url', $url);
 
 			$cdnArgs = implode(',', $replaceBlock->args);
 
@@ -769,8 +769,8 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 
 	protected function listenFlush()
 	{
-		add_action('shortpixel/image/after_restore',  [$this, 'flushItem'], 10, 2); // hit this when restoring.
-		add_action('shortpixel/image/optimised', [$this, 'flushItem'], 10, 2);
+		add_action('spui/image/after_restore',  [$this, 'flushItem'], 10, 2); // hit this when restoring.
+		add_action('spui/image/optimised', [$this, 'flushItem'], 10, 2);
 	}
 
 
@@ -820,7 +820,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 
 		$getArgs = [
 			'timeout'=> 8,
-			'sslverify' => apply_filters('shortpixel/system/sslverify', true),
+			'sslverify' => apply_filters('spui/system/sslverify', true),
 			'blocking' => false, 
 		];
 

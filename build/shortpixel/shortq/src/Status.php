@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\ShortQ;
+namespace SPUI\ShortQ;
 
 /* Status Object to hold all relevant values for Queue Status like counts, times run etc.
 * Provider-agnostic so doesn't mingle in saving / loading .

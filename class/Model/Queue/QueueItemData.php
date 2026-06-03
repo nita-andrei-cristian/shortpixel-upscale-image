@@ -1,5 +1,5 @@
 <?php 
-namespace ShortPixel\Model\Queue;
+namespace SPUI\Model\Queue;
 
 if (!defined('ABSPATH')) {
    exit; // Exit if accessed directly.
@@ -7,8 +7,8 @@ if (!defined('ABSPATH')) {
 
 // Handler for QueueItem Data stuff
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Helper\UtilHelper as UtilHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 class QueueItemData
 {
@@ -89,7 +89,7 @@ class QueueItemData
         public function toObject()
         {
              $vars = get_object_vars($this);
-             $vars = array_filter($vars, ['\ShortPixel\Helper\UtilHelper','arrayFilterNullValues']);
+             $vars = array_filter($vars, ['\SPUI\Helper\UtilHelper','arrayFilterNullValues']);
              return (object) $vars; 
             
         }

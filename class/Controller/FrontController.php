@@ -1,15 +1,15 @@
 <?php
 
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class FrontController extends \ShortPixel\Controller
+class FrontController extends \SPUI\Controller
 {
 
 	private static $instance;
@@ -18,7 +18,7 @@ class FrontController extends \ShortPixel\Controller
 	public function __construct()
 	{
 
-			$settings = \wpSPIO()->settings();
+			$settings = \wpSPUI()->settings();
 
 			if (true === $settings->useCDN) {
 				$this->controller = new Front\CDNController();

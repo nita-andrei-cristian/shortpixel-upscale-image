@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="wrap is-shortpixel-settings-page multi-site-settings">
 <h1>
-    <img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/svg/sp-logo-regular.svg')) ?>" width="50" />
+    <img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/svg/sp-logo-regular.svg')) ?>" width="50" />
     <?php esc_html_e('ShortPixel Network Settings','shortpixel-image-optimiser');?>
 </h1>
 

@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
-use ShortPixel\Helper\UiHelper;
+use SPUI\Helper\UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-$settings = \wpSPIO()->settings();
+$settings = \wpSPUI()->settings();
 ?>
 <section class="panel process" data-panel="process" >
   <div class="panel-container">
@@ -204,11 +204,11 @@ $settings = \wpSPIO()->settings();
       </div>
 
       <div class="preview-wrapper">
-			 <div class="slide-mask" id="preview-structure" data-placeholder="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>">
+			 <div class="slide-mask" id="preview-structure" data-placeholder="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>">
 
 					<div class='current preview-image'>
 		        <div class="image source">
-		          <img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
+		          <img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 		          <p><?php esc_html_e('Original Image', 'shortpixel-image-optimiser'); ?></p>
 							<?php $this->loadView('snippets/part-svgloader', false); ?>
 		        </div>
@@ -216,7 +216,7 @@ $settings = \wpSPIO()->settings();
 				        <i class="shortpixel-icon arrow-right"></i>
 			      </div>
 		        <div class="image result">
-		          <img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
+		          <img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 						<p><?php esc_html_e('Upscaled Image', 'shortpixel-image-optimiser'); ?>
 								- <span data-result="improvements-totalpercentage"></span>% <?php _e('smaller', 'shortpixel-image-optimiser'); ?>
 						</p>
@@ -227,13 +227,13 @@ $settings = \wpSPIO()->settings();
 					<div class='new preview-image'>
 
 							<div class="image source">
-								<img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
+								<img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 								<?php $this->loadView('snippets/part-svgloader', false); ?>
 								<p><?php esc_html_e('Original Image','shortpixel-image-optimiser'); ?></p>
 							</div>
 
 							<div class="image result">
-								<img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
+								<img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 								<?php $this->loadView('snippets/part-svgloader', false); ?>
 							<p class='improvement-item'><?php esc_html_e('Upscaled Image','shortpixel-image-optimiser'); ?>
 								- <span data-result="improvements-totalpercentage"></span>% <?php _e('smaller', 'shortpixel-image-optimiser'); ?>

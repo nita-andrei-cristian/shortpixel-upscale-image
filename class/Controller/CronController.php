@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 class CronController
 {
@@ -50,13 +50,13 @@ class CronController
 
   public function cron_schedules($schedules)
   {
-        $schedules['spio_interval'] = array(
-          'interval' => apply_filters('shortpixel/cron/interval', 60),
+        $schedules['spui_interval'] = array(
+          'interval' => apply_filters('spui/cron/interval', 60),
           'display' => __('ShortPixel cron interval', 'shortpixel-image-optimiser')
         );
 
-        $schedules['spio_interval_30min'] = array(
-          'interval' => apply_filters('shortpixel/cron/interval', 30 * MINUTE_IN_SECONDS),
+        $schedules['spui_interval_30min'] = array(
+          'interval' => apply_filters('spui/cron/interval', 30 * MINUTE_IN_SECONDS),
           'display' => __('ShortPixel 30 min interval', 'shortpixel-image-optimiser')
         );
 
@@ -69,19 +69,19 @@ class CronController
       // Defaults
       $background_crons = array(
           'single' => array(
-              'cron_name' => 'spio-single-cron',
+              'cron_name' => 'spui-single-cron',
               'bulk' => false,
 
           ),
           'bulk' => array(
-            'cron_name' => 'spio-bulk-cron',
+            'cron_name' => 'spui-bulk-cron',
             'bulk' => true,
           ),
       );
 
       $custom_crons = array(
           'directory' => array(
-              'cron_name' => 'spio-refresh-dir',
+              'cron_name' => 'spui-refresh-dir',
           )
       );
 
@@ -100,7 +100,7 @@ class CronController
 
   protected function checkActive()
   {
-      $settings = \wpSPIO()->settings();
+      $settings = \wpSPUI()->settings();
       $this->background_is_active = ($settings->doBackgroundProcess) ? true : false;
   }
 
@@ -142,19 +142,19 @@ class CronController
 
   protected function custom_scheduler($unschedule = false)
   {
-      $name = 'spio-refresh-dir';
+      $name = 'spui-refresh-dir';
       $args = [0 => [
           'amount' => 10]
       ];
 
       $scheduled = wp_next_scheduled($name, $args);
 
-			$add_cron = (false == \wpSPIO()->settings()->showCustomMedia) ? false : true;
-			$add_cron = apply_filters('shortpixel/othermedia/add_cron', $add_cron);
+			$add_cron = (false == \wpSPUI()->settings()->showCustomMedia) ? false : true;
+			$add_cron = apply_filters('spui/othermedia/add_cron', $add_cron);
 
       if (false == $scheduled && true === $add_cron && false === $unschedule)
       {
-                wp_schedule_event(time(), 'spio_interval_30min', $name, $args);
+                wp_schedule_event(time(), 'spui_interval_30min', $name, $args);
       }
       elseif(false !== $scheduled && (false === $add_cron || true == $unschedule) )
       {
@@ -165,20 +165,20 @@ class CronController
 
   protected function removeLegacyCron()
   {
-      $name = 'spio-refresh-dir';
+      $name = 'spui-refresh-dir';
       $args = ['args' => [
         'amount' => 10]
       ];
 
       wp_unschedule_event(wp_next_scheduled($name, $args), $name, $args);
 
-      $name = 'spio-single-cron';
+      $name = 'spui-single-cron';
       $args = array('bulk' => false);
 
       wp_unschedule_event(wp_next_scheduled($name, $args), $name, $args);
 
 
-      $name = 'spio-bulk-cron';
+      $name = 'spui-bulk-cron';
       $args = array('bulk' => true);
 
       wp_unschedule_event(wp_next_scheduled($name, $args), $name, $args);
@@ -202,7 +202,7 @@ class CronController
 
        if ($items  > 0)
        {
-          wp_schedule_event(time(), 'spio_interval', $options['cron_name'], $args);
+          wp_schedule_event(time(), 'spui_interval', $options['cron_name'], $args);
        }
 
   }

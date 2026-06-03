@@ -1,21 +1,21 @@
 <?php
-namespace ShortPixel\Controller\Optimizer;
+namespace SPUI\Controller\Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
 
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\Api\RequestManager as RequestManager;
-use ShortPixel\Controller\Queue\Queue;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\Api\RequestManager as RequestManager;
+use SPUI\Controller\Queue\Queue;
+use SPUI\Controller\ResponseController as ResponseController;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Converter\Converter as Converter;
 
 class ActionController extends OptimizerBase
 {
@@ -144,7 +144,7 @@ class ActionController extends OptimizerBase
 
     $queue->updateItem($qItem);
 
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPUI()->filesystem();
 
     $imageObj = $qItem->imageModel;
 
@@ -205,7 +205,7 @@ class ActionController extends OptimizerBase
 
     if (true == $bool) // successful restore.
     {
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPUI()->filesystem();
         $fs->flushImageCache();
 
         // Mark Item ( for results ) as ongoing and such
@@ -249,7 +249,7 @@ class ActionController extends OptimizerBase
    */
   protected function restoreItem(QueueItem $queueItem)
   {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 
       $check = $this->checkItem($queueItem);
 

@@ -1,35 +1,35 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notice;
+use SPUI\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\InstallHelper as InstallHelper;
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Model\SettingsModel as SettingsModel;
-use ShortPixel\Model\ApiKeyModel as ApiKeyModel;
+use SPUI\Model\AccessModel as AccessModel;
+use SPUI\Model\SettingsModel as SettingsModel;
+use SPUI\Model\ApiKeyModel as ApiKeyModel;
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QueueController as QueueController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\BulkController as BulkController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\QueueController as QueueController;
 
-use ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\View\BulkViewController as BulkViewController;
-use ShortPixel\External\Offload\Offloader;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\NextGenController as NextGenController;
+use SPUI\Controller\CacheController as CacheController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\Controller\View\BulkViewController as BulkViewController;
+use SPUI\External\Offload\Offloader;
+use SPUI\Model\AiDataModel;
+use SPUI\NextGenController as NextGenController;
 
-class SettingsViewController extends \ShortPixel\ViewController
+class SettingsViewController extends \SPUI\ViewController
 {
 
      //env
@@ -65,7 +65,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
       public function __construct()
       {
-          $this->model = \wpSPIO()->settings();
+          $this->model = \wpSPUI()->settings();
 					$keyControl = ApiKeyController::getInstance();
           $this->keyModel = $keyControl->getKeyModel();
 
@@ -151,7 +151,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
 
 					$bodyArgs = array(
-							'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+							'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 							'email' => $email,
 							'ip' => isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? sanitize_text_field($_SERVER["HTTP_X_FORWARDED_FOR"]) : sanitize_text_field($_SERVER['REMOTE_ADDR']),
 					);
@@ -189,7 +189,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 							$valid = $this->keyModel->checkKey($key);
 
 	            if($valid === true) {
-	                \ShortPixel\Controller\AdminNoticesController::resetAPINotices();
+	                \SPUI\Controller\AdminNoticesController::resetAPINotices();
 
 	            }
 							$this->doRedirect('reload');
@@ -515,7 +515,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
          // @todo this might be converted at some point tho view->env or something to divide better. 
          $offLoader = Offloader::getInstance();
-         $this->view->cloudflare_constant = defined('SHORTPIXEL_CFTOKEN') ? true : false;
+         $this->view->cloudflare_constant = defined('SPUI_CFTOKEN') ? true : false;
          $this->view->is_unlimited =  (!is_null($this->quotaData) && $this->quotaData->unlimited) ? true : false;
          $this->view->is_wpoffload = $offLoader->isActive('wp-offload');
 
@@ -523,11 +523,11 @@ class SettingsViewController extends \ShortPixel\ViewController
          $this->view->languages = wp_get_available_translations();
         
          $this->view->hide_banner = false; 
-         $bool = apply_filters('shortpixel/settings/no_banner', false);
+         $bool = apply_filters('spui/settings/no_banner', false);
          if (true === $bool )
             $this->view->hide_banner = true; 
 
-         if ( defined('SHORTPIXEL_NO_BANNER') && SHORTPIXEL_NO_BANNER == true)
+         if ( defined('SPUI_NO_BANNER') && SPUI_NO_BANNER == true)
          {
            $this->view->hide_banner = true; 
          }
@@ -535,7 +535,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
          //$this->view->latest_ai = $this->getLatestAIExamples();
 
-         $settings = \wpSPIO()->settings();
+         $settings = \wpSPUI()->settings();
 
 				 if ($this->view->data->createAvif == 1)
            $this->avifServerCheck();
@@ -684,7 +684,7 @@ class SettingsViewController extends \ShortPixel\ViewController
       /** Checks on things and set them for information. */
       protected function loadEnv()
       {
-          $env = wpSPIO()->env();
+          $env = wpSPUI()->env();
 
           $this->is_nginx = $env->is_nginx;
           $this->has_image_library = ($env->is_gd_installed || $env->is_imagick_installed); // Any library 
@@ -696,7 +696,7 @@ class SettingsViewController extends \ShortPixel\ViewController
           $this->is_mainsite = $env->is_mainsite;
           $this->has_nextgen = $env->has_nextgen;
 
-          $this->disable_heavy_features = (false === \wpSPIO()->env()->useVirtualHeavyFunctions()) ? true : false;
+          $this->disable_heavy_features = (false === \wpSPUI()->env()->useVirtualHeavyFunctions()) ? true : false;
 
           $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'optimisation';
       }
@@ -714,7 +714,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
           $args = wp_parse_args($args, $defaults);
 
-          $link = esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=' . $args['part'] ));
+          $link = esc_url(admin_url('options-general.php?page=shortpixel-upscale-settings&part=' . $args['part'] ));
           $active = ($this->display_part == $args['part']) ? ' active ' : '';
 
           $title = $args['title'];
@@ -743,7 +743,7 @@ class SettingsViewController extends \ShortPixel\ViewController
           if ($this->is_nginx)
             return false;
 
-					$file = \wpSPIO()->filesystem()->getFile(get_home_path() . '.htaccess');
+					$file = \wpSPUI()->filesystem()->getFile(get_home_path() . '.htaccess');
 					if ($file->is_writable())
 					{
 						 return true;
@@ -852,7 +852,7 @@ class SettingsViewController extends \ShortPixel\ViewController
           $setting_useCDN = $this->model->useCDN; 
           $setting_CDNDomain = $this->model->CDNDomain; 
 
-          $CDNcontroller = new \ShortPixel\Controller\Front\CDNController();
+          $CDNcontroller = new \SPUI\Controller\Front\CDNController();
 
           if ($post_useCDN !== $setting_useCDN)
           {

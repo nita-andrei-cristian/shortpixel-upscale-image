@@ -1,30 +1,30 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\Controller\Queue\Queue as Queue;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notices;
+use SPUI\Controller\Queue\Queue as Queue;
 
-use ShortPixel\Model\Converter\Converter as Converter;
-use ShortPixel\Model\Converter\ApiConverter as ApiConverter;
+use SPUI\Model\Converter\Converter as Converter;
+use SPUI\Model\Converter\ApiConverter as ApiConverter;
 
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\Model\AccessModel as AccessModel;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 
 /* AdminController is meant for handling events, hooks, filters in WordPress where there is *NO* specific or more precise  ShortPixel Page active.
 *
 * This should be a delegation class connection global hooks and such to the best shortpixel handler.
 */
-class AdminController extends \ShortPixel\Controller
+class AdminController extends \SPUI\Controller
 {
     protected static $instance;
 
@@ -40,7 +40,7 @@ class AdminController extends \ShortPixel\Controller
 
     public function addAttachmentHook($post_id)
     {
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
 
           // If attachment doesn't come back as an valid image
           $mediaItem = $fs->getImage($post_id, 'media');
@@ -53,7 +53,7 @@ class AdminController extends \ShortPixel\Controller
 
             if (is_object($converter) && $converter->isConvertable())
             {
-              do_action('shortpixel/converter/prevent-offload', $post_id);
+              do_action('spui/converter/prevent-offload', $post_id);
             }
     }
 
@@ -71,7 +71,7 @@ class AdminController extends \ShortPixel\Controller
 				}
 
         // todo add check here for mediaitem
-			  $fs = \wpSPIO()->filesystem();
+			  $fs = \wpSPUI()->filesystem();
 				$fs->flushImageCache(); // it's possible file just changed by external plugin.
         $mediaItem = $fs->getImage($id, 'media');
 
@@ -83,7 +83,7 @@ class AdminController extends \ShortPixel\Controller
 
 				if ($mediaItem->getExtension()  == 'pdf')
 				{
-					$settings = \wpSPIO()->settings();
+					$settings = \wpSPUI()->settings();
 					if (! $settings->optimizePdfs)
 					{
 						 Log::addDebug('Image Upload Hook detected PDF, which is turned off - not optimizing');
@@ -91,7 +91,7 @@ class AdminController extends \ShortPixel\Controller
 					}
 				}
 
-        $handleImage = apply_filters('shortpixel/media/uploadhook', true, $mediaItem, $meta, $id);
+        $handleImage = apply_filters('spui/media/uploadhook', true, $mediaItem, $meta, $id);
 
         // Short-circuit in certain cases if needed.
         if (false === $handleImage)
@@ -119,7 +119,7 @@ class AdminController extends \ShortPixel\Controller
 
 							$meta = $converter->getUpdatedMeta();
 
-              //do_action('shortpixel/converter/prevent-offload-off', $id);
+              //do_action('spui/converter/prevent-offload-off', $id);
            }
 
          // $autoAi = $settings->
@@ -155,7 +155,7 @@ class AdminController extends \ShortPixel\Controller
 					 return $meta;
 				}
 
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPUI()->filesystem();
 				$fs->flushImageCache(); // it's possible file just changed by external plugin.
         $mediaItem = $fs->getImage($id, 'media');
 
@@ -195,7 +195,7 @@ class AdminController extends \ShortPixel\Controller
 				 return $url;
 			}
 
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
 			$mediaImage = $fs->getImage($post_id, 'media');
 
 			if (false === $mediaImage)
@@ -253,7 +253,7 @@ class AdminController extends \ShortPixel\Controller
 				}
 
 				$args = wp_parse_args($args, $defaults);
-        $args = apply_filters('shortpixel/process_hook/options', $args);
+        $args = apply_filters('spui/process_hook/options', $args);
 
         $queueArgs = []; 
 				if (true == $args['bulk'])
@@ -263,7 +263,7 @@ class AdminController extends \ShortPixel\Controller
 
 
 			  $control = new QueueController($queueArgs);
-        $env = \wpSPIO()->env();
+        $env = \wpSPUI()->env();
 
 			 	if ($args['run_once'] === true)
 				{
@@ -327,7 +327,7 @@ class AdminController extends \ShortPixel\Controller
 
 
 
-      $args = apply_filters('shortpixel/othermedia/scan_custom_folder', $args);
+      $args = apply_filters('spui/othermedia/scan_custom_folder', $args);
 
       $running = true;
       $i = 0;
@@ -361,7 +361,7 @@ class AdminController extends \ShortPixel\Controller
 
       $attach_id = $data['id'];
        
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 			$mediaImage = $fs->getImage($attach_id, 'media');
 
       if (false === $mediaImage)
@@ -525,7 +525,7 @@ class AdminController extends \ShortPixel\Controller
       if(isset($params['post_id'])) { //integration with EnableMediaReplace - that's an upload for replacing an existing ID
 
           $post_id = intval($params['post_id']);
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
 
           $imageObj = $fs->getImage($post_id, 'media');
           // In case entry is corrupted data, this might fail.
@@ -549,7 +549,7 @@ class AdminController extends \ShortPixel\Controller
 		}
 
     public function generatePluginLinks($links) {
-        $in = '<a href="options-general.php?page=wp-shortpixel-settings">Settings</a>';
+        $in = '<a href="options-general.php?page=shortpixel-upscale-settings">Settings</a>';
         array_unshift($links, $in);
         return $links;
     }
@@ -559,7 +559,7 @@ class AdminController extends \ShortPixel\Controller
     */
     public function addMimes($mimes)
     {
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPUI()->settings();
         if ($settings->createWebp)
         {
             if (! isset($mimes['webp']))
@@ -589,7 +589,7 @@ class AdminController extends \ShortPixel\Controller
 		{
       return;
 				// Prevent this thing running on edit media screen. The media library grid is before the screen is set, so just check if we are not on the attachment window.
-				$screen_id = \wpSPIO()->env()->screen_id;
+				$screen_id = \wpSPUI()->env()->screen_id;
 				if ($screen_id == 'attachment')
 				{
 					return $fields;
@@ -607,13 +607,13 @@ class AdminController extends \ShortPixel\Controller
 		public function printComparer()
 		{
 
-				$screen_id = \wpSPIO()->env()->screen_id;
+				$screen_id = \wpSPUI()->env()->screen_id;
 				if ($screen_id !== 'upload')
 				{
 					return false;
 				}
 
-				$view = \ShortPixel\Controller\View\ListMediaViewController::getInstance();
+				$view = \SPUI\Controller\View\ListMediaViewController::getInstance();
 				$view->loadComparer();
 		}
 
@@ -625,7 +625,7 @@ class AdminController extends \ShortPixel\Controller
     public function onDeleteAttachment($post_id) {
         Log::addDebug('onDeleteImage - Image Removal Detected ' . $post_id);
         $result = null;
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPUI()->filesystem();
 
         try
         {
@@ -649,10 +649,10 @@ class AdminController extends \ShortPixel\Controller
     */
     public function toolbar_shortpixel_processing( $wp_admin_bar ) {
 
-        if (! \wpSPIO()->env()->is_screen_to_use )
+        if (! \wpSPUI()->env()->is_screen_to_use )
           return; // not ours, don't load JS and such.
 
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPUI()->settings();
         $access = AccessModel::getInstance();
 				$quotaController = QuotaController::getInstance();
 
@@ -675,7 +675,7 @@ class AdminController extends \ShortPixel\Controller
             {
               $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-image-optimiser');
               //$link = "http://shortpixel.com/login/" . $this->_settings->apiKey;
-              $link = "options-general.php?page=wp-shortpixel-settings";
+              $link = "options-general.php?page=shortpixel-upscale-settings";
             }
             else {
               $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-image-optimiser');
@@ -687,7 +687,7 @@ class AdminController extends \ShortPixel\Controller
         $args = array(
                 'id'    => 'shortpixel_processing',
                 'title' => '<div id="' . $id . '" title="' . $tooltip . '"><span class="stats hidden">0</span><img alt="' . __('ShortPixel icon','shortpixel-image-optimiser') . '" src="'
-                         . plugins_url( 'res/img/'.$icon, SHORTPIXEL_PLUGIN_FILE ) . '" success-url="' . $successLink . '"><span class="shp-alert">!</span>'
+                         . plugins_url( 'res/img/'.$icon, SPUI_PLUGIN_FILE ) . '" success-url="' . $successLink . '"><span class="shp-alert">!</span>'
                          . '<div class="controls">
                               <span class="dashicons dashicons-controls-pause pause" title="' . __('Pause', 'shortpixel-image-optimiser') . '">&nbsp;</span>
                               <span class="dashicons dashicons-controls-play play" title="' . __('Resume', 'shortpixel-image-optimiser') . '">&nbsp;</span>

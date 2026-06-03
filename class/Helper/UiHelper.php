@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel\Helper;
+namespace SPUI\Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Model\AiDataModel;
+use SPUI\Model\AccessModel as AccessModel;
+use SPUI\Model\AiDataModel;
 
 class UiHelper
 {
@@ -35,7 +35,7 @@ class UiHelper
 
     $output .= "<div class='sp-column-actions '>
                     <div class='sp-dropdown'>
-                        <button onclick='ShortPixel.openImageMenu(event);' class='sp-dropbtn button dashicons dashicons-menu $primary' title='ShortPixel Actions'></button>";
+                        <button onclick='SPUI.openImageMenu(event);' class='sp-dropbtn button dashicons dashicons-menu $primary' title='ShortPixel Actions'></button>";
     $output .= "<div id='sp-dd-$id' class='sp-dropdown-content'>";
 
     foreach($actions as $actionName => $actionData)
@@ -51,7 +51,7 @@ class UiHelper
   // SPUI: success text shown in the media column when the image has already been upscaled.
   public static function renderSuccessText($imageObj)
   {
-    $message = esc_html__( 'This image has been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+    $message = esc_html__( 'This image has been upscaled by SPUI.', 'shortpixel-upscale-image' );
     $editUrl = '';
 
     if (is_object($imageObj) && method_exists($imageObj, 'get'))
@@ -63,17 +63,17 @@ class UiHelper
       }
     }
 
-    $messageHtml = ($editUrl !== '')
-      ? '<a href="' . $editUrl . '">' . $message . '</a>'
-      : $message;
-
     if (self::$outputMode === 'list-media')
     {
+      $messageHtml = ($editUrl !== '')
+        ? '<a href="' . $editUrl . '">' . $message . '</a>'
+        : $message;
+
       return '<p>' . $messageHtml . '<i class="shortpixel-icon ai" title="' . esc_attr($message) . '"></i></p>';
     }
 
-    $iconUrl = esc_url( plugins_url( 'res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE ) );
-    $text = '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> ' . $messageHtml;
+    $iconUrl = esc_url( plugins_url( 'res/images/icon/shortpixel.svg', SPUI_PLUGIN_FILE ) );
+    $text = '<img class="spui-action-icon spui-caption-icon" src="' . $iconUrl . '" alt=""> ' . $message;
 
     return $text;
   }
@@ -118,7 +118,7 @@ class UiHelper
     return [];
   }
 
-  // SPUI: single "Upscale Now" button — disabled when in queue, not processable, or no quota.
+  // SPUI: single "Upscale Now" button — disabled only while this item is queued/upscaling.
   public static function getActions($mediaItem)
   {
     $actions         = [];
@@ -137,19 +137,17 @@ class UiHelper
     // Reuse the same editor action after a successful upscale, but keep internal identifiers untouched.
     $action = ($isUpscaled) ? self::getAction('re-upscale', $id) : self::getAction('optimize', $id);
 
-    if (! $quotaControl->hasQuota())
-    {
-      $action['disabled'] = true;
-      $action['title']    = __('No upscale quota available', 'shortpixel-upscale-image');
-    }
-    elseif ($queueController->isItemInQueue($mediaItem))
+    if ($queueController->isItemInQueue($mediaItem))
     {
       $action['disabled'] = true;
       $action['title']    = __('Upscaling in progress…', 'shortpixel-upscale-image');
     }
-    elseif (! $mediaItem->isProcessable())
+    elseif (! $isUpscaled && ! $quotaControl->hasQuota())
     {
-      $action['disabled'] = true;
+      $action['title']    = __('No upscale quota available', 'shortpixel-upscale-image');
+    }
+    elseif (! $isUpscaled && ! $mediaItem->isProcessable())
+    {
       $action['title']    = $mediaItem->getReason('processable');
     }
 
@@ -166,7 +164,7 @@ class UiHelper
 
     if (! $keyControl->keyIsVerified())
     {
-      $text = __('Invalid API Key. <a href="options-general.php?page=wp-shortpixel-settings">Check your Settings</a>', 'shortpixel-image-optimiser');
+      $text = __('Invalid API Key. <a href="options-general.php?page=shortpixel-upscale-settings">Check your Settings</a>', 'shortpixel-image-optimiser');
     }
     elseif ($mediaItem->get('id') === 0)
     {
@@ -183,6 +181,14 @@ class UiHelper
     elseif ($mediaItem->getMeta('status') < 0)
     {
       $text = $mediaItem->getMeta('errorMessage');
+    }
+    elseif ((new QueueController())->isItemInQueue($mediaItem))
+    {
+      // SPUI: show an in-progress indicator so a page reload mid-upscale isn't silent
+      // (previously only the disabled button hinted that something was happening).
+      $message = esc_html__( 'Upscaling in progress…', 'shortpixel-upscale-image' );
+      $spinner = esc_url( \wpSPUI()->plugin_url('res/img/bulk/loading-hourglass.svg') );
+      $text = '<p>' . $message . ' <img src="' . $spinner . '" width="16" height="16" alt="" style="vertical-align:middle" /></p>';
     }
     elseif ($mediaItem->isOptimized() || get_post_meta($mediaItem->get('id'), '_spui_scaled', true))
     {
@@ -206,7 +212,7 @@ class UiHelper
     }
     elseif (self::$outputMode === 'list-media')
     {
-      $message = esc_html__( 'This image has not been upscaled by ShortPixel.', 'shortpixel-upscale-image' );
+      $message = esc_html__( 'This image has not been upscaled by SPUI.', 'shortpixel-upscale-image' );
       $text = '<p>' . $message . '<i class="shortpixel-icon no-ai" title="' . esc_attr($message) . '"></i></p>';
     }
 
@@ -264,7 +270,7 @@ class UiHelper
     {
       case 'optimize':
          // SPUI: opens the editor preview popup (scale action).
-         $action['function'] = 'window.ShortPixelProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
+         $action['function'] = 'window.SPUIProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
          $action['type']  = 'js';
          $action['text'] = __('Upscale Now', 'shortpixel-upscale-image');
          if (self::$outputMode === 'list-media')
@@ -279,7 +285,7 @@ class UiHelper
          $action['is-optimizable'] = true;
       break;
       case 'forceOptimize':
-        $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ', true)';
+        $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ', true)';
         $action['type']  = 'js';
         // SPUI: renamed from "Override exclusions and optimize now"
         $action['text'] = __('Override exclusions and upscale now', 'shortpixel-image-optimiser');
@@ -287,13 +293,13 @@ class UiHelper
         $action['is-optimizable'] = true;
       break;
 			case 'cancelOptimize':
-				 $action['function'] = 'window.ShortPixelProcessor.screen.CancelOptimizeItem(' . $id . ')';
+				 $action['function'] = 'window.SPUIProcessor.screen.CancelOptimizeItem(' . $id . ')';
 				 $action['type']  = 'js';
 				 $action['text'] = __('Cancel item upscaling', 'shortpixel-image-optimiser');
 				 $action['display'] = 'button';
 			break;
       case 'markCompleted':
-          $action['function'] = 'window.ShortPixelProcessor.screen.MarkCompleted(' . $id . ')';
+          $action['function'] = 'window.SPUIProcessor.screen.MarkCompleted(' . $id . ')';
           $action['type']  = 'js';
           $action['text'] = __('Mark as Completed', 'shortpixel-image-optimiser');
           $action['display'] = 'button-secondary';
@@ -301,7 +307,7 @@ class UiHelper
           $action['title'] = __('This will cause the plugin to skip this image for upscaling', 'shortpixel-image-optimiser');
       break;
       case 'unMarkCompleted':
-          $action['function'] = 'window.ShortPixelProcessor.screen.UnMarkCompleted(' . $id . ')';
+          $action['function'] = 'window.SPUIProcessor.screen.UnMarkCompleted(' . $id . ')';
           $action['type']  = 'js';
           $action['text'] = __('Click to unmark this item as done', 'shortpixel-image-optimiser');
           $action['display'] = 'js';
@@ -309,11 +315,11 @@ class UiHelper
       case 'optimizethumbs':
           if (! is_null($compressionType))
           {
-            $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
+            $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
           }
           else
           {
-            $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ');';
+            $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ');';
           }
 
           $action['type'] = 'js';
@@ -322,41 +328,41 @@ class UiHelper
           $action['is-optimizable'] = true;
       break;
       case 'retry':
-         $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ');';
+         $action['function'] = 'window.SPUIProcessor.screen.Optimize(' . $id . ');';
          $action['type']  = 'js';
          $action['text'] = __('Retry', 'shortpixel-image-optimiser') ;
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
      break;
 		 case 'redo_legacy':
-		 			$action['function'] = 'window.ShortPixelProcessor.screen.RedoLegacy(' . $id . ');';
+		 			$action['function'] = 'window.SPUIProcessor.screen.RedoLegacy(' . $id . ');';
 		 			$action['type']  = 'js';
 		 			$action['text'] = __('Redo Conversion', 'shortpixel-image-optimiser') ;
 		 			$action['display'] = 'button';
 		 break;
 
      case 'restore':
-         $action['function'] = 'window.ShortPixelProcessor.screen.RestoreItem(' . $id . ');';
+         $action['function'] = 'window.SPUIProcessor.screen.RestoreItem(' . $id . ');';
          $action['type'] = 'js';
          $action['text'] = __('Restore backup','shortpixel-image-optimiser');
          $action['display'] = 'inline';
      break;
 
      case 'compare':
-        $action['function'] = 'ShortPixel.loadComparer(' . $id . ')';
+        $action['function'] = 'SPUI.loadComparer(' . $id . ')';
         $action['type'] = 'js';
         $action['text'] = __('Compare', 'shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 'compare-custom':
-        $action['function'] = 'ShortPixel.loadComparer(' . $id . ',"custom")';
+        $action['function'] = 'SPUI.loadComparer(' . $id . ',"custom")';
         $action['type'] = 'js';
         $action['text'] = __('Compare', 'shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 're-upscale':
         // SPUI: Re-upscale button shown after a successful upscale.
-        $action['function'] = 'window.ShortPixelProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
+        $action['function'] = 'window.SPUIProcessor.screen.OpenEditorById(' . $id . ', \'scale\', \'edit\')';
         $action['type']     = 'js';
         $action['text']     = __('Upscale again', 'shortpixel-upscale-image');
         if (self::$outputMode === 'list-media')
@@ -371,37 +377,37 @@ class UiHelper
         $action['is-optimizable'] = true;
      break;
      case 're-upscale-glossy':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
+        $action['function'] = 'window.SPUIProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-upscale Glossy','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 're-upscale-lossy':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
+        $action['function'] = 'window.SPUIProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-upscale Lossy','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 're-upscale-lossless':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
+        $action['function'] = 'window.SPUIProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-upscale Lossless','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
 		 case 're-upscale-smartcrop':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
+        $action['function'] = 'window.SPUIProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-upscale with SmartCrop','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
 		 case 're-upscale-smartcropless':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
+        $action['function'] = 'window.SPUIProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-upscale without SmartCrop','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 'shortpixel-generateai': 
-      $action['function'] = 'window.ShortPixelProcessor.screen.RequestAlt(' . $id . ')';
+      $action['function'] = 'window.SPUIProcessor.screen.RequestAlt(' . $id . ')';
       $action['type'] = 'js';
       $action['text'] = __('Generate image SEO data','shortpixel-image-optimiser');     
       $action['ai-action'] = true;
@@ -413,7 +419,7 @@ class UiHelper
         $action['display'] = 'button';
      break;
      case 'checkquota':
-        $action['function'] = 'ShortPixel.checkQuota()';
+        $action['function'] = 'SPUI.checkQuota()';
         $action['type'] = 'js';
         $action['display'] = 'button';
         $action['text'] = __('Check&nbsp;&nbsp;Quota','shortpixel-image-optimiser');
@@ -567,11 +573,11 @@ class UiHelper
 	{
 		if ($type == 'webp')
 		{
-			$is_double = \wpSPIO()->env()->useDoubleWebpExtension();
+			$is_double = \wpSPUI()->env()->useDoubleWebpExtension();
 		}
 		if ($type == 'avif')
 		{
-			$is_double = \wpSPIO()->env()->useDoubleAvifExtension();
+			$is_double = \wpSPUI()->env()->useDoubleAvifExtension();
 		}
 
 		if ($is_double)
@@ -638,7 +644,7 @@ class UiHelper
 
       );
 
-      $icon_url = plugins_url($path, SHORTPIXEL_PLUGIN_FILE);
+      $icon_url = plugins_url($path, SPUI_PLUGIN_FILE);
 
       $attr = ''; 
       if (isset($args['width']))

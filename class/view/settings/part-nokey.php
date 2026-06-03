@@ -1,8 +1,8 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\Notices\NoticeController as Notice;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\UiHelper as UiHelper;
+namespace SPUI;
+use SPUI\Notices\NoticeController as Notice;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 if (! $view->key->is_verifiedkey && $view->key->hide_api_key && ! $view->key->is_constant_key)
 {
 
-	$error_message = __('wp-config.php is hiding the API key, but no API key was found. Remove the constant, or define the SHORTPIXEL_API_KEY constant as well', 'shortpixel-upscale-image');
+	$error_message = __('wp-config.php is hiding the API key, but no API key was found. Remove the constant, or define the SPUI_API_KEY constant as well', 'shortpixel-upscale-image');
 	Notice::addError($error_message);
 }
 elseif ($view->key->is_constant_key && ! $view->key->is_verifiedkey)
 {
-  $dkey = ($view->key->hide_api_key) ? '' : '(' . SHORTPIXEL_API_KEY.  ')';
+  $dkey = ($view->key->hide_api_key) ? '' : '(' . SPUI_API_KEY.  ')';
 	$error_message = sprintf(__('Constant API Key is not verified. Please check if this is a valid API key %s'),$dkey);
   Notice::addError($error_message);
 }
@@ -90,9 +90,9 @@ $spui_is_disabled = ! $view->key->is_editable;
 
                         <input name="tos" type="checkbox" id="tos">
                         <img class="tos-robo" alt="<?php esc_html_e('ShortPixel logo', 'shortpixel-upscale-image'); ?>"
-                             src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/slider.png' ));?>" style="position: absolute;left: -95px;bottom: -26px;display:none;">
+                             src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/slider.png' ));?>" style="position: absolute;left: -95px;bottom: -26px;display:none;">
                         <img class="tos-hand" alt="<?php esc_html_e('Hand pointing', 'shortpixel-upscale-image'); ?>"
-                             src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/point.png' ));?>" style="position: absolute;left: -39px;bottom: -9px;display:none;">
+                             src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/point.png' ));?>" style="position: absolute;left: -39px;bottom: -9px;display:none;">
 
                     </span>
                     <?php printf(esc_html__('I have read and I agree to the %s Terms of Service %s and the %s Privacy Policy %s (%s GDPR compliant %s).','shortpixel-upscale-image'), '<a href="https://shortpixel.com/tos" target="_blank">', '</a>', '<a href="https://shortpixel.com/privacy" target="_blank">', '</a>', '<a href="https://shortpixel.com/privacy#gdpr" target="_blank">', '</a>');

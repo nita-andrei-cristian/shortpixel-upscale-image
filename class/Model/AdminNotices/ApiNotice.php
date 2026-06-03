@@ -1,27 +1,27 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
 
 
-class ApiNotice extends \ShortPixel\Model\AdminNoticeModel
+class ApiNotice extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_NO_APIKEY';
 
-  protected $exclude_screens = ['settings_page_wp-shortpixel-settings'];
+  protected $exclude_screens = ['settings_page_shortpixel-upscale-settings'];
 
 	public function load()
 	{
-		$activationDate = \wpSPIO()->settings()->activationDate;
+		$activationDate = \wpSPUI()->settings()->activationDate;
 		if (! $activationDate)
 		{
 			 $activationDate = time();
-			 \wpSPIO()->settings()->activationDate = $activationDate;
+			 \wpSPUI()->settings()->activationDate = $activationDate;
 		}
 
 		parent::load();
@@ -53,7 +53,7 @@ class ApiNotice extends \ShortPixel\Model\AdminNoticeModel
 	protected function getMessage()
 	{
 		$message = "<p>" . __('To start the upscaling process, you need to validate your API key on the '
-						. '<a href="options-general.php?page=wp-shortpixel-settings">Shortpixel Image Upscale</a> page in your WordPress admin.','shortpixel-image-optimiser') . "
+						. '<a href="options-general.php?page=shortpixel-upscale-settings">Shortpixel Image Upscale</a> page in your WordPress admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you do not have an API key yet, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
 

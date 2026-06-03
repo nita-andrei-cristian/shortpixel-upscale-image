@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-class ListviewNotice extends \ShortPixel\Model\AdminNoticeModel
+class ListviewNotice extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_LISTVIEW_ACTIVE';
 
@@ -30,7 +30,7 @@ class ListviewNotice extends \ShortPixel\Model\AdminNoticeModel
 	protected function checkTrigger()
 	{
 		// Don't check for this, when not on this screen.
-		$screen_id = \wpSPIO()->env()->screen_id;
+		$screen_id = \wpSPUI()->env()->screen_id;
 		if ($screen_id !== 'upload')
 		{
 			return false;

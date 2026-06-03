@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\BulkController as BulkController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPUI\Model\AccessModel as AccessModel;
 
 
-class BulkViewController extends \ShortPixel\ViewController
+class BulkViewController extends \SPUI\ViewController
 {
 
   protected $form_action = 'sp-bulk';
@@ -101,7 +101,7 @@ class BulkViewController extends \ShortPixel\ViewController
       $noticesController = AdminNoticesController::getInstance();
       $offer = $noticesController->getRemoteOffer(); 
 
-          $this->view->dashboard_icon = plugins_url('res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE); 
+          $this->view->dashboard_icon = plugins_url('res/images/icon/shortpixel.svg', SPUI_PLUGIN_FILE); 
           $this->view->dashboard_link = false; 
           $this->view->dashboard_title = false; 
           $this->view->dashboard_message = ''; 
@@ -175,7 +175,7 @@ class BulkViewController extends \ShortPixel\ViewController
 	protected function getActivationNotice()
 	{
 		$message = "<p>" . __('In order to start the upscaling process, you need to validate your API Key in the '
-						. '<a href="options-general.php?page=wp-shortpixel-settings">Shortpixel Image Upscale</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
+						. '<a href="options-general.php?page=shortpixel-upscale-settings">Shortpixel Image Upscale</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
 		return $message;
@@ -193,13 +193,13 @@ class BulkViewController extends \ShortPixel\ViewController
     $sc = StatsController::getInstance();
     $sc->reset(); // Get a fresh stat.
 
-    $excludeSizes = \wpSPIO()->settings()->excludeSizes;
+    $excludeSizes = \wpSPUI()->settings()->excludeSizes;
 
 
-    $approx->media->items = $sc->find('media', 'itemsTotal') - $sc->find('media', 'items');
+    $approx->media->items = $sc->find('media', 'itemsTotal');
 
-    // ThumbsTotal - Approx thumbs in installation - Approx optimized thumbs (same query)
-    $approx->media->thumbs = $sc->find('media', 'thumbsTotal') - $sc->find('media', 'thumbs');
+    // SPUI bulk should not subtract SPIO optimization stats; optimized images can still be upscaled.
+    $approx->media->thumbs = $sc->find('media', 'thumbsTotal');
 
     // If sizes are excluded, remove this count from the approx.
     if (is_array($excludeSizes) && count($excludeSizes) > 0)
@@ -207,11 +207,14 @@ class BulkViewController extends \ShortPixel\ViewController
       $approx->media->thumbs = $approx->media->thumbs - ($approx->media->items * count($excludeSizes));
     }
 
+    $approx->media->items = max($approx->media->items, 0);
+    $approx->media->thumbs = max($approx->media->thumbs, 0);
+
     // Total optimized items + Total optimized (approx) thumbnails
     $approx->media->total = $approx->media->items + $approx->media->thumbs;
 
 
-    $approx->custom->images = $sc->find('custom', 'itemsTotal') - $sc->find('custom', 'items');
+    $approx->custom->images = $sc->find('custom', 'itemsTotal');
 		$approx->custom->has_custom = $otherMediaController->hasCustomImages();
 
     $approx->total->images = $approx->media->total + $approx->custom->images; // $sc->totalImagesToOptimize();
@@ -286,8 +289,8 @@ class BulkViewController extends \ShortPixel\ViewController
   {
       $bulkController = BulkController::getInstance();
       $logs = $bulkController->getLogs();
-      $fs = \wpSPIO()->filesystem();
-      $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+      $fs = \wpSPUI()->filesystem();
+      $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
 
       $view = array();
 

@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelScreenItemBase extends ShortPixelScreenBase {
+class SPUIScreenItemBase extends SPUIScreenBase {
 
 	type; // media / custom
 	currentMessage = '';
@@ -304,6 +304,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 
 		this.SetMessageProcessing(id);
 		this.processor.AjaxRequest(data);
+		this.KickProcessor();
 	}
 
 	RequestAlt(id) {
@@ -354,6 +355,16 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		this.processor.AjaxRequest(data);
 	}
 
+	// SPUI: kick the processor right after queueing. CheckActive() can report active
+	// while the tick loop has backed off to a long defer interval (or stopped after
+	// empty cycles), which left a freshly-queued item idle until a manual page reload.
+	// Reset the back-off and run now so processing starts without a refresh.
+	KickProcessor() {
+		this.processor.timesEmpty = 0;
+		this.processor.SetInterval(-1);
+		this.processor.RunProcess();
+	}
+
 	Optimize(id, force, compressionType) {
 		var data = {
 			id: id,
@@ -367,7 +378,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 
 		if (typeof compressionType !== 'undefined')
 		{
-			data.compressionType = compressionType; 
+			data.compressionType = compressionType;
 		}
 
 		if (!this.processor.CheckActive())
@@ -375,6 +386,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 
 		this.SetMessageProcessing(id);
 		this.processor.AjaxRequest(data);
+		this.KickProcessor();
 	}
 
 	MarkCompleted(id) {

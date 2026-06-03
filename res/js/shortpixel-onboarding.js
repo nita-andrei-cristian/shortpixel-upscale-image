@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelOnboarding
+class SPUIOnboarding
 {
 
     root;
@@ -359,5 +359,5 @@ class ShortPixelOnboarding
 }
 
 document.addEventListener('shortpixel.settings.loaded', function (event) {
-  var s = new ShortPixelOnboarding(event.detail);
+  var s = new SPUIOnboarding(event.detail);
 });

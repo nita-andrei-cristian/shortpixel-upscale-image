@@ -1,15 +1,15 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use \ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use \SPUI\Controller\CacheController as CacheController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
+class AvifNotice extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_AVIF_ERROR';
 	protected $errorLevel = 'error';
@@ -29,13 +29,13 @@ class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
 	public function check()
 	{
 		$cache = new CacheController();
-		if (apply_filters('shortpixel/avifcheck/override', false) === true)
+		if (apply_filters('spui/avifcheck/override', false) === true)
 		{ return; }
 
 
 		if ($cache->getItem('avif_server_check')->exists() === false)
 		{
-			 $url = \WPSPIO()->plugin_url('res/img/test.avif');
+			 $url = \wpSPUI()->plugin_url('res/img/test.avif');
 			 $headers = get_headers($url);
 			 $is_error = true;
 

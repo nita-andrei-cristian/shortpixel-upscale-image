@@ -58,6 +58,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     float: left;
 
     margin-right: 8px;
@@ -79,10 +80,21 @@
     }
 
     .dashicons {
-      font-size: 26px;
-      height: 26px;
-      margin-right: 8px;
+      align-items: center;
+      display: inline-flex;
+      flex: 0 0 20px;
+      font-size: 20px;
+      height: 20px;
+      justify-content: center;
+      line-height: 1;
+      margin-right: 0;
       vertical-align: middle;
+      width: 20px;
+
+      &::before {
+        display: block;
+        line-height: 1;
+      }
     }
     .icon
     {
@@ -98,6 +110,7 @@
       margin: 0;
       display: inline;
       font-size: 14px;
+      line-height: 1;
       vertical-align: middle;
     }
   } // button basic
@@ -198,6 +211,10 @@
       }
 
     
+  }
+
+  section.spui-progressbar {
+    display: none;
   }
 
   .dashicons.spin {
@@ -518,6 +535,10 @@
 
   /***************** SELECTION *************/
   section.panel.selection {
+
+    > .panel-container .interface.wrapper > .wrap-collap {
+      display: none;
+    }
 
     .spio-progressbar .select {
       .line {

@@ -1,5 +1,5 @@
 <?php 
-namespace ShortPixel\Replacer\Classes; 
+namespace SPUI\Replacer\Classes; 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.

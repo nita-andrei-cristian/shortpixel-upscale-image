@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model\Image;
+namespace SPUI\Model\Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 
 // @todo Custom Model for adding files, instead of meta DAO.
-class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
+class CustomImageModel extends \SPUI\Model\Image\ImageModel
 {
 
     protected $folder_id;
@@ -94,13 +94,13 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
 						'returnParams' => array(),
 				);
 
-				$fs = \wpSPIO()->filesystem();
+				$fs = \wpSPUI()->filesystem();
         if ($this->is_virtual())
           $url = $this->getFullPath();
         else
           $url = $this->getURL();
 
-				 $settings = \wpSPIO()->settings();
+				 $settings = \wpSPUI()->settings();
 				 $isSmartCrop = ($settings->useSmartcrop == true && $this->getExtension() !== 'pdf') ? true : false;
 		 		 $paramListArgs = array(); // args for the params, yes.
 
@@ -135,7 +135,7 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
 
 		public function getURL()
 		{
-			  return \wpSPIO()->filesystem()->pathToUrl($this);
+			  return \wpSPUI()->filesystem()->pathToUrl($this);
 		}
 
     public function getAllUrls()
@@ -280,7 +280,7 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
         }
 
         $toOptimize = array();
-        $fs = \WPSPIO()->filesystem();
+        $fs = \wpSPUI()->filesystem();
 
 				// The file must not exist yet.
         if (count($types) == 0 && ($this->isProcessable(true) || $this->isOptimized()) )
@@ -293,7 +293,7 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
     public function restore($args = array())
     {
        do_action('shortpixel_before_restore_image', $this->get('id'));
-       do_action('shortpixel/image/before_restore', $this);
+       do_action('spui/image/before_restore', $this);
 
 			/* $defaults = array(
 	 			'keep_in_queue' => false, // used for bulk restore.
@@ -332,7 +332,7 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
 			 {
 				 $this->dropFromQueue();
 			 } */
-			 do_action('shortpixel/image/after_restore', $this, $this->id, $bool);
+			 do_action('spui/image/after_restore', $this, $this->id, $bool);
 
        return $return;
     }

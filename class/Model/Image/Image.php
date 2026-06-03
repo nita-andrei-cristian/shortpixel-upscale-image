@@ -1,15 +1,15 @@
 <?php 
-namespace ShortPixel\Model\Image;
+namespace SPUI\Model\Image;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 /** Class for loading Image into memory as resource. Used for conversion like PNG . 
  * 
- * @package ShortPixel\Model\Image
+ * @package SPUI\Model\Image
  */
  
-Class Image extends \ShortPixel\Model\File\FileModel
+Class Image extends \SPUI\Model\File\FileModel
 {
 
         protected $image; // The image resource
@@ -31,7 +31,7 @@ Class Image extends \ShortPixel\Model\File\FileModel
 
         protected function checkLibrary()
         {
-            $env = \wpSPIO()->env(); 
+            $env = \wpSPUI()->env(); 
             if ($env->is_imagick_installed)
             {
                 $this->useLib = 'imagick'; 

@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\ShortQ;
+namespace SPUI\ShortQ;
 
 /* The Queue Item
 *

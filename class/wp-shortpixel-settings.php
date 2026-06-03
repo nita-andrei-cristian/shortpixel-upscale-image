@@ -1,7 +1,7 @@
 <?php
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\SettingsModel as SettingsModel;
+use SPUI\Model\SettingsModel as SettingsModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 /** Settings Model **/
-class WPShortPixelSettings extends \ShortPixel\Model {
+// SPUI: renamed from the global WPShortPixelSettings so SPUI can stay co-active with
+// SPIO, which declares its own global WPShortPixelSettings. Mirrors SPAATG_Settings.
+class SPUI_Settings extends \SPUI\Model {
     private $_apiKey = '';
     private $_compressionType = 1;
     private $_keepExif = 0;
@@ -24,73 +26,73 @@ class WPShortPixelSettings extends \ShortPixel\Model {
 
     private static $_optionsMap = array(
         //This one is accessed also directly via get_option
-    //    'frontBootstrap' => array('key' => 'wp-short-pixel-front-bootstrap', 'default' => null, 'group' => 'options'), //set to 1 when need the plugin active for logged in user in the front-end
-      //  'lastBackAction' => array('key' => 'wp-short-pixel-last-back-action', 'default' => null, 'group' => 'state'), //when less than 10 min. passed from this timestamp, the front-bootstrap is ineffective.
+    //    'frontBootstrap' => array('key' => 'spui-short-pixel-front-bootstrap', 'default' => null, 'group' => 'options'), //set to 1 when need the plugin active for logged in user in the front-end
+      //  'lastBackAction' => array('key' => 'spui-short-pixel-last-back-action', 'default' => null, 'group' => 'state'), //when less than 10 min. passed from this timestamp, the front-bootstrap is ineffective.
 
         //optimization options
-        'apiKey' => array('key' => 'wp-short-pixel-apiKey', 'default' => '', 'group' => 'options'),
-        'verifiedKey' => array('key' => 'wp-short-pixel-verifiedKey', 'default' => false, 'group' => 'options'),
-        'compressionType' => array('key' => 'wp-short-pixel-compression', 'default' => 1, 'group' => 'options'),
-        'processThumbnails' => array('key' => 'wp-short-process_thumbnails', 'default' => 1, 'group' => 'options'),
-				'useSmartcrop' => array('key' => 'wpspio-usesmartcrop', 'default' => 0, 'group' => 'options'),
-        'keepExif' => array('key' => 'wp-short-pixel-keep-exif', 'default' => 0, 'group' => 'options'),
-        'CMYKtoRGBconversion' => array('key' => 'wp-short-pixel_cmyk2rgb', 'default' => 1, 'group' => 'options'),
-        'createWebp' => array('key' => 'wp-short-create-webp', 'default' => null, 'group' => 'options'),
-        'createAvif' => array('key' => 'wp-short-create-avif', 'default' => null, 'group' => 'options'),
-        'deliverWebp' => array('key' => 'wp-short-pixel-create-webp-markup', 'default' => 0, 'group' => 'options'),
-        'optimizeRetina' => array('key' => 'wp-short-pixel-optimize-retina', 'default' => 1, 'group' => 'options'),
-        'optimizeUnlisted' => array('key' => 'wp-short-pixel-optimize-unlisted', 'default' => 0, 'group' => 'options'),
-        'backupImages' => array('key' => 'wp-short-backup_images', 'default' => 1, 'group' => 'options'),
-        'resizeImages' => array('key' => 'wp-short-pixel-resize-images', 'default' => false, 'group' => 'options'),
-        'resizeType' => array('key' => 'wp-short-pixel-resize-type', 'default' => null, 'group' => 'options'),
-        'resizeWidth' => array('key' => 'wp-short-pixel-resize-width', 'default' => 0, 'group' => 'options'),
-        'resizeHeight' => array('key' => 'wp-short-pixel-resize-height', 'default' => 0, 'group' => 'options'),
-        'siteAuthUser' => array('key' => 'wp-short-pixel-site-auth-user', 'default' => null, 'group' => 'options'),
-        'siteAuthPass' => array('key' => 'wp-short-pixel-site-auth-pass', 'default' => null, 'group' => 'options'),
-        'autoMediaLibrary' => array('key' => 'wp-short-pixel-auto-media-library', 'default' => 1, 'group' => 'options'),
-        'doBackgroundProcess' => array('key' => 'wp-short-pixel-backgroundprocess', 'default' => 0, 'group' => 'options'),
-        'optimizePdfs' => array('key' => 'wp-short-pixel-optimize-pdfs', 'default' => 1, 'group' => 'options'),
-        'excludePatterns' => array('key' => 'wp-short-pixel-exclude-patterns', 'default' => array(), 'group' => 'options'),
-        'png2jpg' => array('key' => 'wp-short-pixel-png2jpg', 'default' => 0, 'group' => 'options'),
-        'excludeSizes' => array('key' => 'wp-short-pixel-excludeSizes', 'default' => array(), 'group' => 'options'),
-				'currentVersion' => array('key' => 'wp-short-pixel-currentVersion', 'default' => null, 'group' => 'options'),
-				'showCustomMedia' => array('key' => 'wp-short-pixel-show-custom-media', 'default' => 1, 'group' => 'options'),
+        'apiKey' => array('key' => 'spui-short-pixel-apiKey', 'default' => '', 'group' => 'options'),
+        'verifiedKey' => array('key' => 'spui-short-pixel-verifiedKey', 'default' => false, 'group' => 'options'),
+        'compressionType' => array('key' => 'spui-short-pixel-compression', 'default' => 1, 'group' => 'options'),
+        'processThumbnails' => array('key' => 'spui-short-process_thumbnails', 'default' => 1, 'group' => 'options'),
+				'useSmartcrop' => array('key' => 'spui-usesmartcrop', 'default' => 0, 'group' => 'options'),
+        'keepExif' => array('key' => 'spui-short-pixel-keep-exif', 'default' => 0, 'group' => 'options'),
+        'CMYKtoRGBconversion' => array('key' => 'spui-short-pixel_cmyk2rgb', 'default' => 1, 'group' => 'options'),
+        'createWebp' => array('key' => 'spui-short-create-webp', 'default' => null, 'group' => 'options'),
+        'createAvif' => array('key' => 'spui-short-create-avif', 'default' => null, 'group' => 'options'),
+        'deliverWebp' => array('key' => 'spui-short-pixel-create-webp-markup', 'default' => 0, 'group' => 'options'),
+        'optimizeRetina' => array('key' => 'spui-short-pixel-optimize-retina', 'default' => 1, 'group' => 'options'),
+        'optimizeUnlisted' => array('key' => 'spui-short-pixel-optimize-unlisted', 'default' => 0, 'group' => 'options'),
+        'backupImages' => array('key' => 'spui-short-backup_images', 'default' => 1, 'group' => 'options'),
+        'resizeImages' => array('key' => 'spui-short-pixel-resize-images', 'default' => false, 'group' => 'options'),
+        'resizeType' => array('key' => 'spui-short-pixel-resize-type', 'default' => null, 'group' => 'options'),
+        'resizeWidth' => array('key' => 'spui-short-pixel-resize-width', 'default' => 0, 'group' => 'options'),
+        'resizeHeight' => array('key' => 'spui-short-pixel-resize-height', 'default' => 0, 'group' => 'options'),
+        'siteAuthUser' => array('key' => 'spui-short-pixel-site-auth-user', 'default' => null, 'group' => 'options'),
+        'siteAuthPass' => array('key' => 'spui-short-pixel-site-auth-pass', 'default' => null, 'group' => 'options'),
+        'autoMediaLibrary' => array('key' => 'spui-short-pixel-auto-media-library', 'default' => 1, 'group' => 'options'),
+        'doBackgroundProcess' => array('key' => 'spui-short-pixel-backgroundprocess', 'default' => 0, 'group' => 'options'),
+        'optimizePdfs' => array('key' => 'spui-short-pixel-optimize-pdfs', 'default' => 1, 'group' => 'options'),
+        'excludePatterns' => array('key' => 'spui-short-pixel-exclude-patterns', 'default' => array(), 'group' => 'options'),
+        'png2jpg' => array('key' => 'spui-short-pixel-png2jpg', 'default' => 0, 'group' => 'options'),
+        'excludeSizes' => array('key' => 'spui-short-pixel-excludeSizes', 'default' => array(), 'group' => 'options'),
+				'currentVersion' => array('key' => 'spui-short-pixel-currentVersion', 'default' => null, 'group' => 'options'),
+				'showCustomMedia' => array('key' => 'spui-short-pixel-show-custom-media', 'default' => 1, 'group' => 'options'),
 
         //CloudFlare
-        /*'cloudflareEmail'   => array( 'key' => 'wp-short-pixel-cloudflareAPIEmail', 'default' => '', 'group' => 'options'),
-        'cloudflareAuthKey' => array( 'key' => 'wp-short-pixel-cloudflareAuthKey', 'default' => '', 'group' => 'options'), */
-        'cloudflareZoneID'  => array( 'key' => 'wp-short-pixel-cloudflareAPIZoneID', 'default' => '', 'group' => 'options'),
-        'cloudflareToken'   => array( 'key' => 'wp-short-pixel-cloudflareToken', 'default' => '', 'group' => 'options'),
+        /*'cloudflareEmail'   => array( 'key' => 'spui-short-pixel-cloudflareAPIEmail', 'default' => '', 'group' => 'options'),
+        'cloudflareAuthKey' => array( 'key' => 'spui-short-pixel-cloudflareAuthKey', 'default' => '', 'group' => 'options'), */
+        'cloudflareZoneID'  => array( 'key' => 'spui-short-pixel-cloudflareAPIZoneID', 'default' => '', 'group' => 'options'),
+        'cloudflareToken'   => array( 'key' => 'spui-short-pixel-cloudflareToken', 'default' => '', 'group' => 'options'),
 
         //optimize other images than the ones in Media Library
-        'includeNextGen' => array('key' => 'wp-short-pixel-include-next-gen', 'default' => null, 'group' => 'options'),
-        'hasCustomFolders' => array('key' => 'wp-short-pixel-has-custom-folders', 'default' => false, 'group' => 'options'),
-        //'customBulkPaused' => array('key' => 'wp-short-pixel-custom-bulk-paused', 'default' => false, 'group' => 'options'),
+        'includeNextGen' => array('key' => 'spui-short-pixel-include-next-gen', 'default' => null, 'group' => 'options'),
+        'hasCustomFolders' => array('key' => 'spui-short-pixel-has-custom-folders', 'default' => false, 'group' => 'options'),
+        //'customBulkPaused' => array('key' => 'spui-short-pixel-custom-bulk-paused', 'default' => false, 'group' => 'options'),
 
         //uninstall
-  //      'removeSettingsOnDeletePlugin' => array('key' => 'wp-short-pixel-remove-settings-on-delete-plugin', 'default' => false, 'group' => 'options'),
+  //      'removeSettingsOnDeletePlugin' => array('key' => 'spui-short-pixel-remove-settings-on-delete-plugin', 'default' => false, 'group' => 'options'),
 
         //stats, notices, etc.
 				// @todo Most of this can go. See state machine comment.
-        'currentStats' => array('key' => 'wp-short-pixel-current-total-files', 'default' => null, 'group' => 'state'),
-      //  'fileCount' => array('key' => 'wp-short-pixel-fileCount', 'default' => 0, 'group' => 'state'),
-        'thumbsCount' => array('key' => 'wp-short-pixel-thumbnail-count', 'default' => 0, 'group' => 'state'),
-        //'under5Percent' => array('key' => 'wp-short-pixel-files-under-5-percent', 'default' => 0, 'group' => 'state'),
-    //    'savedSpace' => array('key' => 'wp-short-pixel-savedSpace', 'default' => 0, 'group' => 'state'),
-       // 'apiRetries' => array('key' => 'wp-short-pixel-api-retries', 'default' => 0, 'group' => 'state'),
-      //  'totalOptimized' => array('key' => 'wp-short-pixel-total-optimized', 'default' => 0, 'group' => 'state'),
-      //  'totalOriginal' => array('key' => 'wp-short-pixel-total-original', 'default' => 0, 'group' => 'state'),
-        'quotaExceeded' => array('key' => 'wp-short-pixel-quota-exceeded', 'default' => 0, 'group' => 'state'),
-        'httpProto' => array('key' => 'wp-short-pixel-protocol', 'default' => 'https', 'group' => 'state'),
-        'downloadProto' => array('key' => 'wp-short-pixel-download-protocol', 'default' => null, 'group' => 'state'),
+        'currentStats' => array('key' => 'spui-short-pixel-current-total-files', 'default' => null, 'group' => 'state'),
+      //  'fileCount' => array('key' => 'spui-short-pixel-fileCount', 'default' => 0, 'group' => 'state'),
+        'thumbsCount' => array('key' => 'spui-short-pixel-thumbnail-count', 'default' => 0, 'group' => 'state'),
+        //'under5Percent' => array('key' => 'spui-short-pixel-files-under-5-percent', 'default' => 0, 'group' => 'state'),
+    //    'savedSpace' => array('key' => 'spui-short-pixel-savedSpace', 'default' => 0, 'group' => 'state'),
+       // 'apiRetries' => array('key' => 'spui-short-pixel-api-retries', 'default' => 0, 'group' => 'state'),
+      //  'totalOptimized' => array('key' => 'spui-short-pixel-total-optimized', 'default' => 0, 'group' => 'state'),
+      //  'totalOriginal' => array('key' => 'spui-short-pixel-total-original', 'default' => 0, 'group' => 'state'),
+        'quotaExceeded' => array('key' => 'spui-short-pixel-quota-exceeded', 'default' => 0, 'group' => 'state'),
+        'httpProto' => array('key' => 'spui-short-pixel-protocol', 'default' => 'https', 'group' => 'state'),
+        'downloadProto' => array('key' => 'spui-short-pixel-download-protocol', 'default' => null, 'group' => 'state'),
 
-				'downloadArchive' => array('key' => 'wp-short-pixel-download-archive', 'default' => -1, 'group' => 'state'),
+				'downloadArchive' => array('key' => 'spui-short-pixel-download-archive', 'default' => -1, 'group' => 'state'),
 
-        'activationDate' => array('key' => 'wp-short-pixel-activation-date', 'default' => null, 'group' => 'state'),
-        'mediaLibraryViewMode' => array('key' => 'wp-short-pixel-view-mode', 'default' => false, 'group' => 'state'),
-        'redirectedSettings' => array('key' => 'wp-short-pixel-redirected-settings', 'default' => null, 'group' => 'state'),
-      //  'convertedPng2Jpg' => array('key' => 'wp-short-pixel-converted-png2jpg', 'default' => array(), 'group' => 'state'),
-				'unlistedCounter' => array('key' => 'wp-short-pixel-unlisted-counter', 'default' => 0, 'group' => 'state'),
+        'activationDate' => array('key' => 'spui-short-pixel-activation-date', 'default' => null, 'group' => 'state'),
+        'mediaLibraryViewMode' => array('key' => 'spui-short-pixel-view-mode', 'default' => false, 'group' => 'state'),
+        'redirectedSettings' => array('key' => 'spui-short-pixel-redirected-settings', 'default' => null, 'group' => 'state'),
+      //  'convertedPng2Jpg' => array('key' => 'spui-short-pixel-converted-png2jpg', 'default' => array(), 'group' => 'state'),
+				'unlistedCounter' => array('key' => 'spui-short-pixel-unlisted-counter', 'default' => 0, 'group' => 'state'),
     );
 
 
@@ -137,17 +139,17 @@ class WPShortPixelSettings extends \ShortPixel\Model {
         foreach(self::$_optionsMap as $key => $val) {
             delete_option($val['key']);
         }
-        delete_option("wp-short-pixel-bulk-previous-percent");
+        delete_option("spui-short-pixel-bulk-previous-percent");
     }
 
     public static function onActivate() {
-        /*if(!self::getOpt('wp-short-pixel-verifiedKey', false)) {
-            update_option('wp-short-pixel-activation-notice', true, 'no');
+        /*if(!self::getOpt('spui-short-pixel-verifiedKey', false)) {
+            update_option('spui-short-pixel-activation-notice', true, 'no');
         } */
-        update_option( 'wp-short-pixel-activation-date', time(), 'no');
+        update_option( 'spui-short-pixel-activation-date', time(), 'no');
 
-        delete_option( 'wp-short-pixel-current-total-files');
-				//delete_option('wp-short-pixel-remove-settings-on-delete-plugin');
+        delete_option( 'spui-short-pixel-current-total-files');
+				//delete_option('spui-short-pixel-remove-settings-on-delete-plugin');
 
         /*
 				if (isset(self::$_optionsMap['removeSettingsOnDeletePlugin']) && isset(self::$_optionsMap['removeSettingsOnDeletePlugin']['key']))
@@ -177,60 +179,60 @@ class WPShortPixelSettings extends \ShortPixel\Model {
 
     public static function onDeactivate() {
 
-        delete_option('wp-short-pixel-activation-notice');
-				delete_option('wp-short-pixel-bulk-last-status'); // legacy shizzle
-				delete_option('wp-short-pixel-current-total-files');
-				delete_option('wp-short-pixel-remove-settings-on-delete-plugin');
+        delete_option('spui-short-pixel-activation-notice');
+				delete_option('spui-short-pixel-bulk-last-status'); // legacy shizzle
+				delete_option('spui-short-pixel-current-total-files');
+				delete_option('spui-short-pixel-remove-settings-on-delete-plugin');
 
 				// Bulk State machine legacy
 				$bulkLegacyOptions = array(
-						'wp-short-pixel-bulk-type',
-						'wp-short-pixel-bulk-last-status',
-						'wp-short-pixel-query-id-start',
-						'wp-short-pixel-query-id-stop',
-						'wp-short-pixel-bulk-count',
-						'wp-short-pixel-bulk-previous-percent',
-						'wp-short-pixel-bulk-processed-items',
-						'wp-short-pixel-bulk-done-count',
-						'wp-short-pixel-last-bulk-start-time',
-						'wp-short-pixel-last-bulk-success-time',
-						'wp-short-pixel-bulk-running-time',
-						'wp-short-pixel-cancel-pointer',
-						'wp-short-pixel-skip-to-custom',
-						'wp-short-pixel-bulk-ever-ran',
-						'wp-short-pixel-flag-id',
-						'wp-short-pixel-failed-imgs',
+						'spui-short-pixel-bulk-type',
+						'spui-short-pixel-bulk-last-status',
+						'spui-short-pixel-query-id-start',
+						'spui-short-pixel-query-id-stop',
+						'spui-short-pixel-bulk-count',
+						'spui-short-pixel-bulk-previous-percent',
+						'spui-short-pixel-bulk-processed-items',
+						'spui-short-pixel-bulk-done-count',
+						'spui-short-pixel-last-bulk-start-time',
+						'spui-short-pixel-last-bulk-success-time',
+						'spui-short-pixel-bulk-running-time',
+						'spui-short-pixel-cancel-pointer',
+						'spui-short-pixel-skip-to-custom',
+						'spui-short-pixel-bulk-ever-ran',
+						'spui-short-pixel-flag-id',
+						'spui-short-pixel-failed-imgs',
 						'bulkProcessingStatus',
-						'wp-short-pixel-prioritySkip',
+						'spui-short-pixel-prioritySkip',
 				);
 
 				$removedStats = array(
-						'wp-short-pixel-helpscout-optin',
-						'wp-short-pixel-activation-notice',
-						'wp-short-pixel-dismissed-notices',
-						'wp-short-pixel-media-alert',
+						'spui-short-pixel-helpscout-optin',
+						'spui-short-pixel-activation-notice',
+						'spui-short-pixel-dismissed-notices',
+						'spui-short-pixel-media-alert',
 				);
 
 				$removedOptions = array(
-						'wp-short-pixel-remove-settings-on-delete-plugin',
-						'wp-short-pixel-custom-bulk-paused',
-						'wp-short-pixel-last-back-action',
-						'wp-short-pixel-front-bootstrap',
+						'spui-short-pixel-remove-settings-on-delete-plugin',
+						'spui-short-pixel-custom-bulk-paused',
+						'spui-short-pixel-last-back-action',
+						'spui-short-pixel-front-bootstrap',
 				);
 
         // Settings completely removed during the settings redo
         $settingsRevamp = [
-          'wp-short-pixel-cloudflareAPIEmail',
-          'wp-short-pixel-cloudflareAuthKey',
-          'wp-short-pixel-front-bootstrap',
-					'wp-short-pixel-api-retries',
-					'wp-short-pixel-total-optimized',
-					'wp-short-pixel-total-original',
-					'wp-short-pixel-download-archive',
-					'wp-short-pixel-converted-png2jpg',
-          'wp-short-pixel-savedSpace',
-          'wp-short-pixel-fileCount',
-          'wp-short-pixel-files-under-5-percent',
+          'spui-short-pixel-cloudflareAPIEmail',
+          'spui-short-pixel-cloudflareAuthKey',
+          'spui-short-pixel-front-bootstrap',
+					'spui-short-pixel-api-retries',
+					'spui-short-pixel-total-optimized',
+					'spui-short-pixel-total-original',
+					'spui-short-pixel-download-archive',
+					'spui-short-pixel-converted-png2jpg',
+          'spui-short-pixel-savedSpace',
+          'spui-short-pixel-fileCount',
+          'spui-short-pixel-files-under-5-percent',
         ];
 
 				$toRemove = array_merge($bulkLegacyOptions, $removedStats, $removedOptions, $settingsRevamp);

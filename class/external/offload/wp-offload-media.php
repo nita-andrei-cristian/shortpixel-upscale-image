@@ -1,18 +1,18 @@
 <?php
 
-namespace ShortPixel\External\Offload;
+namespace SPUI\External\Offload;
 
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPUI\Model\File\FileModel as FileModel;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notice;
 
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\ResponseController as ResponseController;
 
 // @integration WP Offload Media Lite
 class wpOffload
@@ -68,11 +68,11 @@ class wpOffload
 			$this->offloading = false;
 		}
 
-		add_action('shortpixel/image/optimised', array($this, 'image_upload'), 10);
-		add_action('shortpixel/image/after_restore', array($this, 'image_restore'), 10, 3); // hit this when restoring.
+		add_action('spui/image/optimised', array($this, 'image_upload'), 10);
+		add_action('spui/image/after_restore', array($this, 'image_restore'), 10, 3); // hit this when restoring.
 		add_action('shortpixel-thumbnails-before-regenerate', array($this, 'remove_remote'), 10);
-		add_action('shortpixel/converter/prevent-offload', array($this, 'preventOffload'), 10);
-		add_action('shortpixel/converter/prevent-offload-off', array($this, 'preventOffloadOff'), 10);
+		add_action('spui/converter/prevent-offload', array($this, 'preventOffload'), 10);
+		add_action('spui/converter/prevent-offload-off', array($this, 'preventOffloadOff'), 10);
 
 		add_filter('as3cf_attachment_file_paths', array($this, 'add_webp_paths'));
 
@@ -84,14 +84,14 @@ class wpOffload
 
 		add_filter('shortpixel_get_original_image_path', array($this, 'checkScaledUrl'), 10, 2);
 
-		add_filter('shortpixel/image/urltopath', array($this, 'checkIfOffloaded'), 10, 3);
-		add_filter('shortpixel/file/virtual/translate', array($this, 'getLocalPathByURL'));
+		add_filter('spui/image/urltopath', array($this, 'checkIfOffloaded'), 10, 3);
+		add_filter('spui/file/virtual/translate', array($this, 'getLocalPathByURL'));
 
 		// for webp picture paths rendered via output
-		add_filter('shortpixel/front/webp_notfound', array($this, 'fixWebpRemotePath'), 10, 4);
+		add_filter('spui/front/webp_notfound', array($this, 'fixWebpRemotePath'), 10, 4);
 
 		// Fix for updating source paths when converting
-		add_action('shortpixel/image/convertpng2jpg_success', array($this, 'updateOriginalPath'));
+		add_action('spui/image/convertpng2jpg_success', array($this, 'updateOriginalPath'));
 	}
 
 	public function returnOriginalFile($file, $attach_id)
@@ -150,7 +150,7 @@ class wpOffload
 	 */
 	public function image_restore($mediaItem, $id, $clean)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		// Only medialibrary offloading supported.
 		if ('media' !== $mediaItem->get('type')) {
@@ -380,7 +380,7 @@ class wpOffload
 			$original_path = str_replace(wp_basename($original_path), wp_basename($url), $original_path);
 		}
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$base = $fs->getWPUploadBase();
 
 		$file  = $base . $original_path;
@@ -394,7 +394,7 @@ class wpOffload
 	 */
 	public function image_converted($mediaItem)
 	{
-		$fs = \wpSPIO()->fileSystem();
+		$fs = \wpSPUI()->fileSystem();
 
 		$id = $mediaItem->get('id');
 		//$this->remove_remote($id);
@@ -450,8 +450,8 @@ class wpOffload
 	public function preventInitialUploadHandler($bool, $as3cf_item, $options)
 	{
 
-		$fs = \wpSPIO()->filesystem();
-		$settings = \WPSPIO()->settings();
+		$fs = \wpSPUI()->filesystem();
+		$settings = \wpSPUI()->settings();
 
 		$post_id = $as3cf_item->source_id();
 
@@ -519,7 +519,7 @@ class wpOffload
 	private function getWebpPaths($paths, $check_exists = true)
 	{
 		$newPaths = array();
-		$fs = \wpSPIO()->fileSystem();
+		$fs = \wpSPUI()->fileSystem();
 
 		foreach ($paths as $size => $path) {
 			$file = $fs->getFile($path);
@@ -620,7 +620,7 @@ class wpOffload
 	public function fixWebpRemotePath($bool, $fileObj, $url, $imagebaseDir)
 	{
 		$extension = $fileObj->getExtension();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		$webpUrl = $fileObj->getFullPath();
 		$main_is_loaded = $this->sourceCache($url); // main image, check if loaded.

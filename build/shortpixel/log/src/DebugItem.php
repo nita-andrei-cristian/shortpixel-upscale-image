@@ -1,6 +1,6 @@
 <?php
 // The data models.
-namespace ShortPixel\ShortPixelLogger;
+namespace SPUI\ShortPixelLogger;
 
 
 class DebugItem

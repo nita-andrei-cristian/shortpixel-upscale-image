@@ -1,16 +1,16 @@
 <?php
-namespace ShortPixel\Controller\Optimizer;
+namespace SPUI\Controller\Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Queue\QueueItem as QueueItem;
 use Shortpixel\Controller\Api\RequestManager as RequestManager;
-use ShortPixel\Controller\QueueController;
-use ShortPixel\Helper\UiHelper;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\QueueController;
+use SPUI\Helper\UiHelper;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 use stdClass;
 
 abstract class OptimizerBase
@@ -150,7 +150,7 @@ abstract class OptimizerBase
     protected function finishItemProcess(QueueItem $qItem, $args = [])
     {
         $queue = $this->getCurrentQueue($qItem); 
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPUI()->filesystem();
         
         // If the action is passed as direct action / out of queue, there might be no queueItem in DB
         if (is_object($qItem->getQueueItem()))
@@ -197,7 +197,7 @@ abstract class OptimizerBase
     {
       $imageModel = $qItem->imageModel; 
       $showItem = UiHelper::findBestPreview($imageModel); // find smaller / better preview
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 
       $original = $optimized = false;
 

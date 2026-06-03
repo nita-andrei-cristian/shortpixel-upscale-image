@@ -1,23 +1,23 @@
 <?php
-namespace ShortPixel\Model\Queue;
+namespace SPUI\Model\Queue;
 
 if (!defined('ABSPATH')) {
    exit; // Exit if accessed directly.
 }
 // Attempt to standardize what goes around in the queue and keep some overview.
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\Api\RequestManager as RequestManager;
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\Api\RequestManager as RequestManager;
+use SPUI\Model\Converter\Converter as Converter;
 
-use ShortPixel\Controller\Optimizer\OptimizeController as OptimizeController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController as OptimizeAiController;
-use ShortPixel\Controller\Optimizer\ActionController as ActionController;
-use ShortPixel\Helper\UiHelper;
-use ShortPixel\Model\AiDataModel;
+use SPUI\Controller\Optimizer\OptimizeController as OptimizeController;
+use SPUI\Controller\Optimizer\OptimizeAiController as OptimizeAiController;
+use SPUI\Controller\Optimizer\ActionController as ActionController;
+use SPUI\Helper\UiHelper;
+use SPUI\Model\AiDataModel;
 use stdClass;
 
 class QueueItem
@@ -398,7 +398,7 @@ class QueueItem
       }
       elseif (is_null($this->data()->compressionType))
       {
-         $this->data()->compressionType = \wpSPIO()->settings()->compressionType;
+         $this->data()->compressionType = \wpSPUI()->settings()->compressionType;
       }
 
       if (isset($args['smartcrop'])) 

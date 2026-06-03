@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Notices;
+namespace SPUI\Notices;
 
 class NoticeModel //extends ShortPixelModel
 {

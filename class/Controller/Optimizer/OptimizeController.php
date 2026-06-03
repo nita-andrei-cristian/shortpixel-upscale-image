@@ -1,32 +1,32 @@
 <?php
 
-namespace ShortPixel\Controller\Optimizer;
+namespace SPUI\Controller\Optimizer;
 
-use ShortPixel\Controller\Api\RequestManager;
+use SPUI\Controller\Api\RequestManager;
 
 if (!defined('ABSPATH')) {
   exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ResponseController as ResponseController;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Queue\QueueItem as QueueItem;
 
-use ShortPixel\Helper\DownloadHelper as DownloadHelper;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\DownloadHelper as DownloadHelper;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Helper\UiHelper as UiHelper;
 
 
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
 
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPUI\Model\Converter\Converter as Converter;
 
-use ShortPixel\Controller\AjaxController as AjaxController;
-use ShortPixel\Controller\Queue\QueueItems;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\StatsController as StatsController;
+use SPUI\Controller\AjaxController as AjaxController;
+use SPUI\Controller\Queue\QueueItems;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\StatsController as StatsController;
 
 class OptimizeController extends OptimizerBase
 {
@@ -70,7 +70,7 @@ class OptimizeController extends OptimizerBase
       );
       $args = wp_parse_args($args, $defaults); */
 
-    //$fs = \wpSPIO()->filesystem();
+    //$fs = \wpSPUI()->filesystem();
 
     // $json = $this->getJsonResponse();
     $bool = $this->checkImageModel($qItem);
@@ -87,6 +87,10 @@ class OptimizeController extends OptimizerBase
     }
 
     $is_processable = $imageModel->isProcessable();
+    if (false === $is_processable && 'scale_image' === $qItem->data()->action && $imageModel->isOptimized()) {
+      $is_processable = true;
+    }
+
     // Allow processable to be overridden when using the manual optimize button
     if (false === $is_processable && true === $imageModel->isUserExcluded() && true === $qItem->data()->forceExclusion) {
       $imageModel->cancelUserExclusions();
@@ -269,7 +273,7 @@ class OptimizeController extends OptimizerBase
   {
     $imageModel = $qItem->imageModel;
     $item_id = $qItem->item_id;
-    $fs = \wpSPIO()->filesystem(); 
+    $fs = \wpSPUI()->filesystem(); 
     $q = $this->getCurrentQueue($qItem);
     $statsController = StatsController::getInstance();
 
@@ -295,7 +299,7 @@ class OptimizeController extends OptimizerBase
             ]);
 
             do_action('shortpixel_image_optimised', $item_id);
-            do_action('shortpixel/image/optimised', $imageModel);
+            do_action('spui/image/optimised', $imageModel);
           } elseif (RequestManager::STATUS_CONVERTED == $status) {
             $qItem->addResult([
               'apiStatus' => RequestManager::STATUS_CONVERTED,
@@ -451,6 +455,12 @@ class OptimizeController extends OptimizerBase
            if ( ! is_wp_error($new_attach_id) ) {
              update_post_meta($item_id, '_spui_scaled', (int) $new_attach_id);
              update_post_meta($new_attach_id, '_spui_scaled', (int) $item_id);
+
+             // SPUI: carry over the descriptive + SEO metadata from the source
+             // attachment. media_handle_sideload() only sets a title, so without this
+             // the upscaled copy would lose its caption, description, alt text and any
+             // SEO plugin data.
+             $this->copyAttachmentMetadata($item_id, $new_attach_id);
            }
 
            $qItem->addResult(['new_attach_id' => $new_attach_id] );
@@ -459,6 +469,80 @@ class OptimizeController extends OptimizerBase
         }
     }
 
+  }
+
+  /**
+   * SPUI: Copy the descriptive and SEO metadata from a source attachment onto the
+   * freshly created (upscaled) attachment.
+   *
+   * media_handle_sideload() creates a brand new attachment that only inherits a
+   * title, so without this the upscaled image starts blank — losing its caption,
+   * description, alt text and any SEO plugin data. Core WP fields are copied
+   * explicitly; meta keys are cloned by known SEO prefix (plus the WP alt-text meta)
+   * so new keys from those plugins keep working without enumerating each one.
+   *
+   * @param int $source_id The original attachment ID.
+   * @param int $target_id The newly created upscaled attachment ID.
+   */
+  protected function copyAttachmentMetadata($source_id, $target_id)
+  {
+    $source_id = (int) $source_id;
+    $target_id = (int) $target_id;
+
+    if ($source_id <= 0 || $target_id <= 0 || $source_id === $target_id) {
+      return;
+    }
+
+    $source = get_post($source_id);
+    if (null === $source) {
+      Log::addWarn('SPUI: cannot copy metadata, source attachment not found: ' . $source_id);
+      return;
+    }
+
+    // Core descriptive fields: description (post_content) and caption (post_excerpt).
+    $update = array(
+      'ID'           => $target_id,
+      'post_content' => $source->post_content, // Description
+      'post_excerpt' => $source->post_excerpt, // Caption
+    );
+
+    // Only fill the title from the source when the sideload left it empty or fell
+    // back to the file name, so an explicitly requested newPostTitle is preserved.
+    $target = get_post($target_id);
+    if (null !== $target && '' === trim((string) $target->post_title) && '' !== trim((string) $source->post_title)) {
+      $update['post_title'] = $source->post_title;
+    }
+
+    wp_update_post($update);
+
+    // Alt text + every known SEO plugin meta key (Yoast, Rank Math, SEOPress,
+    // All in One SEO). Copying by prefix avoids enumerating individual keys.
+    $seo_prefixes = array('_yoast_wpseo_', 'rank_math_', '_seopress_', '_aioseo_');
+
+    foreach (array_keys(get_post_meta($source_id)) as $key) {
+      $copy = ('_wp_attachment_image_alt' === $key);
+
+      if (! $copy) {
+        foreach ($seo_prefixes as $prefix) {
+          if (0 === strpos($key, $prefix)) {
+            $copy = true;
+            break;
+          }
+        }
+      }
+
+      if (! $copy) {
+        continue;
+      }
+
+      // get_post_meta() returns unserialized, unslashed values; the metadata API
+      // expects slashed input, so re-slash before writing.
+      $values = get_post_meta($source_id, $key);
+      delete_post_meta($target_id, $key);
+      foreach ($values as $value) {
+        add_post_meta($target_id, $key, wp_slash($value));
+      }
+    }
   }
 
   protected function HandleItemError(QueueItem $qItem)
@@ -594,7 +678,7 @@ class OptimizeController extends OptimizerBase
     }
 
     $files = $qItem->files;
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPUI()->filesystem();
 
     foreach ($files as $name => $data) {
       foreach ($data as $tmpPath) {

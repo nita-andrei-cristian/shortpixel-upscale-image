@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 class Woocommerce
 {
@@ -20,7 +20,7 @@ class Woocommerce
 
 		public function hooks()
 		{
-			if (\wpSPIO()->env()->plugin_active('woocommerce'))
+			if (\wpSPUI()->env()->plugin_active('woocommerce'))
 			{
 				 add_filter('woocommerce_regenerate_images_intermediate_image_sizes', array($this, 'signalWC'));
 
@@ -52,7 +52,7 @@ class Woocommerce
 					 self::$SIGNAL = false;
 					 return $new_sizes;
 				}
-				$fs = \wpSPIO()->filesystem();
+				$fs = \wpSPUI()->filesystem();
 
 				$mediaImage = $fs->getMediaImage($attach_id);
 				$changes = false;
@@ -87,7 +87,7 @@ class Woocommerce
 
 		public function addWarning($tools)
 		{
-			 if (isset($tools['regenerate_thumbnails']) && \wpSPIO()->env()->is_autoprocess)
+			 if (isset($tools['regenerate_thumbnails']) && \wpSPUI()->env()->is_autoprocess)
 			 {
 				  $text = $tools['regenerate_thumbnails']['desc'];
 					$text .= sprintf(

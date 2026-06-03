@@ -1,6 +1,6 @@
 <?php
 // Debug Box to load Log File
-namespace ShortPixel\ShortPixelLogger;
+namespace SPUI\ShortPixelLogger;
 wp_enqueue_script( 'jquery-ui-draggable' );
 
 ?>

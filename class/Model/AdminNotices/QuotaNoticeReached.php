@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\QuotaController as QuotaController;
 
 
-class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
+class QuotaNoticeReached extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_QUOTA_REACHED';
 	protected $errorLevel = 'error';
@@ -71,7 +71,7 @@ class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
 										jQuery(function() {
 												if (ShortPixel)
 												{
-													ShortPixel.percentDial("#sp-avg-optimization-dial", 60);
+													SPUI.percentDial("#sp-avg-optimization-dial", 60);
 												}
 										});
 								</script>
@@ -98,12 +98,12 @@ class QuotaNoticeReached extends \ShortPixel\Model\AdminNoticeModel
 
 			 $message .= sprintf('</p>
 					<div>
-						<button class="button button-primary" type="button" id="shortpixel-upgrade-advice" onclick="ShortPixel.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>
+						<button class="button button-primary" type="button" id="shortpixel-upgrade-advice" onclick="SPUI.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>
 						<a class="button button-primary" href="%s"
 							 title="' . __('Go to My Account and choose a plan','shortpixel-image-optimiser') . '" target="_blank" style="margin-right:10px;">
 								<strong>' . __('Upgrade','shortpixel-image-optimiser') . '</strong>
 						</a>
-						<button type="button" name="checkQuota" class="button" onclick="ShortPixel.checkQuota()">'.  __('Confirm new credits','shortpixel-image-optimiser') . '</button>
+						<button type="button" name="checkQuota" class="button" onclick="SPUI.checkQuota()">'.  __('Confirm new credits','shortpixel-image-optimiser') . '</button>
 				</div>', $login_url);
 
 			$message .= '</div>'; /// closing div

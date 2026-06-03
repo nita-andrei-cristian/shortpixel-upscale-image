@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
-use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
+use SPUI\Controller\Queue\CustomQueue as CustomQueue;
+use SPUI\Controller\Queue\Queue as Queue;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 // Class for controlling bulk and reporting.
 class BulkController
@@ -48,8 +48,8 @@ class BulkController
 
       $queueController = new QueueController(['is_bulk' => true]);
 
-			$fs = \wpSPIO()->filesystem();
-			$backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+			$fs = \wpSPUI()->filesystem();
+			$backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
 			$current_log = $fs->getFile($backupDir->getPath() . 'current_bulk_' . $type . '.log');
 
 			// When starting new bulk remove any open 'current logs';
@@ -76,7 +76,7 @@ class BulkController
            $args['numitems'] = 200;
         }
 
-				$args = apply_filters('shortpixel/bulk/custom_options', $args);
+				$args = apply_filters('spui/bulk/custom_options', $args);
 
       }
 
@@ -194,10 +194,10 @@ class BulkController
 
 	 public function getLog($logName)
 	 {
-  		 $fs = \wpSPIO()->filesystem();
-			 $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+  		 $fs = \wpSPUI()->filesystem();
+			 $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
 
-       $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+       $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
        $backupPath = realpath($backupDir->getPath());
    
        // Construct the full path
@@ -264,8 +264,8 @@ class BulkController
         $data['date'] = time();
 
         $logs = $this->getLogs();
-        $fs = \wpSPIO()->filesystem();
-        $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+        $fs = \wpSPUI()->filesystem();
+        $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
 
         if (count($logs) == 10) // remove logs if more than 10.
         {

@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\InstallHelper as InstallHelper;
 
 
 class StatsModel
@@ -82,13 +82,13 @@ class StatsModel
 
   public function __construct()
   {
-      $this->refreshStatTime = apply_filters('shortpixel/statistics/refresh', WEEK_IN_SECONDS);
+      $this->refreshStatTime = apply_filters('spui/statistics/refresh', WEEK_IN_SECONDS);
       $this->load();
   }
 
   public function load()
   {
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPUI()->settings();
 
     $stats = $settings->currentStats;
 		if (! is_array($stats))
@@ -121,7 +121,7 @@ class StatsModel
 
   public function save()
   {
-     $settings = \wpSPIO()->settings();
+     $settings = \wpSPUI()->settings();
      $stats = $this->stats;
      $stats['time'] = time();
      $settings->currentStats = $stats;
@@ -130,7 +130,7 @@ class StatsModel
   public function reset()
   {
       $this->stats = $this->defaults;
-			\wpSPIO()->settings()->deleteOption('currentStats');
+			\wpSPUI()->settings()->deleteOption('currentStats');
 
   //    $this->save();
   }

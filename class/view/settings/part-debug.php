@@ -1,10 +1,10 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\Notices\NoticeController as NoticeController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI;
+use SPUI\Notices\NoticeController as NoticeController;
+use SPUI\Controller\StatsController as StatsController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,8 +15,8 @@ $opt = new QueueController();
 
 $q = $opt->getQueue('media');
 
-$env = \wpSPIO()->env();
-$fs = \wpSPIO()->filesystem();
+$env = \wpSPUI()->env();
+$fs = \wpSPUI()->filesystem();
 
 $debugUrl = add_query_arg(array('part' => 'debug', 'noheader' => true), $this->url);
 
@@ -32,7 +32,7 @@ if (Log::isManualDebug())
   </h2>
 
   <div class='env'>
-    <h3><?php esc_html_e('Environment', 'shortpixel'); ?></h3>
+    <h3><?php esc_html_e('Environment', 'spui'); ?></h3>
     <div class='flex'>
       <span>NGINX</span><span><?php var_export($this->is_nginx); ?></span>
       <span>KeyVerified</span><span><?php var_export($view->key->is_verifiedkey); ?></span>
@@ -43,11 +43,11 @@ if (Log::isManualDebug())
       <span>Hide Key</span><span><?php var_export($view->key->hide_api_key); ?></span>
       <span>Has Nextgen</span><span><?php var_export($this->has_nextgen); ?></span>
 			<span>Has Offload</span><span><?php
-        $offload = \wpSPIO()->env()->hasOffload();
+        $offload = \wpSPUI()->env()->hasOffload();
         var_export($offload);
         if (true === $offload)
         {
-            echo ' (' .  \wpSPIO()->env()->getOffloadName() . ') ';
+            echo ' (' .  \wpSPUI()->env()->getOffloadName() . ') ';
         }
 
 
@@ -73,7 +73,7 @@ if (Log::isManualDebug())
   </div> <!-- /env -->
 
   <div class='fs'>
-    <h3><?php esc_html_e('FileSystem', 'shortpixel'); ?></h3>
+    <h3><?php esc_html_e('FileSystem', 'spui'); ?></h3>
     <div class='flex'>
        <span>WpFileBase</span><span><?php var_export($fs->getWPFileBase()); ?></span>
        <span>Upload Base</span><span><?php var_export($fs->getWPUploadBase()); ?></span>
@@ -84,7 +84,7 @@ if (Log::isManualDebug())
   </div>
 
   <div class='settings'>
-    <h3><?php esc_html_e('Settings', 'shortpixel'); ?></h3>
+    <h3><?php esc_html_e('Settings', 'spui'); ?></h3>
     <?php $local = $this->view->key;
 
       $local->apiKey = strlen($local->apiKey) . ' chars'; ?>
@@ -120,7 +120,7 @@ if (Log::isManualDebug())
 
 
   <div class='quotadata'>
-    <h3><?php esc_html_e('Quota Data', 'shortpixel'); ?></h3>
+    <h3><?php esc_html_e('Quota Data', 'spui'); ?></h3>
     <pre><?php var_export($this->quotaData); ?></pre>
   </div>
 

@@ -5,12 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Visual Composer and compat class.
-class visualComp
+// SPUI: renamed from the global visualComp so SPUI stays co-active with SPIO, which
+// declares its own global visualComp.
+class SPUI_visualComp
 {
 
   public function __construct()
   {
-     add_filter('shortpixel/init/automedialibrary', array($this, 'check_vcinline'));
+     add_filter('spui/init/automedialibrary', array($this, 'check_vcinline'));
   }
 
   // autolibrary should not do things when VC is being inline somewhere.
@@ -24,4 +26,4 @@ class visualComp
 
 } // Class
 
-$vc = new visualComp();
+$vc = new SPUI_visualComp();

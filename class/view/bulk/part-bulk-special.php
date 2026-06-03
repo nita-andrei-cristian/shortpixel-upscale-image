@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use \ShortPixel\Controller\BulkController as BulkController;
+use \SPUI\Controller\BulkController as BulkController;
 
 	$bulk = BulkController::getInstance();
 	$queueRunning = $bulk->isAnyBulkRunning();

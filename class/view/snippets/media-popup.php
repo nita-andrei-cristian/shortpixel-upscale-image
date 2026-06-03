@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -33,7 +33,7 @@ switch($action_name)
 
 	case 'scale':
 		$modal_title = __('AI Image Upscale', 'shortpixel-image-optimiser');
-		$suggestedFileName = \ShortPixel\Helper\UiHelper::buildUpscaleFileName($originalImage, $defaultScale);
+		$suggestedFileName = \SPUI\Helper\UiHelper::buildUpscaleFileName($originalImage, $defaultScale);
 
 	break;
 }
@@ -76,7 +76,7 @@ $scale_sizes =
 				<span><?php _e('After', 'shortpixel-image-optimiser'); ?></span>
                 <i data-placeholder="<?php echo esc_url($placeholderImage) ?>" style="background-image: url('<?php echo esc_url($placeholderImage) ?>');" ></i>
 				<div class='error-message shortpixel-hide'>&nbsp;</div>
-                <div class='load-preview-spinner shortpixel-hide'><img class='loadspinner' src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></div>
+                <div class='load-preview-spinner shortpixel-hide'><img class='loadspinner' src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></div>
             </div>
     </div>
 

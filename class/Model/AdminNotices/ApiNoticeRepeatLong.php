@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPUI\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
 
-class ApiNoticeRepeatLong extends \ShortPixel\Model\AdminNoticeModel
+class ApiNoticeRepeatLong extends \SPUI\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_NO_APIKEY_REPEAT_LONG';
 	protected $errorLevel = 'warning';
@@ -23,7 +23,7 @@ class ApiNoticeRepeatLong extends \ShortPixel\Model\AdminNoticeModel
 			}
 
 			// Is set by general ApiNotice. If not set, don't bother with the repeat.
-			$activationDate = \wpSPIO()->settings()->activationDate;
+			$activationDate = \wpSPUI()->settings()->activationDate;
 			if (! $activationDate)
 			{
 				 return false;

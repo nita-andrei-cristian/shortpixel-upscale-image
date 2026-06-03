@@ -1,24 +1,24 @@
 <?php
 
-namespace ShortPixel\Model\Image;
+namespace SPUI\Model\Image;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ResponseController as ResponseController;
+use SPUI\Controller\AdminNoticesController as AdminNoticesController;
+use SPUI\Controller\QuotaController as QuotaController;
 
-use ShortPixel\Controller\QueueController as QueueController;
+use SPUI\Controller\QueueController as QueueController;
 
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\InstallHelper as InstallHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPUI\Model\Converter\Converter as Converter;
 
-class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailModel
+class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 {
 
 	/** @var array */
@@ -138,7 +138,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 			'returnParams' => array('sizes' => array(), 'doubles' => array(), 'duplicates'  => array()),
 		);
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$url = $this->getURL();
 
 		if ($this->hasOriginal()) {
@@ -508,7 +508,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 	protected function getRetinas()
 	{
 		// Don't load retina's if option is off.
-		if (! \wpSPIO()->settings()->optimizeRetina)
+		if (! \wpSPUI()->settings()->optimizeRetina)
 			return;
 
 		if (! is_null($this->retinas)) {
@@ -664,7 +664,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 		$return = true;
 		$wpmeta = wp_get_attachment_metadata($this->get('id'));
 		$WPMLduplicates = $this->getWPMLDuplicates();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		if (isset($optimizeData['files']) && isset($optimizeData['data'])) {
 			$files = $optimizeData['files'];
@@ -903,10 +903,10 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 	protected function loadMeta()
 	{
 		$metadata = $this->getDBMeta();
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		$this->image_meta = new ImageMeta();
-		$fs = \wpSPIO()->fileSystem();
+		$fs = \wpSPUI()->fileSystem();
 
 		if (! $metadata) {
 			// Thumbnails is a an array of ThumbnailModels
@@ -1322,7 +1322,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 		$WPMLduplicates = $this->getWPMLDuplicates();
 
 		$fileDelete = (count($WPMLduplicates) == 0) ? true : false;
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		// Load before removing meta.
 		$isConverted = $this->getMeta()->convertMeta()->isConverted();
@@ -1453,7 +1453,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 	{
 		$main_bool = $bool = parent::isProcessable();
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		if (false !== $this->checkDateExcluded())
 		{
@@ -1549,7 +1549,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 
 	public function conversionPrepare($args = array())
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$bool = false;
 
 		$defaults = array(
@@ -1604,7 +1604,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 
 	public function conversionFailed($args = array())
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		$defaults = array('checksum' => 1);
 		$args = wp_parse_args($args, $defaults);
@@ -1634,7 +1634,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 
 	public function conversionSuccess($args = array())
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$defaults = array(
 			'checksum' => 1,
 			'omit_backup' => true,
@@ -1644,7 +1644,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 		$args = wp_parse_args($args, $defaults);
 
 		$this->getMeta()->convertMeta()->setConversionDone($args['omit_backup']);
-		$mainfile = \wpSPIO()->filesystem()->getfile($this->getFileDir() . $this->getFileBase() . '.jpg');
+		$mainfile = \wpSPUI()->filesystem()->getfile($this->getFileDir() . $this->getFileBase() . '.jpg');
 
 		if ($this->exists()) // success, remove converted file.
 		{
@@ -1690,7 +1690,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 
 	protected function setOriginalFile()
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		if (is_null($this->id))
 			return false;
@@ -1760,8 +1760,8 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 	public function getWPMLDuplicates()
 	{
 		global $wpdb;
-		$fs = \wpSPIO()->filesystem();
-		$env = \wpSPIO()->env();
+		$fs = \wpSPUI()->filesystem();
+		$env = \wpSPUI()->env();
 
 		$duplicates = array();
 
@@ -1942,10 +1942,10 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 
 		//$args = wp_parse_args($args, $defaults);
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		do_action('shortpixel_before_restore_image', $this->get('id'));
-		do_action('shortpixel/image/before_restore', $this);
+		do_action('spui/image/before_restore', $this);
 
 
 		$cleanRestore = true;
@@ -2094,7 +2094,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 		update_post_meta($this->get('id'), '_wp_attachment_metadata', $wpmeta);
 
 		do_action('shortpixel_after_restore_image', $this->id, $cleanRestore); // legacy
-		do_action('shortpixel/image/after_restore', $this, $this->id, $cleanRestore);
+		do_action('spui/image/after_restore', $this, $this->id, $cleanRestore);
 
 		if (is_array($WPMLduplicates) && count($WPMLduplicates) > 0) {
 			$current_id = $this->id;
@@ -2113,7 +2113,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 					$this->saveMeta();
 				}
 				do_action('shortpixel_after_restore_image', $this->id, $cleanRestore);
-				do_action('shortpixel/image/after_restore', $this, $this->id,  $cleanRestore);
+				do_action('spui/image/after_restore', $this, $this->id,  $cleanRestore);
 			}
 			$this->id = $current_id;
 		}
@@ -2146,7 +2146,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 	 */
 	protected function restoreConversion($convertMeta, $converter)
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$ext = $convertMeta->getFileFormat();
 		// ImageModel restore, restored png file to .jpg file ( due to $this)
 		// File has just been restored, but it will be wrong extension in uploads
@@ -2655,18 +2655,18 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 			return $fileType->getFileName();
 		}
 
-		$env = \wpSPIO()->env();
-		$fs = \wpSPIO()->filesystem();
+		$env = \wpSPUI()->env();
+		$fs = \wpSPUI()->filesystem();
 
 		// try the whole thing, but fetching remote URLS, test if really S3 not in case something went wrong with is_virtual, or it's just something messed up.
 		if ($fileObj->is_virtual() && $env->plugin_active('s3-offload')) {
 
 
 			if ($type == 'webp') {
-				$is_double = \wpSPIO()->env()->useDoubleWebpExtension();
+				$is_double = \wpSPUI()->env()->useDoubleWebpExtension();
 			}
 			if ($type == 'avif') {
-				$is_double = \wpSPIO()->env()->useDoubleAvifExtension();
+				$is_double = \wpSPUI()->env()->useDoubleAvifExtension();
 			}
 
 			$url = str_replace('.' . $fileObj->getExtension(), '.' . $type, $fileObj->getURL());
@@ -2773,7 +2773,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 
 		self::$unlistedNoticeChecked = true;
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$control = AdminNoticesController::getInstance();
 
 		// Silent mode has no notices.
@@ -2823,32 +2823,32 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 	protected function addUnlisted($check_only = false)
 	{
 		// Setting must be active.
-		/*if (! \wpSPIO()->settings()->optimizeUnlisted )
+		/*if (! \wpSPUI()->settings()->optimizeUnlisted )
          return; */
-		$searchUnlisted = \wpSPIO()->settings()->optimizeUnlisted;
+		$searchUnlisted = \wpSPUI()->settings()->optimizeUnlisted;
 
 		// Don't check this more than once per run-time.
 		if (in_array($this->get('id'), self::$unlistedChecked) && $check_only === false) {
 			return;
 		}
 
-		if ($this->is_virtual() && false === \wpSPIO()->env()->useVirtualHeavyFunctions()) {
+		if ($this->is_virtual() && false === \wpSPUI()->env()->useVirtualHeavyFunctions()) {
 			return;
 		}
 
-		if (defined('SHORTPIXEL_CUSTOM_THUMB_SUFFIXES')) {
-			$suffixes = explode(',', SHORTPIXEL_CUSTOM_THUMB_SUFFIXES);
+		if (defined('SPUI_CUSTOM_THUMB_SUFFIXES')) {
+			$suffixes = explode(',', SPUI_CUSTOM_THUMB_SUFFIXES);
 		} else
 			$suffixes = array();
 
-		if (defined('SHORTPIXEL_CUSTOM_THUMB_INFIXES')) {
-			$infixes = explode(',', SHORTPIXEL_CUSTOM_THUMB_INFIXES);
+		if (defined('SPUI_CUSTOM_THUMB_INFIXES')) {
+			$infixes = explode(',', SPUI_CUSTOM_THUMB_INFIXES);
 		} else {
 			$infixes = array();
 		}
 
-		$searchSuffixes = array_unique(apply_filters('shortpixel/image/unlisted_suffixes', $suffixes));
-		$searchInfixes =  array_unique(apply_filters('shortpixel/image/unlisted_infixes', $infixes));
+		$searchSuffixes = array_unique(apply_filters('spui/image/unlisted_suffixes', $suffixes));
+		$searchInfixes =  array_unique(apply_filters('spui/image/unlisted_infixes', $infixes));
 
 		// addUnlisted is called by IsProcessable, file might not exist.
 		// If virtual, we can't read dir, don't do it.
@@ -2905,7 +2905,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 			$unlisted = array_merge($unlisted, $result_files);
 
 			if (count($searchSuffixes) > 0) {
-				// $suffixes = explode(',', SHORTPIXEL_CUSTOM_THUMB_SUFFIXES);
+				// $suffixes = explode(',', SPUI_CUSTOM_THUMB_SUFFIXES);
 				if (is_array($searchSuffixes)) {
 					foreach ($searchSuffixes as $suffix) {
 
@@ -2918,7 +2918,7 @@ class MediaLibraryModel extends \ShortPixel\Model\Image\MediaLibraryThumbnailMod
 				}
 			}
 			if (count($searchInfixes) > 0) {
-				// $infixes = explode(',', SHORTPIXEL_CUSTOM_THUMB_INFIXES);
+				// $infixes = explode(',', SPUI_CUSTOM_THUMB_INFIXES);
 				if (is_array($searchInfixes)) {
 					foreach ($searchInfixes as $infix) {
 						//$thumbsCandidates = @glob($base . $infix  . "-*." . $ext);

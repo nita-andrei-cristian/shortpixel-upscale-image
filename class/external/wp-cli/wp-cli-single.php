@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-//use ShortPixel\Controller\OptimizeController as OptimizeController;
-use ShortPixel\Controller\BulkController as BulkController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+//use SPUI\Controller\OptimizeController as OptimizeController;
+use SPUI\Controller\BulkController as BulkController;
 
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\Queue\Queue as Queue;
+use SPUI\Controller\ResponseController as ResponseController;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
 
 /**
 * Actions and operations for the ShortPixel Image Optimizer plugin
@@ -48,7 +48,7 @@ class SpioSingle extends SpioCommandBase
   public function restore($args, $assoc_args)
   {
       //$controller = new QueueController();
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 
       if (! isset($args[0]))
       {
@@ -120,7 +120,7 @@ class SpioSingle extends SpioCommandBase
 	public function requestAlt($args, $assoc)
 	{
 		$queueController = $this->getQueueController();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		if (! isset($args[0])) {
 			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-image-optimiser'));

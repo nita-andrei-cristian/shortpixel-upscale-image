@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\AccessModel as AccessModel;
 
 
 class ViewController extends Controller
@@ -35,7 +35,7 @@ class ViewController extends Controller
 	 /*
 	 Not sure why this is here
 	 foreach (get_declared_classes() as $class) {
-      if (is_subclass_of($class, 'ShortPixel\Controller') )
+      if (is_subclass_of($class, 'SPUI\Controller') )
         self::$controllers[] = $class;
 		} */
   }
@@ -122,7 +122,7 @@ class ViewController extends Controller
       $view->template_args = $args; // local pass only for this view, useful for snippets, not main controllers.
       $controller = $this;
 
-      $template_path = \wpSPIO()->plugin_path('class/view/' . $template  . '.php');
+      $template_path = \wpSPUI()->plugin_path('class/view/' . $template  . '.php');
      	if (file_exists($template_path) === false)
 			{
         Log::addError("View $template could not be found in " . $template_path,

@@ -1,23 +1,23 @@
 <?php
-namespace ShortPixel\Controller\Queue;
+namespace SPUI\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Model\Converter\Converter as Converter;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\CacheController as CacheController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\Controller\ResponseController as ResponseController;
+use SPUI\Model\Converter\Converter as Converter;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\Queue\QueueItem as QueueItem;
 
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\ShortQ\ShortQ as ShortQ;
+use SPUI\Helper\UiHelper as UiHelper;
+use SPUI\Model\AiDataModel;
+use SPUI\ShortQ\ShortQ as ShortQ;
 
 abstract class Queue
 {
@@ -26,7 +26,7 @@ abstract class Queue
     protected static $results;
     protected static $isInQueue = [];
 
-    const PLUGIN_SLUG = 'SPIO';
+    const PLUGIN_SLUG = 'SPUI';
 
     // Result status for Run function
     const RESULT_ITEMS = 1;
@@ -340,13 +340,13 @@ abstract class Queue
 
     protected function prepareItems($items)
     {
-        do_action('shortpixel/queue/prepare_items', $items);
+        do_action('spui/queue/prepare_items', $items);
 
         $return = array('items' => 0, 'images' => 0, 'results' => 0,
       'overlimit' => false);
 
-				$settings = \wpSPIO()->settings();
-        $env = \wpSPIO()->env();
+				$settings = \wpSPUI()->settings();
+        $env = \wpSPUI()->env();
         $queueOptions = $this->getOptions();
 
           if (count($items) == 0)
@@ -356,7 +356,7 @@ abstract class Queue
               return $return;
           }
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
 
           $queue = array();
           $imageCount = $webpCount = $avifCount = $baseCount = 0;
@@ -426,11 +426,11 @@ abstract class Queue
                 }
 
                 // @todo This whole structure on ai / not-ai for enqueue is getting messy 
-                $spui_already_scaled = (bool) get_post_meta( $mediaItem->get('id'), '_spui_scaled', true );
-                if ($mediaItem->isProcessable() &&
+                $spui_scaled_id = (int) get_post_meta( $mediaItem->get('id'), '_spui_scaled', true );
+                $spui_generated_upscale = $spui_scaled_id > 0 && $spui_scaled_id < (int) $mediaItem->get('id');
+                if (($mediaItem->isProcessable() || $mediaItem->isOptimized()) &&
                     $mediaItem->isOptimizePrevented() === false &&
-                    ! $mediaItem->isOptimized() &&
-                    ! $spui_already_scaled && // SPUI: skip already-upscaled images in bulk
+                    ! $spui_generated_upscale && // SPUI: skip generated upscaled copies, not their source attachments.
                      ! $operation &&
                     true === $enqueueRegular
                   ) // Checking will be done when processing queue.
@@ -443,7 +443,7 @@ abstract class Queue
 
                     $qItem = QueueItems::getImageItem($mediaItem);
                     // SPUI: use scale_image action with the configured default factor
-                    $spuiScale = (int) \wpSPIO()->settings()->defaultUpscaleFactor;
+                    $spuiScale = (int) \wpSPUI()->settings()->defaultUpscaleFactor;
                     if ($spuiScale <= 0) { $spuiScale = 2; }
                     $qItem->newScaleImageAction(['scale' => $spuiScale]);
 

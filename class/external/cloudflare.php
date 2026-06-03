@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 // @todo Clean up unused lines in this file. (cloudflare)
 class CloudFlareAPI {
@@ -22,16 +22,16 @@ class CloudFlareAPI {
 
     public function __construct()
     {
-        add_action('shortpixel/image/optimised', array( $this, 'check_cloudflare' ), 10 );
-				add_action('shortpixel/image/before_restore', array($this, 'check_cloudflare'), 10);
+        add_action('spui/image/optimised', array( $this, 'check_cloudflare' ), 10 );
+				add_action('spui/image/before_restore', array($this, 'check_cloudflare'), 10);
     }
 
     public function setup()
     {
 
-        $this->zone_id =  (defined('SHORTPIXEL_CFZONE') ) ? SHORTPIXEL_CFZONE : \wpSPIO()->settings()->cloudflareZoneID;
+        $this->zone_id =  (defined('SPUI_CFZONE') ) ? SPUI_CFZONE : \wpSPUI()->settings()->cloudflareZoneID;
 
-        $this->token = (defined('SHORTPIXEL_CFTOKEN') ) ? SHORTPIXEL_CFTOKEN : \wpSPIO()->settings()->cloudflareToken;
+        $this->token = (defined('SPUI_CFTOKEN') ) ? SPUI_CFTOKEN : \wpSPUI()->settings()->cloudflareToken;
 
         if (! empty($this->token) && ! empty($this->zone_id))
         {
@@ -82,7 +82,7 @@ class CloudFlareAPI {
 
             */
 
-						$fs = \wpSPIO()->filesystem();
+						$fs = \wpSPUI()->filesystem();
 
 						$image_paths[] = $imageItem->getURL();
 						if ($imageItem->getWebp() !== false)

@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelScreen extends ShortPixelScreenBase
+class SPUIScreen extends SPUIScreenBase
 {
 
   isCustom = true;
@@ -29,7 +29,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 			window.addEventListener('shortpixel.bulk.onSwitchPanel', this.EventPanelSwitched.bind(this));
 			window.addEventListener('shortpixel.reloadscreen', this.ReloadScreen.bind(this));
 
-			var processData = ShortPixelProcessorData.startData;
+			var processData = SPUIProcessorData.startData;
 			var initMedia = processData.media.stats;
 			var initCustom = processData.custom.stats;
 			var initTotal = processData.total.stats;
@@ -91,9 +91,9 @@ class ShortPixelScreen extends ShortPixelScreenBase
 			}
 
 			// This var is defined in admin_scripts, localize.
-			if ( typeof shortPixelScreen.panel !== 'undefined')
+			if ( typeof spuiScreen.panel !== 'undefined')
 			{
-				 this.SwitchPanel(shortPixelScreen.panel);
+				 this.SwitchPanel(spuiScreen.panel);
 			}
 
 	}
@@ -842,7 +842,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
   }
   StopBulk(event)
   {
-      if (confirm(shortPixelScreen.endBulk))
+      if (confirm(spuiScreen.endBulk))
          this.FinishBulk(event);
   }
   FinishBulk(event)
@@ -870,7 +870,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
          var url = data.redirect;
       }
       else {
-          var url = shortPixelScreen.reloadURL;
+          var url = spuiScreen.reloadURL;
       }
 
 			location.href = url;
@@ -1083,7 +1083,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 		}
     var data = {screen_action: 'startRestoreAll', callback: 'shortpixel.startRestoreAll', queues: queues}; //
 
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spuiScreen.panel);
 
     this.UpdatePanelStatus('loading', 'selection');
     this.SwitchPanel('selection');
@@ -1102,7 +1102,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 		this.SwitchPanel('selection');
 
   	//this.SwitchPanel('process');
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spuiScreen.panel);
 
     // Prepare should happen after selecting what the optimize.
     window.addEventListener('shortpixel.startUndoAI', this.PrepareBulk.bind(this), {'once': true} );
@@ -1118,7 +1118,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 		this.SwitchPanel('selection');
 
   	//this.SwitchPanel('process');
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spuiScreen.panel);
 
 
     // Prepare should happen after selecting what the optimize.
@@ -1135,7 +1135,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
     this.UpdatePanelStatus('loading', 'selection');
 
 
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spuiScreen.panel);
 
     // Prepare should happen after selecting what the optimize.
     window.addEventListener('shortpixel.startRemoveLegacy', this.PrepareBulk.bind(this), {'once': true} );

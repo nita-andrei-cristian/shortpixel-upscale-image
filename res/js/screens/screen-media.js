@@ -1,7 +1,7 @@
 'use strict';
 
 // MainScreen as an option for delegate functions
-class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen, processor)
+class SPUIScreen extends SPUIScreenItemBase //= function (MainScreen, processor)
 {
 	isCustom = true;
 	isMedia = true;
@@ -19,7 +19,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 	Init() {
 		super.Init();
 		
-		let settings = spio_mediascreen_settings;
+		let settings = spui_mediascreen_settings;
 		this.settings = settings;
 
 		this.ListenGallery();
@@ -728,6 +728,20 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		{
 			this.UpdateGutenBerg(resultItem);
 		}
+
+		// SPUI: an upscale produces a NEW attachment (new_attach_id). The partial
+		// LoadItemView only refreshes the source row, so the new image and the updated
+		// "Upscale again" button never appear in the list without a manual refresh.
+		// Reload once the upscale is done so the new attachment shows. Skip when a SPUI
+		// editor modal is open (the modal/Gutenberg path inserts the image itself) so we
+		// don't yank the page out from under the user.
+		var isDone = (fileStatus == 'FILE_DONE' || resultItem.is_done == true);
+		var newAttachId = parseInt(resultItem.new_attach_id);
+		var modalOpen = (null !== document.getElementById('shortpixel-media-modal'));
+		if (type == 'media' && isDone && newAttachId > 0 && ! modalOpen)
+		{
+			window.location.reload();
+		}
 	}
 
 	RedoLegacy(id) {
@@ -755,7 +769,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		var self = this;
 		var next_item_run_process = false; 
 
-		if (this.settings.hide_spio_in_popups)
+		if (this.settings.hide_spui_in_popups)
 		{
 			return;
 		}
@@ -788,8 +802,8 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 					{
 						if (true === next_item_run_process )
 						{
-							window.ShortPixelProcessor.SetInterval(-1);
-							window.ShortPixelProcessor.RunProcess();
+							window.SPUIProcessor.SetInterval(-1);
+							window.SPUIProcessor.RunProcess();
 							next_item_run_process = false; 
 						}
 						else
@@ -866,7 +880,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			doSPIORow: function (dataHtml) {
 				var html = '';
 				html += '<div class="shortpixel-popup-info">';
-				html += '<label class="name">ShortPixel</label>';
+				html += '<label class="name">SPUI</label>';
 				html += dataHtml;
 				html += '</div>';
 				return html;
@@ -934,10 +948,10 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			id: id,
 			type: 'media',
 			screen_action: 'getItemEditWarning',
-			callback: 'ShortPixelMedia.getItemEditWarning'
+			callback: 'SPUIMedia.getItemEditWarning'
 		};
 
-		window.addEventListener('ShortPixelMedia.getItemEditWarning', this.CheckOptimizeWarning.bind(this), { 'once': true });
+		window.addEventListener('SPUIMedia.getItemEditWarning', this.CheckOptimizeWarning.bind(this), { 'once': true });
 		this.processor.AjaxRequest(data);
 	}
 
@@ -960,11 +974,11 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 
 
 		if ('true' == is_restorable) {
-			var restore_link = spio_media.restore_link.replace('#post_id#', image_post_id);
-			div.innerHTML = '<p>' + spio_media.optimized_text + ' <a href="' + restore_link + '">' + spio_media.restore_link_text + '</a></p>';
+			var restore_link = spui_media.restore_link.replace('#post_id#', image_post_id);
+			div.innerHTML = '<p>' + spui_media.optimized_text + ' <a href="' + restore_link + '">' + spui_media.restore_link_text + '</a></p>';
 		}
 		else {
-			div.innerHTML = '<p>' + spio_media.optimized_text + ' ' + spio_media.restore_link_text_unrestorable + '</p>';
+			div.innerHTML = '<p>' + spui_media.optimized_text + ' ' + spui_media.restore_link_text_unrestorable + '</p>';
 
 		}
 		// only if not existing.
@@ -1002,11 +1016,11 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 				id: post_id,
 				type: 'media',
 				screen_action: 'getItemEditWarning',
-				callback: 'ShortPixelMedia.getItemEditWarning'
+				callback: 'SPUIMedia.getItemEditWarning'
 			};
 
-			window.addEventListener('ShortPixelMedia.getItemEditWarning', self.CheckOptimizeWarning.bind(self), { 'once': true });
-			window.ShortPixelProcessor.AjaxRequest(data);
+			window.addEventListener('SPUIMedia.getItemEditWarning', self.CheckOptimizeWarning.bind(self), { 'once': true });
+			window.SPUIProcessor.AjaxRequest(data);
 		});
 	}
 
@@ -1034,8 +1048,8 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 						if (self.gutenCheck.indexOf(imageId) === -1)
 						{
 						
-							window.ShortPixelProcessor.SetInterval(-1);
-							window.ShortPixelProcessor.RunProcess();
+							window.SPUIProcessor.SetInterval(-1);
+							window.SPUIProcessor.RunProcess();
 						
 							self.gutenCheck.push(imageId);
 						}

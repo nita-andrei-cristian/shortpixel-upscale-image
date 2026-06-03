@@ -1,6 +1,6 @@
 'use strict';
 
-var ShortPixelToolTip = function(reserved, processor)
+var SPUIToolTip = function(reserved, processor)
 {
 		this.strings = '';
 
@@ -24,7 +24,7 @@ var ShortPixelToolTip = function(reserved, processor)
             this.ProcessPause();
         }
 
-			this.strings = spio_tooltipStrings;
+			this.strings = spui_tooltipStrings;
 
       window.addEventListener('shortpixel.processor.paused', this.ProcessChange.bind(this));
     }
@@ -39,7 +39,7 @@ var ShortPixelToolTip = function(reserved, processor)
     }
 		this.InitStats = function()
 		{
-		      var processData = ShortPixelProcessorData.startData;
+		      var processData = SPUIProcessorData.startData;
 					if (typeof processData !== 'object')
 					{
 						 console.error('Tooltip: No start Data found.');

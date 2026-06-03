@@ -1,7 +1,7 @@
 'use strict'
 
 // New Class for Settings Section.
-class ShortPixelSettings {
+class SPUISettings {
 
 	tab_elements = {};
 	menu_elements = [];
@@ -25,7 +25,7 @@ class ShortPixelSettings {
 
 	InitActions() {
 		var self = this;
-		this.strings = settings_strings;
+		this.strings = spuiSettingsStrings;
 
 		this.InitToggle(); // data- toggles 
 		this.InitExclusions(); // Exclusions 
@@ -418,7 +418,7 @@ class ShortPixelSettings {
 					callback : 'shortpixelSettings.AiImageSet',
 					
 				}
-				window.ShortPixelProcessor.AjaxRequest(data); 
+				window.SPUIProcessor.AjaxRequest(data); 
 
 				window.addEventListener('shortpixelSettings.AiImageSet', function (response) {
 
@@ -467,7 +467,7 @@ class ShortPixelSettings {
 						
 					}
 
-					window.ShortPixelProcessor.AjaxRequest(data); 
+					window.SPUIProcessor.AjaxRequest(data); 
 
 					window.addEventListener('shortpixelSettings.AiImageSet', function (response) {
 						
@@ -498,15 +498,15 @@ class ShortPixelSettings {
 		};
 
 				// Processor / Screen might not be loaded if the current screen is AI.
-		if (null === window.ShortPixelProcessor.screen)
+		if (null === window.SPUIProcessor.screen)
 			{
 					addEventListener('shortpixel.screen.loaded', function () {
-						window.ShortPixelProcessor.AjaxRequest(data);
+						window.SPUIProcessor.AjaxRequest(data);
 					} );
 			}
 			else
 			{
-				window.ShortPixelProcessor.AjaxRequest(data);
+				window.SPUIProcessor.AjaxRequest(data);
 			}
 	}
 
@@ -589,7 +589,7 @@ class ShortPixelSettings {
 
 			let results = json.settings.results;
 			//let anchor = document.querySelector('.wp-header-end');
-			//let screen = window.ShortPixelProcessor.GetScreen();
+			//let screen = window.SPUIProcessor.GetScreen();
 
 			//screen.AppendNotices(json.display_notices, anchor);
 			var messageBox = document.getElementById('settings-purge-message');
@@ -606,7 +606,7 @@ class ShortPixelSettings {
 
 		}, { 'once': true });
 
-		window.ShortPixelProcessor.AjaxRequest(data);
+		window.SPUIProcessor.AjaxRequest(data);
 
 	}
 
@@ -681,7 +681,7 @@ class ShortPixelSettings {
 
 		}, { once: true });
 
-		window.ShortPixelProcessor.AjaxRequest(data);
+		window.SPUIProcessor.AjaxRequest(data);
 
 	}
 
@@ -716,7 +716,7 @@ class ShortPixelSettings {
 
 		}, { once: true });
 
-		window.ShortPixelProcessor.AjaxRequest(data);
+		window.SPUIProcessor.AjaxRequest(data);
 
 
 	}
@@ -728,7 +728,7 @@ class ShortPixelSettings {
 		data.screen_action = 'settings/changemode';
 		data.new_mode = new_mode;
 
-		window.ShortPixelProcessor.AjaxRequest(data);
+		window.SPUIProcessor.AjaxRequest(data);
 
 		this.root.classList.remove('simple', 'advanced');
 		this.root.classList.add(new_mode);
@@ -990,16 +990,16 @@ class ShortPixelSettings {
 
 	async DoAjaxRequest(formData, responseOkCallBack, responseErrorCallback) {
 
-		formData.append('action', 'shortpixel_settingsRequest');
+		formData.append('action', 'spui_settingsRequest');
 		formData.append('ajaxSave', 'true');
 
 		formData.append('request_url', window.location.toString());
 
 		if (false === formData.has('nonce')) {
-			formData.append('nonce', ShortPixelProcessorData.nonce_settingsrequest);
+			formData.append('nonce', SPUIProcessorData.nonce_settingsrequest);
 		}
 
-		const url = ShortPixel.AJAX_URL;
+		const url = SPUI.AJAX_URL;
 
 		if (typeof responseOkCallBack !== 'function') {
 			responseOkCallBack = (response) => { console.log(response); };
@@ -1057,7 +1057,7 @@ class ShortPixelSettings {
 		if (json.display_notices) {
 
 			let anchor = document.querySelector('.wp-header-end');
-			let screen = window.ShortPixelProcessor.GetScreen();
+			let screen = window.SPUIProcessor.GetScreen();
 
 			screen.AppendNotices(json.display_notices, anchor);
 			/*					for (let i = 0; i < json.display_notices.length; i++)
@@ -1339,7 +1339,7 @@ class ShortPixelSettings {
 
 		window.addEventListener('shortpixelSettings.receiveModal', this.ReceiveModal.bind(this), { 'once': true });
 
-		window.ShortPixelProcessor.AjaxRequest(data);
+		window.SPUIProcessor.AjaxRequest(data);
 
 	}
 
@@ -2018,6 +2018,6 @@ console.log(demon.selectedIndex);
 
 
 document.addEventListener("DOMContentLoaded", function () {
-	var s = new ShortPixelSettings();
+	var s = new SPUISettings();
 	s.Init();
 });

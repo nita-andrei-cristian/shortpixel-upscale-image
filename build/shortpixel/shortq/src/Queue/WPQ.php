@@ -1,8 +1,8 @@
 <?php
-namespace ShortPixel\ShortQ\Queue;
-use ShortPixel\ShortQ\Item as Item;
-use ShortPixel\ShortQ\Status as Status;
-use \ShortPixel\ShortQ\ShortQ as ShortQ;
+namespace SPUI\ShortQ\Queue;
+use SPUI\ShortQ\Item as Item;
+use SPUI\ShortQ\Status as Status;
+use \SPUI\ShortQ\ShortQ as ShortQ;
 
 class WPQ implements Queue
 {
@@ -285,7 +285,7 @@ class WPQ implements Queue
        $item->tries++;
 			 if ($item->tries > $this->getOption('retry_limit'))
 			 {
-				 do_action('shortpixel/modules/wpq/item/timeout', $item);
+				 do_action('spui/modules/wpq/item/timeout', $item);
 				 $this->itemFailed($item, true); // fatal fail
 			 }
 			 else

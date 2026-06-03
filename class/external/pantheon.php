@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -11,10 +11,10 @@ class Pantheon {
 
 	public function __construct()
 	{
-		add_action( 'shortpixel/image/optimised', array( $this, 'flush_image_caches' ), 10 );
-		if (! defined('SHORTPIXEL_TRUSTED_MODE'))
+		add_action( 'spui/image/optimised', array( $this, 'flush_image_caches' ), 10 );
+		if (! defined('SPUI_TRUSTED_MODE'))
 		{
-			 define('SHORTPIXEL_TRUSTED_MODE', true);
+			 define('SPUI_TRUSTED_MODE', true);
 		}
 
 		self::$is_pantheon = true;

@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
-use ShortPixel\Controller\Front\CDNController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\QueueController;
+use SPUI\Controller\Front\CDNController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\Controller\QueueController;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\AiDataModel;
+use SPUI\Model\File\FileModel as FileModel;
 
 
 // Future contoller for the edit media metabox view.
-class EditMediaViewController extends \ShortPixel\ViewController
+class EditMediaViewController extends \SPUI\ViewController
 {
       protected $template = 'view-edit-media';
   //    protected $model = 'image';
@@ -44,7 +44,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
         if (! $this->hooked)
           $this->loadHooks();
 
-					$fs = \wpSPIO()->filesystem();
+					$fs = \wpSPUI()->filesystem();
 					$fs->startTrustedMode();
 
       }
@@ -73,7 +73,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
           $fields['aibutton'] = [
               'label' => __('ShortPixel AI Data', 'shortpixel-image-optimiser'), 
               'input' => 'html', 
-              'html' => "<a href='javascript:window.ShortPixelProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
+              'html' => "<a href='javascript:window.SPUIProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
                  <div class='shortpixel-alt-messagebox' id='shortpixel-ai-messagebox-$post_id'>&nbsp;</div>
                ",
           ];
@@ -90,7 +90,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 					$this->view->id = $this->post_id;
 					$this->view->list_actions = '';
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
           $this->imageModel = $fs->getMediaImage($this->post_id);
 
 					// Asking for something non-existing.
@@ -122,7 +122,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
             $this->view->list_actions = '';
           }
 
-          if(true === \wpSPIO()->env()->is_debug )
+          if(true === \wpSPUI()->env()->is_debug )
           {
             $this->view->debugInfo = $this->getDebugInfo();
           }
@@ -183,7 +183,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 				if ($imageObj->isOptimized())
 				{
 					$stats[] = array( sprintf(__('%s %s Read more about theses stats %s ', 'shortpixel-image-optimiser'), '
-					<p><img alt=' . esc_html('Info Icon', 'shortpixel-image-optimiser')  . ' src=' . esc_url( wpSPIO()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
+					<p><img alt=' . esc_html('Info Icon', 'shortpixel-image-optimiser')  . ' src=' . esc_url( wpSPUI()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
 				}
 
         return $stats;
@@ -191,14 +191,14 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
       protected function getDebugInfo()
       {
-          if(! \wpSPIO()->env()->is_debug )
+          if(! \wpSPUI()->env()->is_debug )
           {
             return [];
           }
 
           $meta = \wp_get_attachment_metadata($this->post_id);
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPUI()->filesystem();
 
 					$imageObj = $this->imageModel;
 

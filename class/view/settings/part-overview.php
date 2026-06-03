@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use \ShortPixel\Helper\UiHelper as UiHelper;
+use \SPUI\Helper\UiHelper as UiHelper;
 
 
 $total_circle = 289.027;

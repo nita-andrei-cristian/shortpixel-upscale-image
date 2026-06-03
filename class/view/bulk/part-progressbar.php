@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -11,7 +11,7 @@ $do_active = true; // color all steps active until part is reached.
 
 
 ?>
-<section class='spio-progressbar'>
+<section class='spui-progressbar'>
 
   <div class="flex">
     <div class="select <?php echo (true == $do_active) ? ' active ' : '' ?>" >

@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPUI\Controller\Api;
 
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Helper\UtilHelper;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -66,15 +66,15 @@ abstract class RequestManager
    */
   protected function getRequest($requestBody = [], $requestParameters = [])
   {
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPUI()->settings();
 
-    $requestBody = apply_filters('shortpixel/api/request', $requestBody, $requestBody['item_id']);
+    $requestBody = apply_filters('spui/api/request', $requestBody, $requestBody['item_id']);
 
     $arguments = array(
         'method' => 'POST',
         'timeout' => 15, // timeout in seconds
         'redirection' => 3, // amount of redirects allowed.
-        'sslverify' => apply_filters('shortpixel/system/sslverify', true),
+        'sslverify' => apply_filters('spui/system/sslverify', true),
         'httpversion' => '1.0',
         'blocking' => isset($requestParameters['blocking']) ? $requestParameters['blocking'] : true,
         'headers' => isset($requestParameters['headers']) ? $requestParameters['headers'] : [],

@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPUI\Controller\Api;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
 
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use \ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
+use \SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ class AiController extends RequestManager
 {
 
     protected $main_url;
-    protected $auth_token = 'spio_ai_jwt_token';
+    protected $auth_token = 'spui_ai_jwt_token';
 
     const AI_STATUS_INVALID_URL = 2;
     const AI_STATUS_OVERQUOTA = 3; 
@@ -43,7 +43,7 @@ class AiController extends RequestManager
 
       //$request = $this->getRequest($requestArgs);
       $requestBody = [
-        'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+        'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
         'item_id' => $qItem->item_id,
         'source' => 1, // SPIO
       ];

@@ -4,7 +4,7 @@
 //       : Crawler to scan / refresh folders via ajax / JSON
 //
 
-class ShortPixelFolderTree
+class SPUIFolderTree
 {
     strings = [];
     icons = [];
@@ -29,8 +29,8 @@ class ShortPixelFolderTree
         if (true === this.didInit)
           return;
 
-        this.strings = spio_folderbrowser.strings;
-        this.icons = spio_folderbrowser.icons;
+        this.strings = spui_folderbrowser.strings;
+        this.icons = spui_folderbrowser.icons;
 
         this.ShowLoading();
         this.AjaxLoadFolders('');

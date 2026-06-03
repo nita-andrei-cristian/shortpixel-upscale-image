@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Model\File;
+namespace SPUI\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notice;
 
-use \ShortPixel\Model\File\DirectoryModel as DirectoryModel;
-use \ShortPixel\Model\Image\ImageModel as ImageModel;
+use \SPUI\Model\File\DirectoryModel as DirectoryModel;
+use \SPUI\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
 
 // extends DirectoryModel. Handles ShortPixel_meta database table
 // Replacing main parts of shortpixel-folder
@@ -309,14 +309,14 @@ class DirectoryOtherMediaModel extends DirectoryModel
         return false;
       }
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
       $filter = ($time > 0)  ? array('date_newer' => $time) : array();
       $filter['exclude_files'] = array('.avif');
 			$filter['include_files'] = ImageModel::PROCESSABLE_EXTENSIONS;
 
       $files = $fs->getFilesRecursive($this, $filter);
 
-      \wpSPIO()->settings()->hasCustomFolders = time(); // note, check this against bulk when removing. Custom Media Bulk depends on having a setting.
+      \wpSPUI()->settings()->hasCustomFolders = time(); // note, check this against bulk when removing. Custom Media Bulk depends on having a setting.
 
     	$result = $this->addImages($files);
 
@@ -341,9 +341,9 @@ class DirectoryOtherMediaModel extends DirectoryModel
 	*/
 	public function checkDirectory($silent = false)
 	{
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
        $rootDir = $fs->getWPFileBase();
-       $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+       $backupDir = $fs->getDirectory(SPUI_BACKUP_FOLDER);
 			 $otherMediaController = OtherMediaController::getInstance();
 
        if (! $this->exists())
@@ -519,7 +519,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
   */
   public function addImages($files) {
 
-			if ( apply_filters('shortpixel/othermedia/addfiles', true, $files, $this) === false)
+			if ( apply_filters('spui/othermedia/addfiles', true, $files, $this) === false)
 			{
 				 return false;
 			}
@@ -528,7 +528,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 			$otherMediaControl = OtherMediaController::getInstance();
 			$activeFolders = $otherMediaControl->getActiveDirectoryIDS();
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPUI()->filesystem();
 			$updated = false;
 
       foreach($files as $fileObj)
@@ -555,7 +555,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 						}
 
 						// If in Db, but not optimized and autoprocess is on; add to queue for optimizing
-						if (\wpSPIO()->env()->is_autoprocess && $imageObj->isProcessable())
+						if (\wpSPUI()->env()->is_autoprocess && $imageObj->isProcessable())
 						{
 							 $queueControl->addItemToQueue($imageObj);
 						}
@@ -568,7 +568,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
              $imageObj->saveMeta();
 						 $updated = true;
 
-             if (\wpSPIO()->env()->is_autoprocess)
+             if (\wpSPUI()->env()->is_autoprocess)
              {
                 $queueControl->addItemToQueue($imageObj);
              }
@@ -626,7 +626,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
         else
           $this->name = $folder->name;
 
-        do_action('shortpixel/othermedia/folder/load', $this->id, $this);
+        do_action('spui/othermedia/folder/load', $this->id, $this);
 
 				// Making conclusions after action.
         if ($this->status == -1)

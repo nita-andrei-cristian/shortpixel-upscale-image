@@ -1,16 +1,16 @@
 <?php
-namespace ShortPixel\Controller\Queue;
+namespace SPUI\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortQ\ShortQ as ShortQ;
-use ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortQ\ShortQ as ShortQ;
+use SPUI\Controller\CacheController as CacheController;
+use SPUI\Helper\UtilHelper;
+use SPUI\Model\AiDataModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
 
 class MediaLibraryQueue extends Queue
@@ -43,7 +43,7 @@ class MediaLibraryQueue extends Queue
      }
 
      // @todo  Here probably options thing should be replaced by querying custom_data from Q first and then set options
-     $this->options = apply_filters('shortpixel/medialibraryqueue/options', $options);
+     $this->options = apply_filters('spui/medialibraryqueue/options', $options);
 
 
      $this->q->setOptions($options);
@@ -129,7 +129,7 @@ class MediaLibraryQueue extends Queue
 
 
      $prepare = [];
-     $fastmode = apply_filters('shortpixel/queue/fastmode', false);
+     $fastmode = apply_filters('spui/queue/fastmode', false);
 
      global $wpdb;
 

@@ -1,24 +1,24 @@
 <?php
 
-namespace ShortPixel;
+namespace SPUI;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\OptimizeAiController as OptimizeAiController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Controller\OptimizeAiController as OptimizeAiController;
 
-use ShortPixel\Controller\BulkController as BulkController;
+use SPUI\Controller\BulkController as BulkController;
 
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\Queue\Queue as Queue;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\ResponseController as ResponseController;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
 
 
 
@@ -31,9 +31,9 @@ class WpCliController
 
 	public function __construct()
 	{
-		$log = \ShortPixel\ShortPixelLogger\ShortPixelLogger::getInstance();
-		if (\ShortPixel\ShortPixelLogger\ShortPixelLogger::debugIsActive())
-			$log->setLogPath(SHORTPIXEL_BACKUP_FOLDER . "/shortpixel_log_wpcli");
+		$log = \SPUI\ShortPixelLogger\ShortPixelLogger::getInstance();
+		if (\SPUI\ShortPixelLogger\ShortPixelLogger::debugIsActive())
+			$log->setLogPath(SPUI_BACKUP_FOLDER . "/shortpixel_log_wpcli");
 
 		$this->initCommands();
 	}
@@ -51,8 +51,8 @@ class WpCliController
 
 	protected function initCommands()
 	{
-		\WP_CLI::add_command('spio', '\ShortPixel\SpioSingle');
-		\WP_CLI::add_command('spio bulk', '\ShortPixel\SpioBulk');
+		\WP_CLI::add_command('spio', '\SPUI\SpioSingle');
+		\WP_CLI::add_command('spio bulk', '\SPUI\SpioBulk');
 	}
 } // class WpCliController
 
@@ -108,7 +108,7 @@ class SpioCommandBase
 		}
 		$id = intval($args[0]);
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$imageObj = $fs->getImage($id, $type);
 
 		if ($imageObj === false) {
@@ -462,7 +462,7 @@ class SpioCommandBase
 	 */
 	public function settings()
 	{
-		$settings = \WPspio()->settings();
+		$settings = \wpSPUI()->settings();
 
 		$items = array();
 		$fields = array('setting', 'value');

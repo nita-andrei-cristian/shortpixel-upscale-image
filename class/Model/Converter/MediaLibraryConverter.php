@@ -1,13 +1,13 @@
 <?php
 
-namespace ShortPixel\Model\Converter;
+namespace SPUI\Model\Converter;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Replacer\Replacer as Replacer;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Replacer\Replacer as Replacer;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
 /* Abstract base to use for image converters. Handles media library related functions ( replacing )  */
 
@@ -27,7 +27,7 @@ abstract class MediaLibraryConverter extends Converter
 	protected function setupReplacer()
 	{
 		$this->replacer = new Replacer();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		$url = $fs->pathToUrl($this->imageModel);
 
@@ -44,7 +44,7 @@ abstract class MediaLibraryConverter extends Converter
 
 	protected function setTarget($newFile)
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$this->newFile = $newFile; // set target newFile.
 
 		$url = $fs->pathToUrl($this->imageModel);
@@ -81,7 +81,7 @@ abstract class MediaLibraryConverter extends Converter
 
 		// This action prevents images from being regenerated on the thumbnail hook.
 		do_action('shortpixel-thumbnails-before-regenerate', $attach_id);
-		do_action('shortpixel/converter/prevent-offload', $attach_id);
+		do_action('spui/converter/prevent-offload', $attach_id);
 
 		// Update attached_file
 		$bool = update_attached_file($attach_id, $newFile->getFullPath());
@@ -133,7 +133,7 @@ abstract class MediaLibraryConverter extends Converter
 		}
 
 		if (isset($params['success']) && true === $params['success']) {
-			do_action('shortpixel/converter/prevent-offload-off', $attach_id);
+			do_action('spui/converter/prevent-offload-off', $attach_id);
 		}
 
 		if (is_array($new_metadata) && count($new_metadata) > 0) {
@@ -142,7 +142,7 @@ abstract class MediaLibraryConverter extends Converter
 
 		// Restore -sigh- fires off a later signal, because on the succesHandler in MediaLIbraryModel it may copy back backups.
 		if (isset($params['restore']) && true === $params['restore']) {
-			do_action('shortpixel/converter/prevent-offload-off', $attach_id);
+			do_action('spui/converter/prevent-offload-off', $attach_id);
 		}
 
 		if (is_array($WPMLduplicates) && count($WPMLduplicates) > 0) {

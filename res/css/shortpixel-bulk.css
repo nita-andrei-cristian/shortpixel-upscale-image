@@ -481,6 +481,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   float: left;
   margin-right: 8px;
   padding: 8px 16px;
@@ -499,10 +500,20 @@
   color: #fff;
 }
 .wrap.is-shortpixel-bulk-page .button .dashicons {
-  font-size: 26px;
-  height: 26px;
-  margin-right: 8px;
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 20px;
+  font-size: 20px;
+  height: 20px;
+  justify-content: center;
+  line-height: 1;
+  margin-right: 0;
   vertical-align: middle;
+  width: 20px;
+}
+.wrap.is-shortpixel-bulk-page .button .dashicons::before {
+  display: block;
+  line-height: 1;
 }
 .wrap.is-shortpixel-bulk-page .button .icon {
   margin-right: 4px;
@@ -514,6 +525,7 @@
   margin: 0;
   display: inline;
   font-size: 14px;
+  line-height: 1;
   vertical-align: middle;
 }
 .wrap.is-shortpixel-bulk-page .button-primary {
@@ -579,6 +591,9 @@
 .wrap.is-shortpixel-bulk-page .wrap-collap .collap-checkbox:checked + label .collap-arrow img {
   transition: all 0.2s linear;
   rotate: 180deg;
+}
+.wrap.is-shortpixel-bulk-page section.spui-progressbar {
+  display: none;
 }
 .wrap.is-shortpixel-bulk-page .dashicons.spin {
   animation: dashicons-spin 1s infinite;
@@ -839,6 +854,9 @@
      .step {
        border-color: #1FBEC9;
      }*/
+}
+.wrap.is-shortpixel-bulk-page section.panel.selection > .panel-container .interface.wrapper > .wrap-collap {
+  display: none;
 }
 .wrap.is-shortpixel-bulk-page section.panel.selection .spio-progressbar .select .line {
   background: linear-gradient(90deg, rgb(31, 190, 201) 0%, rgb(31, 190, 201) 49.9%, rgb(204, 204, 204) 50%, rgb(204, 204, 204) 100%);

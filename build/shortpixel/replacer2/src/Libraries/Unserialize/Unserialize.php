@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Replacer\Libraries\Unserialize;
+namespace SPUI\Replacer\Libraries\Unserialize;
 
 // Taken from : https://github.com/dbrumann/polyfill-unserialize/
 final class Unserialize

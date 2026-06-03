@@ -1,11 +1,11 @@
 <?php
 
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPUI;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPUI\Controller\OtherMediaController as OtherMediaController;
 
 
 if ( ! defined( 'ABSPATH' ) ) {

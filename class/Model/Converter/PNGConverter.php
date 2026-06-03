@@ -1,21 +1,21 @@
 <?php
- namespace ShortPixel\Model\Converter;
+ namespace SPUI\Model\Converter;
 
  if ( ! defined( 'ABSPATH' ) ) {
  	exit; // Exit if accessed directly.
  }
 
- use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
- use ShortPixel\Model\Image\ImageModel as ImageModel;
- use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
- use ShortPixel\Model\File\FileModel as FileModel;
- use ShortPixel\Notices\NoticeController as Notices;
+ use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+ use SPUI\Model\Image\ImageModel as ImageModel;
+ use SPUI\Model\File\DirectoryModel as DirectoryModel;
+ use SPUI\Model\File\FileModel as FileModel;
+ use SPUI\Notices\NoticeController as Notices;
 
- use ShortPixel\Controller\ResponseController as ResponseController;
+ use SPUI\Controller\ResponseController as ResponseController;
 
- use ShortPixel\Helper\DownloadHelper as DownloadHelper;
-use ShortPixel\Model\Image\Image;
-use ShortPixel\Model\Queue\QueueItem;
+ use SPUI\Helper\DownloadHelper as DownloadHelper;
+use SPUI\Model\Image\Image;
+use SPUI\Model\Queue\QueueItem;
 
 class PNGConverter extends MediaLibraryConverter
 {
@@ -37,8 +37,8 @@ class PNGConverter extends MediaLibraryConverter
 		{
 			parent::__construct($imageModel);
 
-			$settings = \wpSPIO()->settings();
-			$env = \wpSPIO()->env();
+			$settings = \wpSPUI()->settings();
+			$env = \wpSPUI()->env();
 
 
 			$this->converterActive = (intval($settings->png2jpg) > 0) ? true : false;
@@ -115,7 +115,7 @@ class PNGConverter extends MediaLibraryConverter
 				 return false;
 			 }
 
-			 $fs = \wpSPIO()->filesystem();
+			 $fs = \wpSPUI()->filesystem();
 
 			 $defaults = array(
 				 	'runReplacer' => true, // The replacer doesn't need running when the file is just uploaded and doing in handle upload hook.
@@ -178,7 +178,7 @@ class PNGConverter extends MediaLibraryConverter
 					$this->imageModel->conversionSuccess($conversionArgs);
 
 					// new hook.
-					do_action('shortpixel/image/convertpng2jpg_success', $this->imageModel);
+					do_action('spui/image/convertpng2jpg_success', $this->imageModel);
 
 					return true;
 			 }
@@ -186,7 +186,7 @@ class PNGConverter extends MediaLibraryConverter
 			 $this->imageModel->conversionFailed($conversionArgs);
 
 			 //legacy. Note at this point metadata has not been updated.
-			 do_action('shortpixel/image/convertpng2jpg_after', $this->imageModel, $args);
+			 do_action('spui/image/convertpng2jpg_after', $this->imageModel, $args);
 
 			 return false;
 		}
@@ -199,10 +199,10 @@ class PNGConverter extends MediaLibraryConverter
 
 		protected function convertFile()
 		{
-			do_action('shortpixel/image/convertpng2jpg_before', $this->imageModel);
+			do_action('spui/image/convertpng2jpg_before', $this->imageModel);
 
 			//$img = $this->getPNGImage();
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
 
 			$image = $this->getPNGImage();
 
@@ -341,7 +341,7 @@ class PNGConverter extends MediaLibraryConverter
            return false;
         }
 
-        $percentage = apply_filters('shortpixel/pngconverter/filesizeMargin', 0);
+        $percentage = apply_filters('spui/pngconverter/filesizeMargin', 0);
 
         // If the percentage is lower than 0, stop checking. This is a way to short-circuit this check in case optimized images always should be used.
         if ($percentage < 0)
@@ -363,7 +363,7 @@ class PNGConverter extends MediaLibraryConverter
 			$params = array(
 				'restore' => true,
 			);
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
 
 			$this->setupReplacer();
 

@@ -6,13 +6,13 @@
 	{
 		 return;
 	}
-	var ShortPixelFilter = wp.media.view.AttachmentFilters.extend
+	var SPUIFilter = wp.media.view.AttachmentFilters.extend
 	({
 		id: 'shortpixel-media-filter',
 
 		createFilters: function() {
 			 var filters = {};
-			 var optimizedfilter = spio_media.mediafilters.optimized;
+			 var optimizedfilter = spui_media.mediafilters.optimized;
 
 			 for (const [key,value] of Object.entries(optimizedfilter))
 			 {
@@ -26,7 +26,7 @@
 			 this.filters = filters;
 		}
 
-	}); // ShortPixelFilter
+	}); // SPUIFilter
 
 	var AttachmentsBrowser = wp.media.view.AttachmentsBrowser;
 
@@ -37,8 +37,8 @@
 			AttachmentsBrowser.prototype.createToolbar.call( this );
 
 			this.toolbar.set(
-				'ShortPixelFilter',
-				new ShortPixelFilter({
+				'SPUIFilter',
+				new SPUIFilter({
 					controller: this.controller,
 					model:      this.collection.props,
 					priority:   -80

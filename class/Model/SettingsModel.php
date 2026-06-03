@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPUI\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-class SettingsModel extends \ShortPixel\Model
+class SettingsModel extends \SPUI\Model
 {
 		private static $instance;
 
-		private $option_name = 'spio_settings';
+		private $option_name = 'spui_settings';
 
 		private $updated = false;
 
@@ -121,6 +121,17 @@ class SettingsModel extends \ShortPixel\Model
 
 		protected function load()
 		{
+       // SPUI: one-time migration from the formerly-shared SPIO option, so settings carry
+       // over when the plugin becomes independent. Seed only if our own option is absent.
+       if (false === get_option($this->option_name, false))
+       {
+          $legacy = get_option('spio_settings', false);
+          if (false !== $legacy)
+          {
+             update_option($this->option_name, $legacy);
+          }
+       }
+
        $this->settings = $this->check(get_option($this->option_name, []));
 
        if (false === function_exists('register_shutdown_function'))
@@ -198,7 +209,7 @@ class SettingsModel extends \ShortPixel\Model
            unset($settings['keepExif']);
         }
 
-        $settings = apply_filters('shortpixel/settings/check', $settings);
+        $settings = apply_filters('spui/settings/check', $settings);
         return $settings;
     }
 

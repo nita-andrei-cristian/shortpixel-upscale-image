@@ -1,33 +1,33 @@
 <?php
 
-namespace ShortPixel\Controller;
+namespace SPUI\Controller;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\Api\RequestManager;
-use ShortPixel\Controller\View\ListMediaViewController as ListMediaViewController;
-use ShortPixel\Controller\View\OtherMediaViewController as OtherMediaViewController;
-use ShortPixel\Controller\View\OtherMediaFolderViewController as OtherMediaFolderViewController;
+use SPUI\Controller\Api\RequestManager;
+use SPUI\Controller\View\ListMediaViewController as ListMediaViewController;
+use SPUI\Controller\View\OtherMediaViewController as OtherMediaViewController;
+use SPUI\Controller\View\OtherMediaFolderViewController as OtherMediaFolderViewController;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Notices\NoticeController as Notices;
 
-//use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Helper\UtilHelper;
+//use SPUI\Controller\BulkController as BulkController;
+use SPUI\Helper\UiHelper as UiHelper;
+use SPUI\Helper\InstallHelper as InstallHelper;
+use SPUI\Helper\UtilHelper;
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\AccessModel as AccessModel;
 
 // @todo This should probably become settingscontroller, for saving
-use ShortPixel\Controller\View\SettingsViewController as SettingsViewController;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\Queue\QueueItem;
-use ShortPixel\ViewController;
+use SPUI\Controller\View\SettingsViewController as SettingsViewController;
+use SPUI\Controller\Queue\QueueItems as QueueItems;
+use SPUI\Model\AiDataModel;
+use SPUI\Model\Queue\QueueItem;
+use SPUI\ViewController;
 
 // Class for containing all Ajax Related Actions.
 class AjaxController
@@ -109,7 +109,7 @@ class AjaxController
 		$result = '';
 
 
-		$item = \wpSPIO()->filesystem()->getImage($id, $type);
+		$item = \wpSPUI()->filesystem()->getImage($id, $type);
 
 		$this->checkImageAccess($item);
 
@@ -117,7 +117,7 @@ class AjaxController
 			if ($type == 'media') {
 				ob_start();
 				$control = ListMediaViewController::getInstance();
-				$control->doColumn('wp-shortPixel', $id);
+				$control->doColumn('spui-shortPixel', $id);
 				$result = ob_get_contents();
 				ob_end_clean();
 			}
@@ -444,11 +444,11 @@ class AjaxController
 		 $view->addData([
 			'previewImage' => $previewImage, 
 			'originalImage' => $originalImage, 
-			'placeholderImage' => \wpSPIO()->plugin_url('res/img/bulk/placeholder.svg'), 
+			'placeholderImage' => \wpSPUI()->plugin_url('res/img/bulk/placeholder.svg'), 
 			'item_id' => $item_id, 
 			'post_title' => $post->post_title, 
 			'action_name' => $action_name, 
-			'defaultScale' => intval(\wpSPIO()->settings()->defaultUpscaleFactor),
+			'defaultScale' => intval(\wpSPUI()->settings()->defaultUpscaleFactor),
 			]
 		 ); 
 
@@ -509,7 +509,7 @@ class AjaxController
 		}
 		elseif ('scale' == $action_name) 		// For image scaling:
 		{
-			$defaultFactor = (int) \wpSPIO()->settings()->defaultUpscaleFactor;
+			$defaultFactor = (int) \wpSPUI()->settings()->defaultUpscaleFactor;
 			if ($defaultFactor <= 0) { $defaultFactor = 2; }
 			$args['scale'] = isset($_POST['scale']) ? intval($_POST['scale']) : $defaultFactor;
 
@@ -608,7 +608,7 @@ class AjaxController
 
 	protected function getMediaItem($id, $type)
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		return $fs->getImage($id, $type);
 	}
 
@@ -659,7 +659,7 @@ class AjaxController
 		}
 
 		// SPUI: force upscale action — scale factor read from settings (defaultUpscaleFactor)
-		$defaultFactor = (int) \wpSPIO()->settings()->defaultUpscaleFactor;
+		$defaultFactor = (int) \wpSPUI()->settings()->defaultUpscaleFactor;
 		if ($defaultFactor <= 0) { $defaultFactor = 2; }
 		$args['action'] = 'scale_image';
 		$args['scale']  = $defaultFactor;
@@ -682,7 +682,7 @@ class AjaxController
 
 		$purge =  isset($_POST['purge']) ? sanitize_text_field($_POST['purge']) : 'cssjs'; 
 
-		$CDNController = new \ShortPixel\Controller\Front\CDNController();
+		$CDNController = new \SPUI\Controller\Front\CDNController();
 		$result = $CDNController->purgeCDN(['purge' => $purge]);
 
 		$json->settings->results = $result;
@@ -696,7 +696,7 @@ class AjaxController
 	{
 		$action = (isset($_POST['actionType'])) ? sanitize_text_field($_POST['actionType']) : 'export'; 
 		$this->checkActionAccess($action, 'is_admin_user');
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		if ('import' === $action)
 		{
@@ -849,13 +849,13 @@ class AjaxController
 	{
 
 		// Get and remove Meta
-		$mediaItem = \wpSPIO()->filesystem()->getImage($imageId, 'media');
+		$mediaItem = \wpSPUI()->filesystem()->getImage($imageId, 'media');
 
 		$mediaItem->onDelete();
 
 		// Flush and reaquire image to make sure it doesn't stay previous state.
-		\wpSPIO()->filesystem()->flushImage($mediaItem);
-		$mediaItem = \wpSPIO()->filesystem()->getImage($imageId, 'media', false);
+		\wpSPUI()->filesystem()->flushImage($mediaItem);
+		$mediaItem = \wpSPUI()->filesystem()->getImage($imageId, 'media', false);
 
 		// Optimize
 		$control = new QueueController();
@@ -1013,7 +1013,7 @@ class AjaxController
 		$bulkControl = BulkController::getInstance();
 
 		if (false !== $bulkControl->getAnyCustomOperation()) {
-			$json->redirect = add_query_arg(['page' => 'wp-shortpixel-settings', 'part' => 'tools'], admin_url('options-general.php'));
+			$json->redirect = add_query_arg(['page' => 'shortpixel-upscale-settings', 'part' => 'tools'], admin_url('options-general.php'));
 		}
 
 		$bulkControl->finishBulk('media');
@@ -1051,8 +1051,8 @@ class AjaxController
 		
 		$bulkControl = BulkController::getInstance();
 		// This is where the settings start to break and double. This info is also needs inside the process. 
-		$doMedia = filter_var(sanitize_text_field($_POST['mediaActive']), FILTER_VALIDATE_BOOLEAN);
-		$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
+		$doMedia = $this->getPostedBoolean('mediaActive', true);
+		$doAi = $this->getPostedBoolean('aiActive');
 		$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi]);
 
 		$stats = $bulkControl->createNewBulk('media', $mediaArgs);
@@ -1068,29 +1068,29 @@ class AjaxController
 	protected function applyBulkSelection($json, $data)
 	{
 		// These values should always be given!
-		$doMedia = filter_var(sanitize_text_field($_POST['mediaActive']), FILTER_VALIDATE_BOOLEAN);
-		$doCustom = filter_var(sanitize_text_field($_POST['customActive']), FILTER_VALIDATE_BOOLEAN);
-		$doWebp = filter_var(sanitize_text_field($_POST['webpActive']), FILTER_VALIDATE_BOOLEAN);
-		$doAvif = filter_var(sanitize_text_field($_POST['avifActive']), FILTER_VALIDATE_BOOLEAN);
-		$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
+		$doMedia = $this->getPostedBoolean('mediaActive', true);
+		$doCustom = $this->getPostedBoolean('customActive');
+		$doWebp = $this->getPostedBoolean('webpActive');
+		$doAvif = $this->getPostedBoolean('avifActive');
+		$doAi = $this->getPostedBoolean('aiActive');
 
-		$aiPreserve = isset($_POST['aiPreserve']) ? filter_var(sanitize_text_field($_POST['aiPreserve']), FILTER_VALIDATE_BOOLEAN) : null; 
-		$backgroundProcess = filter_var(sanitize_text_field($_POST['backgroundProcess']), FILTER_VALIDATE_BOOLEAN);
+		$aiPreserve = isset($_POST['aiPreserve']) ? $this->getPostedBoolean('aiPreserve') : null; 
+		$backgroundProcess = $this->getPostedBoolean('backgroundProcess', (bool) \wpSPUI()->settings()->doBackgroundProcess);
 
 		// Can be hidden
 		if (isset($_POST['thumbsActive'])) {
-			$doThumbs = filter_var(sanitize_text_field($_POST['thumbsActive']), FILTER_VALIDATE_BOOLEAN);
-			\wpSPIO()->settings()->processThumbnails = $doThumbs;
+			$doThumbs = $this->getPostedBoolean('thumbsActive', (bool) \wpSPUI()->settings()->processThumbnails);
+			\wpSPUI()->settings()->processThumbnails = $doThumbs;
 		}
 
-		\wpSPIO()->settings()->createWebp = $doWebp;
-		\wpSPIO()->settings()->createAvif = $doAvif;
-		\wpSPIO()->settings()->doBackgroundProcess = $backgroundProcess;
-		\wpSPIO()->settings()->autoAIBulk = $doAi;
+		\wpSPUI()->settings()->createWebp = $doWebp;
+		\wpSPUI()->settings()->createAvif = $doAvif;
+		\wpSPUI()->settings()->doBackgroundProcess = $backgroundProcess;
+		\wpSPUI()->settings()->autoAIBulk = $doAi;
 
 		if (false === is_null($aiPreserve))
 		{
-			\wpSPIO()->settings()->aiPreserve = $aiPreserve;
+			\wpSPUI()->settings()->aiPreserve = $aiPreserve;
 		}
 
 		$bulkControl = BulkController::getInstance();
@@ -1113,6 +1113,17 @@ class AjaxController
 		$json->status = true;
 
 		return $json;
+	}
+
+	private function getPostedBoolean($name, $default = false)
+	{
+		if (! isset($_POST[$name])) {
+			return $default;
+		}
+
+		$value = filter_var(sanitize_text_field(wp_unslash($_POST[$name])), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+		return is_null($value) ? $default : $value;
 	}
 
 
@@ -1224,7 +1235,7 @@ class AjaxController
 		if (! is_null($settingsData))
 		{
 			 $json = json_decode(stripslashes($settingsData), true);
-			 $settings = \wpSPIO()->settings(); 
+			 $settings = \wpSPUI()->settings(); 
 			 //$settingsData = array_map('sanitize_text_field', $json); 
 			 $settingsData = $settings->getSanitizedData($json, false);
 		}
@@ -1238,7 +1249,7 @@ class AjaxController
 			'is_error' => true, 
 		];
 
-		$imageModel = \wpSPIO()->filesystem()->getMediaImage($item_id); 
+		$imageModel = \wpSPUI()->filesystem()->getMediaImage($item_id); 
 		
 
 		if (false === $imageModel)
@@ -1297,8 +1308,8 @@ class AjaxController
 						 $aiData['item_id'] = $qItem->item_id;
 						 $aiData['time_generated'] = time(); 
 
-						 set_transient('spio_settings_ai_example', $aiData, MONTH_IN_SECONDS);
-						 set_transient('spio_settings_ai_example_id', $qItem->item_id, MONTH_IN_SECONDS); 
+						 set_transient('spui_settings_ai_example', $aiData, MONTH_IN_SECONDS);
+						 set_transient('spui_settings_ai_example_id', $qItem->item_id, MONTH_IN_SECONDS); 
 						 
 						 $aiData['aiData'] = true; // for the JS check
 						 $this->send((object) $aiData);
@@ -1333,7 +1344,7 @@ class AjaxController
 	protected function getSettingsAiExample($data)
 	{
 		 
-		$id = get_transient('spio_settings_ai_example_id');
+		$id = get_transient('spui_settings_ai_example_id');
 
 		if (false === $id || ! is_numeric($id))
 		{
@@ -1346,7 +1357,7 @@ class AjaxController
 			$attach_id = $id; 
 		}
 		
-		$imageModel = \wpSPIO()->fileSystem()->getMediaImage($attach_id);
+		$imageModel = \wpSPUI()->fileSystem()->getMediaImage($attach_id);
 
         if (is_null($attach_id) || false === $imageModel)
         {
@@ -1361,7 +1372,7 @@ class AjaxController
         }
         else
         {
-		  $transient = get_transient('spio_settings_ai_example'); 
+		  $transient = get_transient('spui_settings_ai_example'); 
 		  if (is_array($transient) && $transient['item_id'] == $id)
 		  { 
 			 $generated = $transient; 
@@ -1395,7 +1406,7 @@ class AjaxController
 	protected function setSettingsAiImage($data)
 	{
 		 $id = $data['id']; 
-		 set_transient('spio_settings_ai_example_id', $id, MONTH_IN_SECONDS); 
+		 set_transient('spui_settings_ai_example_id', $id, MONTH_IN_SECONDS); 
 
 		 return $this->getSettingsAiExample($data);
 	}
@@ -1417,7 +1428,7 @@ class AjaxController
 		}
 
 		$ret = array();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 		$imageObj = $fs->getImage($id, $type);
 
 		$this->checkImageAccess($imageObj);
@@ -1541,7 +1552,7 @@ class AjaxController
 	{
 		$relpath = isset($_POST['relpath']) ? sanitize_text_field($_POST['relpath']) : null;
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		$customFolderBase = $fs->getWPFileBase();
 		$basePath = $customFolderBase->getPath();
@@ -1637,7 +1648,7 @@ class AjaxController
 		$this->checkNonce('ajax_request');
 		$this->checkActionAccess($action, 'is_editor');
 
-		$dirObj = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+		$dirObj = \wpSPUI()->filesystem()->getDirectory(SPUI_BACKUP_FOLDER);
 
 		$size = $dirObj->getFolderSize();
 		echo UiHelper::formatBytes($size);
@@ -1667,7 +1678,7 @@ class AjaxController
 
 		$quota = $quotaController->getQuota();
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 
 		$sendback = wp_get_referer();
 		// sanitize the referring webpage location
@@ -1689,7 +1700,7 @@ class AjaxController
 	{
 		$logFile = $data['logFile'] . '.log';
 		$type = $data['type'];
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPUI()->filesystem();
 
 		if (is_null($logFile)) {
 			$json->$type->is_error = true;
@@ -1871,11 +1882,11 @@ class AjaxController
 	{
 		if (wp_verify_nonce($_POST['tools-nonce'], 'empty-backup')) {			
 
-			$fs = \wpSPIO()->filesystem(); 
+			$fs = \wpSPUI()->filesystem(); 
 			
 			$fs->moveLogFiles(); 
 
-			$dir = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+			$dir = \wpSPUI()->filesystem()->getDirectory(SPUI_BACKUP_FOLDER);
 			$dir->recursiveDelete(); 
 
 			$fs->moveLogFiles(['to_temp' => false]);

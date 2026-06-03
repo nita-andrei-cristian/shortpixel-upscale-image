@@ -1,6 +1,6 @@
 <?php
 
-namespace ShortPixel;
+namespace SPUI;
 
 if (! defined('ABSPATH')) {
   exit; // Exit if accessed directly.
@@ -10,12 +10,12 @@ if (! defined('ABSPATH')) {
 
 <section id="tab-optimisation" class="<?php echo ($this->display_part == 'optimisation') ? 'active setting-tab' : 'setting-tab'; ?>" data-part="optimisation">
 
-  <?php if (true === \wpSPIO()->env()->useTrustedMode()) : ?>
+  <?php if (true === \wpSPUI()->env()->useTrustedMode()) : ?>
     <div class='compression-notice warning'>
       <p>
         <?php esc_html_e('Trusted file mode is active. This means that ShortPixel will depend on the metadata and not check the filesystem while loading the UI. Information may be incorrect and errors may occur during upscaling.', 'shortpixel-upscale-image'); ?>
       </p>
-      <?php if (true === \ShortPixel\Pantheon::IsActive()) : ?>
+      <?php if (true === \SPUI\Pantheon::IsActive()) : ?>
         <p><?php esc_html_e('(You are on Pantheon. This setting was automatically activated)', 'shortpixel-upscale-image'); ?></p>
       <?php endif; ?>
     </div>

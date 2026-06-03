@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
+namespace SPUI;
 
-use ShortPixel\Helper\UiHelper;
+use SPUI\Helper\UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <h3><?php esc_html_e('Review & Start Processing', 'shortpixel-image-optimiser'); ?>
        <!-- <span>
-            <img src="<?php echo esc_url(wpSPIO()->plugin_url('res/img/robo-notes.png')); ?>" style="transform: scale(-1, 1);height: 50px;"/>
+            <img src="<?php echo esc_url(wpSPUI()->plugin_url('res/img/robo-notes.png')); ?>" style="transform: scale(-1, 1);height: 50px;"/>
         </span> -->
       </h3>
 
@@ -168,10 +168,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <?php if (false == $quotaData->unlimited): ?>
   <div class="over-quota" data-check-visibility="false" data-control="data-quota-remaining" data-control-check="data-check-total-total">
-      <span><img src="<?php echo esc_url(wpSPIO()->plugin_url('res/img/bulk/over-quota.svg')) ?>" /></span>
+      <span><img src="<?php echo esc_url(wpSPUI()->plugin_url('res/img/bulk/over-quota.svg')) ?>" /></span>
             <p><?php printf(esc_html('In your ShortPixel account you %shave only %s credits available %s, but you have chosen %s  images to be optimized in this bulk process. You can either go back and select less images, or you can upgrade to a higher plan or buy one-time credits.','shortpixel-image-optimiser'), '<span class="red">', esc_html($this->formatNumber($quotaData->total->remaining, 0)), '</span>', '<b data-stats-total="images-images">0</b>'); ?>
 
-       <button type="button" class="button" onClick="ShortPixel.proposeUpgrade();"><?php esc_html_e('Show me the best options') ?></button>
+       <button type="button" class="button" onClick="SPUI.proposeUpgrade();"><?php esc_html_e('Show me the best options') ?></button>
      </p>
 
        <span class='hidden' data-quota-remaining><?php

@@ -1,18 +1,18 @@
 <?php
 
-namespace ShortPixel;
+namespace SPUI;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\BulkController as BulkController;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\BulkController as BulkController;
 
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\QueueController;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPUI\Controller\Queue\Queue as Queue;
+use SPUI\Controller\Api\ApiController as ApiController;
+use SPUI\Controller\QueueController;
+use SPUI\Controller\ResponseController as ResponseController;
 
 /**
  * Actions for running bulk operations from WP-CLI
@@ -215,7 +215,7 @@ class SpioBulk extends SpioCommandBase
 			 $args['filters'] = $filters; 
 		}
 
-		$mediaArgs = array_merge($args, ['doMedia' => true, 'doAi' => \wpSPIO()->settings()->autoAIBulk]);
+		$mediaArgs = array_merge($args, ['doMedia' => true, 'doAi' => \wpSPUI()->settings()->autoAIBulk]);
 
 		foreach ($queues as $qname) {
 

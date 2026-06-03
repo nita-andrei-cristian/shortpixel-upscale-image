@@ -1,27 +1,27 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPUI\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\UiHelper as UiHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\Optimizer\OptimizeAiController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Controller\QueueController as QueueController;
+use SPUI\Model\AiDataModel;
+use SPUI\Model\Image\ImageModel as ImageModel;
+use SPUI\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
 // Controller for the MediaLibraryView
-class ListMediaViewController extends \ShortPixel\ViewController
+class ListMediaViewController extends \SPUI\ViewController
 {
 
 	protected static $instance;
@@ -31,7 +31,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function load()
   {
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPUI()->filesystem();
 			$fs->startTrustedMode();
 
       $this->loadHooks();
@@ -54,7 +54,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function headerColumns($defaults)
   {
-    $defaults['wp-shortPixel'] = __('ShortPixel Upscale', 'shortpixel-image-optimiser');
+    $defaults['spui-shortPixel'] = __('ShortPixel Upscale', 'shortpixel-image-optimiser');
 
 
     return $defaults;
@@ -62,7 +62,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function doColumn($column_name, $id)
   {
-     if($column_name == 'wp-shortPixel')
+     if($column_name == 'spui-shortPixel')
      {
        $this->view = new \stdClass; // reset every row
        $this->view->id = $id;
@@ -79,7 +79,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
   {
      UiHelper::setOutputHandler('list-media');
 
-     $fs = \wpSPIO()->filesystem();
+     $fs = \wpSPUI()->filesystem();
      $mediaItem = $fs->getMediaImage($id);
 
 		 // Asking for something non-existing.
@@ -151,7 +151,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 				$compressionType = $mediaItem->getMeta('compressionType');
 		}
 		else {
-				$compressionType = \wpSPIO()->settings()->compressionType;
+				$compressionType = \wpSPUI()->settings()->compressionType;
 		}
 
 

@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPUI\Controller\Api;
 
 if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPUI\ShortPixelLogger\ShortPixelLogger as Log;
+use SPUI\Controller\ApiKeyController as ApiKeyController;
+use SPUI\Controller\ResponseController as ResponseController;
+use SPUI\Controller\QuotaController as QuotaController;
+use SPUI\Model\Queue\QueueItem as QueueItem;
+use SPUI\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPUI\Helper\UtilHelper as UtilHelper;
 
 class ApiController extends RequestManager
 {
@@ -38,9 +38,9 @@ class ApiController extends RequestManager
 
 	public function __construct()
 	{
-		$settings = \wpSPIO()->settings();
-		$this->apiEndPoint = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/reducer.php';
-		$this->apiDumpEndPoint = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/cleanup.php';
+		$settings = \wpSPUI()->settings();
+		$this->apiEndPoint = $settings->httpProto . '://' . SPUI_API . '/v2/reducer.php';
+		$this->apiDumpEndPoint = $settings->httpProto . '://' . SPUI_API . '/v2/cleanup.php';
 	}
 
 	/*
@@ -56,7 +56,7 @@ class ApiController extends RequestManager
 		} elseif (false === $imageModel->isProcessable() || $imageModel->isOptimizePrevented() == true) {
 			if ($imageModel->isOptimized()) // This only looks at main item
 			{
-				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is already optimized', 'shortpixel-image-optimiser')));
+					$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is already upscaled', 'shortpixel-upscale-image')));
 			} else {
 				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is not processable and not optimized', 'shortpixel-image-optimiser')));
 			}
@@ -67,13 +67,13 @@ class ApiController extends RequestManager
 			return;
 		}
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$keyControl = ApiKeyController::getInstance();
 		$flags = $qItem->data()->flags; 
 		$convertTo = implode("|", $flags);
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'lossy' => $qItem->data()->compressionType,
@@ -125,7 +125,7 @@ class ApiController extends RequestManager
 		}
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'lossy' => $qItem->data()->compressionType,
@@ -170,7 +170,7 @@ class ApiController extends RequestManager
 	   */
 	public function dumpMediaItem(QueueItem $qItem)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$keyControl = ApiKeyController::getInstance();
 
 		if (is_null($qItem->data()->urls) || !is_array($qItem->data()->urls) || count($qItem->data()->urls) == 0) {
@@ -179,7 +179,7 @@ class ApiController extends RequestManager
 		}
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'item_id' => $qItem->item_id,
@@ -457,7 +457,7 @@ class ApiController extends RequestManager
 	 */
 	protected function handleNewSuccess(QueueItem $qItem, $fileData, $data)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPUI()->settings();
 		$compressionType = ! is_null($qItem->data()->compressionType) ? $qItem->data()->compressionType : $settings->compressionType;
 		//$savedSpace =  $originalSpace =  $optimizedSpace = $fileCount  = 0;
 
@@ -584,7 +584,7 @@ class ApiController extends RequestManager
 		if ($fileSize == 0)
 			return true;
 
-		$percentage = apply_filters('shortpixel/api/filesizeMargin', 5);
+		$percentage = apply_filters('spui/api/filesizeMargin', 5);
 
 		// If the percentage is lower than 0, stop checking. This is a way to short-circuit this check in case optimized images always should be used.
 		if ($percentage < 0) {
@@ -599,7 +599,7 @@ class ApiController extends RequestManager
 			return true;
 
 
-		if (\wpSPIO()->settings()->useSmartcrop == true && \wpSPIO()->settings()->smartCropIgnoreSizes == true) {
+		if (\wpSPUI()->settings()->useSmartcrop == true && \wpSPUI()->settings()->smartCropIgnoreSizes == true) {
 			return true;
 		}
 
