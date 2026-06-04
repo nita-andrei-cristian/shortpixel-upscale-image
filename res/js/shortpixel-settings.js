@@ -74,9 +74,14 @@ class SPUISettings {
 		});
 
 
-		// ApiKeyField toggle
+		// ApiKeyField toggle. The .apifield eye toggle only renders once an API
+		// key exists; on the onboarding/nokey page it's absent, so guard against
+		// null. Without this the deref throws and aborts settings init, which
+		// stops 'shortpixel.settings.loaded' and leaves the onboarding cards dead.
 		var keyField = this.root.querySelector('.apifield i.eye');
-		keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
+		if (keyField !== null) {
+			keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
+		}
 
 			var compressionRadios = this.root.querySelectorAll('.shortpixel-compression-options input[type="radio"]');
 			for (var i = 0; i < compressionRadios.length; i++)
@@ -191,6 +196,16 @@ class SPUISettings {
 			if (typeof args.checks === 'undefined' || args.elements.length !== args.checks.length) {
 				console.error('Checks must be provided and same length as elements', args);
 				return false;
+			}
+
+			// On the onboarding/nokey page the warning target inputs don't exist,
+			// so some args.elements entries can be null (e.g. the manually built
+			// [element, element] arrays). Skip the whole warning rather than
+			// dereferencing null, which would abort settings init.
+			for (var i = 0; i < args.elements.length; i++) {
+				if (args.elements[i] === null) {
+					return false;
+				}
 			}
 
 			for (var i = 0; i < args.elements.length; i++) {
@@ -322,11 +337,16 @@ class SPUISettings {
 
 	InitModeSwitcher() {
 		var switcher = document.getElementById('viewmode-toggles');
-		var checkbox = switcher.querySelector('input[type="checkbox"]');
 
+		// Null check must run before dereferencing switcher. This view-mode
+		// toggle isn't rendered on the onboarding/nokey page (or in this fork),
+		// so without the guard the deref throws and aborts settings init, which
+		// stops 'shortpixel.settings.loaded' and breaks the onboarding cards.
 		if (null == switcher) {
 			return;
 		}
+
+		var checkbox = switcher.querySelector('input[type="checkbox"]');
 		if (this.root.classList.contains('advanced') || checkbox.checked) {
 			checkbox.checked = true;
 			this.current_mode = 'advanced';
@@ -360,6 +380,14 @@ class SPUISettings {
 
 	InitAiEvents()
 	{
+			// The AI tab is not part of this plugin (Upscale fork). Bail out so the
+			// missing AI DOM doesn't throw and abort settings init (which would stop
+			// 'shortpixel.settings.loaded' from firing and break onboarding).
+			if (document.getElementById('tab-ai') === null)
+			{
+				return;
+			}
+
 			window.addEventListener('shortpixel.ui.settingsTabLoad', this.AiWindowLoadEvent);
 			window.addEventListener('shortpixelSettings.UpdateAiExampleEvent', this.UpdateAiExampleEvent );
 
@@ -374,10 +402,12 @@ class SPUISettings {
 				window.dispatchEvent(triggerLoadEvent);		
 			}
 
-			var button = document.querySelector('button[name="refresh_ai_preview"]'); 
+			var button = document.querySelector('button[name="refresh_ai_preview"]');
+			if (button !== null)
+			{
 			button.addEventListener('click', function () {
 
-				 var attach_id = document.querySelector('input[name="ai_preview_image_id"]').value; 
+				 var attach_id = document.querySelector('input[name="ai_preview_image_id"]').value;
 				 var inputs = document.querySelectorAll('#tab-ai input, #tab-ai select, #tab-ai textarea'); 
 
 				 var previewResult = document.querySelector('.preview_wrapper .preview_result'); 
@@ -440,11 +470,14 @@ class SPUISettings {
 						window.dispatchEvent(triggerLoadEvent); 
 					}
 					
-				}, {once: true}); 
+				}, {once: true});
 
 			});
+			}
 
 			var button = document.querySelector('button[name="open_change_photo"]');
+			if (button !== null)
+			{
 			button.addEventListener('click', function () {
 
 				var mediaFrame = wp.media({
@@ -481,6 +514,7 @@ class SPUISettings {
 				// Open the media library
 				mediaFrame.open();
 			});
+			}
 
 	}
 
