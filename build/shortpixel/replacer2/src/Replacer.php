@@ -127,19 +127,19 @@ class Replacer
 
 		// Search-and-replace filename in post database
 		// @todo Check this with scaled images.
-		$base_url = parse_url($this->source_url, PHP_URL_PATH);
+		$base_url = wp_parse_url($this->source_url, PHP_URL_PATH);
 		$base_url = str_replace('.' . pathinfo($base_url, PATHINFO_EXTENSION), '', $base_url);
 
 		/** Fail-safe if base_url is a whole directory, don't go search/replace */
 		if (false === $this->fileIsRestricted($base_url) && is_dir($base_url)) {
 			Log::addError('Search Replace tried to replace to directory - ' . $base_url);
-			$errors[] = __('Fail Safe :: Source Location seems to be a directory.', 'shortpixel-image-optimiser');
+			$errors[] = __('Fail Safe :: Source Location seems to be a directory.', 'shortpixel-upscale-image');
 			return $errors;
 		}
 
 		if (strlen(trim($base_url)) == 0) {
 			Log::addError('Current Base URL emtpy - ' . $base_url);
-			$errors[] = __('Fail Safe :: Source Location returned empty string. Not replacing content', 'shortpixel-image-optimiser');
+			$errors[] = __('Fail Safe :: Source Location returned empty string. Not replacing content', 'shortpixel-upscale-image');
 			return $errors;
 		}
 
@@ -203,7 +203,7 @@ class Replacer
 		// If the two sides are disbalanced, the str_replace part will cause everything that has an empty replace counterpart to replace it with empty. Unwanted.
 		if (count($search_urls) !== count($replace_urls)) {
 			Log::addError('Unbalanced Replace Arrays, aborting', array($search_urls, $replace_urls, count($search_urls), count($replace_urls)));
-			$errors[] = __('There was an issue with updating your image URLS: Search and replace have different amount of values. Aborting updating thumbnails', 'enable-media-replace');
+				$errors[] = __('There was an issue with updating your image URLS: Search and replace have different amount of values. Aborting updating thumbnails', 'shortpixel-upscale-image');
 			return $errors;
 		}
 
@@ -240,14 +240,17 @@ class Replacer
 		/* Search and replace in WP_POSTS */
 		// Removed $wpdb->remove_placeholder_escape from here, not compatible with WP 4.8
 
-		$posts_sql = $wpdb->prepare(
-			"SELECT ID, post_content FROM $wpdb->posts WHERE post_status in ('publish', 'future', 'draft', 'pending', 'private')
-				AND post_content LIKE %s",
-			'%' . $base_url . '%'
-		);
-
-		$rs = $wpdb->get_results($posts_sql, ARRAY_A);
-		$number_of_updates = 0;
+				$posts_table = esc_sql($wpdb->posts);
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and the table name comes from core $wpdb properties.
+				$rs = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT ID, post_content FROM {$posts_table} WHERE post_status in ('publish', 'future', 'draft', 'pending', 'private')
+						AND post_content LIKE %s",
+						'%' . $base_url . '%'
+					),
+					ARRAY_A
+				);
+			$number_of_updates = 0;
 
 		if (! empty($rs)) {
 			foreach ($rs as $rows) {
@@ -261,10 +264,14 @@ class Replacer
 				if ($replaced_content !== $post_content) {
 
 					//  $result = wp_update_post($post_ar);
-					$sql = 'UPDATE ' . $wpdb->posts . ' SET post_content = %s WHERE ID = %d';
-					$sql = $wpdb->prepare($sql, $replaced_content, $post_id);
-
-					$result = $wpdb->query($sql);
+						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and the table name comes from core $wpdb properties.
+						$result = $wpdb->query(
+							$wpdb->prepare(
+								"UPDATE {$posts_table} SET post_content = %s WHERE ID = %d",
+								$replaced_content,
+								$post_id
+							)
+						);
 
 					if ($result === false) {
 						// Notice::addError('Something went wrong while replacing' .  $result->get_error_message() );
@@ -312,27 +319,28 @@ class Replacer
 			$id_field = esc_sql($data['id']);
 			$value_field = esc_sql($data['value']);
 
-			switch ($table) {
-				case "postmeta": // special case.
-					$sql = 'SELECT * FROM ' . $wpdb->postmeta . '
-	                WHERE post_id in (SELECT ID from ' . $wpdb->posts . ' where post_status in ("publish", "future", "draft", "pending", "private") ) AND meta_value like %s';
-					$type = 'post';
+				switch ($table) {
+					case "postmeta": // special case.
+						$postmeta_table = esc_sql($wpdb->postmeta);
+						$posts_table = esc_sql($wpdb->posts);
+						$sql = "SELECT * FROM {$postmeta_table}
+		                WHERE post_id in (SELECT ID from {$posts_table} where post_status in ('publish', 'future', 'draft', 'pending', 'private') ) AND meta_value like %s";
+						$type = 'post';
 
-					$update_sql = ' UPDATE ' . $wpdb->postmeta . ' SET meta_value = %s WHERE meta_id = %d';
-					break;
-				default:
-					$wp_table = $wpdb->{$table};  // termmeta, commentmeta etc
+						$update_sql = " UPDATE {$postmeta_table} SET meta_value = %s WHERE meta_id = %d";
+						break;
+					default:
+						$wp_table = esc_sql($wpdb->{$table});  // termmeta, commentmeta etc
 
-					$sql = "SELECT $id_field , $value_field FROM $wp_table WHERE $value_field like %s";
+						$sql = "SELECT $id_field , $value_field FROM $wp_table WHERE $value_field like %s";
 
 					$update_sql = " UPDATE $wp_table set $value_field = %s WHERE $id_field  = %d ";
 					break;
 			}
 
-			$sql = $wpdb->prepare($sql, '%' . $url . '%');
-
-			// This is a desparate solution. Can't find anyway for wpdb->prepare not the add extra slashes to the query, which messes up the query.
-			$rsmeta = $wpdb->get_results($sql, ARRAY_A);
+					// This is a desparate solution. Can't find anyway for wpdb->prepare not the add extra slashes to the query, which messes up the query.
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and dynamic identifiers are sanitized from known table metadata.
+					$rsmeta = $wpdb->get_results($wpdb->prepare($sql, '%' . $url . '%'), ARRAY_A);
 
 			if (! empty($rsmeta)) {
 				foreach ($rsmeta as $row) {
@@ -357,8 +365,8 @@ class Replacer
 
 						// Check if usual save should be prevented. This is for integrations.
 						if (true === $this->replace_settings['replacer_do_save']) {
-							$prepared_sql = $wpdb->prepare($update_sql, $content, $id);
-							$result = $wpdb->query($prepared_sql);
+								// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and dynamic identifiers are sanitized from known table metadata.
+								$result = $wpdb->query($wpdb->prepare($update_sql, $content, $id));
 						}
 					}
 				} // Loop
@@ -521,7 +529,7 @@ class Replacer
 			$result[$index] = array();
 			$metadata = $item['metadata'];
 
-			$baseurl = parse_url($item['url'], PHP_URL_PATH);
+			$baseurl = wp_parse_url($item['url'], PHP_URL_PATH);
 			$result[$index]['base'] = $baseurl;  // this is the relpath of the mainfile.
 			$baseurl = trailingslashit(str_replace(wp_basename($item['url']), '', $baseurl)); // get the relpath of main file.
 

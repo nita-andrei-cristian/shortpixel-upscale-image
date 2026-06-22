@@ -41,7 +41,10 @@ if (! defined('ABSPATH')) {
           <i class='documentation dashicons dashicons-editor-help' data-link="https://shortpixel.com/knowledge-base/article/settings-upscale-thumbnails/?target=iframe"></i>
           <name><?php esc_html_e('Upscale image thumbnails', 'shortpixel-upscale-image'); ?></name>
           <info>
-            <?php printf(esc_html__('It is highly recommended to upscale thumbnails, as they are often the images most viewed by end users. %s Please note that thumbnails count toward your total quota.', 'shortpixel-upscale-image'), '<br>'); ?>
+            <?php
+            /* translators: %s: Line break tag. */
+            printf( wp_kses_post( __( 'It is highly recommended to upscale thumbnails, as they are often the images most viewed by end users. %s Please note that thumbnails count toward your total quota.', 'shortpixel-upscale-image' ) ), '<br>' );
+            ?>
           </info>
         </content>
       </setting>
@@ -63,7 +66,10 @@ if (! defined('ABSPATH')) {
         </content>
         <warning class="heavy-feature-virtual unlisted">
           <message>
-            <?php printf(esc_html__('This feature has been disabled in offload mode for performance reasons. You can enable it again with a %s filter hook %s ', 'shortpixel-upscale-image'), '<a target="_blank" href="https://shortpixel.com/knowledge-base/">', '</a>'); ?>
+            <?php
+            /* translators: 1: Opening documentation link. 2: Closing documentation link. */
+            printf( wp_kses_post( __( 'This feature has been disabled in offload mode for performance reasons. You can enable it again with a %1$s filter hook %2$s ', 'shortpixel-upscale-image' ) ), '<a target="_blank" href="https://shortpixel.com/knowledge-base/">', '</a>' );
+            ?>
           </message>
         </warning>
       </setting>
@@ -102,7 +108,10 @@ if (! defined('ABSPATH')) {
 
         <warning class='heavy-feature-virtual retina'>
           <message>
-            <?php printf(esc_html__('This feature has been disabled in offload mode for performance reasons. You can enable it again with a %s filter hook %s ', 'shortpixel-upscale-image'), '<a target="_blank" href="https://shortpixel.com/knowledge-base/">', '</a>'); ?>
+            <?php
+            /* translators: 1: Opening documentation link. 2: Closing documentation link. */
+            printf( wp_kses_post( __( 'This feature has been disabled in offload mode for performance reasons. You can enable it again with a %1$s filter hook %2$s ', 'shortpixel-upscale-image' ) ), '<a target="_blank" href="https://shortpixel.com/knowledge-base/">', '</a>' );
+            ?>
           </message>
         </warning>
       </setting>
@@ -138,15 +147,15 @@ if (! defined('ABSPATH')) {
 
           <div class='upscale-factor-options' role="radiogroup" aria-label="<?php esc_attr_e('Default Upscale Factor', 'shortpixel-upscale-image'); ?>">
 
-            <?php foreach ([2 => '2×', 3 => '3×', 4 => '4×'] as $factor => $label) : ?>
+            <?php foreach ([2 => '2×', 3 => '3×', 4 => '4×'] as $spui_factor => $spui_label) : ?>
               <label class='upscale-factor-option'>
                 <input type="radio"
                        name="defaultUpscaleFactor"
-                       value="<?php echo esc_attr($factor); ?>"
-                       <?php checked((int) $view->data->defaultUpscaleFactor, $factor); ?>
+                       value="<?php echo esc_attr($spui_factor); ?>"
+                       <?php checked((int) $view->data->defaultUpscaleFactor, $spui_factor); ?>
                        class="spui-upscale-factor-radio"
                 />
-                <span><?php echo esc_html($label); ?></span>
+                <span><?php echo esc_html($spui_label); ?></span>
               </label>
             <?php endforeach; ?>
 

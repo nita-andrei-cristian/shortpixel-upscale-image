@@ -332,27 +332,30 @@ class StatsModel
      $args = wp_parse_args($args,$defaults);
 		 $prepare = array();
 
-     if ($args['optimizedOnly'] == true)
-     {
-       $sql =  ' SELECT count(id) as thumbcount FROM ' . UtilHelper::getPostMetaTable() . ' WHERE status = %d AND (image_type = %d or image_type = %d)';
-			 $prepare = array(ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_THUMB, MediaLibraryModel::IMAGE_TYPE_ORIGINAL);
-     }
-		 else {
-			 // This query will return 2 positions after the thumbnail array declaration.  Value can be up to two positions ( 0-100 thumbnails) . If positions is 1-10 intval will filter out the string part.
-	     $sql = "SELECT  meta_id, post_id, substr(meta_value, instr(meta_value,'sizes')+9,2) as thumbcount, LOCATE('original_image', meta_value) as originalImage FROM " . $wpdb->postmeta . " WHERE meta_key = '_wp_attachment_metadata' ";
+	     if ($args['optimizedOnly'] == true)
+	     {
+				 $table_name = esc_sql( UtilHelper::getPostMetaTable() );
+	       $sql =  " SELECT count(id) as thumbcount FROM {$table_name} WHERE status = %d AND (image_type = %d or image_type = %d)";
+				 $prepare = array(ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_THUMB, MediaLibraryModel::IMAGE_TYPE_ORIGINAL);
+	     }
+			 else {
+				 $postmeta_table = esc_sql( $wpdb->postmeta );
+				 // This query will return 2 positions after the thumbnail array declaration.  Value can be up to two positions ( 0-100 thumbnails) . If positions is 1-10 intval will filter out the string part.
+		     $sql = "SELECT  meta_id, post_id, substr(meta_value, instr(meta_value,'sizes')+9,2) as thumbcount, LOCATE('original_image', meta_value) as originalImage FROM {$postmeta_table} WHERE meta_key = '_wp_attachment_metadata' ";
 
-	     $sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
+		     $sql .= " AND post_id NOT IN ( SELECT post_id FROM {$postmeta_table} where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
 
 			 $sql .= " limit 0," . $args['limit'];
 		 }
 
 
-		 if (count($prepare) > 0)
-		 {
-			  $sql = $wpdb->prepare($sql, $prepare);
+		 if ( count( $prepare ) > 0 ) {
+			  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here; remaining SQL uses plugin-owned table names and numeric limit.
+			  $results = $wpdb->get_results( $wpdb->prepare( $sql, $prepare ) );
+		 } else {
+			  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses plugin-owned table names and numeric limit.
+			  $results = $wpdb->get_results( $sql );
 		 }
-
-     $results = $wpdb->get_results($sql);
 
 		 //og::addDebug('Limit and count results' . $args['limit'] . ' ' . count($results));
 		 if ($args['limit'] <= count($results))
@@ -385,21 +388,26 @@ class StatsModel
       $args = wp_parse_args($args,$defaults);
 			$prepare = array();
 
-      if ($args['optimizedOnly'] == true)
-      {
-        //$sql .= ' AND post_id IN ( SELECT post_id FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_shortpixel_optimized")';
-				$sql = ' SELECT count(id) as count FROM ' . UtilHelper::getPostMetaTable() . ' WHERE status = %d AND parent = %d';
-				$prepare = array(ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_MAIN);
-      }
-			else {
-				$sql = 'SELECT count(meta_id) FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_wp_attached_file"';
-     		$sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
-			}
+	      if ($args['optimizedOnly'] == true)
+	      {
+	        //$sql .= ' AND post_id IN ( SELECT post_id FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_shortpixel_optimized")';
+					$table_name = esc_sql( UtilHelper::getPostMetaTable() );
+					$sql = " SELECT count(id) as count FROM {$table_name} WHERE status = %d AND parent = %d";
+					$prepare = array(ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_MAIN);
+	      }
+				else {
+					$postmeta_table = esc_sql( $wpdb->postmeta );
+					$sql = "SELECT count(meta_id) FROM {$postmeta_table} WHERE meta_key = '_wp_attached_file'";
+	     		$sql .= " AND post_id NOT IN ( SELECT post_id FROM {$postmeta_table} where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
+				}
 
-			if (count($prepare) > 0)
-				$sql = $wpdb->prepare($sql, $prepare);
-
-      $count = $wpdb->get_var($sql);
+				if ( count( $prepare ) > 0 ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here.
+					$count = $wpdb->get_var( $wpdb->prepare( $sql, $prepare ) );
+				} else {
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses plugin-owned table names.
+					$count = $wpdb->get_var( $sql );
+				}
 
 
 			if (is_null($count) && strpos($wpdb->last_error, 'exist') !== false)
@@ -424,14 +432,18 @@ class StatsModel
      $dateUntil = new \DateTime();
      $dateUntil->sub( new \DateInterval('P' . ($monthsAgo-1). 'M'));
 
-     $sql = 'SELECT count(id) FROM '  . $wpdb->prefix . 'shortpixel_postmeta WHERE tsOptimized >= %s and tsOptimized <= %s';
-     $sql = $wpdb->prepare($sql, $date->format('Y-m-d H:i:s'), $dateUntil->format('Y-m-d H:i:s') );
-     $count_media = $wpdb->get_var($sql);
+			 $postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
+	     // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and the table name is plugin-owned.
+	     $count_media = $wpdb->get_var(
+		 	$wpdb->prepare( "SELECT count(id) FROM {$postmeta_table} WHERE tsOptimized >= %s and tsOptimized <= %s", $date->format('Y-m-d H:i:s'), $dateUntil->format('Y-m-d H:i:s') )
+		 );
 
 		 // Custom
-		 $sql = 'SELECT count(id) FROM '  . $wpdb->prefix . 'shortpixel_meta WHERE ts_optimized >= %s and ts_optimized <= %s';
-		 $sql = $wpdb->prepare($sql, $date->format('Y-m-d H:i:s'), $dateUntil->format('Y-m-d H:i:s') );
-		 $count_custom = $wpdb->get_var($sql);
+			 $meta_table = esc_sql( $wpdb->prefix . 'shortpixel_meta' );
+		 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and the table name is plugin-owned.
+		 $count_custom = $wpdb->get_var(
+		 	$wpdb->prepare( "SELECT count(id) FROM {$meta_table} WHERE ts_optimized >= %s and ts_optimized <= %s", $date->format('Y-m-d H:i:s'), $dateUntil->format('Y-m-d H:i:s') )
+		 );
 
 		 $count = 0;
 		 if (! is_null($count_media) && is_numeric($count_media))
@@ -469,16 +481,18 @@ class StatsModel
 					$in_str_arr = array_fill( 0, count( $activeDirectories ), '%s' );
  				 $in_str = join( ',', $in_str_arr );
 
-       $sql = 'SELECT COUNT(id) as count FROM ' . $wpdb->prefix . 'shortpixel_meta WHERE folder_id in (' . $in_str . ')';
-			 $sql = $wpdb->prepare($sql, $activeDirectories);
+					 $meta_table = esc_sql( $wpdb->prefix . 'shortpixel_meta' );
+		       $sql = "SELECT COUNT(id) as count FROM {$meta_table} WHERE folder_id in ({$in_str})";
+					 $prepare = $activeDirectories;
 
-       if ($args['optimizedOnly'] == true)
-       {
-         $sql .= ' AND status = %d';
-         $sql = $wpdb->prepare($sql, ImageModel::FILE_STATUS_SUCCESS);
-       }
+	       if ($args['optimizedOnly'] == true)
+	       {
+	         $sql .= ' AND status = %d';
+	         $prepare[] = ImageModel::FILE_STATUS_SUCCESS;
+	       }
 
-        $count = $wpdb->get_var($sql);
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here.
+        $count = $wpdb->get_var( $wpdb->prepare( $sql, $prepare ) );
         return $count;
 
   }

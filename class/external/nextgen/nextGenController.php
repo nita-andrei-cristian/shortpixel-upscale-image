@@ -191,9 +191,14 @@ The screen IDS seem to be have changed, trying a more definitive solution
       $searchPath = trailingslashit(implode('/', array_slice($path_split, -2, 2)));
 
       global $wpdb;
-      $sql = "SELECT gid FROM {$wpdb->prefix}ngg_gallery WHERE path LIKE %s";
-      $sql = $wpdb->prepare($sql, '%' . $searchPath . '');
-      $gid = $wpdb->get_var($sql);
+      $ngg_gallery_table = esc_sql( $wpdb->prefix . 'ngg_gallery' );
+      // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped.
+      $gid = $wpdb->get_var(
+        $wpdb->prepare(
+          "SELECT gid FROM {$ngg_gallery_table} WHERE path LIKE %s",
+          '%' . $searchPath
+        )
+      );
 
 
       if (! is_null($gid) && is_numeric($gid))
@@ -229,15 +234,20 @@ The screen IDS seem to be have changed, trying a more definitive solution
     $fs = \wpSPUI()->filesystem();
     $homepath = $fs->getWPFileBase();
 
-		$sql = "SELECT path FROM {$wpdb->prefix}ngg_gallery";
+		$ngg_gallery_table = esc_sql( $wpdb->prefix . 'ngg_gallery' );
+		$sql = "SELECT path FROM {$ngg_gallery_table}";
 		if (! is_null($id))
 		{
 			 $sql .= ' WHERE gid = %d';
-			 $sql = $wpdb->prepare($sql, $id);
+			 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped, query is prepared here.
+			 $result = $wpdb->get_results( $wpdb->prepare( $sql, $id ) );
 		}
-    $result = $wpdb->get_results($sql);
+		else {
+			 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped.
+			 $result = $wpdb->get_results( $sql );
+		}
 
-    $galleries = array();
+	    $galleries = array();
 
     foreach($result as $row)
     {
@@ -393,4 +403,4 @@ The screen IDS seem to be have changed, trying a more definitive solution
 
 } // class.
 
-$ng = NextGenController::getInstance();
+$spui_ng = NextGenController::getInstance();

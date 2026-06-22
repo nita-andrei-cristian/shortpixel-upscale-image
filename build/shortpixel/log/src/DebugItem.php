@@ -32,14 +32,14 @@ class DebugItem
         if (is_object($this->message) || is_array($this->message))
         {
           $data[] = $this->message;
-          $this->message = __('[Data]', 'shortpixel-image-optimiser');
+          $this->message = __('[Data]', 'shortpixel-upscale-image');
         }
         if (is_array($data) && count($data) > 0)
         {
           $dataType = $this->getDataType($data);
           if ($dataType == 1)  // singular
           {
-              $this->data[] = print_r($data, true);
+              $this->data[] = $this->stringifyData($data);
           }
           if ($dataType == 2) //array or object.
           {
@@ -59,14 +59,14 @@ class DebugItem
             {
               if (is_object($item) || is_array($item))
               {
-                $this->data[] = print_r($index, true) . ' ( ' . ucfirst(gettype($item)) . ') => ' . print_r($item, true);
+                $this->data[] = $this->stringifyData($index) . ' ( ' . ucfirst(gettype($item)) . ') => ' . $this->stringifyData($item);
               }
             }
           }
         } // if
         elseif (! is_array($data)) // this leaves out empty default arrays
         {
-           $this->data[] = print_r($data, true);
+           $this->data[] = $this->stringifyData($data);
         }
     }
 
@@ -91,6 +91,17 @@ class DebugItem
         {
           return 2;
         }
+    }
+
+    protected function stringifyData( $data )
+    {
+      if ( is_scalar( $data ) || null === $data ) {
+        return (string) $data;
+      }
+
+      $json = wp_json_encode( $data );
+
+      return ( false !== $json ) ? $json : '';
     }
 
     public function getForFormat()
@@ -131,8 +142,10 @@ class DebugItem
     protected function setCaller()
     {
         if(PHP_VERSION_ID < 50400) {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional diagnostic trace for logger caller metadata.
           $debug=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         } else {
+          // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional diagnostic trace for logger caller metadata.
           $debug=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
         }
 

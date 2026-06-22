@@ -43,14 +43,14 @@ class SpaiCDN extends \SPUI\Model\AdminNoticeModel
 		$admin_url = esc_url(admin_url('options-general.php?page=shortpixel-upscale-settings&part=webp'));
 
 
-		$message = __("Please deactivate the ShortPixel Adaptive Images plugin if CDN delivery is enabled in ShortPixel Upscale Image. If both are activated, this can lead to duplicate processing and errors on your website.", 'shortpixel-image-optimiser');
+		$message = __("Please deactivate the ShortPixel Adaptive Images plugin if CDN delivery is enabled in ShortPixel Upscale Image. If both are activated, this can lead to duplicate processing and errors on your website.", 'shortpixel-upscale-image');
 
 
     $action = 'Deactivate';
     $path = 'shortpixel-adaptive-images/short-pixel-ai.php';
     $link = wp_nonce_url( admin_url( 'admin-post.php?action=spui_deactivate_conflict_plugin&plugin=' . urlencode( $path ) ), 'sp_deactivate_plugin_nonce' );
 
-    $message .= sprintf('<p><a class="button button-primary" href="%s">%s</a></p>', $link, __('Deactivate ShortPixel Adaptive Images'));
+    $message .= sprintf('<p><a class="button button-primary" href="%s">%s</a></p>', $link, __('Deactivate ShortPixel Adaptive Images', 'shortpixel-upscale-image'));
 
 		return $message;
 

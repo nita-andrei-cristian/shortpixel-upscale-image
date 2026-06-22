@@ -35,6 +35,19 @@ class DirectoryModel extends \SPUI\Model
 
 	public static $TRUSTED_MODE = false;
 
+	protected function getWPFilesystem()
+	{
+		global $wp_filesystem;
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		WP_Filesystem();
+
+		return $wp_filesystem;
+	}
+
 
   /** Creates a directory model object. DirectoryModel directories don't need to exist on FileSystem
   *
@@ -153,7 +166,7 @@ class DirectoryModel extends \SPUI\Model
   {
 		if (is_null($this->is_writable))
 		{
-    	$this->is_writable = is_writable($this->path);
+	    	$this->is_writable = wp_is_writable($this->path);
 		}
     return $this->is_writable;
   }
@@ -280,7 +293,9 @@ class DirectoryModel extends \SPUI\Model
 
 
         try {
-          $result = @mkdir($this->path, $permission , true);
+	          // wp_mkdir_p() creates the full directory tree recursively (WP_Filesystem::mkdir is NOT recursive
+	          // and its 3rd arg is $chown, not a recursive flag), and it is plugin-check approved.
+	          $result = wp_mkdir_p( $this->path );
         }
         catch (\Exception $e)
         {
@@ -289,7 +304,9 @@ class DirectoryModel extends \SPUI\Model
        
         if (true === $result)
         {
-          chmod ($this->path, $permission );
+	          if ( isset( $wp_filesystem ) && $wp_filesystem ) {
+	          	$wp_filesystem->chmod( $this->path, $permission );
+	          }
         }
 				
 
@@ -306,11 +323,16 @@ class DirectoryModel extends \SPUI\Model
      }
      if ($this->exists() && $check_writable && ! $this->is_writable())
      {
-       chmod($this->path, $permission);
-			 if (! $this->is_writable()) // perhaps parent permission is no good.
-			 {
-			 		chmod($this->path, $this->new_directory_permission);
-			 }
+	       $wp_filesystem = $this->getWPFilesystem();
+	       if ( $wp_filesystem ) {
+	       	$wp_filesystem->chmod( $this->path, $permission );
+	       }
+				 if (! $this->is_writable()) // perhaps parent permission is no good.
+				 {
+				 		if ( $wp_filesystem ) {
+				 			$wp_filesystem->chmod( $this->path, $this->new_directory_permission );
+				 		}
+				 }
      }
 
      if (! $this->exists())
@@ -561,8 +583,9 @@ class DirectoryModel extends \SPUI\Model
 
   public function delete()
   {
-     return rmdir($this->getPath());
-  }
+	     $wp_filesystem = $this->getWPFilesystem();
+	     return ( $wp_filesystem ) ? $wp_filesystem->rmdir( $this->getPath(), false ) : false;
+	  }
 
   /** This will try to remove the whole structure. Use with care.
   *  This is mostly used to clear the backups.

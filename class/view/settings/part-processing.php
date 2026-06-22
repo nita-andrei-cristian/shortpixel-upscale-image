@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             ['name' => 'doBackgroundProcess',
              'checked' => $view->data->doBackgroundProcess,
              'label' => esc_html__('Background mode','shortpixel-upscale-image'),
-             'data' => ['data-toggle="background_warning"', 'data-dashboard="' . __('Background mode is recommended', 'shortpixel-image-optimser') . '"'],
+             'data' => ['data-toggle="background_warning"', 'data-dashboard="' . __( 'Background mode is recommended', 'shortpixel-upscale-image' ) . '"'],
             ]);
       ?>
 
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </content>
     <warning class="background_warning">
         <message>
-        <?php _e('I understand that background upscaling may pause if there are no visitors on the website.', 'shortpixel-upscale-image'); ?>
+        <?php esc_html_e( 'I understand that background upscaling may pause if there are no visitors on the website.', 'shortpixel-upscale-image' ); ?>
       </message>
     </warning>
   </setting>
@@ -82,9 +82,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
         <info>
-          <?php printf(esc_html__('You can delete the backup folder at any time, but it is best to %skeep a local or cloud copy.%s This way, you can easily restore the upscaled files to their originals or upscale the images with a different compression type if needed.','shortpixel-upscale-image'),
-             '<a href="https://shortpixel.com/knowledge-base/article/where-is-the-backup-folder-located/" target="_blank">','</a>'
-             );
+          <?php
+          /* translators: 1: Opening backup documentation link. 2: Closing backup documentation link. */
+          $spui_backup_info = __( 'You can delete the backup folder at any time, but it is best to %1$skeep a local or cloud copy.%2$s This way, you can easily restore the upscaled files to their originals or upscale the images with a different compression type if needed.', 'shortpixel-upscale-image' );
+          printf(
+          	wp_kses_post( $spui_backup_info ),
+             '<a href="https://shortpixel.com/knowledge-base/article/where-is-the-backup-folder-located/" target="_blank">',
+             '</a>'
+          );
          ?>
         </info>
       </content>

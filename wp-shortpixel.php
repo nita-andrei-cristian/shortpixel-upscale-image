@@ -9,6 +9,7 @@
  * GitHub Plugin URI: https://github.com/short-pixel-optimizer/shortpixel-upscale-image
  * Text Domain: shortpixel-upscale-image
  * Domain Path: /lang
+ * License: GPLv2 or later
  */
 
 
@@ -21,7 +22,8 @@ if (function_exists('wpSPUI'))
 {
     add_action('admin_notices', function () {
       echo '<div class="error"><h4>';
-      printf(esc_html__('ShortPixel plugin already loaded. You might have two versions active. Not loaded: %s', 'shortpixel-image-optimiser'), __FILE__);
+      /* translators: %s: Absolute file path of the duplicate plugin bootstrap file. */
+      printf(esc_html__('ShortPixel plugin already loaded. You might have two versions active. Not loaded: %s', 'shortpixel-upscale-image'), __FILE__);
       echo '</h4></div>';
     });
     return;

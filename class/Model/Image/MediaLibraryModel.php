@@ -1015,9 +1015,10 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 		global $wpdb;
 
 		// Main Image.
-		$sqlQuery = 'SELECT * FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE attach_id = %d ORDER BY parent ASC';
-		$sqlPrep = $wpdb->prepare($sqlQuery, $this->id);
-		$meta = $wpdb->get_results($sqlPrep);
+		$shortpixel_postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
+		$sqlQuery = "SELECT * FROM {$shortpixel_postmeta_table} WHERE attach_id = %d ORDER BY parent ASC";
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+		$meta = $wpdb->get_results( $wpdb->prepare( $sqlQuery, $this->id ) );
 
 		// If metadata is null and the last-error discussed about exist (and probably doesn't exist), check the table. s
 		if (count($meta) == 0 && strpos($wpdb->last_error, 'exist') !== false) {
@@ -1025,8 +1026,8 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 			return false;
 		} elseif (count($meta) == 1 && $meta[0]->image_type == self::IMAGE_TYPE_DUPLICATE) {
 			$duplicate_id = (int) $meta[0]->parent;
-			$sqlPrep = $wpdb->prepare($sqlQuery, $duplicate_id);
-			$meta = $wpdb->get_results($sqlPrep);
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+			$meta = $wpdb->get_results( $wpdb->prepare( $sqlQuery, $duplicate_id ) );
 			// This is an error state if the parent also seems duplicate (bug - should be fixed). Dump and reacquire
 			if (count($meta) == 1 && $meta[0]->image_type == self::IMAGE_TYPE_DUPLICATE) {
 				$this->deleteMeta();
@@ -1044,16 +1045,15 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 
 				$prepare = array_merge(array(self::IMAGE_TYPE_MAIN), $duplicates);
 
-				$sql = 'SELECT attach_id FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE image_type = %d and attach_id in ( ' . $in_str . ') ';
-				$sql = $wpdb->prepare($sql, $prepare);
-
-				$parent_id = $wpdb->get_var($sql);
+					$sql = "SELECT attach_id FROM {$shortpixel_postmeta_table} WHERE image_type = %d and attach_id in ( {$in_str} ) ";
+						// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+						$parent_id = $wpdb->get_var( $wpdb->prepare( $sql, $prepare ) );
 
 				if (is_numeric($parent_id)) {
 					$this->createDuplicateRecord($this->id, $parent_id);
 
-					$sqlPrep = $wpdb->prepare($sqlQuery, $parent_id);
-					$meta = $wpdb->get_results($sqlPrep); // get the parent meta.
+						// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+						$meta = $wpdb->get_results( $wpdb->prepare( $sqlQuery, $parent_id ) ); // get the parent meta.
 				} else {
 					return false;
 				}
@@ -1273,6 +1273,7 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 	private function cleanupDatabase($records)
 	{
 		global $wpdb;
+		$shortpixel_postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
 
 		// Empty numbers might erase the whole thing.
 		$records = array_filter($records, 'intval');
@@ -1285,10 +1286,10 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 
 		$prepare = array_merge(array($this->id), $records);
 
-		$sql = 'DELETE FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE attach_id = %d and id not in (' . $in_str . ') ';
-		$sql = $wpdb->prepare($sql, $prepare);
+		$sql = "DELETE FROM {$shortpixel_postmeta_table} WHERE attach_id = %d and id not in ({$in_str}) ";
 
-		$wpdb->query($sql);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+		$wpdb->query( $wpdb->prepare( $sql, $prepare ) );
 	}
 
 
@@ -1307,10 +1308,14 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 		$this->resetPrevent();
 
 
-		$sql = 'DELETE FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE attach_id = %s';
-		$sql = $wpdb->prepare($sql, $this->id);
-
-		$bool = $wpdb->query($sql);
+		$shortpixel_postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped, query is prepared here.
+			$bool = $wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM {$shortpixel_postmeta_table} WHERE attach_id = %d",
+					$this->id
+			)
+		);
 
 		return $bool;
 	}
@@ -1571,7 +1576,7 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 				$response = array(
 					'is_error' => true,
 					'item_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-					'message ' => __('ConvertPrepare could not create backup. Please check file permissions', 'shortpixel-image-optimiser'),
+					'message ' => __('ConvertPrepare could not create backup. Please check file permissions', 'shortpixel-upscale-image'),
 				);
 				ResponseController::addData($this->get('id'), $response);
 
@@ -1766,12 +1771,11 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 		$duplicates = array();
 
 		if ($env->plugin_active('wpml')) {
-			$sql = "select element_id from " . $wpdb->prefix . "icl_translations where trid in (select trid from " . $wpdb->prefix . "icl_translations where element_id = %d) and element_id <> %d";
+			$icl_translations_table = esc_sql( $wpdb->prefix . 'icl_translations' );
+			$sql = "select element_id from {$icl_translations_table} where trid in (select trid from {$icl_translations_table} where element_id = %d) and element_id <> %d";
 
-			$sql = $wpdb->prepare($sql, $this->id, $this->id);
-
-
-			$results = $wpdb->get_results($sql);
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+				$results = $wpdb->get_results( $wpdb->prepare( $sql, $this->id, $this->id ) );
 
 			if (is_array($results)) {
 				foreach ($results as $result) {
@@ -1792,10 +1796,11 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 		if ($env->plugin_active('polylang')) // polylang
 		{
 			// unholy sql where guid is duplicated.
-			$sql = 'SELECT id FROM ' . $wpdb->prefix . 'posts WHERE guid in (select guid from ' . $wpdb->prefix . 'posts where id = %d ) and post_type = %s and id <> %d';
+			$posts_table = esc_sql( $wpdb->prefix . 'posts' );
+			$sql = "SELECT id FROM {$posts_table} WHERE guid in (select guid from {$posts_table} where id = %d ) and post_type = %s and id <> %d";
 
-			$sql = $wpdb->prepare($sql, $this->id, 'attachment', $this->id);
-			$results = $wpdb->get_col($sql);
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+				$results = $wpdb->get_col( $wpdb->prepare( $sql, $this->id, 'attachment', $this->id ) );
 
 			foreach ($results as $index => $element_id) {
 				$duplicates[] = intval($element_id);
@@ -2128,10 +2133,15 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 
 		global $wpdb;
 
-		$sql = 'SELECT id FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE attach_id = %d AND size IS NULL and image_type = %d';
-		$sql = $wpdb->prepare($sql, $this->id, self::IMAGE_TYPE_MAIN);
-
-		$id = $wpdb->get_var($sql);
+		$shortpixel_postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped, query is prepared here.
+		$id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM {$shortpixel_postmeta_table} WHERE attach_id = %d AND size IS NULL and image_type = %d",
+				$this->id,
+				self::IMAGE_TYPE_MAIN
+			)
+		);
 
 		if (is_null($id)) {
 			return false;
@@ -2170,7 +2180,7 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 			$copyok = $this->copy($destination);
 			if (false === $copyok) {
 				Log::addError('Copy to destination failed!');
-				ResponseController::addData('message', __('Restore PNG2JPG : Copying PNG to destination failed', 'shortpixel-image-optimiser'));
+				ResponseController::addData('message', __('Restore PNG2JPG : Copying PNG to destination failed', 'shortpixel-upscale-image'));
 				ResponseController::addData('is_error', true);
 			}
 
@@ -2179,7 +2189,7 @@ class MediaLibraryModel extends \SPUI\Model\Image\MediaLibraryThumbnailModel
 			Log::addInfo('Destination exists, but is of correct extension, so fine?');
 		} else {
 			Log::addError('Restoring Converted image not possible, target already exists');
-			ResponseController::addData('message', __('Restore PNG2JPG : Restoring to target that already exists', 'shortpixel-image-optimiser'));
+			ResponseController::addData('message', __('Restore PNG2JPG : Restoring to target that already exists', 'shortpixel-upscale-image'));
 			ResponseController::addData('is_error', true);
 
 			return false;

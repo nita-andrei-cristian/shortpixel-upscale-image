@@ -93,7 +93,7 @@ class AjaxController
 
 		if (false === $is_processor) {
 			$json = new \stdClass;
-			$json->message = __('Processor is active in another window', 'shortpixel-image-optimiser');
+			$json->message = __('Processor is active in another window', 'shortpixel-upscale-image');
 			$json->status = false;
 			$json->error = self::PROCESSOR_ACTIVE; // processor active
 			$this->send($json);
@@ -178,7 +178,7 @@ class AjaxController
 		$this->checkProcessorKey();
 
 		$json = new \stdClass;
-		$json->message = __('Became processor', 'shortpixel-image-optimiser');
+		$json->message = __('Became processor', 'shortpixel-upscale-image');
 		$json->status = true;
 		$this->send($json);
 	}
@@ -191,7 +191,7 @@ class AjaxController
 		$this->checkActionAccess('ajax', 'is_author');
 
 		// phpcs:ignore -- Nonce is checked
-		$action = isset($_POST['screen_action']) ? sanitize_text_field($_POST['screen_action']) : false;
+		$action = isset($_POST['screen_action']) ? sanitize_text_field(wp_unslash($_POST['screen_action'])) : false;
 		// phpcs:ignore -- Nonce is checked
 		$typeArray = isset($_POST['type'])  ? array(sanitize_text_field($_POST['type'])) : array('media', 'custom');
 		// phpcs:ignore -- Nonce is checked
@@ -306,7 +306,7 @@ class AjaxController
 			break;
 			case "loadLogFile":
 				$this->checkActionAccess($action, 'is_editor');
-				$data['logFile'] = isset($_POST['loadFile']) ? sanitize_text_field($_POST['loadFile']) : null;
+				$data['logFile'] = isset($_POST['loadFile']) ? sanitize_text_field(wp_unslash($_POST['loadFile'])) : null;
 				$json = $this->loadLogFile($json, $data);
 				break;
 
@@ -360,7 +360,7 @@ class AjaxController
 				$this->getEditorPreview($data);
 			break;
 			default:
-				$json->$type->message = __('Ajaxrequest - no action found', 'shorpixel-image-optimiser');
+				$json->$type->message = __('Ajaxrequest - no action found', 'shortpixel-upscale-image');
 				$json->error = self::NO_ACTION;
 			break;
 		}
@@ -372,7 +372,7 @@ class AjaxController
 		$this->checkNonce('settings_request');
 		ErrorController::start(); // Capture fatal errors for us.
 
-		$action = isset($_POST['screen_action']) ? sanitize_text_field($_POST['screen_action']) : false;
+		$action = isset($_POST['screen_action']) ? sanitize_text_field(wp_unslash($_POST['screen_action'])) : false;
 
 		$this->checkActionAccess($action, 'is_admin_user');
 
@@ -405,7 +405,7 @@ class AjaxController
 		$viewController =  new SettingsViewController();
 		$viewController->indicateAjaxSave(); // set ajax save method
 
-		$url = isset($_POST['request_url']) ? sanitize_text_field($_POST['request_url']) : null;
+		$url = isset($_POST['request_url']) ? sanitize_text_field(wp_unslash($_POST['request_url'])) : null;
 		if (is_null($url)) {
 			Log::addError('Ajax : redirect URL not set!');
 		}
@@ -425,7 +425,7 @@ class AjaxController
 		 $mediaItem = $this->getMediaItem($item_id, 'media');
 		 $this->checkImageAccess($mediaItem);
 
-		 $action_name = isset($_POST['action_name']) ? sanitize_text_field($_POST['action_name']) : 'replace'; 
+		 $action_name = isset($_POST['action_name']) ? sanitize_text_field(wp_unslash($_POST['action_name'])) : 'replace'; 
 
 		 $previewImage = UiHelper::findBestPreview($mediaItem, 800);
 
@@ -463,9 +463,9 @@ class AjaxController
 	{
 		$item_id = $data['id'];
 		$is_preview = true; // default to no action 
-		$is_preview = (isset($_POST['is_preview'])) ? filter_var(sanitize_text_field($_POST['is_preview']), FILTER_VALIDATE_BOOL) : $is_preview; 
+		$is_preview = (isset($_POST['is_preview'])) ? filter_var(sanitize_text_field(wp_unslash($_POST['is_preview'])), FILTER_VALIDATE_BOOL) : $is_preview; 
 
-		$action_name = isset($_POST['action_name']) ? sanitize_text_field($_POST['action_name']) : 'remove'; 
+		$action_name = isset($_POST['action_name']) ? sanitize_text_field(wp_unslash($_POST['action_name'])) : 'remove'; 
 
 		$mediaItem = $this->getMediaItem($item_id, 'media');
 
@@ -475,8 +475,8 @@ class AjaxController
 		// General needed: 
 		$opener = isset($_POST['opener']) ? sanitize_text_field($_POST['opener']) : ''; 
 		$attached_post_id = isset($_POST['attached_post_id']) ? intval($_POST['attached_post_id']) : 0; 
-		$newFileName = isset($_POST['newFileName']) ? sanitize_file_name($_POST['newFileName']) : false; 
-		$newPostTitle = isset($_POST['newPostTitle']) ? sanitize_text_field($_POST['newPostTitle']) : ''; 
+		$newFileName = isset($_POST['newFileName']) ? sanitize_file_name(wp_unslash($_POST['newFileName'])) : false; 
+		$newPostTitle = isset($_POST['newPostTitle']) ? sanitize_text_field(wp_unslash($_POST['newPostTitle'])) : ''; 
 		$refresh = isset($_POST['refresh']) ? filter_var(sanitize_text_field($_POST['refresh']), FILTER_VALIDATE_BOOL) : false;  
 
 		$args = [
@@ -489,7 +489,7 @@ class AjaxController
 		// For remove background : 
 		if ('remove' === $action_name)
 		{
-			$backgroundType = isset($_POST['background_type']) ? sanitize_text_field($_POST['background_type']) : 'transparent'; 
+			$backgroundType = isset($_POST['background_type']) ? sanitize_text_field(wp_unslash($_POST['background_type'])) : 'transparent'; 
 			$backgroundColor = isset($_POST['background_color']) ? sanitize_text_field($_POST['background_color']) : false; 
 			$backgroundTransparency = isset($_POST['background_transparency']) ? sanitize_text_field($_POST['background_transparency']) : '00';
 			if ('solid' == $backgroundType)
@@ -591,7 +591,7 @@ class AjaxController
 				$result = [
 					'is_error' => true, 
 					'is_done' => true, 
-					'message' => __('Limit of attempts exceeded. Possible connection issue. Try again later. ', 'shortpixel-image-optimiser'),
+					'message' => __('Limit of attempts exceeded. Possible connection issue. Try again later. ', 'shortpixel-upscale-image'),
 				]; 
 				
 				Log::addTemp('Timeout 15x');
@@ -700,13 +700,13 @@ class AjaxController
 
 		if ('import' === $action)
 		{
-			$importdata = (isset($_POST['importData'])) ? sanitize_text_field(trim($_POST['importData'])) : false; 
+			$importdata = (isset($_POST['importData'])) ? sanitize_textarea_field(wp_unslash($_POST['importData'])) : false; 
 			$importdata = stripslashes($importdata); 
 			$importdata = trim($importdata); 
 
 			if (false === $importdata || 0 == strlen($importdata))
 			{
-				 $json->settings->results = ['is_error' => true, 'message' => __('Import contained empty field', 'shortpixel-image-optimiser')];
+				 $json->settings->results = ['is_error' => true, 'message' => __('Import contained empty field', 'shortpixel-upscale-image')];
 			}
 			elseif (true ===  UtilHelper::validateJson($importdata) )
 			{
@@ -720,7 +720,8 @@ class AjaxController
 				{
 					if (false === $settings->exists($name))
 					{
-						$messages[] = sprintf(__('Field with name %s does not exist in current version', 'shortpixel-image-optimiser'), $name);
+							/* translators: %s is the imported setting field name. */
+							$messages[] = sprintf(__('Field with name %s does not exist in current version', 'shortpixel-upscale-image'), $name);
 					}
 					else
 					{
@@ -729,14 +730,16 @@ class AjaxController
 					}
 				}
 
-				$messages[] = sprintf(__('%s settings imported! Reload page to see changes', 'shortpixel-image-optimiser'), $counter); 
+					/* translators: %s is the number of imported settings. */
+					$messages[] = sprintf(__('%s settings imported! Reload page to see changes', 'shortpixel-upscale-image'), $counter); 
 				$json->settings->results = ['is_error' => false, 'messages' => $messages];
 		 
 			}
 			else
 			{
 				$json->settings->results = ['is_error' => true, 
-				'message' => sprintf(__('Invalid JSON sent: %s', 'shortpixel-image-optimiser'), json_last_error_msg())];
+					/* translators: %s is the JSON decode error message. */
+					'message' => sprintf(__('Invalid JSON sent: %s', 'shortpixel-upscale-image'), json_last_error_msg())];
 			}
 
 		}
@@ -745,7 +748,7 @@ class AjaxController
 			$data = $settings->getExport(); 
 			
 			$json->settings->exportData = json_encode($data);
-			$json->settings->message = __('Export completed. Copy the string below', 'shortpixel-image-optimiser');
+			$json->settings->message = __('Export completed. Copy the string below', 'shortpixel-upscale-image');
 			
 		}
 		
@@ -762,13 +765,13 @@ class AjaxController
 
 		$this->checkImageAccess($imageModel);
 
-		$imageModel->markCompleted(__('This item has been manually marked as completed', 'shortpixel-image-optimiser'), ImageModel::FILE_STATUS_MARKED_DONE);
+		$imageModel->markCompleted(__('This item has been manually marked as completed', 'shortpixel-upscale-image'), ImageModel::FILE_STATUS_MARKED_DONE);
 
 		$qItem = QueueItems::getImageItem($imageModel);
 		$qItem->addResult([
 			'fileStatus' => ImageModel::FILE_STATUS_SUCCESS, 
 			'item_id' => $id, 
-			'message' => __('Item marked as completed', 'shortpixel-image-optimiser'), 
+			'message' => __('Item marked as completed', 'shortpixel-upscale-image'), 
 			'is_done' => true, 
 			'is_error' => false, 
 		]);
@@ -778,7 +781,7 @@ class AjaxController
 		$json->$type->result = new \stdClass;
 
 		$json->$type->result->item_id = $id;
-		$json->$type->result->message = __('Item marked as completed', 'shortpixel-image-optimiser');
+		$json->$type->result->message = __('Item marked as completed', 'shortpixel-upscale-image');
 		$json->$type->result->is_done = true;
 		$json->$type->result->is_error = false;
 */
@@ -803,7 +806,7 @@ class AjaxController
 		$qItem->addResult([
 			'fileStatus' => ImageModel::FILE_STATUS_SUCCESS, 
 			'item_id' => $id, 
-			'message' => __('Item unmarked', 'shortpixel-image-optimiser'), 
+			'message' => __('Item unmarked', 'shortpixel-upscale-image'), 
 			'is_done' => true, 
 			'is_error' => false, 
 		]);
@@ -830,7 +833,7 @@ class AjaxController
 		$qItem->addResult([
 			'fileStatus' => ImageModel::FILE_STATUS_SUCCESS, 
 			'item_id' => $id, 
-			'message' => __('Item removed from queue', 'shortpixel-image-optimiser'), 
+			'message' => __('Item removed from queue', 'shortpixel-upscale-image'), 
 			'is_done' => true, 
 			'is_error' => false, 
 		]);
@@ -975,7 +978,7 @@ class AjaxController
 		$id = $data['id'];
 		$type = $data['type']; 
 		// undo or redo 
-		$action_type = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : 'undo'; 
+		$action_type = isset($_POST['action_type']) ? sanitize_text_field(wp_unslash($_POST['action_type'])) : 'undo'; 
 
 		$imageModel = $this->getMediaItem($id, $type); 
 		$this->checkImageAccess($imageModel);
@@ -1032,12 +1035,12 @@ class AjaxController
 		
 		if (isset($_POST['filter_startdate'])) 
 		{
-			 $filters['start_date'] = sanitize_text_field($_POST['filter_startdate']); 
+			 $filters['start_date'] = sanitize_text_field(wp_unslash($_POST['filter_startdate'])); 
 			 $has_filters = true; 	 
 		}
 		if (isset($_POST['filter_enddate']))
 		{
-			 $filters['end_date'] = sanitize_text_field($_POST['filter_enddate']); 
+			 $filters['end_date'] = sanitize_text_field(wp_unslash($_POST['filter_enddate'])); 
 			 $has_filters = true; 
 		}
 
@@ -1218,7 +1221,7 @@ class AjaxController
 	protected function handleChangeMode($data)
 	{
 		$user_id = get_current_user_id();
-		$new_mode = isset($_POST['new_mode']) ? sanitize_text_field($_POST['new_mode']) : false;
+		$new_mode = isset($_POST['new_mode']) ? sanitize_text_field(wp_unslash($_POST['new_mode'])) : false;
 
 		if (false === $new_mode) {
 			return false;
@@ -1230,7 +1233,7 @@ class AjaxController
 	protected function getNewAiImagePreview($data)
 	{
 		$item_id = $data['id'];
-		$settingsData = isset($_POST['settingsData']) ? $_POST['settingsData'] : null; 
+		$settingsData = isset($_POST['settingsData']) ? wp_unslash($_POST['settingsData']) : null; 
 
 		if (! is_null($settingsData))
 		{
@@ -1245,7 +1248,7 @@ class AjaxController
 		}
 
 		$result_json = [
-			'error' => __('Something went wrong', 'shortpixel-image-optimiser'), 
+			'error' => __('Something went wrong', 'shortpixel-upscale-image'), 
 			'is_error' => true, 
 		];
 
@@ -1254,7 +1257,7 @@ class AjaxController
 
 		if (false === $imageModel)
 		{
-			 $result_json['message'] = __('This image could not be loaded', 'shortpixel-image-optimiser'); 
+			 $result_json['message'] = __('This image could not be loaded', 'shortpixel-upscale-image'); 
 			 $this->send((object) $result_json);
 		}
 
@@ -1365,7 +1368,7 @@ class AjaxController
 		   $json = [
 				'preview_image' => '', 
 				'item_id' => -1, 
-				'generated' => ['alt' => __('Select an image for example', 'shortpixel-image-optimser')], 
+				'generated' => ['alt' => __('Select an image for example', 'shortpixel-upscale-image')], 
 				'original'	=> [], 
 		   ]; 
 		   $this->send((object) $json);
@@ -1423,7 +1426,7 @@ class AjaxController
 
 			$json->status = false;
 			$json->id = $id;
-			$json->message = __('Error - item to compare could not be found or no access', 'shortpixel-image-optimiser');
+			$json->message = __('Error - item to compare could not be found or no access', 'shortpixel-upscale-image');
 			$this->send($json);
 		}
 
@@ -1488,14 +1491,14 @@ class AjaxController
 
 		if (false === $folder_id) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('An error has occured: no folder id', 'shortpixel-image-optimiser');
+			$json->folder->message = __('An error has occured: no folder id', 'shortpixel-upscale-image');
 		}
 
 		$folderObj = $otherMediaController->getFolderByID($folder_id);
 
 		if (false === $folderObj) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-image-optimiser');
+			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-upscale-image');
 		}
 
 		$result = $folderObj->refreshFolder(true);
@@ -1505,9 +1508,11 @@ class AjaxController
 		} else { // result is stats
 			$stats = $result;
 			if ($stats['new'] > 0) {
-				$message = sprintf(__('%s new files found ( %s waiting %s optimized)', 'shortpixel-image-optimiser'), $stats['new'], $stats['waiting'], $stats['optimized']);
-			} else {
-				$message = sprintf(__('No new files found ( %s waiting %s optimized)', 'shortpixel-image-optimiser'), $stats['waiting'], $stats['optimized']);
+					/* translators: 1: number of new files, 2: waiting files count, 3: optimized files count. */
+					$message = sprintf(__('%1$s new files found ( %2$s waiting %3$s optimized)', 'shortpixel-upscale-image'), $stats['new'], $stats['waiting'], $stats['optimized']);
+				} else {
+					/* translators: 1: waiting files count, 2: optimized files count. */
+					$message = sprintf(__('No new files found ( %1$s waiting %2$s optimized)', 'shortpixel-upscale-image'), $stats['waiting'], $stats['optimized']);
 			}
 
 			$json->folder->message = $message;
@@ -1532,14 +1537,14 @@ class AjaxController
 
 		if ($dirObj === false) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-image-optimiser');
+			$json->folder->message = __('An error has occured: no folder object', 'shortpixel-upscale-image');
 			return;
 		}
 
 		$dirObj->delete();
 
 		$json->status = true;
-		$json->folder->message = __('Folder has been removed', 'shortpixel-image-optimiser');
+		$json->folder->message = __('Folder has been removed', 'shortpixel-upscale-image');
 		$json->folder->is_done = true;
 		$json->folder->action = 'remove';
 		$json->folder->id = $folder_id;
@@ -1550,7 +1555,7 @@ class AjaxController
 
 	protected function addCustomFolder($json, $data)
 	{
-		$relpath = isset($_POST['relpath']) ? sanitize_text_field($_POST['relpath']) : null;
+		$relpath = isset($_POST['relpath']) ? sanitize_text_field(wp_unslash($_POST['relpath'])) : null;
 
 		$fs = \wpSPUI()->filesystem();
 
@@ -1566,7 +1571,7 @@ class AjaxController
 
 		if (false === $result) {
 			$json->folder->is_error = true;
-			$json->folder->message = __('Failed to add Folder', 'shortpixel-image-optimiser');
+			$json->folder->message = __('Failed to add Folder', 'shortpixel-upscale-image');
 		} else {
 			$control = new OtherMediaFolderViewController();
 			$itemView = $control->singleItemView($result);
@@ -1593,7 +1598,7 @@ class AjaxController
 
 	protected function browseFolders($json, $data)
 	{
-		$relpath = isset($_POST['relPath']) ? sanitize_text_field($_POST['relPath']) : '';
+		$relpath = isset($_POST['relPath']) ? sanitize_text_field(wp_unslash($_POST['relPath'])) : '';
 
 		$otherMediaController = OtherMediaController::getInstance();
 
@@ -1633,7 +1638,7 @@ class AjaxController
 		if ($result === false) {
 			$json->folder->is_done = true;
 			$json->folder->result = new \stdClass;
-			$json->folder->result->message = __('All Folders have been scanned!', 'shortpixel_image_optimiser');
+			$json->folder->result->message = __('All Folders have been scanned!', 'shortpixel-upscale-image');
 		} else {
 
 			$json->folder->result = $result;
@@ -1688,7 +1693,7 @@ class AjaxController
 		if (! $settings->quotaExceeded) {
 			$result['status'] = 'has-quota';
 		} else {
-			Notices::addWarning(__('You have no available image credits. If you just bought a package, please note that sometimes it takes a few minutes for the payment processor to send us the payment confirmation.', 'shortpixel-image-optimiser'));
+			Notices::addWarning(__('You have no available image credits. If you just bought a package, please note that sometimes it takes a few minutes for the payment processor to send us the payment confirmation.', 'shortpixel-upscale-image'));
 		}
 
 		wp_send_json($result);
@@ -1704,7 +1709,7 @@ class AjaxController
 
 		if (is_null($logFile)) {
 			$json->$type->is_error = true;
-			$json->$type->result = __('Could not load log file', 'shortpixel-image-optimiser');
+			$json->$type->result = __('Could not load log file', 'shortpixel-upscale-image');
 			return $json;
 		}
 
@@ -1718,7 +1723,7 @@ class AjaxController
 
 		if (false === $log) {
 			$json->$type->is_error = true;
-			$json->$type->result = __('Log file does not exist', 'shortpixel-image-optimiser');
+			$json->$type->result = __('Log file does not exist', 'shortpixel-upscale-image');
 			return $json;
 		}
 
@@ -1727,14 +1732,14 @@ class AjaxController
 		$lines = array_filter(explode(';', $content));
 
 		$headers = [
-			__('Time', 'shortpixel-image-optimiser'),
-			__('Filename', 'shortpixel-image-optimiser'),
-			__('ID', 'shortpixel-image-optimiser'),
-			__('Error', 'shortpixel-image-optimiser'),
+			__('Time', 'shortpixel-upscale-image'),
+			__('Filename', 'shortpixel-upscale-image'),
+			__('ID', 'shortpixel-upscale-image'),
+			__('Error', 'shortpixel-upscale-image'),
 		];
 
 		if ('custom' == $logType) {
-			array_splice($headers, 3, 0, __('Info', 'shortpixel-image-optimiser'));
+			array_splice($headers, 3, 0, __('Info', 'shortpixel-upscale-image'));
 		}
 
 		foreach ($lines as $index => $line) {
@@ -1774,20 +1779,22 @@ class AjaxController
 		}
 		$lines = array_values(array_filter($lines));
 		array_unshift($lines, $headers);
-		$json->$type->title = sprintf(__('Bulk ran on %s', 'shortpixel-image-optimiser'), $date);
+			/* translators: %s is the formatted bulk run timestamp. */
+			$json->$type->title = sprintf(__('Bulk ran on %s', 'shortpixel-upscale-image'), $date);
 		$json->$type->results = $lines;
 		return $json;
 	}
 
 	protected function checkNonce($action)
 	{
-		if (! wp_verify_nonce($_POST['nonce'], $action)) {
+			$nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+			if (! wp_verify_nonce($nonce, $action)) {
 
 			$id = isset($_POST['id']) ? intval($_POST['id']) : false;
-			$action = isset($_POST['screen_action']) ? sanitize_text_field($_POST['screen_action']) : false;
+				$action = isset($_POST['screen_action']) ? sanitize_text_field(wp_unslash($_POST['screen_action'])) : false;
 
 			$json = new \stdClass;
-			$json->message = __('Nonce is missing or wrong - Try to refresh the page', 'shortpixel-image-optimiser');
+			$json->message = __('Nonce is missing or wrong - Try to refresh the page', 'shortpixel-upscale-image');
 			$json->item_id = $id;
 			$json->action = $action;
 			$json->status = false;
@@ -1805,7 +1812,7 @@ class AjaxController
 
 		if ($bool === false) {
 			$json = new \stdClass;
-			$json->message = __('This user is not allowed to perform this action', 'shortpixel-image-optimiser');
+			$json->message = __('This user is not allowed to perform this action', 'shortpixel-upscale-image');
 			$json->action = $action;
 			$json->status = false;
 			$json->error = self::NO_ACCESS;
@@ -1820,7 +1827,7 @@ class AjaxController
 	{
 
 		// defaults 
-		$message = __('This user is not allowed to edit this image', 'shortpixel-image-optimiser');
+		$message = __('This user is not allowed to edit this image', 'shortpixel-upscale-image');
 
 		$accessModel = AccessModel::getInstance();
 		if (is_object($mediaItem)) {
@@ -1832,7 +1839,7 @@ class AjaxController
 			$id = false;
 			if (! is_object($mediaItem))
 			{
-				$message = __('Image does not exist or could not be loaded', 'shortpixel-image-optimiser');
+				$message = __('Image does not exist or could not be loaded', 'shortpixel-upscale-image');
 			}
 		}
 
@@ -1851,7 +1858,7 @@ class AjaxController
 
 	protected function send($json)
 	{
-		$callback = isset($_POST['callback']) ? sanitize_text_field($_POST['callback']) : false;
+		$callback = isset($_POST['callback']) ? sanitize_text_field(wp_unslash($_POST['callback'])) : false;
 		if ($callback)
 			$json->callback = $callback; // which type of request we just fullfilled ( response processing )
 
@@ -1866,9 +1873,10 @@ class AjaxController
 
 	private function removeAllData($json, $data)
 	{
-		if (1 === wp_verify_nonce($_POST['tools-nonce'], 'remove-all')) {
+			$tools_nonce = isset($_POST['tools-nonce']) ? sanitize_text_field(wp_unslash($_POST['tools-nonce'])) : '';
+			if (1 === wp_verify_nonce($tools_nonce, 'remove-all')) {
 			InstallHelper::hardUninstall();
-			$json->settings->results = __('All Data has been removed. The plugin has been deactivated', 'shortpixel-image-optimiser');
+			$json->settings->results = __('All Data has been removed. The plugin has been deactivated', 'shortpixel-upscale-image');
 		} else {
 			Log::addError('RemoveAll detected with wrong nonce');
 		}
@@ -1880,7 +1888,8 @@ class AjaxController
 
 	private function removeBackup($json, $data)
 	{
-		if (wp_verify_nonce($_POST['tools-nonce'], 'empty-backup')) {			
+			$tools_nonce = isset($_POST['tools-nonce']) ? sanitize_text_field(wp_unslash($_POST['tools-nonce'])) : '';
+			if (wp_verify_nonce($tools_nonce, 'empty-backup')) {			
 
 			$fs = \wpSPUI()->filesystem(); 
 			
@@ -1891,9 +1900,9 @@ class AjaxController
 
 			$fs->moveLogFiles(['to_temp' => false]);
 
-			$json->settings->results = __('The backups have been removed. You can close the window', 'shortpixel-image-optimiser');
+			$json->settings->results = __('The backups have been removed. You can close the window', 'shortpixel-upscale-image');
 		} else {
-			$json->settings->results = __('Error: Invalid Nonce in empty backups', 'shortpixel-image-optimiser');
+			$json->settings->results = __('Error: Invalid Nonce in empty backups', 'shortpixel-upscale-image');
 		}
 
 		return $json;

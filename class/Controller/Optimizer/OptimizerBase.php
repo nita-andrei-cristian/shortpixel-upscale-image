@@ -86,7 +86,7 @@ abstract class OptimizerBase
       {
 
         $qItem->addResult([
-            'message' => __("File Error. File could not be loaded with this ID ", 'shortpixel-image-optimiser'),
+            'message' => __("File Error. File could not be loaded with this ID ", 'shortpixel-upscale-image'),
             'apiStatus' => RequestManager::STATUS_NOT_API,
             'fileStatus' => ImageModel::FILE_STATUS_ERROR,
             'is_done' => true,

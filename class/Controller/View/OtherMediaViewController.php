@@ -41,15 +41,16 @@ class OtherMediaViewController extends \SPUI\ViewController
       {
         parent::__construct();
 
-				// 2015: https://github.com/WordPress/WordPress-Coding-Standards/issues/426 !
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-        $this->currentPage = isset($_GET['paged']) ? intval($_GET['paged']) : 1;
+					// 2015: https://github.com/WordPress/WordPress-Coding-Standards/issues/426 !
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
+	        $this->currentPage = isset($_GET['paged']) ? intval( wp_unslash( $_GET['paged'] ) ) : 1;
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
         $this->orderby = ( ! empty( $_GET['orderby'] ) ) ? $this->filterAllowedOrderBy(sanitize_text_field(wp_unslash($_GET['orderby']))) : 'id';
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
         $this->order = ( ! empty($_GET['order'] ) ) ? sanitize_text_field( wp_unslash($_GET['order'])) : 'desc'; // If no order, default to asc
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-        $this->search =  (isset($_GET["s"]) && strlen($_GET["s"]) > 0)  ? sanitize_text_field( wp_unslash($_GET['s'])) : false;
+	        $spui_search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+	        $this->search = ( strlen( $spui_search ) > 0 ) ? $spui_search : false;
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
 				$this->show_hidden = isset($_GET['show_hidden']) ? sanitize_text_field(wp_unslash($_GET['show_hidden'])) : false;
 
@@ -67,7 +68,7 @@ class OtherMediaViewController extends \SPUI\ViewController
 
           $this->view->filter = $this->getFilter();
 
-					$this->view->title = __('Custom Media upscaled by ShortPixel', 'shortpixel-image-optimiser');
+					$this->view->title = __('Custom Media upscaled by ShortPixel', 'shortpixel-upscale-image');
 					$this->view->show_search = true;
 
     //      $this->checkQueue();
@@ -79,26 +80,26 @@ class OtherMediaViewController extends \SPUI\ViewController
       {
          $headings = array(
               'checkbox' => array('title' => '<input type="checkbox" name="select-all">', 'sortable' => false),
-              'thumbnails' => array('title' => __('Thumbnail', 'shortpixel-image-optimiser'),
+              'thumbnails' => array('title' => __('Thumbnail', 'shortpixel-upscale-image'),
                               'sortable' => false,
                               'orderby' => 'id',  // placeholder to allow sort on this.
                             ),
-               'name' =>  array('title' => __('Name', 'shortpixel-image-optimiser'),
+               'name' =>  array('title' => __('Name', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'name',
                             ),
-               'folder' => array('title' => __('Folder', 'shortpixel-image-optimiser'),
+               'folder' => array('title' => __('Folder', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'path',
                             ),
-               'type' =>   array('title' => __('Type', 'shortpixel-image-optimiser'),
+               'type' =>   array('title' => __('Type', 'shortpixel-upscale-image'),
                                 'sortable' => false,
                                 ),
-               'date' =>    array('title' => __('Date', 'shortpixel-image-optimiser'),
+               'date' =>    array('title' => __('Date', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'ts_optimized',
                              ),
-               'status' => array('title' => __('Status', 'shortpixel-image-optimiser'),
+               'status' => array('title' => __('Status', 'shortpixel-upscale-image'),
                                 'sortable' => true,
                                 'orderby' => 'status',
                             ),
@@ -136,11 +137,12 @@ class OtherMediaViewController extends \SPUI\ViewController
              $items[$index] = $mediaItem;
           }
 
-          if (count($removed) > 0)
-          {
-            Notices::addWarning(sprintf(__('Some images were missing. They have been removed from the Custom Media overview : %s %s'),
-                '<BR>', implode('<BR>', $removed)));
-          }
+	        if (count($removed) > 0)
+	        {
+							/* translators: 1: line break, 2: removed image paths separated by line breaks. */
+	            Notices::addWarning(sprintf(__('Some images were missing. They have been removed from the Custom Media overview : %1$s %2$s', 'shortpixel-upscale-image'),
+	                '<BR>', implode('<BR>', $removed)));
+	        }
 
           return $items;
       }
@@ -188,7 +190,7 @@ class OtherMediaViewController extends \SPUI\ViewController
           $this->view->hasSearch = false;
 
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-					$search = (isset($_GET['s'])) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
+						$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
           if(strlen($search) > 0) {
 
             $this->view->hasSearch = true;
@@ -196,14 +198,16 @@ class OtherMediaViewController extends \SPUI\ViewController
               $filter['path'] = (object)array("operator" => "like", "value" =>"'%" . esc_sql($search) . "%'");
           }
 
-				  $folderFilter =  (isset($_GET['folder_id'])) ? intval($_GET['folder_id']) : false;
+					  // phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
+					  $folderFilter = isset( $_GET['folder_id'] ) ? intval( wp_unslash( $_GET['folder_id'] ) ) : false;
 					if (false !== $folderFilter)
 					{
               $this->view->hasFilter = true;
 						  $filter['folder_id'] = (object)array("operator" => "=", "value" =>"'" . esc_sql($folderFilter) . "'");
 					}
 
-          $statusFilter = isset($_GET['custom-status']) ? sanitize_text_field($_GET['custom-status']) : false;
+		          // phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
+		          $statusFilter = isset( $_GET['custom-status'] ) ? sanitize_text_field( wp_unslash( $_GET['custom-status'] ) ) : false;
           if (false !== $statusFilter)
 					{
               $operator = '=';
@@ -263,16 +267,18 @@ class OtherMediaViewController extends \SPUI\ViewController
           if (strlen($dirs) == 0)
             return array();
 
-          $sql = "SELECT COUNT(id) as count FROM " . $wpdb->prefix . "shortpixel_meta where folder_id in ( " . $dirs  . ") ";
+						$meta_table = esc_sql( $wpdb->prefix . 'shortpixel_meta' );
+	          $sql = "SELECT COUNT(id) as count FROM {$meta_table} where folder_id in ( " . $dirs  . ") ";
 
           foreach($filters as $field => $value) {
               $field  = property_exists($value, 'field')  ? $value->field : $field;
               $sql .= " AND $field " . $value->operator . " ". $value->value . " ";
           }
 
-          $this->total_items = $wpdb->get_var($sql);
+						// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Built from whitelisted fields, operators, and sanitized values.
+	          $this->total_items = $wpdb->get_var($sql);
 
-          $sql = "SELECT * FROM " . $wpdb->prefix . "shortpixel_meta where folder_id in ( " . $dirs  . ") ";
+	          $sql = "SELECT * FROM {$meta_table} where folder_id in ( " . $dirs  . ") ";
 
           foreach($filters as $field => $value) {
               $field  = property_exists($value, 'field')  ? $value->field : $field;
@@ -284,7 +290,8 @@ class OtherMediaViewController extends \SPUI\ViewController
                   . " LIMIT " . $this->items_per_page . " OFFSET " . ($page - 1) * $this->items_per_page;
 
 
-          $results = $wpdb->get_results($sql);
+						// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Built from whitelisted fields, operators, and sanitized values.
+	          $results = $wpdb->get_results($sql);
           return $results;
       }
 
@@ -372,7 +379,8 @@ class OtherMediaViewController extends \SPUI\ViewController
 					 {
 						  $output .= sprintf('<input type="hidden" name="%s" value="%s">', $arg, $val);
 					 }
-           $output .= '<span class="displaying-num">'. sprintf(esc_html__('%d Images', 'shortpixel-image-optimiser'), $this->total_items) . '</span>';
+					 /* translators: %d is the total number of custom media images. */
+	           $output .= '<span class="displaying-num">'. sprintf(esc_html__('%d Images', 'shortpixel-upscale-image'), $this->total_items) . '</span>';
 
            if ( $disable_first ) {
                     $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
@@ -380,7 +388,7 @@ class OtherMediaViewController extends \SPUI\ViewController
                     $page_links[] = sprintf(
                         "<a class='first-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                         esc_url( $current_url ),
-                        esc_html__( 'First page' ),
+	                        esc_html__( 'First page', 'shortpixel-upscale-image' ),
                         '&laquo;'
                     );
                 }
@@ -391,14 +399,14 @@ class OtherMediaViewController extends \SPUI\ViewController
                 $page_links[] = sprintf(
                     "<a class='prev-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                     esc_url( add_query_arg( 'paged', max( 1, $current - 1 ), $current_url ) ),
-                    esc_html__( 'Previous page' ),
+	                    esc_html__( 'Previous page', 'shortpixel-upscale-image' ),
                     '&lsaquo;'
                 );
             }
 
             $html_current_page = sprintf(
                 "%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-                '<label for="current-page-selector" class="screen-reader-text">' . esc_html__( 'Current Page' ) . '</label>',
+	                '<label for="current-page-selector" class="screen-reader-text">' . esc_html__( 'Current Page', 'shortpixel-upscale-image' ) . '</label>',
                 $current,
                 strlen( $pages )
             );
@@ -406,7 +414,7 @@ class OtherMediaViewController extends \SPUI\ViewController
             $html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $pages ) );
             $page_links[]     = $total_pages_before . sprintf(
                 /* translators: 1: Current page, 2: Total pages. */
-                _x( '%1$s of %2$s', 'paging' ),
+	                _x( '%1$s of %2$s', 'paging', 'shortpixel-upscale-image' ),
                 $html_current_page,
                 $html_total_pages
             ) . $total_pages_after;
@@ -417,7 +425,7 @@ class OtherMediaViewController extends \SPUI\ViewController
                 $page_links[] = sprintf(
                     "<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                     esc_url( add_query_arg( 'paged', min( $pages, $current + 1 ), $current_url ) ),
-                    __( 'Next page' ),
+	                    __( 'Next page', 'shortpixel-upscale-image' ),
                     '&rsaquo;'
                 );
             }
@@ -428,7 +436,7 @@ class OtherMediaViewController extends \SPUI\ViewController
                 $page_links[] = sprintf(
                     "<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
                     esc_url( add_query_arg( 'paged', $pages, $current_url ) ),
-                    __( 'Last page' ),
+	                    __( 'Last page', 'shortpixel-upscale-image' ),
                     '&raquo;'
                 );
             }
@@ -451,12 +459,12 @@ class OtherMediaViewController extends \SPUI\ViewController
 
           $keyControl = ApiKeyController::getInstance();
 
-					$actions = UIHelper::getActions($item);
+						$actions = UiHelper::getActions($item);
 
 					$viewAction = array('view' => array(
 						 'function' => $item->getUrl(),
 						 'type' => 'link',
-						 'text' => __('View', 'shortpixel-image-optimiser'),
+						 'text' => __('View', 'shortpixel-upscale-image'),
 						 'display' => 'inline',
 
 					));
@@ -477,7 +485,7 @@ class OtherMediaViewController extends \SPUI\ViewController
 					<div id='shortpixel-data-<?php echo esc_attr($item->get('id')) ?>'  class='sp-column-info'><?php
 							$this->printItemActions($item);
 
-            echo "<div>" .  UiHelper::getStatusText($item) . "</div>";
+	            echo '<div>' . wp_kses_post( UiHelper::getStatusText($item) ) . '</div>';
            ?>
          </div> <!-- sp-column-info -->
         <?php
@@ -502,7 +510,7 @@ class OtherMediaViewController extends \SPUI\ViewController
           $this->loadView('snippets/part-single-actions', false);
 
         }
-        echo $list_actions;
+	        echo wp_kses_post($list_actions);
       }
 
       public function printFilter()
@@ -510,10 +518,10 @@ class OtherMediaViewController extends \SPUI\ViewController
             $status   = filter_input(INPUT_GET, 'custom-status', FILTER_UNSAFE_RAW );
 
             $options = array(
-                'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-                'optimized' => __('Upscaled', 'shortpixel-image-optimiser'),
-                'unoptimized' => __('Not Upscaled', 'shortpixel-image-optimiser'),
-                'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
+                'all' => __('Any ShortPixel State', 'shortpixel-upscale-image'),
+                'optimized' => __('Upscaled', 'shortpixel-upscale-image'),
+                'unoptimized' => __('Not Upscaled', 'shortpixel-upscale-image'),
+	                'prevented' => __('Upscaling Error', 'shortpixel-upscale-image'),
 
             );
 
@@ -521,7 +529,7 @@ class OtherMediaViewController extends \SPUI\ViewController
             foreach($options as $optname => $optval)
             {
                 $selected = ($status == $optname) ? esc_attr('selected') : '';
-                echo "<option value='". esc_attr($optname) . "' $selected >" . esc_html($optval) . "</option>\n";
+	                echo "<option value='" . esc_attr($optname) . "' " . esc_attr($selected) . '>' . esc_html($optval) . "</option>\n";
             }
             echo "</select>";
 

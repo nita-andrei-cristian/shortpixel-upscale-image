@@ -110,14 +110,15 @@ class SettingsViewController extends \SPUI\ViewController
 
         $this->checkPost(false);
 
-        if ($this->is_form_submit && isset($_POST['apiKey']))
-        {
-            $apiKey = sanitize_text_field($_POST['apiKey']);
+	        if ($this->is_form_submit && isset($_POST['apiKey']))
+	        {
+	            $apiKey = sanitize_text_field(wp_unslash($_POST['apiKey']));
 
-            if (strlen(trim($apiKey)) == 0) // display notice when submitting empty API key
-            {
-              Notice::addError(sprintf(__("The key you provided has %s characters. The API key should have 20 characters, letters and numbers only.",'shortpixel-image-optimiser'), strlen($apiKey) ));
-            }
+	            if (strlen(trim($apiKey)) == 0) // display notice when submitting empty API key
+	            {
+	              /* translators: %s is the number of characters in the provided API key. */
+	              Notice::addError(sprintf(__("The key you provided has %s characters. The API key should have 20 characters, letters and numbers only.",'shortpixel-upscale-image'), strlen($apiKey) ));
+	            }
             else
             {
 
@@ -140,7 +141,7 @@ class SettingsViewController extends \SPUI\ViewController
 					$this->loadEnv();
  	        $this->checkPost(false);
 
-					$email = isset($_POST['pluginemail']) ? trim(sanitize_text_field($_POST['pluginemail'])) : null;
+					$email = isset($_POST['pluginemail']) ? trim(sanitize_text_field(wp_unslash($_POST['pluginemail']))) : null;
 
 					// Not a proper form post.
 					if (is_null($email))
@@ -153,7 +154,7 @@ class SettingsViewController extends \SPUI\ViewController
 					$bodyArgs = array(
 							'plugin_version' => SPUI_IMAGE_OPTIMISER_VERSION,
 							'email' => $email,
-							'ip' => isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? sanitize_text_field($_SERVER["HTTP_X_FORWARDED_FOR"]) : sanitize_text_field($_SERVER['REMOTE_ADDR']),
+								'ip' => isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? sanitize_text_field(wp_unslash($_SERVER["HTTP_X_FORWARDED_FOR"])) : ( isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '' ),
 					);
 
 	        $params = array(
@@ -169,7 +170,7 @@ class SettingsViewController extends \SPUI\ViewController
 
 	        $newKeyResponse = wp_remote_post("https://shortpixel.com/free-sign-up-plugin", $params);
 
-					$errorText = __("There was problem requesting a new code. Server response: ", 'shortpixel-image-optimiser');
+					$errorText = __("There was problem requesting a new code. Server response: ", 'shortpixel-upscale-image');
 
 	        if ( is_object($newKeyResponse) && get_class($newKeyResponse) == 'WP_Error' ) {
 	            //die(json_encode((object)array('Status' => 'fail', 'Details' => '503')));
@@ -197,11 +198,12 @@ class SettingsViewController extends \SPUI\ViewController
 	        }
 					elseif($body->Status == 'existing')
 					{
-						 Notice::addWarning( sprintf(__('This email address is already in use. Please use your API-key in the "Already have an API key" field. You can obtain your license key via %s your account %s ', 'shortpixel-image-optimiser'), '<a href="https://shortpixel.com/login/">', '</a>') );
+							 /* translators: 1: opening account link, 2: closing account link. */
+							 Notice::addWarning( sprintf(__('This email address is already in use. Please use your API-key in the "Already have an API key" field. You can obtain your license key via %1$s your account %2$s ', 'shortpixel-upscale-image'), '<a href="https://shortpixel.com/login/">', '</a>') );
 					}
 					else
 					{
-						 Notice::addError( __('Unexpected error obtaining the ShortPixel key. Please contact support about this:', 'shortpixel-image-optimiser') . '  ' . json_encode($body) );
+						 Notice::addError( __('Unexpected error obtaining the ShortPixel key. Please contact support about this:', 'shortpixel-upscale-image') . '  ' . json_encode($body) );
 
 					}
 					$this->doRedirect();
@@ -224,9 +226,9 @@ class SettingsViewController extends \SPUI\ViewController
         $this->loadEnv();
         $this->checkPost(false);
 
-        $setting_name =  isset($_POST['edit_setting']) ? sanitize_text_field($_POST['edit_setting']) : false;
-        $new_value = isset($_POST['new_value']) ? sanitize_text_field($_POST['new_value']) : false;
-        $submit_name = isset($_POST['Submit']) ? sanitize_text_field($_POST['Submit']) : false; 
+	        $setting_name =  isset($_POST['edit_setting']) ? sanitize_text_field(wp_unslash($_POST['edit_setting'])) : false;
+	        $new_value = isset($_POST['new_value']) ? sanitize_text_field(wp_unslash($_POST['new_value'])) : false;
+	        $submit_name = isset($_POST['Submit']) ? sanitize_text_field(wp_unslash($_POST['Submit'])) : false; 
 
       //  $apiKeyModel = (isset($_POST['apiKeySettings']) && 'true' == $_POST['apikeySettings'])  ? true : false;
 
@@ -259,7 +261,8 @@ class SettingsViewController extends \SPUI\ViewController
 
 				QueueController::resetQueues();
 
-				$action = isset($_REQUEST['bulk']) ? sanitize_text_field($_REQUEST['bulk']) : null;
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Already gated through checkPost() above.
+				$action = isset($_REQUEST['bulk']) ? sanitize_text_field(wp_unslash($_REQUEST['bulk'])) : null;
 
 				if ('migrate' == $action)
 				{
@@ -311,7 +314,8 @@ class SettingsViewController extends \SPUI\ViewController
 			public function action_debug_triggerNotice()
 			{
 				$this->checkPost(false);
-				$key = isset($_REQUEST['notice_constant']) ? sanitize_text_field($_REQUEST['notice_constant']) : false;
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Already gated through checkPost() above.
+				$key = isset($_REQUEST['notice_constant']) ? sanitize_text_field(wp_unslash($_REQUEST['notice_constant'])) : false;
 
 				if ($key !== false)
 				{
@@ -337,7 +341,8 @@ class SettingsViewController extends \SPUI\ViewController
 
 			public function action_debug_resetQueue()
 			{
-				 $queue = isset($_REQUEST['queue']) ? sanitize_text_field($_REQUEST['queue']) : null;
+				 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Already gated through checkPost() below.
+				 $queue = isset($_REQUEST['queue']) ? sanitize_text_field(wp_unslash($_REQUEST['queue'])) : null;
 
 				 $this->loadEnv();
 				 $this->checkPost(false);
@@ -379,11 +384,12 @@ class SettingsViewController extends \SPUI\ViewController
 
 						 if ($queue == 'all')
 						 {
-						 	$message = sprintf(__('All items in the queues have been removed and the process is stopped', 'shortpixel-image-optimiser'));
+						 	$message = sprintf(__('All items in the queues have been removed and the process is stopped', 'shortpixel-upscale-image'));
 						 }
 						 else
 						 {
-								 $message = sprintf(__('All items in the %s queue have been removed and the process is stopped', 'shortpixel-image-optimiser'), $queue);
+									 /* translators: %s is the queue name. */
+									 $message = sprintf(__('All items in the %s queue have been removed and the process is stopped', 'shortpixel-upscale-image'), $queue);
  						 }
 
 						 Notice::addSuccess($message);
@@ -398,13 +404,15 @@ class SettingsViewController extends \SPUI\ViewController
 				$this->checkPost(false);
 
 				global $wpdb;
-				$sql = 'delete from ' . $wpdb->postmeta . ' where meta_key = %s';
+				$postmeta_table = esc_sql($wpdb->postmeta);
+				$wpdb->query(
+					$wpdb->prepare(
+						"delete from {$postmeta_table} where meta_key = %s",
+						'_shortpixel_prevent_optimize'
+					)
+				);
 
-				$sql = $wpdb->prepare($sql, '_shortpixel_prevent_optimize');
-
-				$wpdb->query($sql);
-
-				$message = __('Item blocks have been removed. It is recommended to create a backup before trying to upscale the image.', 'shortpixel-image-optimiser');
+				$message = __('Item blocks have been removed. It is recommended to create a backup before trying to upscale the image.', 'shortpixel-upscale-image');
 
 				Notice::addSuccess($message);
 				$this->doRedirect();
@@ -474,7 +482,7 @@ class SettingsViewController extends \SPUI\ViewController
 					elseif (false === $this->is_ajax_save) {
 
 						$noticeController = Notice::getInstance();
-						$notice = Notice::addSuccess(__('Settings Saved', 'shortpixel-image-optimiser'));
+						$notice = Notice::addSuccess(__('Settings Saved', 'shortpixel-upscale-image'));
 						$notice->is_removable = false;
 						$noticeController->update();
 
@@ -502,8 +510,8 @@ class SettingsViewController extends \SPUI\ViewController
 
 				 $excludeOptions = UtilHelper::getWordPressImageSizes();
 				 $mainOptions = array(
-					 'shortpixel_main_donotuse' =>  array('nice-name' => __('Main (scaled) Image', 'shortpixel-image-optimiser')),
-					 'shortpixel_original_donotuse' => array('nice-name' => __('Original Image', 'shortpixel-image-optimiser')),
+					 'shortpixel_main_donotuse' =>  array('nice-name' => __('Main (scaled) Image', 'shortpixel-upscale-image')),
+					 'shortpixel_original_donotuse' => array('nice-name' => __('Original Image', 'shortpixel-upscale-image')),
 				 );
 
 				 $excludeOptions = array_merge($mainOptions, $excludeOptions);
@@ -576,15 +584,15 @@ class SettingsViewController extends \SPUI\ViewController
         $mainblock->ok = true;
         $mainblock->icon = 'ok';
         $mainblock->cocktail = true;
-        $mainblock->header = __('Everything running smoothly.', 'shortpixel-image-optimiser');
-        $mainblock->message = __('Keep calm and carry on', 'shortpixel-image-optimiser');
+        $mainblock->header = __('Everything running smoothly.', 'shortpixel-upscale-image');
+        $mainblock->message = __('Keep calm and carry on', 'shortpixel-upscale-image');
 
         if (false === $this->view->key->is_verifiedkey)
         {
 						/*
 						$mainblock->ok = false;
-            $mainblock->header = __('Issue with API Key', 'shortpixel-image-optimiser');
-            $mainblock->message = __('Add your API Key to start upscaling', 'shortpixel-image-optimiser');
+            $mainblock->header = __('Issue with API Key', 'shortpixel-upscale-image');
+            $mainblock->message = __('Add your API Key to start upscaling', 'shortpixel-upscale-image');
             $mainblock->cocktail = false;
             $mainblock->icon = 'alert';
 						*/
@@ -595,14 +603,16 @@ class SettingsViewController extends \SPUI\ViewController
 						 $media_total = $statsController->find('media', 'images');
 						 $custom_total = $statsController->find('custom', 'images');
 
-						 $custom_text = ($custom_total > 0) ? sprintf(esc_html__('and %s custom images ', 'shortpixel-image-optimiser'), $custom_total) : '';
+						 /* translators: %s is the number of custom images. */
+						 $custom_text = ($custom_total > 0) ? sprintf(esc_html__('and %s custom images ', 'shortpixel-upscale-image'), $custom_total) : '';
             // $mainblock->message = '';
 
              if ($media_total > 0)
              {
-						         $mainblock->message = sprintf(esc_html__('%s media items %s upscaled', 'shortpixel-image-optimiser'), $media_total, $custom_text);
-                     $total_sum = intval($media_total) + intval($custom_text);
-                     $mainblock->optimized = sprintf(esc_html__('%s', 'shortpixel-image-optimiser'), $total_sum);
+							         /* translators: 1: number of media items, 2: optional custom images text. */
+							         $mainblock->message = sprintf(esc_html__('%1$s media items %2$s upscaled', 'shortpixel-upscale-image'), $media_total, $custom_text);
+			                     $total_sum = intval($media_total) + intval($custom_total);
+			                     $mainblock->optimized = (string) $total_sum;
              }
 
 				}
@@ -618,7 +628,8 @@ class SettingsViewController extends \SPUI\ViewController
            $date = $latest['date'];
         }
 
-        $message = (count($logs) == 0) ? esc_html__('No bulk processing has been performed yet', 'shortpixel-image-optimiser') : sprintf(__('The last bulk processing ran on:  %s','shortpixel-image-optimiser'), '<br>' . $date );
+	        /* translators: %s is the formatted last bulk processing date. */
+	        $message = (count($logs) == 0) ? esc_html__('No bulk processing has been performed yet', 'shortpixel-upscale-image') : sprintf(__('The last bulk processing ran on:  %s','shortpixel-upscale-image'), '<br>' . $date );
 
         $bulkblock = new \stdClass;
         $bulkblock->icon = 'ok';
@@ -652,7 +663,7 @@ class SettingsViewController extends \SPUI\ViewController
 				 }
 				 elseif($this->is_multisite && $keyObj->is_constant_key)
 				 {
-					 $keyObj->apiKey = esc_html__('Multisite API Key','shortpixel-image-optimiser');
+					 $keyObj->apiKey = esc_html__('Multisite API Key','shortpixel-upscale-image');
 				 }
 				 else {
 				 	 $showApiKey = true;
@@ -698,14 +709,14 @@ class SettingsViewController extends \SPUI\ViewController
 
           $this->disable_heavy_features = (false === \wpSPUI()->env()->useVirtualHeavyFunctions()) ? true : false;
 
-          $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'optimisation';
+	          $this->display_part = (isset($_GET['part']) && in_array(wp_unslash($_GET['part']), $this->all_display_parts, true) ) ? sanitize_text_field(wp_unslash($_GET['part'])) : 'optimisation';
       }
 
       protected function settingLink($args)
       {
           $defaults = [
              'part' => '',
-             'title' => __('Title', 'shortpixel-image-optimiser'),
+             'title' => __('Title', 'shortpixel-upscale-image'),
              'icon' => false,
              'icon_position' => 'left',
              'class' => 'anchor-link',
@@ -877,7 +888,8 @@ class SettingsViewController extends \SPUI\ViewController
                     'old_value' => $post_CDNDomain, 
                     'new_value' => $check, 
                     'hook_query' => 'info.useCDN', 
-                    'message' => sprintf(__('CDN Domain has been changed from %s to %s . SPIO needs a path component', 'shortpixel-image-optimiser'), $post_CDNDomain, $check),
+	                    /* translators: 1: original CDN domain, 2: adjusted CDN domain. */
+	                    'message' => sprintf(__('CDN Domain has been changed from %1$s to %2$s . SPIO needs a path component', 'shortpixel-upscale-image'), $post_CDNDomain, $check),
                  ]);
                  $post['CDNDomain'] = $check;
               }
@@ -1026,7 +1038,8 @@ class SettingsViewController extends \SPUI\ViewController
             if ( @preg_match($pattern, false) === false)
             {
                $accepted[$index]['has-error'] = true;
-               Notice::addWarning(sprintf(__('Regular Expression Pattern %s returned an error. Please check if the expression is correct. %s * Special characters should be escaped. %s * A regular expression must be contained between two slashes  ', 'shortpixel-image-optimiser'), $pattern, "<br>", "<br>" ));
+	               /* translators: 1: invalid regex pattern, 2: first line break, 3: second line break. */
+	               Notice::addWarning(sprintf(__('Regular Expression Pattern %1$s returned an error. Please check if the expression is correct. %2$s * Special characters should be escaped. %3$s * A regular expression must be contained between two slashes  ', 'shortpixel-upscale-image'), $pattern, "<br>", "<br>" ));
             }
           }
           if ('date' === $type)
@@ -1036,9 +1049,10 @@ class SettingsViewController extends \SPUI\ViewController
              }
              catch (\Exception $e)
              {
-               Notice::addWarning(sprintf(__('Date format %s return an error %s . Accepted are formats that are valid for PHP dateFormat', 'shortpixel-image-optimiser'), 
-                 $pattern, $e->getMessage()
-             ));
+	               /* translators: 1: invalid date format, 2: parser error message. */
+	               Notice::addWarning(sprintf(__('Date format %1$s return an error %2$s . Accepted are formats that are valid for PHP dateFormat', 'shortpixel-upscale-image'), 
+	                 $pattern, $e->getMessage()
+	             ));
              }
           }
         }
@@ -1099,8 +1113,8 @@ class SettingsViewController extends \SPUI\ViewController
 					$this->handleAjaxSave($redirect, $url);
 				}
 
-        wp_redirect($url);
-        exit();
+	        wp_safe_redirect($url);
+	        exit();
       }
 
 			protected function handleAjaxSave($redirect, $url = false)

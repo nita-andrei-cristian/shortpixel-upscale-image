@@ -31,7 +31,7 @@ class UtilHelper
 
   public static function timestampToDB($timestamp)
   {
-    return date("Y-m-d H:i:s", $timestamp);
+    return gmdate("Y-m-d H:i:s", $timestamp);
   }
 
   public static function DBtoTimestamp($date)

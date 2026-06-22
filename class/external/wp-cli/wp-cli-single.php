@@ -52,12 +52,12 @@ class SpioSingle extends SpioCommandBase
 
       if (! isset($args[0]))
       {
-        \WP_CLI::Error(__('Specify an (Media Library) Item ID', 'shortpixel_image_optimiser'));
+        \WP_CLI::Error(__('Specify an (Media Library) Item ID', 'shortpixel-upscale-image'));
         return;
       }
 			if (! is_numeric($args[0]))
 			{
-				 \WP_CLI::Error(__('Item ID needs to be a number', 'shortpixel-image-optimiser'));
+				 \WP_CLI::Error(__('Item ID needs to be a number', 'shortpixel-upscale-image'));
 				 return;
 			}
 
@@ -68,7 +68,7 @@ class SpioSingle extends SpioCommandBase
 
       if ($imageModel === false)
 			{
-				 \WP_CLI::Error(__('No Image returned. Please check if the number and type are correct and the image exists', 'shortpixel-image-optimiser'));
+				 \WP_CLI::Error(__('No Image returned. Please check if the number and type are correct and the image exists', 'shortpixel-upscale-image'));
 				 return;
 			}
 
@@ -89,10 +89,10 @@ class SpioSingle extends SpioCommandBase
 				 $message = $result->message;
 			elseif (property_exists($result, 'result') )
       {
-        \WP_CLI::Error(sprintf(__("Result result exists, should not be", 'shortpixel_image_optimiser'), $result) );
+        \WP_CLI::Error( __( 'Result result exists, should not be', 'shortpixel-upscale-image' ) );
       }
       else {
-         $message = __('Operation didn\'t yield any messages');
+         $message = __( 'Operation didn\'t yield any messages', 'shortpixel-upscale-image' );
       }
 
 
@@ -102,7 +102,8 @@ class SpioSingle extends SpioCommandBase
 			}
       elseif (true === $result->is_error)
 			{
-        \WP_CLI::Error(sprintf(__("Restoring Item: %s", 'shortpixel_image_optimiser'), $message) );
+        // translators: %s: Error message returned while restoring an item.
+        \WP_CLI::Error( sprintf( __( 'Restoring Item: %s', 'shortpixel-upscale-image' ), $message ) );
 			}
       else {
         \WP_CLI::Error('Undetermined' . $message);
@@ -123,7 +124,7 @@ class SpioSingle extends SpioCommandBase
 		$fs = \wpSPUI()->filesystem();
 
 		if (! isset($args[0])) {
-			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-image-optimiser'));
+			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-upscale-image'));
 			return;
 		}
 
@@ -132,7 +133,7 @@ class SpioSingle extends SpioCommandBase
 		$imageObj = $fs->getMediaImage($id);
 
 		if ($imageObj === false) {
-			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-image-optimiser'));
+			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-upscale-image'));
 		}
 
 		// @todo When completing this script probably as for AddSingleItem with requestAlt as action, then run queue, then remove/update item for getter.

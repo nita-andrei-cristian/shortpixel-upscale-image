@@ -25,21 +25,21 @@ if ( ! defined( 'ABSPATH' ) ) {
      <div class="grid-thumbnails">
 
        <?php
-       foreach($view->allThumbSizes as $sizeKey => $sizeVal) {
+       foreach ( $view->allThumbSizes as $spui_size_key => $spui_size_val ) {
        ?>
            <span>
              <label>
 
                <?php
-               $excludeSizes = property_exists($view->data, 'excludeSizes') ? $view->data->excludeSizes : array();
-               $checked = in_array($sizeKey, $excludeSizes) ? 'checked' : '';
-               $width = isset($sizeVal['width']) ? $sizeVal['width'] : '*';
-               $height = isset($sizeVal['height']) ? $sizeVal['height'] : '*';
+               $spui_exclude_sizes = property_exists($view->data, 'excludeSizes') ? $view->data->excludeSizes : array();
+               $spui_checked = in_array( $spui_size_key, $spui_exclude_sizes, true ) ? 'checked' : '';
+               $spui_width = isset($spui_size_val['width']) ? $spui_size_val['width'] : '*';
+               $spui_height = isset($spui_size_val['height']) ? $spui_size_val['height'] : '*';
 
-               $name = isset($sizeVal['nice-name']) ? $sizeVal['nice-name'] : ucfirst($sizeKey);
-               $label = $name . " ( $width &times $height )";
+               $spui_name = isset($spui_size_val['nice-name']) ? $spui_size_val['nice-name'] : ucfirst($spui_size_key);
+               $spui_label = $spui_name . " ( $spui_width &times $spui_height )";
 
-               printf(' <input name="excludeSizes[]" type="checkbox" id="excludeSizes_%s" value="%s" %s>%s  ', esc_attr($sizeKey), esc_attr($sizeKey), $checked, $label);
+               printf( ' <input name="excludeSizes[]" type="checkbox" id="excludeSizes_%1$s" value="%1$s" %2$s>%3$s', esc_attr( $spui_size_key ), checked( true, in_array( $spui_size_key, $spui_exclude_sizes, true ), false ), esc_html( $spui_label ) );
                ?>
                </label>
            </span>
@@ -55,14 +55,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  <setting class='exclude-patterns-setting'>
      <name>
        <?php esc_html_e('Exclude patterns','shortpixel-upscale-image');?>
-       <label><input type='checkbox' class='shortpixel-hide' data-toggle='exclude-settings-expanded'> >> <?php		printf(esc_html__('See examples')); ?></label>
+       <label><input type='checkbox' class='shortpixel-hide' data-toggle='exclude-settings-expanded'> >> <?php esc_html_e( 'See examples', 'shortpixel-upscale-image' ); ?></label>
 
      </name>
      <info>
        <div class='exclude-settings-expanded toggleTarget ' id="exclude-settings-expanded">
          <p  class="settings-info">
          <?php
-             printf(esc_html__('%s"Name type:"%s Matches based on the file name only. For example, if you enter %s"flower.jpg"%s in the "Value" field, ShortPixel will exclude all JPEG images ending in "flower" (case-sensitive). Alternatively, you enter %s"logo"%s, all files (PNG/JPEG/GIF/PDF) containing "logo" in the file name will be excluded, such as: "nicelogo.jpg", "alllogos.png" or "logo.gif".', 'shortpixel-upscale-image'),
+             /* translators: 1: Opening bold tag before "Name type:". 2: Closing bold tag. 3: Opening bold tag before "flower.jpg". 4: Closing bold tag. 5: Opening bold tag before "logo". 6: Closing bold tag. */
+             printf( wp_kses_post( __( '%1$s"Name type:"%2$s Matches based on the file name only. For example, if you enter %3$s"flower.jpg"%4$s in the "Value" field, ShortPixel will exclude all JPEG images ending in "flower" (case-sensitive). Alternatively, you enter %5$s"logo"%6$s, all files (PNG/JPEG/GIF/PDF) containing "logo" in the file name will be excluded, such as: "nicelogo.jpg", "alllogos.png" or "logo.gif".', 'shortpixel-upscale-image' ) ),
              '<b>','</b>',
              '<b>','</b>',
              '<b>','</b>'
@@ -73,7 +74,8 @@ if ( ! defined( 'ABSPATH' ) ) {
        <br />
        <p  class="settings-info">
          <?php
-             printf(esc_html__('%s"Path type:"%s Matches based on the entire file path, which is useful for excluding specific directories or subdirectories. For instance, entering %s"2022"%s in the "Value" field will exclude all images uploaded in 2022, as well as any images with "2022" in the file name (since this is part of the path). To exclude only images uploaded in 2022, use %s"/2022/"%s instead.','shortpixel-upscale-image'),
+             /* translators: 1: Opening bold tag before "Path type:". 2: Closing bold tag. 3: Opening bold tag before "2022". 4: Closing bold tag. 5: Opening bold tag before "/2022/". 6: Closing bold tag. */
+             printf( wp_kses_post( __( '%1$s"Path type:"%2$s Matches based on the entire file path, which is useful for excluding specific directories or subdirectories. For instance, entering %3$s"2022"%4$s in the "Value" field will exclude all images uploaded in 2022, as well as any images with "2022" in the file name (since this is part of the path). To exclude only images uploaded in 2022, use %5$s"/2022/"%6$s instead.', 'shortpixel-upscale-image' ) ),
              '<b>','</b>',
              '<b>','</b>',
              '<b>','</b>'
@@ -83,7 +85,8 @@ if ( ! defined( 'ABSPATH' ) ) {
            <br />
            <p  class="settings-info">
          <?php
-             printf(esc_html__('For both %s"Name"%s and %s"Path"%s types you can enable the %s"Check as regular expression"%s option. This works similarly but requires a valid regular expression between slashes in the "Value" field. Special characters should be escaped with a backslash (\). For instance, using %s/[0-9]+[^\/]*\.(PNG|png)/%s in the "Value" field for the "Name" type will exclude all PNG images with a numeric prefix.','shortpixel-upscale-image'),
+             /* translators: 1: Opening bold tag before "Name". 2: Closing bold tag. 3: Opening bold tag before "Path". 4: Closing bold tag. 5: Opening bold tag before "Check as regular expression". 6: Closing bold tag. 7: Opening bold tag before the regex example. 8: Closing bold tag. */
+             printf( wp_kses_post( __( 'For both %1$s"Name"%2$s and %3$s"Path"%4$s types you can enable the %5$s"Check as regular expression"%6$s option. This works similarly but requires a valid regular expression between slashes in the "Value" field. Special characters should be escaped with a backslash (\). For instance, using %7$s/[0-9]+[^\/]*\.(PNG|png)/%8$s in the "Value" field for the "Name" type will exclude all PNG images with a numeric prefix.', 'shortpixel-upscale-image' ) ),
              '<b>','</b>',
              '<b>','</b>',
              '<b>','</b>',
@@ -94,7 +97,8 @@ if ( ! defined( 'ABSPATH' ) ) {
          <br />
          <p  class="settings-info">
            <?php
-             printf(esc_html__('%s"Size type:"%s Applies to all images and thumbnails within the specified size range. You can set intervals or specify an exact size if the %s"Exact sizes"%s option is enabled.','shortpixel-upscale-image'),
+             /* translators: 1: Opening bold tag before "Size type:". 2: Closing bold tag. 3: Opening bold tag before "Exact sizes". 4: Closing bold tag. */
+             printf( wp_kses_post( __( '%1$s"Size type:"%2$s Applies to all images and thumbnails within the specified size range. You can set intervals or specify an exact size if the %3$s"Exact sizes"%4$s option is enabled.', 'shortpixel-upscale-image' ) ),
              '<b>','</b>',
              '<b>','</b>'
            );
@@ -105,17 +109,14 @@ if ( ! defined( 'ABSPATH' ) ) {
      <content>
          <info>
            <?php
-           printf(esc_html__('Use this section to exclude images based on specific patterns. There are three exclusion types: by file name, file path or file size. Each exclusion type can be applied to: all images and their thumbnails (including scaled or original images), only thumbnails (in which case the original and scaled images are not excluded), only Custom Media images (Media Library items are not affected by this exclusion) or a specific selection of thumbnails. Examples can be found in the fold-out section below.','shortpixel-upscale-image'),
-             '<b>','</b>',
-             '<b>','</b>'
-           );
+           esc_html_e( 'Use this section to exclude images based on specific patterns. There are three exclusion types: by file name, file path or file size. Each exclusion type can be applied to: all images and their thumbnails (including scaled or original images), only thumbnails (in which case the original and scaled images are not excluded), only Custom Media images (Media Library items are not affected by this exclusion) or a specific selection of thumbnails. Examples can be found in the fold-out section below.', 'shortpixel-upscale-image' );
            ?>
          </info>
 
 
 
          <?php
-         $exclusion_format = "
+         $spui_exclusion_format = "
             <li %s %s %s >
               <input type='hidden' name='exclusions[]' value='%s' />
 							<span><b>%s </b><br> %s </span>
@@ -129,94 +130,105 @@ if ( ! defined( 'ABSPATH' ) ) {
 
          <div id='exclusion-format' class='hidden'>
 
-            <?php echo htmlspecialchars( $exclusion_format); ?>
+            <?php echo esc_textarea( $spui_exclusion_format ); ?>
 
          </div>
 
          <?php
-          $exclusions = UtilHelper::getExclusions();
-             $excludeArray = $exclusions;
-						 $newIndex = (is_array($excludeArray) && count($excludeArray) > 0) ? (count($excludeArray) -1) : 0;
+          $spui_exclusions = UtilHelper::getExclusions();
+             $spui_exclude_array = $spui_exclusions;
+						 $spui_new_index = ( is_array( $spui_exclude_array ) && count( $spui_exclude_array ) > 0 ) ? ( count( $spui_exclude_array ) - 1 ) : 0;
 
                  echo "<ul class='exclude-list'>";
-								 echo '<input type="hidden" id="new-exclusion-index" name="new-index" value="' . $newIndex . '">';
-                 $i = 0;
+								 echo '<input type="hidden" id="new-exclusion-index" name="new-index" value="' . esc_attr( $spui_new_index ) . '">';
+                 $spui_i = 0;
 
-                 foreach($excludeArray as $index => $option)
+                 foreach ( $spui_exclude_array as $spui_index => $spui_option )
                  {
-                     $exclude_id  = 'id="exclude-' . $i . '"';
-                     $type = (isset($option['type'])) ? $option['type'] : '';
-										 $value = isset($option['value']) ? $option['value'] : '';
-										 $apply = isset($option['apply']) ? $option['apply'] : '';
-                     $thumblist = isset($option['thumblist']) ? $option['thumblist'] : array();
-                     $hasError = (isset($option['has-error']) && true == $option['has-error']) ? true : false;
+                     $spui_exclude_id  = 'id="exclude-' . $spui_i . '"';
+                     $spui_type = (isset($spui_option['type'])) ? $spui_option['type'] : '';
+										 $spui_value = isset($spui_option['value']) ? $spui_option['value'] : '';
+										 $spui_apply = isset($spui_option['apply']) ? $spui_option['apply'] : '';
+                     $spui_thumblist = isset($spui_option['thumblist']) ? $spui_option['thumblist'] : array();
+                     $spui_has_error = (isset($spui_option['has-error']) && true == $spui_option['has-error']) ? true : false;
 
-                     $option_code = json_encode($option);
+                     $spui_option_code = wp_json_encode($spui_option);
 
-                     $typeStrings  = UiHelper::getSettingsStrings('exclusion_types');
-                     $applyStrings = UiHelper::getSettingsStrings('exclusion_apply');
+                     $spui_type_strings  = UiHelper::getSettingsStrings('exclusion_types');
+                     $spui_apply_strings = UiHelper::getSettingsStrings('exclusion_apply');
 
 
-                     $apply_name = isset($applyStrings[$apply]) ? $applyStrings[$apply] : '';
+                     $spui_apply_name = isset($spui_apply_strings[$spui_apply]) ? $spui_apply_strings[$spui_apply] : '';
 
-                     switch($type)
+                     switch($spui_type)
                      {
                         case 'name':
                         case 'regex-name':
-                          $field_name = $typeStrings['name'];
+                          $spui_field_name = $spui_type_strings['name'];
                         break;
                         case 'path':
                         case 'regex-path':
-                         $field_name = $typeStrings['path']; // __('Path', 'shortpixel-upscale-image');
+                         $spui_field_name = $spui_type_strings['path'];
                         break;
                         case 'size':
-                          $field_name = $typeStrings['size']; // __('Size', 'shortpixel-upscale-image');
+                          $spui_field_name = $spui_type_strings['size'];
                         break;
                         case 'filesize': 
-                          $field_name = $typeStrings['filesize'];
+                          $spui_field_name = $spui_type_strings['filesize'];
                         break; 
                         case 'date': 
-                          $field_name = $typeStrings['date']; // ??   
+                          $spui_field_name = $spui_type_strings['date'];
                         break; 
                         default:
-                          $field_name = __('Unknown', 'shortpixel-upscale-image');
+                          $spui_field_name = __('Unknown', 'shortpixel-upscale-image');
                         break;
                      }
 
 
-                     $classes = array();
-                     if (true === $hasError)
+                     $spui_classes = array();
+                     if ( true === $spui_has_error )
                      {
-                        $classes[] = 'has-error';
+                        $spui_classes[] = 'has-error';
                      }
 
-                     if (strpos($type, 'regex') !== false)
+                     if ( strpos( $spui_type, 'regex' ) !== false )
                      {
-                         $classes[] = 'is-regex';
+                         $spui_classes[] = 'is-regex';
                      }
 
-                     $class = '';
-                     if (count($classes) > 0)
+                     $spui_class = '';
+                     if ( count( $spui_classes ) > 0 )
                      {
-                        $class = 'class="' . implode(' ', $classes) . '"';
+                        $spui_class = 'class="' . implode( ' ', $spui_classes ) . '"';
                      }
 
 
-                     $title = '';
-                     if ('selected-thumbs' == $apply)
+                     $spui_title = '';
+                     if ( 'selected-thumbs' == $spui_apply )
                      {
-                        $thumbTitles = array();
-                        foreach($thumblist as $thumbName)
+                        $spui_thumb_titles = array();
+                        foreach ( $spui_thumblist as $spui_thumb_name )
                         {
-                           $thumb = $view->allThumbSizes[$thumbName];
-                           $thumbTitles[] = (isset($thumb['nice-name'])) ? $thumb['nice-name'] : $thumbName;
+                           $spui_thumb = $view->allThumbSizes[$spui_thumb_name];
+                           $spui_thumb_titles[] = (isset($spui_thumb['nice-name'])) ? $spui_thumb['nice-name'] : $spui_thumb_name;
                         }
-                        $title = 'title="' . implode(', ', $thumbTitles) . '"';
+                        $spui_title = 'title="' . esc_attr( implode( ', ', $spui_thumb_titles ) ) . '"';
                      }
 
-                     printf($exclusion_format, $class, $title, $exclude_id, $option_code, $field_name, $value, $apply_name, '', '' );
+                     printf(
+                        wp_kses_post( $spui_exclusion_format ),
+                        esc_attr( $spui_class ),
+                        esc_attr( $spui_title ),
+                        esc_attr( $spui_exclude_id ),
+                        esc_attr( $spui_option_code ),
+                        esc_html( $spui_field_name ),
+                        esc_html( $spui_value ),
+                        esc_html( $spui_apply_name ),
+                        '',
+                        ''
+                     );
 
-                     $i++;
+                     $spui_i++;
                  }
                  echo "</ul>";
 
@@ -224,22 +236,22 @@ if ( ! defined( 'ABSPATH' ) ) {
                      <div class='new-exclusion not-visible'>
                          <!-- HEADER -->
                          <input type="hidden" name="edit-exclusion" value="">
-                         <h3 class='new-title not-visible'><?php _e('Add New Exclusion' ,'shortpixel-upscale-image'); ?></h3>
-                         <h3 class='edit-title not-visible'><?php _e('Edit Exclusion' ,'shortpixel-upscale-image'); ?></h3>
+                         <h3 class='new-title not-visible'><?php esc_html_e('Add New Exclusion' ,'shortpixel-upscale-image'); ?></h3>
+                         <h3 class='edit-title not-visible'><?php esc_html_e('Edit Exclusion' ,'shortpixel-upscale-image'); ?></h3>
 
                          <div>
-                           <label><?php _e('Type:', 'shortpixel-upscale-image'); ?></label>
+                           <label><?php esc_html_e('Type:', 'shortpixel-upscale-image'); ?></label>
                             <select name="exclusion-type" class='new-exclusion-type'>
-                               <option value='name'><?php _e('Image Name', 'shortpixel-upscale-image'); ?></option>
-                               <option value='path' data-example="/path/"><?php _e('Image Path', 'shortpixel-upscale-image'); ?></option>
-                               <option value='size' data-example="widthXheight-widthXheight"><?php _e('Image Size', 'shortpixel-upscale-image'); ?></option>
-                               <option value='filesize' data-example="500KB / 1MB"><?php _e('Image Filesize', 'shortpixel-upscale-image'); ?></option>
-                               <option value='date' data-example="YYYY-MM-DD"><?php _e('Date', 'shortpixel-upscale-image') ?></option> 
+                               <option value='name'><?php esc_html_e('Image Name', 'shortpixel-upscale-image'); ?></option>
+                               <option value='path' data-example="/path/"><?php esc_html_e('Image Path', 'shortpixel-upscale-image'); ?></option>
+                               <option value='size' data-example="widthXheight-widthXheight"><?php esc_html_e('Image Size', 'shortpixel-upscale-image'); ?></option>
+                               <option value='filesize' data-example="500KB / 1MB"><?php esc_html_e('Image Filesize', 'shortpixel-upscale-image'); ?></option>
+                               <option value='date' data-example="YYYY-MM-DD"><?php esc_html_e('Date', 'shortpixel-upscale-image') ?></option> 
                            </select>
                          </div>
 
                              <div class='value-option '>
-                               <label><?php _e('Value:', 'shortpixel-upscale-image'); ?></label>
+                               <label><?php esc_html_e('Value:', 'shortpixel-upscale-image'); ?></label>
                                <input type="text" name="exclusion-value" value="">
                          </div>
 
@@ -257,12 +269,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                                  <div class='size-option-range'>
                                    <div class='width'>
-                                       <label><?php _e('Width between:', 'shortpixel-upscale-image'); ?></label>
+                                       <label><?php esc_html_e('Width between:', 'shortpixel-upscale-image'); ?></label>
                                        <input type="number" class='small' name="exclusion-minwidth" value="" min="0">px -
                                        <input type="number" class='small' name="exclusion-maxwidth" value="" min="0">px
                                    </div>
                                    <div class='height'>
-                                       <label><?php _e('Height between:', 'shortpixel-upscale-image'); ?></label>
+                                       <label><?php esc_html_e('Height between:', 'shortpixel-upscale-image'); ?></label>
                                        <input type="number" class='small' name="exclusion-minheight" value="" min="0">px -
                                        <input type="number" class='small' name="exclusion-maxheight" value="" min="0">px
                                    </div>
@@ -271,7 +283,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                  <div class='size-option-exact not-visible'>
                                    <div class='exact'>
                                      <label>
-                                       <?php _e('Exact size:', 'shortpixel-upscale-image'); ?></label>
+                                       <?php esc_html_e('Exact size:', 'shortpixel-upscale-image'); ?></label>
                                        <input type="number" class='small' name="exclusion-width" value="" min="0">px -
                                        <input type="number" class='small' name="exclusion-height" value="" min="0">px
                                     </div>
@@ -279,10 +291,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                              </div>
 
                         <div class='date-option not-visible'>
-                        <label><?php _e('Date Options:', 'shortpixel-upscale-image'); ?></label>
+                        <label><?php esc_html_e('Date Options:', 'shortpixel-upscale-image'); ?></label>
                               <select name='exclusion-when'>
-                                <option value='before'><?php _e('Before this date', 'shortpixel-upscale-image'); ?></option>
-                                <option value='after'><?php _e('After this date', 'shortpixel-upscale-image'); ?></option>
+                                <option value='before'><?php esc_html_e('Before this date', 'shortpixel-upscale-image'); ?></option>
+                                <option value='after'><?php esc_html_e('After this date', 'shortpixel-upscale-image'); ?></option>
                               </select>
                             
                         </div>
@@ -290,26 +302,26 @@ if ( ! defined( 'ABSPATH' ) ) {
                           <label>&nbsp;</label>
                           <input type="number" name="exclusion-filesize-value" value='' class='small'>
                           <select name="exclusion-filesize-denom">
-                            <option value="B"><?php _e('Bytes', 'shortpixel-upscale-image'); ?></option>
-                            <option value="K" selected><?php _e('Kilobytes (KB)', 'shortpixel-upscale-image'); ?></option>
-                            <option value="M"><?php _e('Megabytes (MB)', 'shortpixel-upscale-image'); ?></option>
+                            <option value="B"><?php esc_html_e('Bytes', 'shortpixel-upscale-image'); ?></option>
+                            <option value="K" selected><?php esc_html_e('Kilobytes (KB)', 'shortpixel-upscale-image'); ?></option>
+                            <option value="M"><?php esc_html_e('Megabytes (MB)', 'shortpixel-upscale-image'); ?></option>
                           </select>
                           <select name='exclusion-filesize-operator'>
-                              <option value='<'><?php _e('Exclude smaller than given filesize', 'shortpixel-upscale-image'); ?></option>
-                              <option value='>' selected><?php _e('Exclude higher than given filesize', 'shortpixel-upscale-image'); ?></option>
+                              <option value='<'><?php esc_html_e('Exclude smaller than given filesize', 'shortpixel-upscale-image'); ?></option>
+                              <option value='>' selected><?php esc_html_e('Exclude higher than given filesize', 'shortpixel-upscale-image'); ?></option>
                           </select>
 
                         </div>
 
                          <div class='applyto-option' >
-                           <label><?php _e('Apply To:', 'shortpixel-upscale-image'); ?></label>
+                           <label><?php esc_html_e('Apply To:', 'shortpixel-upscale-image'); ?></label>
                            <select name='apply-select' class='thumbnail-type-option'>
-                               <option value='all'><?php _e('All Images', 'shortpixel-upscale-image'); ?></option>
-                               <option value='only-thumbs'><?php _e('Only Thumbnails','shortpixel-upscale-image'); ?>
+                               <option value='all'><?php esc_html_e('All Images', 'shortpixel-upscale-image'); ?></option>
+                               <option value='only-thumbs'><?php esc_html_e('Only Thumbnails','shortpixel-upscale-image'); ?>
                                </option>
-                               <option value='only-custom'><?php _e('Only Custom Media images', 'shortpixel-upscale-image'); ?>
+                               <option value='only-custom'><?php esc_html_e('Only Custom Media images', 'shortpixel-upscale-image'); ?>
                                </option>
-                               <option value='selected-thumbs'><?php _e('Selected thumbnails', 'shortpixel-upscale-image'); ?></option>
+                               <option value='selected-thumbs'><?php esc_html_e('Selected thumbnails', 'shortpixel-upscale-image'); ?></option>
                            </select>
                          </div>
 
@@ -326,55 +338,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
                          <div class='thumbnail-select'>
-                           <h4><?php _e('Selected Thumbnails', 'shortpixel-upscale-image'); ?><hr></h4>
+                           <h4><?php esc_html_e('Selected Thumbnails', 'shortpixel-upscale-image'); ?><hr></h4>
                            <div class='grid-thumbnails'>
-                               <?php foreach($view->allThumbSizes as $key => $data)
+                               <?php foreach ( $view->allThumbSizes as $spui_key => $spui_data )
                                {
-                                  // $nice_name = isset($data['nice-name']) ? $data['nice-name'] : $name;
-                                   $width = isset($data['width']) ? $data['width'] : '*';
-                                   $height = isset($data['height']) ? $data['height'] : '*';
+                                   $spui_width = isset($spui_data['width']) ? $spui_data['width'] : '*';
+                                   $spui_height = isset($spui_data['height']) ? $spui_data['height'] : '*';
 
-                                   $name = isset($data['nice-name']) ? $data['nice-name'] : ucfirst($key);
-                                   $label = $name . " ( $width &times $height )";
+                                   $spui_name = isset($spui_data['nice-name']) ? $spui_data['nice-name'] : ucfirst($spui_key);
+                                   $spui_label = $spui_name . " ( $spui_width &times $spui_height )";
 
-                                printf('<span><label><input type="checkbox" name="thumbnail-select[]" value="%s" > %s </label></span>', $key, $label);
+                                printf( '<span><label><input type="checkbox" name="thumbnail-select[]" value="%s" > %s </label></span>', esc_attr( $spui_key ), esc_html( $spui_label ) );
                                } ?>
                           </div>
                          </div>
                          <div class='validation-message not-visible'>
-                            <?php _e('Fields with a red border are required', 'shortpixel-upscale-image'); ?>
+                            <?php esc_html_e('Fields with a red border are required', 'shortpixel-upscale-image'); ?>
                          </div>
 
                          <div class='button-actions'>
 
                            <button type="button" class="button button-primary not-visible" name="addExclusion">
                              <i class="shortpixel-icon save"> </i>
-                             <?php _e('Save', 'shortpixel-upscale-image'); ?>
+                             <?php esc_html_e('Save', 'shortpixel-upscale-image'); ?>
 			   </button>
 
                            <button type="button" class="button button-primary not-visible" name="updateExclusion">
 			     <i class="shortpixel-icon save"> </i>
-                             <?php _e("Update", 'shortpixel-upscale-image');  ?>
+                             <?php esc_html_e('Update', 'shortpixel-upscale-image');  ?>
                            </button>
 
                            <button type="button" class="button" name='cancelEditExclusion'>
 			     <i class="shortpixel-icon close"> </i>
-			     <?php _e('Close', 'shortpixel-upscale-image'); ?>
+			     <?php esc_html_e('Close', 'shortpixel-upscale-image'); ?>
 			   </button>
 
                            <button type="button" class="button button-primary not-visible" name="removeExclusion">
 			     <i class="shortpixel-icon close"> </i>
-                             <?php _e("Remove", 'shortpixel-upscale-image');  ?>
+                             <?php esc_html_e('Remove', 'shortpixel-upscale-image');  ?>
                            </button>
 
                          </div>
                        </div> <!-- new exclusion -->
 
                        <button class='button button-primary new-exclusion-button' type='button' name="addNewExclusion">
-                         <?php _e('Add new Exclusion', 'shortpixel-upscale-image'); ?>
+                         <?php esc_html_e('Add new Exclusion', 'shortpixel-upscale-image'); ?>
                        </button>
 
-             <info class='exclusion-save-reminder hidden'><?php _e('Reminder: Save the settings for the   exclusion changes to take effect!', 'shortpixel-upscale-image'); ?></info>
+             <info class='exclusion-save-reminder hidden'><?php esc_html_e('Reminder: Save the settings for the   exclusion changes to take effect!', 'shortpixel-upscale-image'); ?></info>
      </content>
  </setting>
  <!-- // Exclude patterns -->

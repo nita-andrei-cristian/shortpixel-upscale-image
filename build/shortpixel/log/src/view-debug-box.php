@@ -1,6 +1,10 @@
 <?php
 // Debug Box to load Log File
 namespace SPUI\ShortPixelLogger;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 wp_enqueue_script( 'jquery-ui-draggable' );
 
 ?>
@@ -49,8 +53,8 @@ wp_enqueue_script( 'jquery-ui-draggable' );
 
 
 <div class='sp_debug_box'>
-     <div class='header'><?php echo esc_html($view->namespace) ?> Debug Box </div>
-     <a target="_blank" href='<?php echo $view->logLink ?>'>Logfile</a>
+     <div class='header'><?php echo esc_html( $view->namespace ); ?> Debug Box </div>
+     <a target="_blank" href='<?php echo esc_url( $view->logLink ); ?>'>Logfile</a>
      <div class='content_box'>
 
      </div>

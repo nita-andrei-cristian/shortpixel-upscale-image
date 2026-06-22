@@ -57,7 +57,7 @@ class ApiNoticeRepeatLong extends \SPUI\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$message = __("Your image gallery is not upscaled yet. It takes 2 minutes to <a href='https://shortpixel.com/wp-apikey' target='_blank'>get your API key</a> and activate your ShortPixel plugin.",'shortpixel-image-optimiser') . "<BR><BR>";
+		$message = __("Your image gallery is not upscaled yet. It takes 2 minutes to <a href='https://shortpixel.com/wp-apikey' target='_blank'>get your API key</a> and activate your ShortPixel plugin.",'shortpixel-upscale-image') . "<BR><BR>";
 
 		return $message;
 	}

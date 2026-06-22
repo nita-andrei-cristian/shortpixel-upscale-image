@@ -52,18 +52,18 @@ class ApiController extends RequestManager
 		$imageModel = $qItem->imageModel; 
 
 		if (!is_object($imageModel)) {
-			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-image-optimiser')));
+			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-upscale-image')));
 		} elseif (false === $imageModel->isProcessable() || $imageModel->isOptimizePrevented() == true) {
 			if ($imageModel->isOptimized()) // This only looks at main item
 			{
 					$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is already upscaled', 'shortpixel-upscale-image')));
 			} else {
-				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is not processable and not optimized', 'shortpixel-image-optimiser')));
+				$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item is not processable and not optimized', 'shortpixel-upscale-image')));
 			}
 		}
 
 		if (!is_array($qItem->data()->urls) || count($qItem->data()->urls) == 0) {
-			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('No Urls given for this Item', 'shortpixel-image-optimiser')));
+			$qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('No Urls given for this Item', 'shortpixel-upscale-image')));
 			return;
 		}
 
@@ -234,10 +234,10 @@ class ApiController extends RequestManager
 					@delete_option('bulkProcessingStatus');
 					QuotaController::getInstance()->setQuotaExceeded();
 
-					return $this->returnRetry(self::STATUS_QUOTA_EXCEEDED, __('Quota exceeded.', 'shortpixel-image-optimiser'));
+					return $this->returnRetry(self::STATUS_QUOTA_EXCEEDED, __('Quota exceeded.', 'shortpixel-upscale-image'));
 					break;
 				case -306:
-					return $this->returnFailure(self::STATUS_FAIL, __('Files need to be from a single domain per request.', 'shortpixel-image-optimiser'));
+					return $this->returnFailure(self::STATUS_FAIL, __('Files need to be from a single domain per request.', 'shortpixel-upscale-image'));
 					break;
 				case -401: // Invalid Api Key
 				case -402: // Wrong API key
@@ -271,7 +271,7 @@ class ApiController extends RequestManager
 				}
 
 				// Bail out if action is not properly defined 
-				return $this->returnFailure(self::STATUS_FAIL, __('ApiController was not provided with known action'));
+					return $this->returnFailure(self::STATUS_FAIL, __('ApiController was not provided with known action', 'shortpixel-upscale-image'));
 		
 
 		} // ApiResponse[0]
@@ -280,7 +280,7 @@ class ApiController extends RequestManager
 		if (!isset($APIresponse['Status'])) {
 
 			Log::addError('API returned Unknown Status/Response ', $response);
-			return $this->returnFailure(self::STATUS_FAIL, __('Unrecognized API response. Please contact support.', 'shortpixel-image-optimiser'));
+			return $this->returnFailure(self::STATUS_FAIL, __('Unrecognized API response. Please contact support.', 'shortpixel-upscale-image'));
 
 		} else {
 
@@ -292,7 +292,7 @@ class ApiController extends RequestManager
 			}
 
 			if (!isset($message) || is_null($message) || $message == '') {
-				$message = __('Unrecognized API message. Please contact support.', 'shortpixel-image-optimiser');
+				$message = __('Unrecognized API message. Please contact support.', 'shortpixel-upscale-image');
 			}
 			return $this->returnRetry(self::STATUS_FAIL, $message);
 		} // else
@@ -324,7 +324,7 @@ class ApiController extends RequestManager
 		}
 
 		if (!isset($returnDataList['sizes'])) {
-			return $this->returnFailure(self::STATUS_FAIL, __('Item did not return image size information. This might be a failed queue item. Reset the queue if this persists or contact support', 'shortpixel-image-optimiser'));
+			return $this->returnFailure(self::STATUS_FAIL, __('Item did not return image size information. This might be a failed queue item. Reset the queue if this persists or contact support', 'shortpixel-upscale-image'));
 		}
 
 		$analyze = array('total' => count($neededURLS), 'ready' => 0, 'waiting' => 0);
@@ -403,7 +403,7 @@ class ApiController extends RequestManager
 			}
 		} elseif ($analyze['waiting'] > 0) {
 
-			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-image-optimiser')));
+			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-upscale-image')));
 		} else {
 			// Theoretically this should not be needed.
 			Log::addWarn('ApiController Response not handled before default case', $imageList);
@@ -412,14 +412,14 @@ class ApiController extends RequestManager
 				$err = array(
 					"Status" => self::STATUS_FAIL,
 					"Code" => (isset($response[0]->Status->Code) ? $response[0]->Status->Code : self::ERR_UNKNOWN),
-					"Message" => __('There was an error and your request was not processed.', 'shortpixel-image-optimiser')
+					"Message" => __('There was an error and your request was not processed.', 'shortpixel-upscale-image')
 						. " (" . wp_basename($response[0]->OriginalURL) . ": " . $response[0]->Status->Message . ")"
 				);
 				return $this->returnRetry($err['Code'], $err['Message']);
 			} else {
 				$err = array(
 					"Status" => self::STATUS_FAIL,
-					"Message" => __('There was an error and your request was not processed.', 'shortpixel-image-optimiser'),
+					"Message" => __('There was an error and your request was not processed.', 'shortpixel-upscale-image'),
 					"Code" => (isset($response[0]->Status->Code) ? $response[0]->Status->Code : self::ERR_UNKNOWN)
 				);
 				return $this->returnRetry($err['Code'], $err['Message']);
@@ -434,7 +434,7 @@ class ApiController extends RequestManager
 		
 		if (in_array($status_code, [self::STATUS_UNCHANGED, self::STATUS_WAITING] ))
 		{
-			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-image-optimiser')));
+			return $this->returnOK(self::STATUS_UNCHANGED, sprintf(__('Item is waiting', 'shortpixel-upscale-image')));
 		}
 		if (self::STATUS_SUCCESS == $status_code)
 		{	
@@ -473,7 +473,7 @@ class ApiController extends RequestManager
 			Log::addError('Failure! HandleSuccess did not receive filename or imagename! ', $data);
 			Log::addError('Error Item:', $qItem);
 
-			return $this->returnFailure(self::STATUS_FAIL, __('Internal error, missing variables'));
+				return $this->returnFailure(self::STATUS_FAIL, __('Internal error, missing variables', 'shortpixel-upscale-image'));
 		}
 
 		$originalFileSize = (false === $data['fileSize']) ? intval($fileData->OriginalSize) : $data['fileSize'];

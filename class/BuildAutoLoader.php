@@ -16,13 +16,23 @@ class BuildAutoLoader
         ),
       );
 
-    $f = fopen('class/plugin.json', 'w');
-    $result = fwrite($f, json_encode($plugin));
+    global $wp_filesystem;
+
+    if ( ! function_exists( 'WP_Filesystem' ) ) {
+      require_once ABSPATH . 'wp-admin/includes/file.php';
+    }
+
+    WP_Filesystem();
+
+    if ( ! $wp_filesystem ) {
+      echo '!!! Error !!! Could not initialize WP_Filesystem';
+      return;
+    }
+
+    $result = $wp_filesystem->put_contents( 'class/plugin.json', wp_json_encode( $plugin ) );
 
     if ($result === false)
       echo "!!! Error !!! Could not write Plugin.json";
-
-    fclose($f);
   }
 
   public static function getFiles()

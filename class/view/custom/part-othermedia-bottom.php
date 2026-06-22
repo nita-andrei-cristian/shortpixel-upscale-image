@@ -9,6 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class='pagination tablenav bottom'>
   <div class='tablenav-pages'>
-      <?php echo $this->view->pagination; ?>
+	      <?php echo wp_kses_post( $this->view->pagination ); ?>
   </div>
 </div>

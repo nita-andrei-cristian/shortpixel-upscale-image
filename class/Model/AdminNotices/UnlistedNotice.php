@@ -28,14 +28,15 @@ class UnlistedNotice extends \SPUI\Model\AdminNoticeModel
 		$admin_url = esc_url(admin_url('options-general.php?page=shortpixel-upscale-settings&part=optimisation'));
 
 
-		$message = __("<p>ShortPixel has found thumbnails that are not registered in the metadata, but are present alongside the other thumbnails. These thumbnails could be created and needed by a plugin or the theme. Should ShortPixel upscale them as well?</p>", 'shortpixel-image-optimiser');
-		$message .= '<p>' . __("For example, the image", 'shortpixel-image-optimiser') . '
+		$message = '<p>' . __( 'ShortPixel has found thumbnails that are not registered in the metadata, but are present alongside the other thumbnails. These thumbnails could be created and needed by a plugin or the theme. Should ShortPixel upscale them as well?', 'shortpixel-upscale-image' ) . '</p>';
+		$message .= '<p>' . __("For example, the image", 'shortpixel-upscale-image') . '
 				<a href="post.php?post=' . $unlisted_id . '&action=edit" target="_blank">
 						' . $unlisted_name . '
 				</a> also has these thumbnails that are not listed in the metadata: '  . (implode(', ', $unlistedFiles)) . '
 				</p>';
 
-		$message .= '<p>' . sprintf(__('You can activate the option %s Upscale unlisted thumbnails %s in the %sImage Upscaling%s area of the settings.', 'shortpixel-image-optimiser'), '<b>', '</b>', '<a href="'. $admin_url . '">','</a>') . '</p>';
+		// translators: 1: Opening bold tag. 2: Closing bold tag. 3: Opening Image Upscaling settings link. 4: Closing Image Upscaling settings link.
+		$message .= '<p>' . sprintf(__('You can activate the option %1$s Upscale unlisted thumbnails %2$s in the %3$sImage Upscaling%4$s area of the settings.', 'shortpixel-upscale-image'), '<b>', '</b>', '<a href="'. $admin_url . '">','</a>') . '</p>';
 
 		return $message;
 

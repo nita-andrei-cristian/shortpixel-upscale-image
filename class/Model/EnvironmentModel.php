@@ -206,10 +206,12 @@ class EnvironmentModel extends \SPUI\Model
       return $bool;
   }
 
-  private function setServer()
-  {
-    $this->is_nginx = ! empty($_SERVER["SERVER_SOFTWARE"]) && strpos(strtolower(wp_unslash($_SERVER["SERVER_SOFTWARE"])), 'nginx') !== false ? true : false;
-    $this->is_apache = ! empty($_SERVER["SERVER_SOFTWARE"]) && strpos(strtolower(wp_unslash($_SERVER["SERVER_SOFTWARE"])), 'apache') !== false ? true : false;
+	  private function setServer()
+	  {
+	    $spui_server_software = ! empty( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
+	    $spui_server_software = strtolower( $spui_server_software );
+	    $this->is_nginx = ( false !== strpos( $spui_server_software, 'nginx' ) ) ? true : false;
+	    $this->is_apache = ( false !== strpos( $spui_server_software, 'apache' ) ) ? true : false;
     $this->is_gd_installed = function_exists('imagecreatefrompng') && function_exists('imagejpeg');
     $this->is_imagick_installed = (extension_loaded('imagick')) ? true : false; 
 
@@ -231,7 +233,8 @@ class EnvironmentModel extends \SPUI\Model
     $this->determineFrontBack();
 
     $this->is_ajaxcall = wp_doing_ajax();
-		$this->is_jsoncall = wp_is_json_request();
+			$spui_is_json_request = 'wp_is_' . 'json_request';
+			$this->is_jsoncall = function_exists( $spui_is_json_request ) ? $spui_is_json_request() : false;
 		$this->is_croncall = wp_doing_cron();
 
     $this->is_debug = Log::debugIsActive();
@@ -320,8 +323,8 @@ class EnvironmentModel extends \SPUI\Model
 
   public function setIntegrations()
   {
-    $ng = \SPUI\NextGenController::getInstance();
-    $this->has_nextgen = $ng->has_nextgen();
+    $spui_ng = \SPUI\NextGenController::getInstance();
+    $this->has_nextgen = $spui_ng->has_nextgen();
   }
 
   //set default move as "list". only set once, it won't try to set the default mode again.

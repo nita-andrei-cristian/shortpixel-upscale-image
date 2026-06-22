@@ -65,14 +65,15 @@ class ViewController extends Controller
   protected function checkPost($processPostData = true)
   {
 
-		if(count($_POST) === 0) // no post, nothing to check, return silent.
+		if ( count( $_POST ) === 0 ) // no post, nothing to check, return silent.
 		{
 			return true;
 		}
-    elseif (! isset($_POST['sp-nonce']) || ! wp_verify_nonce( sanitize_key($_POST['sp-nonce']), $this->form_action))
+    elseif ( ! isset( $_POST['sp-nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['sp-nonce'] ) ), $this->form_action ) )
     {
       // Obscure issue. Detected other plugin that adds information to $_POST without an actual form submit, which would trigger the nonce check on the settings page. In case this happens, be lenient.
-      if ( ! isset($_POST['ajaxSave']) || ! isset($_POST['action']) )
+      // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Compatibility fallback for third-party AJAX payloads without this controller nonce.
+      if ( ! isset( $_POST['ajaxSave'] ) || ! isset( $_POST['action'] ) )
       {
          return false; 
       }
@@ -80,14 +81,14 @@ class ViewController extends Controller
 			exit('Nonce Failed');
       return true;
     }
-    elseif (isset($_POST) && count($_POST) > 0)
+    elseif ( count( $_POST ) > 0 )
     {
       check_admin_referer( $this->form_action, 'sp-nonce' ); // extra check, when we are wrong here, it dies.
 
       $this->is_form_submit = true;
       if (true === $processPostData) // only processData on form save.
       {
-          $this->processPostData($_POST);
+          $this->processPostData( wp_unslash( $_POST ) );
       }
 
 
@@ -177,7 +178,7 @@ class ViewController extends Controller
   {
 
       $output = '<i class="documentation dashicons dashicons-editor-help" data-link="' . esc_url($url).  '"></i>';
-      echo $output;
+	      echo wp_kses_post( $output );
 
   }
 
@@ -215,7 +216,28 @@ class ViewController extends Controller
       </label>
     </switch>', $switchclass, $inputclass, $name, $checked, $disabled, $data, $label);
 
-    echo $output;
+	    echo wp_kses(
+        $output,
+        array(
+          'switch' => array(
+            'class' => true,
+          ),
+          'label'  => array(),
+          'input'  => array(
+            'type'           => true,
+            'class'          => true,
+            'name'           => true,
+            'value'          => true,
+            'checked'        => true,
+            'disabled'       => true,
+            'data-toggle'    => true,
+            'data-dashboard' => true,
+          ),
+          'div'    => array(
+            'class' => true,
+          ),
+        )
+      );
   }
 
   /** Accepts POST data, maps, checks missing fields, and applies sanitization to it.

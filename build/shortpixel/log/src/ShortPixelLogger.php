@@ -38,7 +38,20 @@ namespace SPUI\ShortPixelLogger;
    private $namespace;
    private $view;
 
-   protected $template = 'view-debug-box';
+	   protected $template = 'view-debug-box';
+
+	   protected function getWPFilesystem()
+	   {
+	      global $wp_filesystem;
+
+	      if ( ! function_exists( 'WP_Filesystem' ) ) {
+	         require_once ABSPATH . 'wp-admin/includes/file.php';
+	      }
+
+	      WP_Filesystem();
+
+	      return $wp_filesystem;
+	   }
 
    /** Debugger constructor
    *  Two ways to activate the debugger. 1) Define SPUI_DEBUG in wp-config.php. Either must be true or a number corresponding to required LogLevel
@@ -81,8 +94,13 @@ namespace SPUI\ShortPixelLogger;
 
       if (defined('SPUI_DEBUG_TARGET') && SPUI_DEBUG_TARGET || $this->is_manual_request)
       {
-          if (defined('SPUI_LOG_OVERWRITE')) // if overwrite, do this on init once.
-            file_put_contents($this->logPath,'-- Log Reset -- ' .PHP_EOL);
+	          if (defined('SPUI_LOG_OVERWRITE')) // if overwrite, do this on init once.
+	          {
+	             $wp_filesystem = $this->getWPFilesystem();
+	             if ( $wp_filesystem && $this->logPath ) {
+	                $wp_filesystem->put_contents($this->logPath,'-- Log Reset -- ' .PHP_EOL, FS_CHMOD_FILE);
+	             }
+	          }
 
       }
 
@@ -184,7 +202,7 @@ namespace SPUI\ShortPixelLogger;
    {
       $items = $debugItem->getForFormat();
       $items['time_passed'] =  round ( ($items['time'] - $this->start_time), 5);
-      $items['time'] =  date('Y-m-d H:i:s', (int) $items['time'] );
+	      $items['time'] =  gmdate('Y-m-d H:i:s', (int) $items['time'] );
 
       if ( ($items['caller']) && is_array($items['caller']) && count($items['caller']) > 0)
       {
@@ -196,12 +214,14 @@ namespace SPUI\ShortPixelLogger;
 
 			$file = $this->getWriteFile();
 
-      // try to write to file. Don't write if directory doesn't exists (leads to notices)
-      if ($file )
-      {
-				fwrite($file, $line);
-//        file_put_contents($this->logPath,$line, FILE_APPEND);
-      }
+	      // try to write to file. Don't write if directory doesn't exists (leads to notices)
+	      if ($file )
+	      {
+					// Native append: WP_Filesystem returns null when the filesystem method is not
+					// 'direct' (common in container setups), which silently dropped every log line.
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Direct append needed for the debug logger; runs only when SPUI_DEBUG is on.
+					file_put_contents( $file, $line, FILE_APPEND );
+	      }
       else {
        // error_log($line);
       }
@@ -213,42 +233,31 @@ namespace SPUI\ShortPixelLogger;
 			{
 					return $this->logFile;
 			}
-			elseif(is_object($this->logFile))
-			{
-				fclose($this->logFile);
-			}
+				elseif($reset)
+				{
+					$this->logFile = null;
+				}
 
-			$logDir = dirname($this->logPath);
-		  if (! is_dir($logDir) || ! is_writable($logDir))
-			{
-				error_log('ShortpixelLogger: Log Directory is not writable : ' . $logDir);
-				$this->logFile = false;
-				return false;
-			}
+				$logDir = dirname($this->logPath);
+			  if (! is_dir($logDir) || ! wp_is_writable($logDir))
+				{
+					$this->logFile = false;
+					return false;
+				}
 
-      $file = false;
-      if (file_exists($this->logPath))
-      {
-         if (! is_writable($this->logPath))
-         {
-            error_log('ShortPixelLogger: File Exists, but not writable: ' . $this->logPath);
-            $this->logFile = false;
-            return $file;
-         }
-      }
+	      $file = false;
+	      if (file_exists($this->logPath))
+	      {
+	         if (! wp_is_writable($this->logPath))
+	         {
+	            $this->logFile = false;
+	            return $file;
+	         }
+	      }
 
-			$file = fopen($this->logPath, 'a');
-
-      if ($file === false)
-			{
-				 error_log('ShortpixelLogger: File could not be opened / created: ' . $this->logPath);
-				 $this->logFile = false;
-				 return $file;
-			}
-
-			$this->logFile = $file;
-			return $file;
-	 }
+				$this->logFile = $this->logPath;
+				return $this->logPath;
+		 }
 
    protected function formatLine($args = array() )
    {
@@ -315,7 +324,7 @@ namespace SPUI\ShortPixelLogger;
    public function logHook($hook, $value, $args)
    {
       array_shift($args);
-      self::addInfo('[Hook] - ' . $hook . ' with ' . var_export($value,true), $args);
+	      self::addInfo('[Hook] - ' . $hook . ' with ' . wp_json_encode($value), $args);
       return $value;
    }
 
@@ -420,9 +429,10 @@ namespace SPUI\ShortPixelLogger;
     * @param String  $message       Description
     * @param integer  $amount        Amount of lines needed.
     * @param integer $debug_option  Debug backtrace ( default IGNORE_ARGS, see docs )
-    */
+   */
    public static function addTrace($message, $amount = 10, $debug_option = 2)
    {
+      // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional diagnostic trace for plugin logging.
       $trace = debug_backtrace($debug_option, $amount);
       $log = self::getInstance();
       $log->addLog($message, DebugItem::LEVEL_DEBUG, $trace);

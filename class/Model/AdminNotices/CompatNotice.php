@@ -30,7 +30,7 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 		if (! is_array($conflicts))
 			$conflicts = array();
 
-		$message = __("The following plugins are not compatible with ShortPixel and may cause unexpected results: ",'shortpixel-image-optimiser');
+		$message = __("The following plugins are not compatible with ShortPixel and may cause unexpected results: ",'shortpixel-upscale-image');
 		$message .= '<ul class="sp-conflict-plugins">';
 		foreach($conflicts as $plugin) {
 				//ShortPixelVDD($plugin);
@@ -172,7 +172,7 @@ class CompatNotice extends \SPUI\Model\AdminNoticeModel
 					*/
 			);
 			if($settings->processThumbnails) {
-					$details = __('Details: recreating image files may require re-optimization of the resulting thumbnails, even if they were previously optimized. Please use <a href="https://wordpress.org/plugins/regenerate-thumbnails-advanced/" target="_blank">reGenerate Thumbnails Advanced</a> instead.','shortpixel-image-optimiser');
+					$details = __('Details: recreating image files may require re-optimization of the resulting thumbnails, even if they were previously optimized. Please use <a href="https://wordpress.org/plugins/regenerate-thumbnails-advanced/" target="_blank">reGenerate Thumbnails Advanced</a> instead.','shortpixel-upscale-image');
 
 					$conflictPlugins = array_merge($conflictPlugins, array(
 							'Regenerate Thumbnails'

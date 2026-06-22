@@ -16,15 +16,15 @@ class Tests{
 
         $q->setOptions(array('is_debug' => true));
 
-        echo "<PRE> START STATUS "; print_r($q->getStatus()); echo "</PRE>";
+        $this->renderDebug( 'START STATUS', $q->getStatus() );
 
         for ($i = 0; $i < 10; $i++)
         {
-           $id = rand(0, 1000);
+           $id = wp_rand(0, 1000);
            $this->items[] = array('id' => $id, 'value' => $id);
         }
 
-        $deq_number = rand(1, 5);
+        $deq_number = wp_rand(1, 5);
         $q->setOption('numitems', $deq_number);
 
         $this->q = $q;
@@ -32,7 +32,7 @@ class Tests{
 
         if ( $this->q->hasItems())
         {
-          echo "ITEMS FOUND: " . $this->q->itemCount() . "<BR>";
+          echo 'ITEMS FOUND: ' . esc_html( (string) $this->q->itemCount() ) . '<BR>';
           $this->runTestQ();
         }
         else {
@@ -43,13 +43,13 @@ class Tests{
 
         $this->results();
 
-        echo "<PRE> END STATUS "; print_r($q->getStatus()); echo "</PRE>";
+        $this->renderDebug( 'END STATUS', $q->getStatus() );
         $this->endView();
     }
 
     public function addItems()
     {
-      print_r($this->items);
+      $this->renderDebug( 'ITEMS', $this->items );
       $this->q->enqueue($this->items);
     }
 
@@ -63,7 +63,7 @@ class Tests{
       while($this->q->hasItems())
       {
         $item = $this->q->deQueue();
-        echo "ITEM FROM THA Q "; var_dump($item);
+        $this->renderDebug( 'ITEM FROM THA Q', $item );
       }
     }
 
@@ -77,7 +77,7 @@ class Tests{
     public function results()
     {
         global $wpdb;
-        echo $wpdb->last_error;
+        echo esc_html( (string) $wpdb->last_error );
     }
 
     public function startView()
@@ -92,6 +92,11 @@ class Tests{
       ?>
       </div>
       <?php
+    }
+
+    protected function renderDebug( $label, $value )
+    {
+      echo '<pre>' . esc_html( $label . ' ' . wp_json_encode( $value ) ) . '</pre>';
     }
 
 } // class

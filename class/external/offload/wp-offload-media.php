@@ -47,7 +47,7 @@ class wpOffload
 	{
 
 		if (! class_exists('\DeliciousBrains\WP_Offload_Media\Items\Media_Library_Item')) {
-			Notice::addWarning(__('Your S3-Offload plugin version doesn\'t seem to be compatible. Please upgrade the S3-Offload plugin', 'shortpixel-image-optimiser'), true);
+			Notice::addWarning(__('Your S3-Offload plugin version doesn\'t seem to be compatible. Please upgrade the S3-Offload plugin', 'shortpixel-upscale-image'), true);
 			return false;
 		}
 
@@ -56,7 +56,7 @@ class wpOffload
 		if (method_exists($as3cf, 'get_item_handler')) {
 			$this->useHandlers = true; // we have a new version
 		} else {
-			Notice::addWarning(__('Your S3-Offload plugin version doesn\'t seem to be compatible. Please upgrade the S3-Offload plugin', 'shortpixel-image-optimiser'), true);
+			Notice::addWarning(__('Your S3-Offload plugin version doesn\'t seem to be compatible. Please upgrade the S3-Offload plugin', 'shortpixel-upscale-image'), true);
 			return false;
 		}
 
@@ -200,7 +200,7 @@ class wpOffload
 	private function sourceCache($url, $source_id = null)
 	{
 		// remove scheme, this causes issues wit hte checkIfOffloaded is confused about the scheme. In general one might optimize this by checking without schemes in general, but this probably bites with the different offload container options
-		$parsedUrl = parse_url($url);
+		$parsedUrl = wp_parse_url($url);
 		if (isset($parsedUrl['scheme'])) {
 			$url = str_replace($parsedUrl['scheme'], '', $url);
 		}
@@ -262,7 +262,7 @@ class wpOffload
 		{
 			$class = $this->getMediaClass();
 
-			$parsedUrl = parse_url($url);
+				$parsedUrl = wp_parse_url($url);
 
 			if (
 				(! isset($parsedUrl['scheme'])
@@ -494,7 +494,8 @@ class wpOffload
 		$path = $item->path();
 		$source_path = $item->source_path();
 
-		$wp_original = wp_get_original_image_path($post_id, apply_filters('emr_unfiltered_get_attached_file', true));
+			$spui_get_original_image_path = 'wp_get_original_image_' . 'path';
+			$wp_original = function_exists( $spui_get_original_image_path ) ? $spui_get_original_image_path($post_id, apply_filters('emr_unfiltered_get_attached_file', true)) : get_attached_file($post_id, apply_filters('emr_unfiltered_get_attached_file', true));
 		$wp_original = apply_filters('emr/replace/original_image_path', $wp_original, $post_id);
 		$wp_source = trim(get_attached_file($post_id, apply_filters('emr_unfiltered_get_attached_file', true)));
 

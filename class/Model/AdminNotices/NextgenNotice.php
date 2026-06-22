@@ -33,7 +33,8 @@ class NextgenNotice extends \SPUI\Model\AdminNoticeModel
 	protected function getMessage()
 	{
 		$url = esc_url(admin_url('options-general.php?page=shortpixel-upscale-settings&part=optimisation'));
-		$message = sprintf(__('You seem to be using NextGen Gallery. You can upscale your galleries with ShortPixel, but this is not currently enabled. To enable it, %sgo to settings and enable%s it!', 'shortpixel_image_optimiser'), '<a href="' . $url . '">', '</a>');
+		// translators: 1: Opening settings link. 2: Closing settings link.
+		$message = sprintf(__('You seem to be using NextGen Gallery. You can upscale your galleries with ShortPixel, but this is not currently enabled. To enable it, %1$sgo to settings and enable%2$s it!', 'shortpixel-upscale-image'), '<a href="' . $url . '">', '</a>');
 
 		return $message;
 

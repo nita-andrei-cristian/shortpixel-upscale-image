@@ -40,13 +40,14 @@ class Finder
 			/* Search and replace in WP_POSTS */
 			// Removed $wpdb->remove_placeholder_escape from here, not compatible with WP 4.8
 	
-			$posts_sql = $wpdb->prepare(
-				"SELECT ID as post_id, post_content as content FROM $wpdb->posts WHERE post_status in ('publish', 'future', 'draft', 'pending', 'private')
-					AND post_content LIKE %s",
-				'%' . $base_url . '%'
-			);
-	
-			$rs = $wpdb->get_results($posts_sql, ARRAY_A);
+				$rs = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT ID as post_id, post_content as content FROM {$wpdb->posts} WHERE post_status in ('publish', 'future', 'draft', 'pending', 'private')
+							AND post_content LIKE %s",
+						'%' . $base_url . '%'
+					),
+					ARRAY_A
+				);
 	
 
 			// @todo before this filter results?  pass results to some worker

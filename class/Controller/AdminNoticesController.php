@@ -168,7 +168,7 @@ class AdminNoticesController extends \SPUI\Controller
                     }
                     elseif ($access->noticeIsAllowed($notice))
                     {
-                        echo $notice->getForDisplay();
+	                        echo wp_kses_post($notice->getForDisplay());
                     }
                     else
                     {
@@ -421,9 +421,9 @@ class AdminNoticesController extends \SPUI\Controller
         $proposal = wp_remote_post("https://shortpixel.com/propose-upgrade-frag", $args);
 
         if(is_wp_error( $proposal )) {
-            $proposal = array('body' => __('Error. Could not contact ShortPixel server for proposal', 'shortpixel-image-optimiser'));
+            $proposal = array('body' => __('Error. Could not contact ShortPixel server for proposal', 'shortpixel-upscale-image'));
         }
-        die( $proposal['body'] );
+	        die( wp_kses_post( $proposal['body'] ) );
 
     }
 
@@ -480,9 +480,9 @@ class AdminNoticesController extends \SPUI\Controller
             $wp_list_table = _get_list_table( 'WP_Plugins_List_Table' );
             printf(
                 '<tr class="plugin-update-tr active"><td colspan="%s" class="plugin-update colspanchange"><div class="notice inline notice-warning notice-alt">%s</div></td></tr>',
-                $wp_list_table->get_column_count(),
-                wpautop( $message )
-            );
+	                esc_attr( $wp_list_table->get_column_count() ),
+	                wp_kses_post( wpautop( $message ) )
+	            );
         }
 
     }

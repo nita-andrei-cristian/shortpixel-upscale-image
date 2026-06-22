@@ -53,7 +53,7 @@ class EditMediaViewController extends \SPUI\ViewController
       {
           add_meta_box(
               'shortpixel_info_box',          // this is HTML id of the box on edit screen
-              __('ShortPixel Info', 'shortpixel-image-optimiser'),    // title of the box
+              __('ShortPixel Info', 'shortpixel-upscale-image'),    // title of the box
               array( $this, 'doMetaBox'),   // function to be called to display the info
               null,//,        // on which edit screen the box should appear
               'side'//'normal',      // part of page where the box should appear
@@ -71,9 +71,9 @@ class EditMediaViewController extends \SPUI\ViewController
       { 
           $post_id = intval($post->ID);
           $fields['aibutton'] = [
-              'label' => __('ShortPixel AI Data', 'shortpixel-image-optimiser'), 
+              'label' => __('ShortPixel AI Data', 'shortpixel-upscale-image'), 
               'input' => 'html', 
-              'html' => "<a href='javascript:window.SPUIProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
+              'html' => "<a href='javascript:window.SPUIProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-upscale-image') . "</a>
                  <div class='shortpixel-alt-messagebox' id='shortpixel-ai-messagebox-$post_id'>&nbsp;</div>
                ",
           ];
@@ -96,7 +96,7 @@ class EditMediaViewController extends \SPUI\ViewController
 					// Asking for something non-existing.
 					if ($this->imageModel === false)
 					{
-						$this->view->status_message = __('File Error. This could be not an image or the file is missing', 'shortpixel-image-optimiser');
+						$this->view->status_message = __('File Error. This could be not an image or the file is missing', 'shortpixel-upscale-image');
 
 						$this->loadView();
 						return false;
@@ -160,7 +160,8 @@ class EditMediaViewController extends \SPUI\ViewController
         if (true === $did_convert )
         {
 					$ext = $imageObj->getMeta()->convertMeta()->getFileFormat();
-          $stats[] = array(  sprintf(__('Converted from %s','shortpixel-image-optimiser'), $ext), '');
+					/* translators: %s is the original file format extension. */
+          $stats[] = array(  sprintf(__('Converted from %s','shortpixel-upscale-image'), $ext), '');
         }
 				elseif (false !== $imageObj->getMeta()->convertMeta()->didTry()) {
 					$ext = $imageObj->getMeta()->convertMeta()->getFileFormat();
@@ -173,17 +174,19 @@ class EditMediaViewController extends \SPUI\ViewController
             $from = $imageObj->getMeta('originalWidth') . 'x' . $imageObj->getMeta('originalHeight');
             $to  = $imageObj->getMeta('resizeWidth') . 'x' . $imageObj->getMeta('resizeHeight');
 						$type = ($imageObj->getMeta('resizeType') !== null) ? '(' . $imageObj->getMeta('resizeType') . ')' : '';
-            $stats[] = array(sprintf(__('Resized %s %s to %s'), $type, $from, $to), '');
+						/* translators: 1: resize type, 2: original dimensions, 3: resized dimensions. */
+            $stats[] = array(sprintf(__('Resized %1$s %2$s to %3$s', 'shortpixel-upscale-image'), $type, $from, $to), '');
         }
 
         $tsOptimized = $imageObj->getMeta('tsOptimized');
         if ($tsOptimized !== null)
-          $stats[] = array(__("Upscaled on :", 'shortpixel-image-optimiser') . "<br /> ", UiHelper::formatTS($tsOptimized) );
+          $stats[] = array(__("Upscaled on :", 'shortpixel-upscale-image') . "<br /> ", UiHelper::formatTS($tsOptimized) );
 
 				if ($imageObj->isOptimized())
 				{
-					$stats[] = array( sprintf(__('%s %s Read more about theses stats %s ', 'shortpixel-image-optimiser'), '
-					<p><img alt=' . esc_html('Info Icon', 'shortpixel-image-optimiser')  . ' src=' . esc_url( wpSPUI()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
+					/* translators: 1: opening paragraph with icon HTML, 2: opening knowledge-base link, 3: closing knowledge-base link. */
+					$stats[] = array( sprintf(__('%1$s %2$s Read more about theses stats %3$s ', 'shortpixel-upscale-image'), '
+					<p><img alt=' . esc_html('Info Icon', 'shortpixel-upscale-image')  . ' src=' . esc_url( wpSPUI()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
 				}
 
         return $stats;
@@ -221,8 +224,8 @@ class EditMediaViewController extends \SPUI\ViewController
 					$hasrecord = ($imageObj->hasDBRecord()) ? '<span class="green">Yes</span>' : '<span class="red">No</span> ';
 
           $debugInfo = array();
-          $debugInfo[] = array(__('URL (get attachment URL)', 'shortpixel_image_optiser'), wp_get_attachment_url($this->post_id));
-          $debugInfo[] = array(__('File (get attached)'), get_attached_file($this->post_id));
+          $debugInfo[] = array(__('URL (get attachment URL)', 'shortpixel-upscale-image'), wp_get_attachment_url($this->post_id));
+          $debugInfo[] = array(__('File (get attached)', 'shortpixel-upscale-image'), get_attached_file($this->post_id));
 
 					if ($imageObj->is_virtual())
 					{
@@ -234,35 +237,35 @@ class EditMediaViewController extends \SPUI\ViewController
             else
               $vtext = 'Not set';
 
-						$debugInfo[] = array(__('Is Virtual: ') . $vtext, $imageObj->getFullPath() );
+						$debugInfo[] = array(__('Is Virtual: ', 'shortpixel-upscale-image') . $vtext, $imageObj->getFullPath() );
 					}
 
-          $debugInfo[] = array(__('Size and Mime (ImageObj)'), $imageObj->get('width') . 'x' . $imageObj->get('height'). ' (' . $imageObj->get('mime') . ')');
-          $debugInfo[] = array(__('Status (ShortPixel)'), $imageObj->getMeta('status') . ' '   );
+          $debugInfo[] = array(__('Size and Mime (ImageObj)', 'shortpixel-upscale-image'), $imageObj->get('width') . 'x' . $imageObj->get('height'). ' (' . $imageObj->get('mime') . ')');
+          $debugInfo[] = array(__('Status (ShortPixel)', 'shortpixel-upscale-image'), $imageObj->getMeta('status') . ' '   );
 
-					$debugInfo[] = array(__('Processable'), $processable);
-          $debugInfo[] = array(__('Upscaled'), $optimized);
-					$debugInfo[] = array(__('Avif/Webp needed'), $anyFileType);
-					$debugInfo[] = array(__('Restorable'), $restorable);
-					$debugInfo[] = array(__('Record'), $hasrecord);
+						$debugInfo[] = array(__('Processable', 'shortpixel-upscale-image'), $processable);
+          $debugInfo[] = array(__('Upscaled', 'shortpixel-upscale-image'), $optimized);
+						$debugInfo[] = array(__('Avif/Webp needed', 'shortpixel-upscale-image'), $anyFileType);
+						$debugInfo[] = array(__('Restorable', 'shortpixel-upscale-image'), $restorable);
+						$debugInfo[] = array(__('Record', 'shortpixel-upscale-image'), $hasrecord);
 
 					if ($imageObj->getMeta()->convertMeta()->didTry())
 					{
-						 $debugInfo[] = array(__('Converted'), ($imageObj->getMeta()->convertMeta()->isConverted() ?'<span class="green">Yes</span>' : '<span class="red">No</span> '));
-						 $debugInfo[] = array(__('Checksum'), $imageObj->getMeta()->convertMeta()->didTry());
-						 $debugInfo[] = array(__('Error'), $imageObj->getMeta()->convertMeta()->getError());
+						 $debugInfo[] = array(__('Converted', 'shortpixel-upscale-image'), ($imageObj->getMeta()->convertMeta()->isConverted() ?'<span class="green">Yes</span>' : '<span class="red">No</span> '));
+						 $debugInfo[] = array(__('Checksum', 'shortpixel-upscale-image'), $imageObj->getMeta()->convertMeta()->didTry());
+						 $debugInfo[] = array(__('Error', 'shortpixel-upscale-image'), $imageObj->getMeta()->convertMeta()->getError());
 					}
 
-          $debugInfo[] = array(__('WPML Duplicates'), json_encode($imageObj->getWPMLDuplicates()) );
+          $debugInfo[] = array(__('WPML Duplicates', 'shortpixel-upscale-image'), json_encode($imageObj->getWPMLDuplicates()) );
 
 					if ($imageObj->getParent() !== false)
 					{
-						 $debugInfo[] = array(__('WPML duplicate - Parent: '), $imageObj->getParent());
+						 $debugInfo[] = array(__('WPML duplicate - Parent: ', 'shortpixel-upscale-image'), $imageObj->getParent());
 					}
 
 					if (isset($urls))
 					{
-						 $debugInfo[] = array(__('Upscale URLs'),  $urls);
+						 $debugInfo[] = array(__('Upscale URLs', 'shortpixel-upscale-image'),  $urls);
 					}
 
           $item = QueueItems::getImageItem($imageObj);
@@ -276,8 +279,8 @@ class EditMediaViewController extends \SPUI\ViewController
 
 						 $returnEnqueue = $item->returnEnqueue();
 
-						 $debugInfo[] = array(__('Image to Queue'), $returnEnqueue );
-             $debugInfo[] = [__('Counts'), $counts];
+						 $debugInfo[] = array(__('Image to Queue', 'shortpixel-upscale-image'), $returnEnqueue );
+             $debugInfo[] = [__('Counts', 'shortpixel-upscale-image'), $counts];
 
 					}
 
@@ -304,10 +307,10 @@ class EditMediaViewController extends \SPUI\ViewController
 
           }
 
-          $debugInfo['imagemetadata'] = array(__('ImageModel Metadata (ShortPixel)'), $imageObj);
+          $debugInfo['imagemetadata'] = array(__('ImageModel Metadata (ShortPixel)', 'shortpixel-upscale-image'), $imageObj);
 					$debugInfo[] = array('', '<hr>');
 
-          $debugInfo['wpmetadata'] = array(__('WordPress Get Attachment Metadata'), $meta );
+          $debugInfo['wpmetadata'] = array(__('WordPress Get Attachment Metadata', 'shortpixel-upscale-image'), $meta );
 					$debugInfo[] = array('', '<hr>');
 
 						if ($imageObj->hasBackup())
@@ -316,15 +319,15 @@ class EditMediaViewController extends \SPUI\ViewController
 							 $backupFile = $fs->getFile($fs->getBackupDirectory($imageObj) . $imageObj->getBackupFileName());
 						}
 
-            $debugInfo[] = array(__('Backup Folder'), (string) $backupFile->getFileDir() );
+            $debugInfo[] = array(__('Backup Folder', 'shortpixel-upscale-image'), (string) $backupFile->getFileDir() );
 						if ($imageObj->hasBackup())
-							$backupText = __('Backup File :');
-						else {
-							$backupText = __('Target Backup File after upscaling (no backup) ');
-						}
+								$backupText = __('Backup File :', 'shortpixel-upscale-image');
+							else {
+								$backupText = __('Target Backup File after upscaling (no backup) ', 'shortpixel-upscale-image');
+							}
             $debugInfo[] = array( $backupText, (string) $backupFile . '(' . UiHelper::formatBytes($backupFile->getFileSize()) . ')' );
 
-            $debugInfo[] =  array(__("No Main File Backup Available"), '');
+            $debugInfo[] =  array(__("No Main File Backup Available", 'shortpixel-upscale-image'), '');
 
 					if ($imageObj->getMeta()->convertMeta()->isConverted())
 					{
@@ -338,7 +341,7 @@ class EditMediaViewController extends \SPUI\ViewController
           if ($or = $imageObj->hasOriginal())
           {
              $original = $imageObj->getOriginalFile();
-             $debugInfo[] = array(__('Has Original File: '), $original->getFullPath()  . '(' . UiHelper::formatBytes($original->getFileSize()) . ')');
+             $debugInfo[] = array(__('Has Original File: ', 'shortpixel-upscale-image'), $original->getFullPath()  . '(' . UiHelper::formatBytes($original->getFileSize()) . ')');
              $orbackup = $original->getBackupFile();
 
              $processable = ($original->isProcessable()) ? '<span class="green">Yes</span>' : '<span class="red">No</span> (' . $original->getReason('processable') . ')';
@@ -350,7 +353,7 @@ class EditMediaViewController extends \SPUI\ViewController
 
 
              if ($orbackup)
-              $debugInfo[] = array(__('Has Backup Original Image'), $orbackup->getFullPath() . '(' . UiHelper::formatBytes($orbackup->getFileSize()) . ')');
+              $debugInfo[] = array(__('Has Backup Original Image', 'shortpixel-upscale-image'), $orbackup->getFullPath() . '(' . UiHelper::formatBytes($orbackup->getFileSize()) . ')');
 						$debugInfo[] = array('', '<hr>');
 
           }
@@ -358,7 +361,7 @@ class EditMediaViewController extends \SPUI\ViewController
 
           if (! isset($meta['sizes']) )
           {
-             $debugInfo[] = array('',  __('Thumbnails were not generated', 'shortpixel-image-optimiser'));
+             $debugInfo[] = array('',  __('Thumbnails were not generated', 'shortpixel-upscale-image'));
           }
           else
           {
@@ -370,7 +373,7 @@ class EditMediaViewController extends \SPUI\ViewController
 
               if ($thumbObj === false)
               {
-                $debugInfo[] =  array(__('Thumbnail not found / loaded: ', 'shortpixel-image-optimiser'), $size );
+                $debugInfo[] =  array(__('Thumbnail not found / loaded: ', 'shortpixel-upscale-image'), $size );
                 continue;
               }
 
@@ -382,13 +385,13 @@ class EditMediaViewController extends \SPUI\ViewController
 							if ($thumbObj->hasBackup())
 							{
 								$backup = $backupFile->getFullPath();
-								$backupText = __('Backup File :');
-							}
-							else {
-								$backupFile = $fs->getFile($fs->getBackupDirectory($thumbObj) . $thumbObj->getBackupFileName());
-								$backup = $backupFile->getFullPath();
-								$backupText = __('Target Backup File after upscaling (no backup) ');
-							}
+									$backupText = __('Backup File :', 'shortpixel-upscale-image');
+								}
+								else {
+									$backupFile = $fs->getFile($fs->getBackupDirectory($thumbObj) . $thumbObj->getBackupFileName());
+									$backup = $backupFile->getFullPath();
+									$backupText = __('Target Backup File after upscaling (no backup) ', 'shortpixel-upscale-image');
+								}
 
               $width = $thumbObj->get('width');
               $height = $thumbObj->get('height');

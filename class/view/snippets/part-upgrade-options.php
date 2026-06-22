@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="shortPixelProposeUpgrade" class="shortpixel-modal shortpixel-hide" style="min-width:650px;margin-left:-305px;">
       <div class="sp-modal-title">
           <button type="button" class="sp-close-upgrade-button" onclick="SPUI.closeProposeUpgrade()">&times;</button>
-           <?php __('Upgrade your ShortPixel account', 'shortpixel-image-optimiser')  ?>
+	           <?php esc_html_e( 'Upgrade your ShortPixel account', 'shortpixel-upscale-image' ); ?>
       </div>
       <div class="sp-modal-body sptw-modal-spinner" style="height:auto;min-height:400px;padding:0;">
       </div>

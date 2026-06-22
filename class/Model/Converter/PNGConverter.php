@@ -46,7 +46,7 @@ class PNGConverter extends MediaLibraryConverter
 			if ($env->is_gd_installed === false && false === $env->is_imagick_installed)
 			{
 				 $this->converterActive = false;
-				 $this->lastError = __('No GD or imagick library detected on this installation. Can\'t convert images to PNG', 'shortpixel-image-optimiser');
+				 $this->lastError = __('No GD or imagick library detected on this installation. Can\'t convert images to PNG', 'shortpixel-upscale-image');
 			}
 
 			$this->forceConvertTransparent = ($settings->png2jpg == 2) ? true : false;
@@ -236,11 +236,11 @@ class PNGConverter extends MediaLibraryConverter
 				Log::addError('ImageCreateTrueColor failed');
 				if (false === $bg)
 				{
-					$msg = __('Creating an TrueColor Image failed - Possible library error', 'shortpixel-image-optimiser');
+					$msg = __('Creating an TrueColor Image failed - Possible library error', 'shortpixel-upscale-image');
 				}
 				elseif (false === $img)
 				{
-					$msg = __('Image source failed - Check if source image is PNG and library is working', 'shortpixel-image-optimiser');
+					$msg = __('Image source failed - Check if source image is PNG and library is working', 'shortpixel-upscale-image');
 				}
 
 				$this->imageModel->getMeta()->convertMeta()->setError(self::ERROR_LIBRARY);
@@ -289,7 +289,7 @@ class PNGConverter extends MediaLibraryConverter
 							//if the image is not 5% smaller, don't bother.
 							//if the size is 0, a conversion (or disk write) problem happened, go on with the PNG
 							Log::addDebug("PNG2JPG converted image is larger ($newSize vs. $origSize), keeping the PNG");
-							$msg = __('Converted file is larger. Keeping original file', 'shortpixel-image-optimiser');
+							$msg = __('Converted file is larger. Keeping original file', 'shortpixel-upscale-image');
 							ResponseController::addData($this->imageModel->get('id'), 'message', $msg);
 							$newFile->delete();
 							$this->imageModel->getMeta()->convertMeta()->setError(self::ERROR_RESULTLARGER);
@@ -299,7 +299,7 @@ class PNGConverter extends MediaLibraryConverter
 					elseif (! $newFile->exists())
 					{
 						 Log::addWarn('PNG imagejpeg file not written!', $newFile->getFileName() );
-						 $msg = __('Error - PNG file not written', 'shortpixel-image-optimiser');
+						 $msg = __('Error - PNG file not written', 'shortpixel-upscale-image');
 						 ResponseController::addData($this->imageModel->get('id'), 'message', $msg);
 						 $this->imageModel->getMeta()->convertMeta()->setError(self::ERROR_WRITEERROR);
 
@@ -482,7 +482,7 @@ class PNGConverter extends MediaLibraryConverter
 		//	$image = @imagecreatefrompng($imagePath);
 			if (false === $bool)
 			{
-				$msg = __('Image source failed - Check if source image is PNG and library is working', 'shortpixel-image-optimiser');
+				$msg = __('Image source failed - Check if source image is PNG and library is working', 'shortpixel-upscale-image');
 				$this->imageModel->getMeta()->convertMeta()->setError(self::ERROR_LIBRARY);
 				ResponseController::addData($this->imageModel->get('id'), 'message', $msg);
 

@@ -11,18 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-$opt = new QueueController();
+$spui_opt = new QueueController();
 
-$q = $opt->getQueue('media');
+$spui_q = $spui_opt->getQueue('media');
 
-$env = \wpSPUI()->env();
-$fs = \wpSPUI()->filesystem();
+$spui_env = \wpSPUI()->env();
+$spui_fs = \wpSPUI()->filesystem();
 
-$debugUrl = add_query_arg(array('part' => 'debug', 'noheader' => true), $this->url);
+$spui_debug_url = add_query_arg(array('part' => 'debug', 'noheader' => true), $this->url);
 
 if (Log::isManualDebug())
 {
-  $debugUrl = add_query_arg(['SPUI_DEBUG' => sanitize_text_field($_GET['SPUI_DEBUG'])], $debugUrl);
+  // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Debug flag reflected in URL only.
+  $spui_debug_value = isset( $_GET['SPUI_DEBUG'] ) ? sanitize_text_field( wp_unslash( $_GET['SPUI_DEBUG'] ) ) : '';
+  $spui_debug_url = add_query_arg(['SPUI_DEBUG' => $spui_debug_value], $spui_debug_url);
 }
 ?>
 
@@ -32,22 +34,22 @@ if (Log::isManualDebug())
   </h2>
 
   <div class='env'>
-    <h3><?php esc_html_e('Environment', 'spui'); ?></h3>
+    <h3><?php esc_html_e('Environment', 'shortpixel-upscale-image'); ?></h3>
     <div class='flex'>
-      <span>NGINX</span><span><?php var_export($this->is_nginx); ?></span>
-      <span>KeyVerified</span><span><?php var_export($view->key->is_verifiedkey); ?></span>
-      <span>HtAccess writable</span><span><?php var_export($this->is_htaccess_writable); ?></span>
-      <span>Multisite</span><span><?php var_export($this->is_multisite); ?></span>
-      <span>Main site</span><span><?php var_export($this->is_mainsite); ?></span>
-      <span>Constant key</span><span><?php var_export($view->key->is_constant_key); ?></span>
-      <span>Hide Key</span><span><?php var_export($view->key->hide_api_key); ?></span>
-      <span>Has Nextgen</span><span><?php var_export($this->has_nextgen); ?></span>
+      <span>NGINX</span><span><?php echo esc_html( wp_json_encode( $this->is_nginx ) ); ?></span>
+      <span>KeyVerified</span><span><?php echo esc_html( wp_json_encode( $view->key->is_verifiedkey ) ); ?></span>
+      <span>HtAccess writable</span><span><?php echo esc_html( wp_json_encode( $this->is_htaccess_writable ) ); ?></span>
+      <span>Multisite</span><span><?php echo esc_html( wp_json_encode( $this->is_multisite ) ); ?></span>
+      <span>Main site</span><span><?php echo esc_html( wp_json_encode( $this->is_mainsite ) ); ?></span>
+      <span>Constant key</span><span><?php echo esc_html( wp_json_encode( $view->key->is_constant_key ) ); ?></span>
+      <span>Hide Key</span><span><?php echo esc_html( wp_json_encode( $view->key->hide_api_key ) ); ?></span>
+      <span>Has Nextgen</span><span><?php echo esc_html( wp_json_encode( $this->has_nextgen ) ); ?></span>
 			<span>Has Offload</span><span><?php
-        $offload = \wpSPUI()->env()->hasOffload();
-        var_export($offload);
-        if (true === $offload)
+        $spui_offload = \wpSPUI()->env()->hasOffload();
+        echo esc_html( wp_json_encode( $spui_offload ) );
+        if (true === $spui_offload)
         {
-            echo ' (' .  \wpSPUI()->env()->getOffloadName() . ') ';
+            echo ' (' . esc_html( \wpSPUI()->env()->getOffloadName() ) . ') ';
         }
 
 
@@ -55,9 +57,9 @@ if (Log::isManualDebug())
 
     </div>
 		<div class='flex'>
-			<span>GD Installed</span><span><?php var_export($env->is_gd_installed); ?></span>
-      <span>Imagick Installed</span><span><?php var_export($env->is_imagick_installed); ?></span>
-			<span>Curl Installed</span><span><?php var_export($env->is_curl_installed); ?></span>
+			<span>GD Installed</span><span><?php echo esc_html( wp_json_encode( $spui_env->is_gd_installed ) ); ?></span>
+      <span>Imagick Installed</span><span><?php echo esc_html( wp_json_encode( $spui_env->is_imagick_installed ) ); ?></span>
+			<span>Curl Installed</span><span><?php echo esc_html( wp_json_encode( $spui_env->is_curl_installed ) ); ?></span>
 		</div>
 
 		<div class='flex'>
@@ -73,42 +75,42 @@ if (Log::isManualDebug())
   </div> <!-- /env -->
 
   <div class='fs'>
-    <h3><?php esc_html_e('FileSystem', 'spui'); ?></h3>
+    <h3><?php esc_html_e('FileSystem', 'shortpixel-upscale-image'); ?></h3>
     <div class='flex'>
-       <span>WpFileBase</span><span><?php var_export($fs->getWPFileBase()); ?></span>
-       <span>Upload Base</span><span><?php var_export($fs->getWPUploadBase()); ?></span>
-       <span>WPAbspath</span><span><?php var_export($fs->getWPAbsPath()); ?></span>
+       <span>WpFileBase</span><span><?php echo esc_html( wp_json_encode( $spui_fs->getWPFileBase() ) ); ?></span>
+       <span>Upload Base</span><span><?php echo esc_html( wp_json_encode( $spui_fs->getWPUploadBase() ) ); ?></span>
+       <span>WPAbspath</span><span><?php echo esc_html( wp_json_encode( $spui_fs->getWPAbsPath() ) ); ?></span>
 
     </div>
 
   </div>
 
   <div class='settings'>
-    <h3><?php esc_html_e('Settings', 'spui'); ?></h3>
-    <?php $local = $this->view->key;
+    <h3><?php esc_html_e('Settings', 'shortpixel-upscale-image'); ?></h3>
+    <?php $spui_local = $this->view->key;
 
-      $local->apiKey = strlen($local->apiKey) . ' chars'; ?>
+      $spui_local->apiKey = strlen($spui_local->apiKey) . ' chars'; ?>
        <h4>ApiKeySettings</h4>
-    <pre><?php var_export($local); ?></pre>
+    <pre><?php echo esc_html( wp_json_encode( $spui_local, JSON_PRETTY_PRINT ) ); ?></pre>
 
     <h4>ApiKeyModel</h4>
- <pre><?php var_export($this->keyModel->getData()); ?></pre>
+ <pre><?php echo esc_html( wp_json_encode( $this->keyModel->getData(), JSON_PRETTY_PRINT ) ); ?></pre>
 
 
-    <?php $settings = (array) $this->view->data;
-     ksort($settings);
+    <?php $spui_settings = (array) $this->view->data;
+     ksort($spui_settings);
     ?>
     <h4>Settings</h4>
-    <pre><?php var_export($settings); ?></pre>
+    <pre><?php echo esc_html( wp_json_encode( $spui_settings, JSON_PRETTY_PRINT ) ); ?></pre>
 
-  	<form method="POST" action="<?php echo esc_url(add_query_arg(['sp-action' => 'action_debug_editSetting'],$debugUrl)) ?>">
+  	<form method="POST" action="<?php echo esc_url(add_query_arg(['sp-action' => 'action_debug_editSetting'],$spui_debug_url)) ?>">
 
       <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 
       <select name="edit_setting">
           <option value="">&nbsp;</option>
-      <?php foreach($settings as $name => $value): ?>
-        <option value="<?php echo $name ?>"><?php echo $name  ?></option>
+      <?php foreach($spui_settings as $spui_name => $spui_value): ?>
+	        <option value="<?php echo esc_attr( $spui_name ); ?>"><?php echo esc_html( $spui_name ); ?></option>
       <?php endforeach; ?>
     </select>
       New Value <input name="new_value" value="">
@@ -120,13 +122,13 @@ if (Log::isManualDebug())
 
 
   <div class='quotadata'>
-    <h3><?php esc_html_e('Quota Data', 'spui'); ?></h3>
-    <pre><?php var_export($this->quotaData); ?></pre>
+    <h3><?php esc_html_e('Quota Data', 'shortpixel-upscale-image'); ?></h3>
+    <pre><?php echo esc_html( wp_json_encode( $this->quotaData, JSON_PRETTY_PRINT ) ); ?></pre>
   </div>
 
 
   <div class='debug-quota'>
-    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetquota'), $debugUrl)) ?>">
+    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetquota'), $spui_debug_url)) ?>">
 			<?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
       <button class='button' type='submit'>Clear Quota Data</button>
       </form>
@@ -135,71 +137,71 @@ if (Log::isManualDebug())
       <h3><?php esc_html_e('Stats', 'shortpixel-upscale-image'); ?></h3>
       <h4>Media</h4>
       <div class='flex'>
-        <?php $statsControl = StatsController::getInstance();
+        <?php $spui_stats_control = StatsController::getInstance();
         ?>
-        <span>Items</span><span><?php echo esc_html($statsControl->find('media', 'items')); ?></span>
-        <span>Thumbs</span><span><?php echo esc_html($statsControl->find('media', 'thumbs')); ?></span>
-        <span>Images</span><span><?php echo esc_html($statsControl->find('media', 'images')); ?></span>
-        <span>ItemsTotal</span><span><?php echo esc_html($statsControl->find('media', 'itemsTotal')); ?></span>
-        <span>ThumbsTotal</span><span><?php echo esc_html($statsControl->find('media', 'thumbsTotal')); ?></span>
+        <span>Items</span><span><?php echo esc_html($spui_stats_control->find('media', 'items')); ?></span>
+        <span>Thumbs</span><span><?php echo esc_html($spui_stats_control->find('media', 'thumbs')); ?></span>
+        <span>Images</span><span><?php echo esc_html($spui_stats_control->find('media', 'images')); ?></span>
+        <span>ItemsTotal</span><span><?php echo esc_html($spui_stats_control->find('media', 'itemsTotal')); ?></span>
+        <span>ThumbsTotal</span><span><?php echo esc_html($spui_stats_control->find('media', 'thumbsTotal')); ?></span>
 
      </div>
      <h4>Custom</h4>
      <div class='flex'>
-       <span>Custom Upscaled</span><span><?php echo esc_html($statsControl->find('custom', 'items')); ?></span>
-       <span>Custom itemsTotal</span><span><?php echo esc_html($statsControl->find('custom', 'itemsTotal')); ?>
+       <span>Custom Upscaled</span><span><?php echo esc_html($spui_stats_control->find('custom', 'items')); ?></span>
+       <span>Custom itemsTotal</span><span><?php echo esc_html($spui_stats_control->find('custom', 'itemsTotal')); ?>
        </span>
      </div>
      <h4>Total</h4>
      <div class='flex'>
-        <span>Items</span><span><?php echo esc_html($statsControl->find('total', 'items')); ?></span>
-        <span>Images</span><span><?php echo esc_html($statsControl->find('total', 'images')); ?></span>
-        <span>Thumbs</span><span><?php echo esc_html($statsControl->find('total', 'thumbs')); ?></span>
+        <span>Items</span><span><?php echo esc_html($spui_stats_control->find('total', 'items')); ?></span>
+        <span>Images</span><span><?php echo esc_html($spui_stats_control->find('total', 'images')); ?></span>
+        <span>Thumbs</span><span><?php echo esc_html($spui_stats_control->find('total', 'thumbs')); ?></span>
      </div>
      <h4>Period</h4>
      <div class='flex'>
-        <span>Month #1 </span><span><?php echo esc_html($statsControl->find('period', 'months', '1')); ?></span>
-        <span>Month #2 </span><span><?php echo esc_html($statsControl->find('period', 'months', '2')); ?></span>
-        <span>Month #3 </span><span><?php echo esc_html($statsControl->find('period', 'months', '3')); ?></span>
-        <span>Month #4 </span><span><?php echo esc_html($statsControl->find('period', 'months', '4')); ?></span>
+        <span>Month #1 </span><span><?php echo esc_html($spui_stats_control->find('period', 'months', '1')); ?></span>
+        <span>Month #2 </span><span><?php echo esc_html($spui_stats_control->find('period', 'months', '2')); ?></span>
+        <span>Month #3 </span><span><?php echo esc_html($spui_stats_control->find('period', 'months', '3')); ?></span>
+        <span>Month #4 </span><span><?php echo esc_html($spui_stats_control->find('period', 'months', '4')); ?></span>
   	</div>
 	</div> <!-- stats -->
 
   <div class='debug-stats'>
-    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetStats'), $debugUrl)) ?>"
+    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetStats'), $spui_debug_url)) ?>"
       >
 			<?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
       <button class='button' type='submit'>Clear statistics cache</button>
       </form>
   </div>
 
-  <?php $noticeController =  NoticeController::getInstance();
-    $notices = $noticeController->getNotices();
+  <?php $spui_notice_controller =  NoticeController::getInstance();
+    $spui_notices = $spui_notice_controller->getNotices();
   ?>
 
-  <h3>Notices (<?php echo esc_html(count($notices)); ?>)</h3>
+  <h3>Notices (<?php echo esc_html(count($spui_notices)); ?>)</h3>
   <div class='table notices'>
 
     <div class='head'>
       <span>ID</span><span>Done</span><span>Dismissed</span><span>Persistent</span><span>Exclude</span><span>Include</span>
     </div>
 
-  <?php foreach ($notices as $noticeObj):
-			$exclude = $noticeObj->_debug_getvar('exclude_screens');
-			$include = $noticeObj->_debug_getvar('include_screens');
+  <?php foreach ($spui_notices as $spui_notice_obj):
+			$spui_exclude = $spui_notice_obj->_debug_getvar('exclude_screens');
+			$spui_include = $spui_notice_obj->_debug_getvar('include_screens');
 
-			$exclude = is_array($exclude) ? implode(',', $exclude) : $exclude;
-			$include = is_array($include) ? implode(',', $include) : $include;
+			$spui_exclude = is_array($spui_exclude) ? implode(',', $spui_exclude) : $spui_exclude;
+			$spui_include = is_array($spui_include) ? implode(',', $spui_include) : $spui_include;
 
 	?>
 
   <div>
-      <span><?php echo esc_html($noticeObj->getID()); ?></span>
-      <span><?php echo ($noticeObj->isDone()) ? 'Y' : 'N'; ?> </span>
-      <span><?php echo ($noticeObj->isDismissed()) ? 'Y' : 'N'; ?> </span>
-      <span><?php echo ($noticeObj->isPersistent()) ? 'Y' : 'N'; ?> </span>
-			<span><?php echo $exclude ?></span>
-			<span><?php echo $include ?></span>
+      <span><?php echo esc_html($spui_notice_obj->getID()); ?></span>
+      <span><?php echo $spui_notice_obj->isDone() ? 'Y' : 'N'; ?> </span>
+      <span><?php echo $spui_notice_obj->isDismissed() ? 'Y' : 'N'; ?> </span>
+      <span><?php echo $spui_notice_obj->isPersistent() ? 'Y' : 'N'; ?> </span>
+			<span><?php echo esc_html( $spui_exclude ); ?></span>
+			<span><?php echo esc_html( $spui_include ); ?></span>
 
   </div>
 
@@ -208,7 +210,7 @@ if (Log::isManualDebug())
   </div>
 
   <div class='debug-notices'>
-    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetNotices'), $debugUrl)) ?>"
+    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetNotices'), $spui_debug_url)) ?>"
       >
 			<?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
       <button class='button' type='submit'>Reset Notices</button>
@@ -216,22 +218,22 @@ if (Log::isManualDebug())
   </div>
 
 	<div class='trigger-notices'>
-		<form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_triggerNotice'), $debugUrl)) ?>"
+		<form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_triggerNotice'), $spui_debug_url)) ?>"
       >
 			<?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 			<?php
-				$controller = AdminNoticesController::getInstance();
-				$notices = $controller->getAllNotices();
+				$spui_controller = AdminNoticesController::getInstance();
+				$spui_notices = $spui_controller->getAllNotices();
 
 		 ?>
 				<select name="notice_constant">
 					 <option value="trigger-all">Trigger All</option>
 
 					<?php
-          if (is_array($notices))
+          if (is_array($spui_notices))
           {
-            foreach($notices as $key => $noticeObj)
-						echo "<option value='$key'>$key </option>";
+            foreach($spui_notices as $spui_key => $spui_notice_obj)
+							 echo '<option value="' . esc_attr( $spui_key ) . '">' . esc_html( $spui_key ) . '</option>';
           }
 						?>
 				</select>
@@ -244,18 +246,18 @@ if (Log::isManualDebug())
 
 	<div class='table queue-stats'>
 		<?php
-      $opt = new QueueController();
+      $spui_opt = new QueueController();
 
-		 	$statsMedia = $opt->getQueue('media');
-			$statsCustom = $opt->getQueue('custom');
+		 	$spui_stats_media = $spui_opt->getQueue('media');
+			$spui_stats_custom = $spui_opt->getQueue('custom');
 
-      $opt = new QueueController(['is_bulk' => true]);
+      $spui_opt = new QueueController(['is_bulk' => true]);
 
-		 	$bulkMedia = $opt->getQueue('media');
-			$bulkCustom = $opt->getQueue('custom');
+		 	$spui_bulk_media = $spui_opt->getQueue('media');
+			$spui_bulk_custom = $spui_opt->getQueue('custom');
 
 
-			$queues = array('media' => $statsMedia, 'custom' => $statsCustom, 'mediaBulk' => $bulkMedia, 'customBulk' => $bulkCustom);
+			$spui_queues = array('media' => $spui_stats_media, 'custom' => $spui_stats_custom, 'mediaBulk' => $spui_bulk_media, 'customBulk' => $spui_bulk_custom);
 
 			?>
 			  <div class='head'>
@@ -270,49 +272,49 @@ if (Log::isManualDebug())
 				</div>
 			<?php
 
-			foreach($queues as $name => $queue):
-					$stats = $queue->getStats();
-          $options = $queue->getOptions();
+			foreach($spui_queues as $spui_name => $spui_queue):
+					$spui_stats = $spui_queue->getStats();
+          $spui_options = $spui_queue->getOptions();
 
           // Lazy options merger to show in titles. 
-          $options_txt = false; 
+          $spui_options_txt = false; 
 
-          if (is_array($options))
+          if (is_array($spui_options))
           {
-              $filters = []; 
+              $spui_filters = []; 
               
-              if(isset($options['filters']) && is_array($options['filters'])) 
+              if(isset($spui_options['filters']) && is_array($spui_options['filters'])) 
               {
-                  $filters = $options['filters'];
-                  unset($options['filters']); 
+                  $spui_filters = $spui_options['filters'];
+                  unset($spui_options['filters']); 
               }
               
               
-              $options = array_merge($options, $filters); 
+              $spui_options = array_merge($spui_options, $spui_filters); 
               
-              foreach($options as $opt => $val)
+              foreach($spui_options as $spui_opt_name => $spui_val)
               {
-                $options_txt .= " $opt : $val \n"; 
+                $spui_options_txt .= " $spui_opt_name : $spui_val \n"; 
               }
           }
 
 					echo "<div>";
-            if (false !== $options_txt)
+            if (false !== $spui_options_txt)
             {
-                echo "<span title='$options_txt' ><u>" .  esc_html($name) . '</u></span>';
+                echo '<span title="' . esc_attr( $spui_options_txt ) . '" ><u>' .  esc_html($spui_name) . '</u></span>';
             }
             else
             {
-                echo "<span >" .  esc_html($name) . '</span>';
+                echo "<span >" .  esc_html($spui_name) . '</span>';
             }
 
-						echo "<span>" .  esc_html($stats->in_queue) . '</span>';
-						echo "<span>" .  esc_html($stats->in_process) . '</span>';
-						echo "<span>" .  esc_html($stats->errors) . '</span>';
-						echo "<span>" .  esc_html($stats->fatal_errors) . '</span>';
-						echo "<span>" .  esc_html($stats->done) . '</span>';
-						echo "<span>" .  esc_html($stats->total) . '</span>';
-            echo "<span>" .  $queue->getCustomDataItem('customOperation') . '</span>';
+						echo "<span>" .  esc_html($spui_stats->in_queue) . '</span>';
+						echo "<span>" .  esc_html($spui_stats->in_process) . '</span>';
+						echo "<span>" .  esc_html($spui_stats->errors) . '</span>';
+						echo "<span>" .  esc_html($spui_stats->fatal_errors) . '</span>';
+						echo "<span>" .  esc_html($spui_stats->done) . '</span>';
+						echo "<span>" .  esc_html($spui_stats->total) . '</span>';
+	            echo '<span>' . esc_html( $spui_queue->getCustomDataItem('customOperation') ) . '</span>';
             
 					echo "</div>";
 
@@ -321,15 +323,15 @@ if (Log::isManualDebug())
 			<?php endforeach; ?>
 
   <div class='debug-queue'>
-    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetQueue'),$debugUrl)) ?>"
+    <form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_resetQueue'),$spui_debug_url)) ?>"
       id="shortpixel-form-reset-queue">
 			<?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
       <button class='button' type='submit'>Reset ShortQ</button>
 			<select name="queue">
 					<option>All</option>
-					<?php foreach($queues as $name => $q)
+					<?php foreach($spui_queues as $spui_name => $spui_queue_item)
 					{
-						 echo "<option>" . esc_attr($name) . "</option>";
+						 echo "<option>" . esc_attr($spui_name) . "</option>";
 					}
 					?>
 			</select>
@@ -343,7 +345,7 @@ if (Log::isManualDebug())
 
 
 <div class='debug-key'>
-	<form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_removeProcessorKey'),$debugUrl)) ?>"
+	<form method="POST" action="<?php echo esc_url(add_query_arg(array('sp-action' => 'action_debug_removeProcessorKey'),$spui_debug_url)) ?>"
 		>
 		<?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 		<button class='button' type='submit'>Reset Processor Key</button>

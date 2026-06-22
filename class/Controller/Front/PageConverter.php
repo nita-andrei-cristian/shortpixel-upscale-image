@@ -40,52 +40,61 @@ class PageConverter extends \SPUI\Controller
 		}
 
     // Beaver Builder
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['fl_builder']))
     {
        return false;
     }
 
     // Divi Builder
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['et_fb']))
     {
        return false;
     }
 
     // Bricks Builder
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['bricks']))
     {
        return false;
     }
 
     // Breakdance Builder
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['breakdance']) || isset($_GET['breakdance_browser']))
     {
        return false;
     }
 
     // Oxygen Builder
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['ct_builder']))
     {
       return false;
     }
 
     // Avada Live Builder
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['fb-edit']))
     {
       return false;
     }
 
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
     if (isset($_GET['spui_no_cdn']))
     {
        return false;
     }
 
-    if (isset($_GET['PageSpeed']) && 'off' === $_GET['PageSpeed'])
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
+    if (isset($_GET['PageSpeed']) && 'off' === sanitize_text_field( wp_unslash( $_GET['PageSpeed'] ) ))
     {
        return false;
     }
 
-    if (isset($_GET['oxygen']) && 'builder' === $_GET['oxygen'])
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request flags used to skip frontend rewriting.
+    if (isset($_GET['oxygen']) && 'builder' === sanitize_text_field( wp_unslash( $_GET['oxygen'] ) ))
     {
        return false;
     }
@@ -266,7 +275,7 @@ class PageConverter extends \SPUI\Controller
 			}
 
 			$block->url = $url;
-			$block->parsed = parse_url($url);
+				$block->parsed = wp_parse_url($url);
 
 			return $block;
 	}
@@ -308,10 +317,10 @@ class PageConverter extends \SPUI\Controller
 // https://stackoverflow.com/questions/276516/parsing-domain-from-a-url
 private function getDomain($url)
 {
-    $matches = preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,63}$/", parse_url($url, PHP_URL_HOST), $_domain_tld);
+	    $matches = preg_match("/[a-z0-9\-]{1,63}\.[a-z\.]{2,63}$/", wp_parse_url($url, PHP_URL_HOST), $_domain_tld);
     if (false === $matches || 0 === $matches) // If pattern fails. 
     {
-       return parse_url($url, PHP_URL_HOST); 
+	       return wp_parse_url($url, PHP_URL_HOST); 
     }    
 
     return $_domain_tld[0];

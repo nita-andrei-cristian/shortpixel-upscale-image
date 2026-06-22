@@ -24,8 +24,15 @@ if ( ! defined( 'ABSPATH' ) ) {
         <inputlabel>User</inputlabel> <input name="siteAuthUser" type="text" id="siteAuthUser" value="<?php echo( esc_html(wp_unslash($view->data->siteAuthUser )));?>" class="regular-text" placeholder="<?php esc_html_e('User','shortpixel-upscale-image');?>" style="margin-bottom: 8px"><br>
         <inputlabel>Password</inputlabel> <input name="siteAuthPass" type="password" id="siteAuthPass" value="<?php echo( esc_html(wp_unslash($view->data->siteAuthPass )));?>" class="regular-text" placeholder="<?php esc_html_e('Password','shortpixel-upscale-image');?>" style="margin-bottom: 8px">
         <info>
-            <?php printf(esc_html__('Only fill in these fields if your website\'s front end is not publicly accessible and requires a username and password for visitors to connect.
-                      If you\'re unsure, simply %sleave these fields empty%s. Please note that the CDN delivery method will not work if your site is protected by HTTP AUTH.','shortpixel-upscale-image'), '<strong>', '</strong>'); ?>
+            <?php
+            /* translators: 1: Opening strong tag for the "leave these fields empty" text. 2: Closing strong tag. */
+            $spui_http_auth_info = __( 'Only fill in these fields if your website\'s front end is not publicly accessible and requires a username and password for visitors to connect. If you\'re unsure, simply %1$sleave these fields empty%2$s. Please note that the CDN delivery method will not work if your site is protected by HTTP AUTH.', 'shortpixel-upscale-image' );
+            printf(
+            	wp_kses_post( $spui_http_auth_info ),
+            	'<strong>',
+            	'</strong>'
+            );
+            ?>
         </info>
         <?php else:  ?>
             <p><?php esc_html_e('The HTTP AUTH credentials have been defined in the wp-config file.', 'shortpixel-upscale-image'); ?></p>
@@ -64,7 +71,17 @@ if(! $this->is_curl_installed) {
 
         <inputlabel>Token</inputlabel> <input name="cloudflareToken" type="text"  id="cloudflare-token" <?php echo(! $this->is_curl_installed ? 'disabled' : '');?>  value="<?php echo esc_attr($view->data->cloudflareToken) ?>" class='regular-text' autocomplete="off">
         <info>
-            <?php printf(esc_html__('Enter your %s site token %s for authentication. This token must have %s Cache Purge permission %s! ', 'shortpixel-upscale-image'), '<a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">', '</a>', '<a href="https://shortpixel.com/knowledge-base/article/using-shortpixel-image-upscaler-with-cloudflare-api-token/" target="_blank">', '</a>'); ?>
+            <?php
+            /* translators: 1: Opening Cloudflare token link. 2: Closing Cloudflare token link. 3: Opening Cache Purge permission documentation link. 4: Closing Cache Purge permission documentation link. */
+            $spui_cloudflare_token_info = __( 'Enter your %1$s site token %2$s for authentication. This token must have %3$s Cache Purge permission %4$s! ', 'shortpixel-upscale-image' );
+            printf(
+            	wp_kses_post( $spui_cloudflare_token_info ),
+            	'<a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">',
+            	'</a>',
+            	'<a href="https://shortpixel.com/knowledge-base/article/using-shortpixel-image-upscaler-with-cloudflare-api-token/" target="_blank">',
+            	'</a>'
+            );
+            ?>
         <a href="https://shortpixel.com/knowledge-base/article/using-shortpixel-image-upscaler-with-cloudflare-api-token/" target="_blank" class="shortpixel-help-link">
               <?php esc_html_e('How to set it up','shortpixel-upscale-image');?>
           </a>
@@ -80,7 +97,9 @@ if(! $this->is_curl_installed) {
       <content>
         <input name="cloudflareToken" type="text"  id="cloudflare-token" <?php echo(! $this->is_curl_installed ? 'disabled' : '');?>  value="<?php echo esc_attr($view->data->cloudflareToken) ?>" class='regular-text' autocomplete="off">
         <info>
-            <?php printf(esc_html__('Enter your %s site token %s for authentication. This token needs %s Cache Purge permission %s! ', 'shortpixel-upscale-image'), '<a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">', '</a>', '<a href="https://shortpixel.com/knowledge-base/article/using-shortpixel-image-upscaler-with-cloudflare-api-token/" target="_blank">', '</a>'); ?>
+            <?php
+            /* translators: 1: Opening Cloudflare token link. 2: Closing Cloudflare token link. 3: Opening Cache Purge permission docs link. 4: Closing Cache Purge permission docs link. */
+            printf( wp_kses_post( __( 'Enter your %1$s site token %2$s for authentication. This token needs %3$s Cache Purge permission %4$s! ', 'shortpixel-upscale-image' ) ), '<a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">', '</a>', '<a href="https://shortpixel.com/knowledge-base/article/using-shortpixel-image-upscaler-with-cloudflare-api-token/" target="_blank">', '</a>' ); ?>
         <a href="https://shortpixel.com/knowledge-base/article/using-shortpixel-image-upscaler-with-cloudflare-api-token/" target="_blank" class="shortpixel-help-link">
               <?php esc_html_e('How to set it up','shortpixel-upscale-image');?>
           </a>

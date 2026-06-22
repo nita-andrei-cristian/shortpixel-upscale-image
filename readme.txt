@@ -1,8 +1,8 @@
-=== ShortPixel Upscale Image - AI Image Upscaling for WordPress ===
+=== ShortPixel Upscale Image ===
 Contributors: ShortPixel
 Tags: image upscale, ai upscaling, upscale images, resize images, retina images
 Requires at least: 4.8.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 6.4.4
 License: GPLv2 or later

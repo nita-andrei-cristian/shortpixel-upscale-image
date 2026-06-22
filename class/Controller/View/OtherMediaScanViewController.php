@@ -31,7 +31,7 @@ class OtherMediaScanViewController extends \SPUI\ViewController
   public function load()
   {
 
-      $this->view->title = __('Scan for new files', 'shortpixel-image-optimiser');
+      $this->view->title = __('Scan for new files', 'shortpixel-upscale-image');
       $this->view->pagination = false;
 
       $this->view->show_search = false;

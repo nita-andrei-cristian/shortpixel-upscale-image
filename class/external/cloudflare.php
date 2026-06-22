@@ -173,11 +173,6 @@ class CloudFlareAPI {
     */
     private function doRequest($url, $postfields, $headers = array())
     {
-      if(!function_exists('curl_init'))
-      { return false; }
-
-      $curl_connection = curl_init();
-
       $default_headers =
         array('content_type' => 'Content-Type: application/json');
 
@@ -187,19 +182,25 @@ class CloudFlareAPI {
       $headers = array_filter(array_values($headers));
 
       $postfields = wp_json_encode($postfields);
+      $response = wp_remote_post(
+        $url,
+        array(
+          'body'        => $postfields,
+          'headers'     => $headers,
+          'method'      => 'POST',
+          'timeout'     => 10,
+          'user-agent'  => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36',
+          'data_format' => 'body',
+        )
+      );
 
-      curl_setopt( $curl_connection, CURLOPT_URL, $url );
-      curl_setopt( $curl_connection, CURLOPT_CUSTOMREQUEST, "POST" );
-      curl_setopt( $curl_connection, CURLOPT_POSTFIELDS, $postfields);
-      curl_setopt( $curl_connection, CURLOPT_RETURNTRANSFER, true );
-      curl_setopt( $curl_connection, CURLOPT_HTTPHEADER, $headers );
-      curl_setopt( $curl_connection, CURLOPT_CONNECTTIMEOUT, 5);  // in seconds!
-      curl_setopt( $curl_connection, CURLOPT_TIMEOUT, 10); // in seconds!
-      curl_setopt( $curl_connection, CURLOPT_USERAGENT, '"User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36"' );
+      if ( is_wp_error( $response ) ) {
+          Log::addWarn( 'ShortPixel - CloudFlare: The CloudFlare API request failed', $response->get_error_message() );
+          return false;
+      }
 
-      $request_response = curl_exec( $curl_connection );
+      $request_response = wp_remote_retrieve_body( $response );
       $result           = json_decode( $request_response, true );
-      curl_close( $curl_connection );
 
       if ( ! is_array( $result ) ) {
           Log::addWarn( 'ShortPixel - CloudFlare: The CloudFlare API is not responding correctly', $result);

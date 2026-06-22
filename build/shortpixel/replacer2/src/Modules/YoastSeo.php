@@ -28,31 +28,39 @@ class YoastSeo
 		}
 	}
 
-	public function removeIndexes($search_urls, $replace_urls)
-	{
-		 global $wpdb;
-
-			$sql = 'DELETE FROM  ' . $this->yoastTable . ' WHERE ';
-			$prepare = array();
+		public function removeIndexes($search_urls, $replace_urls)
+		{
+			 global $wpdb;
+			 $yoast_table = esc_sql( $this->yoastTable );
 
 			$base = isset($search_urls['base']) ? $search_urls['base'] : null;
 			$file = isset($search_urls['file']) ? $search_urls['file'] : null;
 
-			if (! is_null($base))
-			{
-						$querySQL = $sql . ' twitter_image like %s or open_graph_image like %s ';
-						$querySQL = $wpdb->prepare($querySQL, '%' . $base . '%', '%' . $base . '%');
+				if (! is_null($base))
+				{
+								// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and the table name is plugin-owned.
+								$wpdb->query(
+								// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Query is prepared here and the table name is plugin-owned.
+								$wpdb->prepare(
+									"DELETE FROM {$yoast_table} WHERE twitter_image like %s or open_graph_image like %s ",
+									'%' . $base . '%',
+									'%' . $base . '%'
+								)
+							);
+				}
 
-						$wpdb->query($querySQL);
-			}
-
-			if (! is_null($file))
-			{
-						$querySQL = $sql . ' twitter_image like %s or open_graph_image like %s ';
-						$querySQL = $wpdb->prepare($querySQL, '%' . $file . '%', '%' . $file . '%');
-
-						$wpdb->query($querySQL);
-			}
+				if (! is_null($file))
+				{
+								// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and the table name is plugin-owned.
+								$wpdb->query(
+								// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Query is prepared here and the table name is plugin-owned.
+								$wpdb->prepare(
+									"DELETE FROM {$yoast_table} WHERE twitter_image like %s or open_graph_image like %s ",
+									'%' . $file . '%',
+									'%' . $file . '%'
+								)
+							);
+				}
 
 	}
 

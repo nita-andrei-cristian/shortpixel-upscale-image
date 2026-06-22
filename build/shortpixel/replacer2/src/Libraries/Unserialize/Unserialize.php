@@ -26,10 +26,6 @@ final class Unserialize
         }
         if (!is_array($allowedClasses)) {
             $allowedClasses = array();
-            trigger_error(
-                'unserialize(): allowed_classes option should be array or boolean',
-                E_USER_WARNING
-            );
         }
 
         $worker = new DisallowedClassesSubstitutor($serialized, $allowedClasses);

@@ -92,8 +92,8 @@ class Woocommerce
 				  $text = $tools['regenerate_thumbnails']['desc'];
 					$text .= sprintf(
 					'<br><br><strong class="red">%1$s</strong> %2$s',
-					__( 'ShortPixel Upscale Image Note:', 'shortpixel-image-optimiser' ),
-					__( 'The ShortPixel Upscale Image plugin is set to automatically upscale images on upload. When running the thumbnails tools, each image that is not yet upscaled will be added to the queue. It is recommended to disable this option while running these tools', 'shortpixel-image-optimiser')
+					__( 'ShortPixel Upscale Image Note:', 'shortpixel-upscale-image' ),
+					__( 'The ShortPixel Upscale Image plugin is set to automatically upscale images on upload. When running the thumbnails tools, each image that is not yet upscaled will be added to the queue. It is recommended to disable this option while running these tools', 'shortpixel-upscale-image')
 				);
 				$tools['regenerate_thumbnails']['desc'] = $text;
 			 }

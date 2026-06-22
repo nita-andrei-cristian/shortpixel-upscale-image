@@ -168,10 +168,10 @@ class ActionController extends OptimizerBase
 
     if ($bool)
     {
-       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG converted', 'shortpixel-image-optimiser'));
+       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG converted', 'shortpixel-upscale-image'));
     }
     else {
-       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG not converted', 'shortpixel-image-optimiser'));
+       ResponseController::addData($qItem->item_id, 'message', __('PNG2JPG not converted', 'shortpixel-upscale-image'));
     }
 
     // Regardless if it worked or not, requeue the item otherwise it will keep trying to convert due to the flag.
@@ -184,7 +184,7 @@ class ActionController extends OptimizerBase
 
     $qItem->addResult([
       'is_done' => true, 
-      'message' => __('Image converted', 'shortpixel-image-optimiser'), 
+      'message' => __('Image converted', 'shortpixel-upscale-image'), 
    ]);
 
     return $bool; 
@@ -212,7 +212,7 @@ class ActionController extends OptimizerBase
         $queueItem->addResult([
             'fileStatus' => ImageModel::FILE_STATUS_PENDING, 
             'is_done' => true, 
-            'message' => __('Image being reoptimized', 'shortpixel-image-optimiser'), 
+            'message' => __('Image being reoptimized', 'shortpixel-upscale-image'), 
         ]);
 
          // $result = $this->finishItemProcess($queueItem);
@@ -237,7 +237,7 @@ class ActionController extends OptimizerBase
        $queueItem->addResult([
          'is_done' => true, 
          'is_error' => false,
-         'message' => __('Item migrated / checked ', 'shortpixel-image-optimiser'), 
+         'message' => __('Item migrated / checked ', 'shortpixel-upscale-image'), 
          'apiStatus' => ApiController::STATUS_NOT_API,
      ]);
 
@@ -285,7 +285,7 @@ class ActionController extends OptimizerBase
       }
 
       // Compat for ancient WP
-      $now = function_exists('wp_date') ? wp_date( 'U', time() ) : time();
+	      $now = time();
 
       // Reset the whole thing after that.
 
@@ -308,7 +308,7 @@ class ActionController extends OptimizerBase
       if (true === $result)
       {
          $queueItem->addResult([
-             'message' => __('Item restored', 'shortpixel-image-optimiser'),
+             'message' => __('Item restored', 'shortpixel-upscale-image'),
              'fileStatus' => ImageModel::FILE_STATUS_RESTORED,
              'is_done' => true,
              'success' => true,

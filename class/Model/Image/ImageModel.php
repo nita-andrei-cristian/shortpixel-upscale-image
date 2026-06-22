@@ -341,64 +341,68 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
       switch($status)
       {
          case self::P_PROCESSABLE:
-            $message = __('Image Processable', 'shortpixel-image-optimiser');
+            $message = __('Image Processable', 'shortpixel-upscale-image');
          break;
          case self::P_FILE_NOT_EXIST:
-            $message = __('File does not exist', 'shortpixel-image-optimiser');
+            $message = __('File does not exist', 'shortpixel-upscale-image');
          break;
          case self::P_EXCLUDE_EXTENSION:
-            $message = __('Image Extension not processable', 'shortpixel-image-optimiser');
+            $message = __('Image Extension not processable', 'shortpixel-upscale-image');
          break;
          case self::P_EXCLUDE_EXTENSION_PDF:
-            $message = sprintf(__('PDF processing is not enabled in the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="' .  esc_url(admin_url('options-general.php?page=shortpixel-upscale-settings&part=optimisation')) . '">', '</a>');
+            // translators: 1: Opening settings link. 2: Closing settings link.
+            $message = sprintf(__('PDF processing is not enabled in the %1$ssettings%2$s', 'shortpixel-upscale-image'), '<a href="' .  esc_url(admin_url('options-general.php?page=shortpixel-upscale-settings&part=optimisation')) . '">', '</a>');
          break;
          case self::P_EXCLUDE_SIZE:
-            $message = __('Image Size Excluded', 'shortpixel-image-optimiser');
+            $message = __('Image Size Excluded', 'shortpixel-upscale-image');
          break;
          case self::P_EXCLUDE_FILESIZE: 
-            $message = __('Image Filesize excluded', 'shortpixel-image-optimiser');
+            $message = __('Image Filesize excluded', 'shortpixel-upscale-image');
           break;
          case self::P_EXCLUDE_PATH:
-            $message = __('Image Excluded', 'shortpixel-image-optimiser');
+            $message = __('Image Excluded', 'shortpixel-upscale-image');
          break;
          case self::P_IS_OPTIMIZED:
             $message = __('Image is already upscaled', 'shortpixel-upscale-image');
          break;
          case self::P_FILE_NOTWRITABLE:
-            $message = sprintf(__('Image %s (or related thumbnails) is not writable in %s', 'shortpixel-image-optimiser'), $this->getFileName(), (string) $this->getFileDir());
+            // translators: 1: Image filename. 2: Directory path.
+            $message = sprintf(__('Image %1$s (or related thumbnails) is not writable in %2$s', 'shortpixel-upscale-image'), $this->getFileName(), (string) $this->getFileDir());
          break;
 				 case self::P_DIRECTORY_NOTWRITABLE:
-						$message = sprintf(__('Image directory %s is not writable', 'shortpixel-image-optimiser'), (string) $this->getFileDir());
+						// translators: %s: Directory path.
+						$message = sprintf(__('Image directory %s is not writable', 'shortpixel-upscale-image'), (string) $this->getFileDir());
 				 break;
 				 case self::P_BACKUPDIR_NOTWRITABLE:
-				 		$message = __('Backup directory is not writable', 'shortpixel-image-optimiser');
+				 		$message = __('Backup directory is not writable', 'shortpixel-upscale-image');
 				 break;
 				 case self::P_BACKUP_EXISTS:
-				 		$message = __('Backup already exists', 'shortpixel-image-optimiser');
+				 		$message = __('Backup already exists', 'shortpixel-upscale-image');
 				 break;
 				 case self::P_OPTIMIZE_PREVENTED:
-				 		$message = __('Fatal error preventing processing', 'shortpixel-image-optimiser');
+				 		$message = __('Fatal error preventing processing', 'shortpixel-upscale-image');
 						if (property_exists($this, 'optimizePreventedReason'))
 						$message = $this->get('optimizePreventedReason');
 				 break;
 				 // Restorable Reasons
 				 case self::P_RESTORABLE:
-				 		$message = __('Image restorable', 'shortpixel-image-optimiser');
+				 		$message = __('Image restorable', 'shortpixel-upscale-image');
 				 break;
 				 case self::P_BACKUP_NOT_EXISTS:
-				 		$message = __('Backup does not exist', 'shortpixel-image-optimiser');
+				 		$message = __('Backup does not exist', 'shortpixel-upscale-image');
 				 break;
 				 case self::P_NOT_OPTIMIZED:
-				 		$message = __('Image is not optimized', 'shortpixel-image-optimiser');
+				 		$message = __('Image is not optimized', 'shortpixel-upscale-image');
 				 break;
          case self::P_IMAGE_ZERO_SIZE:
-            $message = __('File seems empty, or failure on image size', 'shortpixel-image-optimiser');
+            $message = __('File seems empty, or failure on image size', 'shortpixel-upscale-image');
          break;
          case self::P_EXCLUDE_DATE: 
-             $message = __('Date is excluded', 'shortpixel-image-optimiser');
+             $message = __('Date is excluded', 'shortpixel-upscale-image');
           break; 
          default:
-            $message = __(sprintf('Unknown Issue, Code %s',  $this->processable_status), 'shortpixel-image-optimiser');
+            // translators: %s: Internal processability status code.
+            $message = sprintf( __('Unknown Issue, Code %s', 'shortpixel-upscale-image'), $this->processable_status );
          break;
       }
 
@@ -744,13 +748,13 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 								$response = [
 										'is_error' => true,
 										'issue_type' => ResponseController::ISSUE_BACKUP_CREATE,
-										'message' => __('Could not create backup. Please check file permissions', 'shortpixel-image-optimiser'),
+										'message' => __('Could not create backup. Please check file permissions', 'shortpixel-upscale-image'),
 										'fileName' => $this->getFileName(),
                 ];
 
 								ResponseController::addData($this->get('id'), $response);
 
-								$this->preventNextTry(__('Could not create backup'));
+								$this->preventNextTry(__('Could not create backup', 'shortpixel-upscale-image'));
                 return false;
               }
           }
@@ -841,7 +845,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
                    $this->setMeta('resizeWidth', $width );
                    $this->setMeta('resizeHeight', $height );
                    $this->setMeta('resize', true);
-									 $resizeType = ($settings->resizeType == 1) ? __('Cover', 'shortpixel-image-optimiser') : __('Contain', 'shortpixel-image-optimiser');
+									 $resizeType = ($settings->resizeType == 1) ? __('Cover', 'shortpixel-upscale-image') : __('Contain', 'shortpixel-upscale-image');
 									 $this->setMeta('resizeType', $resizeType);
                }
                else
@@ -855,7 +859,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						$response = array(
 								'is_error' => true,
 								'issue_type' => ResponseController::ISSUE_BACKUP_CREATE,
-								'message' => __('Could not copy optimized image from temporary files. Check file permissions', 'shortpixel-image-optimiser'),
+								'message' => __('Could not copy optimized image from temporary files. Check file permissions', 'shortpixel-upscale-image'),
 								'fileName' => $this->getFileName(),
 						);
 
@@ -950,7 +954,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						  $response = array(
 									'is_error' => true,
 									'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-									'message' => __('This file can\'t be restored, not writable', 'shortpixel-image-optimiser'),
+									'message' => __('This file can\'t be restored, not writable', 'shortpixel-upscale-image'),
 
 							);
 							ResponseController::addData($this->get('id'), $response);
@@ -963,7 +967,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 							$response = array(
 									'is_error' => true,
 									'issue_type' => ResponseController::ISSUE_DIRECTORY_NOTWRITABLE,
-									'message' => __('This file can\'t be restored, directory is not writable', 'shortpixel-image-optimiser'),
+									'message' => __('This file can\'t be restored, directory is not writable', 'shortpixel-upscale-image'),
 
 							);
 							ResponseController::addData($this->get('id'), $response);
@@ -977,7 +981,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						$response = array(
 								'is_error' => true,
 								'issue_type' => ResponseController::ISSUE_BACKUP_EXISTS,
-								'message' => __('Can\'t restore, backup file doesn\'t exist', 'shortpixel-image-optimiser'),
+								'message' => __('Can\'t restore, backup file doesn\'t exist', 'shortpixel-upscale-image'),
 
 						);
 						ResponseController::addData($this->get('id'), $response);
@@ -1014,7 +1018,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						$response = array(
 								'is_error' => true,
 								'issue_type' => ResponseController::ISSUE_BACKUP_EXISTS,
-								'message' => __('BackupFile not readable. Check file and/or file permissions', 'shortpixel-image-optimiser'),
+								'message' => __('BackupFile not readable. Check file and/or file permissions', 'shortpixel-upscale-image'),
 						);
 						ResponseController::addData($this->get('id'), $response);
 
@@ -1026,7 +1030,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						 $response = array(
 								 'is_error' => true,
 								 'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-								 'message' => __('The backup file is not writable. Check file and/or file permissions', 'shortpixel-image-optimiser'),
+								 'message' => __('The backup file is not writable. Check file and/or file permissions', 'shortpixel-upscale-image'),
 
 						 );
 						 ResponseController::addData($this->get('id'), $response);
@@ -1039,7 +1043,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						 $response = array(
 								 'is_error' => true,
 								 'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-								 'message' => __('Target file not writable. Check file permissions', 'shortpixel-image-optimiser'),
+								 'message' => __('Target file not writable. Check file permissions', 'shortpixel-upscale-image'),
 
 						 );
 						 ResponseController::addData($this->get('id'), $response);
@@ -1055,7 +1059,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 					$response = array(
 							'is_error' => true,
 							'issue_type' => ResponseController::ISSUE_FILE_NOTWRITABLE,
-							'message' => __('Moving Backup file failed', 'shortpixel-image-optimiser'),
+							'message' => __('Moving Backup file failed', 'shortpixel-upscale-image'),
 
 					);
 					ResponseController::addData($this->get('id'), $response);
@@ -1454,7 +1458,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
                 Log::addWarn('Backup Failed, File is restorable, try to recover. ' . $this->getFullPath() );
                 $this->restore();
 
-								$this->error_message = __('Backup already exists, but image is recoverable and the plugin will rollback. Will retry to optimize again. ', 'shortpixel-image-optimiser');
+								$this->error_message = __('Backup already exists, but image is recoverable and the plugin will rollback. Will retry to optimize again. ', 'shortpixel-upscale-image');
             }
 /*						elseif ($backupFile->getFileSize() > $this->getFileSize() && ! $backupFile->is_virtual() ) // Where there is a backup and it's bigger, assume some hickup, but there is backup so hooray
 						{
@@ -1463,11 +1467,11 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
 						} */
             else
             {
-              $this->preventNextTry(__('Fatal Issue: The Backup file already exists. The backup seems not restorable, or the original file is bigger than the backup, indicating an error.', 'shortpixel-image-optimiser'));
+              $this->preventNextTry(__('Fatal Issue: The Backup file already exists. The backup seems not restorable, or the original file is bigger than the backup, indicating an error.', 'shortpixel-upscale-image'));
 
               Log::addError('The backup file already exists and it is bigger than the original file. BackupFile Size: ' . $backupFile->getFileSize() . ' This Filesize: ' . $this->getFileSize(), $this->fullpath);
 
-              $this->error_message = __('Backup not possible: it already exists and the original file is bigger.', 'shortpixel-image-optimiser');
+              $this->error_message = __('Backup not possible: it already exists and the original file is bigger.', 'shortpixel-upscale-image');
             }
 
             return false;
@@ -1488,7 +1492,7 @@ abstract class ImageModel extends \SPUI\Model\File\FileModel
        if (! $directory)
        {
           Log::addWarn('Could not create Backup Directory for ' . $this->getFullPath());
-          $this->error_message = __('Could not create backup Directory', 'shortpixel-image-optimiser');
+          $this->error_message = __('Could not create backup Directory', 'shortpixel-upscale-image');
           return false;
        }
 

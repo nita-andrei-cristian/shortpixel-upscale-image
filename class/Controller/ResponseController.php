@@ -180,21 +180,24 @@ class ResponseController
 			{
 				 case self::ISSUE_BACKUP_CREATE:
 				 		if (self::$screenOutput < self::OUTPUT_CLI) // all but cli .
-				 			$text .= sprintf(__(' - file %s', 'shortpixel-image-optimiser'), $item->fileName);
+				 			/* translators: %s: Filename related to the backup creation error. */
+				 			$text .= sprintf(__(' - file %s', 'shortpixel-upscale-image'), $item->fileName);
 				 break;
 			}
 
 			switch($item->fileStatus)
 			{
 				  case ImageModel::FILE_STATUS_ERROR:
-							$text .= sprintf(__('( %s %d ) ', 'shortpixel-image-optimizer'), (strtolower($item->item_type) == 'media') ?  __('Attachment ID ') : __('Custom # '), $item->item_id);
+							/* translators: 1: Item type label such as "Attachment ID" or "Custom #". 2: Numeric queue item ID. */
+							$text .= sprintf(__('( %1$s %2$d ) ', 'shortpixel-upscale-image'), (strtolower($item->item_type) == 'media') ?  __('Attachment ID ', 'shortpixel-upscale-image') : __('Custom # ', 'shortpixel-upscale-image'), $item->item_id);
 					break;
 			}
 
 			switch($item->apiStatus)
 			{
 				  case RequestManager::STATUS_FAIL:
-							$text .= sprintf(__('( %s %d ) ', 'shortpixel-image-optimizer'), (strtolower($item->item_type) == 'media') ?  __('Attachment ID ') : __('Custom # '), $item->item_id);
+							/* translators: 1: Item type label such as "Attachment ID" or "Custom #". 2: Numeric queue item ID. */
+							$text .= sprintf(__('( %1$s %2$d ) ', 'shortpixel-upscale-image'), (strtolower($item->item_type) == 'media') ?  __('Attachment ID ', 'shortpixel-upscale-image') : __('Custom # ', 'shortpixel-upscale-image'), $item->item_id);
 					break;
 			}
 
@@ -212,17 +215,19 @@ class ResponseController
 
 			 if (! $item->is_done && $item->apiStatus == ApiController::STATUS_UNCHANGED)
 				{
-					 	$text = sprintf(__('Upscaling - waiting for results (%d/%d)','shortpixel-image-optimiser'), $item->images_done, $item->images_total);
+					 	/* translators: 1: Number of processed images. 2: Total images. */
+					 	$text = sprintf(__('Upscaling - waiting for results (%1$d/%2$d)','shortpixel-upscale-image'), $item->images_done, $item->images_total);
 				}
 				if (! $item->is_done && $item->apiStatus == ApiController::STATUS_ENQUEUED)
 				{
-				  	$text = sprintf(__('Upscaling - Item has been sent to ShortPixel (%d/%d)','shortpixel-image-optimiser'), $item->images_done, $item->images_total);
+				  	/* translators: 1: Number of processed images. 2: Total images. */
+				  	$text = sprintf(__('Upscaling - Item has been sent to ShortPixel (%1$d/%2$d)','shortpixel-upscale-image'), $item->images_done, $item->images_total);
 				}
 
 				switch($item->apiStatus)
 				{
 					 case RequestManager::STATUS_SUCCESS:
-					 	$text = __('Item successfully optimized', 'shortpixel-image-optimiser');
+					 	$text = __('Item successfully optimized', 'shortpixel-upscale-image');
 					 break;
 
 					 case RequestManager::STATUS_FAIL:
@@ -232,9 +237,10 @@ class ResponseController
 						 }
 					 break;
            case RequestManager::STATUS_NOT_API:
-              $action = (property_exists($item, 'action')) ? ucfirst($item->action) : __('Action', 'shortpixel-image-optimiser');
+              $action = (property_exists($item, 'action')) ? ucfirst($item->action) : __('Action', 'shortpixel-upscale-image');
               $filename = (property_exists($item, 'fileName')) ? $item->fileName : '';
-              $text = sprintf(__('%s completed for %s'), $action, $item->fileName);
+              /* translators: 1: Completed action label. 2: Filename. */
+              $text = sprintf(__('%1$s completed for %2$s', 'shortpixel-upscale-image'), $action, $item->fileName);
            break;
 				}
 
@@ -242,7 +248,8 @@ class ResponseController
 				{
 					 $text = '(' . self::$queueName . ' : ' . $item->fileName . ') ' . $text . ' ';
            if ($item->tries > 0)
-					      $text .= sprintf(__('(cycle %d)', 'shortpixel-image-optimiser'), intval($item->tries) );
+					      /* translators: %d: Retry cycle count. */
+					      $text .= sprintf(__('(cycle %d)', 'shortpixel-upscale-image'), intval($item->tries) );
 				}
 				return $text;
 		}

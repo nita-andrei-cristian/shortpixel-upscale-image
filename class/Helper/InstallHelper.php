@@ -64,9 +64,8 @@ class InstallHelper
 		if ($log->exists())
 			$log->delete();
 
-		global $wpdb;
-		$sql = "delete from " . $wpdb->options . " where option_name like '%_transient_shortpixel%' or option_name like '%_transient_timeout_shortpixel%'";
-		$wpdb->query($sql); // remove transients.
+			global $wpdb;
+			$wpdb->query( "delete from {$wpdb->options} where option_name like '%_transient_shortpixel%' or option_name like '%_transient_timeout_shortpixel%'" ); // remove transients.
 
 		// saved in settings object, reset all stats.
 		StatsController::getInstance()->reset();
@@ -146,11 +145,14 @@ class InstallHelper
 	{
 		global $wpdb;
 		$tableName = $wpdb->prefix . $tableName;
-		$sql = $wpdb->prepare("
-		               SHOW TABLES LIKE %s
-		               ", $tableName);
-
-		$result = intval($wpdb->query($sql));
+			$result = intval(
+				$wpdb->query(
+					$wpdb->prepare(
+						"SHOW TABLES LIKE %s",
+						$tableName
+					)
+				)
+			);
 
 		if ($result == 0)
 			return false;
@@ -193,44 +195,44 @@ class InstallHelper
 			)
 		);
 
-		foreach ($definitions as $raw_tableName => $indexes) {
-			$tableName = $wpdb->prefix . $raw_tableName;
-			foreach ($indexes as $indexName => $fieldName) {
-				// Check exists
-				$sql = 'SHOW INDEX FROM ' . $tableName . ' WHERE Key_name = %s';
-				$sql = $wpdb->prepare($sql, $indexName);
+			foreach ($definitions as $raw_tableName => $indexes) {
+				$tableName = esc_sql( $wpdb->prefix . $raw_tableName );
+				foreach ($indexes as $indexName => $fieldName) {
+					$indexName = preg_replace( '/[^A-Za-z0-9_]/', '', $indexName );
+					$fieldName = preg_replace( '/[^A-Za-z0-9_]/', '', $fieldName );
+					// Check exists
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+					$res = $wpdb->get_row(
+						$wpdb->prepare(
+							"SHOW INDEX FROM {$tableName} WHERE Key_name = %s",
+							$indexName
+						)
+					);
 
-				$res = $wpdb->get_row($sql);
-
-				if (is_null($res)) {
-					// can't prepare for those, also not any user data here.
-					$sql = 'CREATE INDEX ' . $indexName . ' ON ' . $tableName . ' ( ' . $fieldName . ')';
-					$res = $wpdb->query($sql);
+					if (is_null($res)) {
+						// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Schema query uses sanitized identifiers and plugin-owned table names.
+						$res = $wpdb->query( "CREATE INDEX {$indexName} ON {$tableName} ( {$fieldName} )" );
+					}
 				}
 			}
-		}
 	}
 
 	private static function removeTables()
 	{
-		global $wpdb;
-		if (self::checkTableExists('shortpixel_folders') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_folders';
-			$wpdb->query($sql);
+			global $wpdb;
+			if (self::checkTableExists('shortpixel_folders') === true) {
+				$wpdb->query( 'DROP TABLE ' . esc_sql( $wpdb->prefix . 'shortpixel_folders' ) );
+			}
+			if (self::checkTableExists('shortpixel_meta') === true) {
+				$wpdb->query( 'DROP TABLE ' . esc_sql( $wpdb->prefix . 'shortpixel_meta' ) );
+			}
+			if (self::checkTableExists('shortpixel_postmeta') === true) {
+				$wpdb->query( 'DROP TABLE ' . esc_sql( $wpdb->prefix . 'shortpixel_postmeta' ) );
+			}
+			if (self::checkTableExists('shortpixel_aipostmeta') === true) {
+				$wpdb->query( 'DROP TABLE ' . esc_sql( $wpdb->prefix . 'shortpixel_aipostmeta' ) );
+			}
 		}
-		if (self::checkTableExists('shortpixel_meta') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_meta';
-			$wpdb->query($sql);
-		}
-		if (self::checkTableExists('shortpixel_postmeta') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_postmeta';
-			$wpdb->query($sql);
-		}
-		if (self::checkTableExists('shortpixel_aipostmeta') === true) {
-			$sql = 'DROP TABLE  ' . $wpdb->prefix . 'shortpixel_aipostmeta';
-			$wpdb->query($sql);
-		}
-	}
 
 	private static function getFolderTableSQL()
 	{

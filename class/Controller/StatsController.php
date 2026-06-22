@@ -77,14 +77,18 @@ class StatsController extends \SPUI\Controller
       {
          return $item->getValue();
       }
-      else {
+	      else {
 
-          global $wpdb;
-          $sql = 'select round(AVG(100-(compressed_size / original_size * 100))) from ' . $wpdb->prefix  . 'shortpixel_postmeta 
-                  where status = %d and compressed_size > 0 and original_size > 0 order by id desc limit 1000';
-          $sql = $wpdb->prepare($sql, ImageModel::FILE_STATUS_SUCCESS);
-
-          $result = $wpdb->get_var($sql);
+	          global $wpdb;
+					$postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
+	          // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+	          $result = $wpdb->get_var(
+							$wpdb->prepare(
+								"select round(AVG(100-(compressed_size / original_size * 100))) from {$postmeta_table}
+	                  where status = %d and compressed_size > 0 and original_size > 0 order by id desc limit 1000",
+								ImageModel::FILE_STATUS_SUCCESS
+							)
+						);
 
           if (is_numeric($result) && $result > 0)
           {

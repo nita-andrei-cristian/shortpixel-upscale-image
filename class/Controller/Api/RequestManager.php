@@ -115,19 +115,21 @@ abstract class RequestManager
 
             if (strpos($errorMessage, 'cURL error 28') !== false)
             {
-               $errorMessage = __('Timeout fetching data from ShortPixel servers. If persistent, check server connection / whitelist', 'shortpixel-image-optimiser');
+               $errorMessage = __('Timeout fetching data from ShortPixel servers. If persistent, check server connection / whitelist', 'shortpixel-upscale-image');
             }
-            if (strpos($errorMessage, 'cURL error 60') !== false)
-            {
-               $errorMessage = __('Server error, please contact support ( ' . $errorMessage. ')');
-               $is_fatal = true; 
+	            if (strpos($errorMessage, 'cURL error 60') !== false)
+	            {
+	               /* translators: %s is the cURL error message. */
+	               $errorMessage = sprintf(__('Server error, please contact support ( %s )', 'shortpixel-upscale-image'), $errorMessage);
+	               $is_fatal = true; 
 
             }
-            if (strpos($errorMessage, 'cURL error 6') !== false)
-            {
-              $errorMessage = __('Host error, please check configuration or contact support ( ' . $errorMessage. ')');
-              $is_fatal = true; 
-            }
+	            if (strpos($errorMessage, 'cURL error 6') !== false)
+	            {
+	              /* translators: %s is the cURL error message. */
+	              $errorMessage = sprintf(__('Host error, please check configuration or contact support ( %s )', 'shortpixel-upscale-image'), $errorMessage);
+	              $is_fatal = true; 
+	            }
 
             if (true === $is_fatal)
             {
@@ -179,7 +181,8 @@ abstract class RequestManager
 
        $flags = $qItem->data()->flags;
 			 $flags = implode("|", $flags);
-       $text = sprintf(__('New item #%d sent for processing ( %d URLS %s)  ', 'shortpixel-image-optimiser'), $qItem->item_id, $urls, $flags );
+				 /* translators: 1: queue item ID, 2: number of URLs, 3: pipe-separated flags. */
+	       $text = sprintf(__('New item #%1$d sent for processing ( %2$d URLS %3$s)  ', 'shortpixel-upscale-image'), $qItem->item_id, $urls, $flags );
 
        $qItem->addResult($this->returnOK(self::STATUS_ENQUEUED, $text ));
 		}

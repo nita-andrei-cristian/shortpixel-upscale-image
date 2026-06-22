@@ -82,9 +82,9 @@ class OtherMediaController extends \SPUI\Controller
         return $this->folderIDCache;
 
       global $wpdb;
-
-      $sql = 'SELECT id from ' . $wpdb->prefix  .'shortpixel_folders where status <> -1';
-      $results = $wpdb->get_col($sql);
+      $folder_table = esc_sql( $wpdb->prefix . 'shortpixel_folders' );
+      // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped.
+      $results = $wpdb->get_col("SELECT id from {$folder_table} where status <> -1");
 
       $this->folderIDCache = $results;
       return $this->folderIDCache;
@@ -93,9 +93,9 @@ class OtherMediaController extends \SPUI\Controller
 		public function getHiddenDirectoryIDS()
 		{
       global $wpdb;
-
-      $sql = 'SELECT id from ' . $wpdb->prefix  .'shortpixel_folders where status = -1';
-      $results = $wpdb->get_col($sql);
+      $folder_table = esc_sql( $wpdb->prefix . 'shortpixel_folders' );
+      // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped.
+      $results = $wpdb->get_col("SELECT id from {$folder_table} where status = -1");
 
 			return $results;
 		}
@@ -121,10 +121,13 @@ class OtherMediaController extends \SPUI\Controller
     public function getCustomImageByPath($path)
     {
          global $wpdb;
-         $sql = 'SELECT id FROM ' . $this->getMetaTable() . ' WHERE path = %s';
-         $sql = $wpdb->prepare($sql, $path);
-
-         $custom_id = $wpdb->get_var($sql);
+         $meta_table = esc_sql( $this->getMetaTable() );
+         $custom_id = $wpdb->get_var(
+           $wpdb->prepare(
+             "SELECT id FROM {$meta_table} WHERE path = %s",
+             $path
+           )
+         );
          $fs = \wpSPUI()->filesystem();
 
          if (! is_null($custom_id))
@@ -144,12 +147,12 @@ class OtherMediaController extends \SPUI\Controller
 			if (InstallHelper::checkTableExists('shortpixel_meta') === false)
 				$count = 0;
 			else
-			{
-				global $wpdb;
-
-				$sql = 'SELECT count(id) as count from ' . $wpdb->prefix . 'shortpixel_meta';
-        $count = $wpdb->get_var($sql);
-			 }
+				{
+					global $wpdb;
+					$meta_table = esc_sql( $wpdb->prefix . 'shortpixel_meta' );
+	        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped.
+	        $count = $wpdb->get_var("SELECT count(id) as count from {$meta_table}");
+				 }
        if ($count == 0)
         $result = false;
       else
@@ -287,16 +290,19 @@ class OtherMediaController extends \SPUI\Controller
 
 				$args = wp_parse_args($args, $defaults);
 
-        $args['interval'] = apply_filters('spui/othermedia/refreshfolder_interval', $args['interval'], $args);
-				global $wpdb;
+	        $args['interval'] = apply_filters('spui/othermedia/refreshfolder_interval', $args['interval'], $args);
+					global $wpdb;
 
-				$folderTable = $this->getFolderTable();
+					$folderTable = esc_sql( $this->getFolderTable() );
 
-				$tsInterval = UtilHelper::timestampToDB(time() - $args['interval']);
-				$sql = ' SELECT id FROM ' . $folderTable . '	WHERE status >= 0 AND (ts_checked <= %s OR ts_checked IS NULL) order by ts_checked ASC';
-
-				$sql = $wpdb->prepare($sql, $tsInterval);
-				$folder_id = $wpdb->get_var($sql);
+					$tsInterval = UtilHelper::timestampToDB(time() - $args['interval']);
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped, query is prepared here.
+					$folder_id = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT id FROM {$folderTable} WHERE status >= 0 AND (ts_checked <= %s OR ts_checked IS NULL) order by ts_checked ASC",
+							$tsInterval
+						)
+					);
 
 				if (is_null($folder_id))
 				{
@@ -329,43 +335,44 @@ class OtherMediaController extends \SPUI\Controller
 
 				if ($old_count == $new_count)
 				{
-					 $message = __('No new files added', 'shortpixel-image-optimiser');
+					 $message = __('No new files added', 'shortpixel-upscale-image');
 				}
-				elseif ($old_count < $new_count)
-				{
-					$message = sprintf(__(' %s files added', 'shortpixel-image-optimiser'), ($new_count-$old_count));
-				}
-				else {
-					$message = sprintf(__(' %s files removed', 'shortpixel-image-optimiser'), ($old_count-$new_count));
-				}
+					elseif ($old_count < $new_count)
+					{
+						/* translators: %s is the number of newly discovered files. */
+						$message = sprintf(__(' %s files added', 'shortpixel-upscale-image'), ($new_count-$old_count));
+					}
+					else {
+						/* translators: %s is the number of files removed from tracking. */
+						$message = sprintf(__(' %s files removed', 'shortpixel-upscale-image'), ($old_count-$new_count));
+					}
 
 				$return['message'] = $message;
 
 				return $return;
 		}
 
-		public function resetCheckedTimestamps()
-		{
-				global $wpdb;
-				$folderTable = $this->getFolderTable();
+			public function resetCheckedTimestamps()
+			{
+					global $wpdb;
+					$folderTable = esc_sql( $this->getFolderTable() );
+						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped.
+						$wpdb->query("UPDATE {$folderTable} set ts_checked = NULL");
 
-			  $sql = 'UPDATE ' . $folderTable . ' set ts_checked = NULL ';
-				$wpdb->query($sql);
-
-		}
+			}
 
 		/**
 		 * Function to clean the folders and meta from unused stuff
 		*/
-		protected function cleanUp()
-		{
-			 global $wpdb;
-			 $folderTable = $this->getFolderTable();
-			 $metaTable = $this->getMetaTable();
+			protected function cleanUp()
+			{
+				 global $wpdb;
+				 $folderTable = esc_sql( $this->getFolderTable() );
+				 $metaTable = esc_sql( $this->getMetaTable() );
 
-			 // Remove folders that are removed, and have no images in MetaTable.
-			 $sql = " DELETE FROM $folderTable WHERE status < 0 AND id NOT IN ( SELECT DISTINCT folder_id FROM $metaTable)";
-			 $result = $wpdb->query($sql);
+				 // Remove folders that are removed, and have no images in MetaTable.
+					 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names are plugin-owned and escaped.
+					 $result = $wpdb->query("DELETE FROM {$folderTable} WHERE status < 0 AND id NOT IN (SELECT DISTINCT folder_id FROM {$metaTable})");
 
 		}
 
@@ -426,7 +433,7 @@ class OtherMediaController extends \SPUI\Controller
       $error = array('is_error' => true, 'message' => '');
 
       if ( ! $this->userIsAllowed )  {
-          $error['message'] = __('You do not have sufficient permissions to access this page.','shortpixel-image-optimiser');
+          $error['message'] = __('You do not have sufficient permissions to access this page.','shortpixel-upscale-image');
           return $error;
       }
 
@@ -454,7 +461,7 @@ class OtherMediaController extends \SPUI\Controller
       $dirObj = $fs->getDirectory($path);
       if ($dirObj->getPath() !== $rootDirObj->getPath() && ! $dirObj->isSubFolderOf($rootDirObj))
       {
-        $error['message'] = __('This directory seems not part of WordPress', 'shortpixel-image-optimiser');
+        $error['message'] = __('This directory seems not part of WordPress', 'shortpixel-upscale-image');
         return $error;
       }
 
@@ -507,9 +514,9 @@ class OtherMediaController extends \SPUI\Controller
               }
 
           }
-          elseif ($_POST['dir'] == '/')
+	          elseif ($postDir === '/')
           {
-            $error['message'] = __('No Directories found that can be added to Custom Folders', 'shortpixel-image-optimiser');
+            $error['message'] = __('No Directories found that can be added to Custom Folders', 'shortpixel-upscale-image');
             return $error;
           }
           else {
@@ -552,13 +559,9 @@ class OtherMediaController extends \SPUI\Controller
       }
       $fs =  \wpSPUI()->fileSystem();
 
-      if ($args['only_count'])
-        $selector = 'count(id) as id';
-      else
-        $selector = '*';
-
-      $sql = "SELECT " . $selector . "  FROM " . $wpdb->prefix . "shortpixel_folders WHERE 1=1 ";
-      $prepare = array();
+	      $folder_table = esc_sql( $wpdb->prefix . 'shortpixel_folders' );
+	      $sql = "SELECT * FROM {$folder_table} WHERE 1=1 ";
+	      $prepare = array();
     //  $mask = array();
 
       if ($args['id'] !== false && $args['id'] > 0)
@@ -578,13 +581,33 @@ class OtherMediaController extends \SPUI\Controller
           $sql .= " AND status <> -1";
       }
 
-      if (count($prepare) > 0)
-        $sql = $wpdb->prepare($sql, $prepare);
-
-      if ($args['only_count'])
-        $results = intval($wpdb->get_var($sql));
-      else
-        $results = $wpdb->get_results($sql);
+	      if ($args['only_count'])
+	      {
+	      	$count_sql = str_replace('SELECT *', 'SELECT count(id) as id', $sql);
+	      	if (count($prepare) > 0)
+	      	{
+		      		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and remaining fragments are controller-owned.
+		      		$results = intval($wpdb->get_var($wpdb->prepare($count_sql, $prepare)));
+	      	}
+	      	else
+	      	{
+		      		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses controller-owned fragments only.
+		      		$results = intval($wpdb->get_var($count_sql));
+	      	}
+	      }
+	      else
+	      {
+	      	if (count($prepare) > 0)
+	      	{
+		      		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and remaining fragments are controller-owned.
+		      		$results = $wpdb->get_results($wpdb->prepare($sql, $prepare));
+	      	}
+	      	else
+	      	{
+		      		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses controller-owned fragments only.
+		      		$results = $wpdb->get_results($sql);
+	      	}
+	      }
 
 
       return $results;

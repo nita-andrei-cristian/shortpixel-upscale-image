@@ -50,12 +50,14 @@ class ApiNotice extends \SPUI\Model\AdminNoticeModel
     return false;
   }
 
-	protected function getMessage()
+		protected function getMessage()
 	{
-		$message = "<p>" . __('To start the upscaling process, you need to validate your API key on the '
-						. '<a href="options-general.php?page=shortpixel-upscale-settings">Shortpixel Image Upscale</a> page in your WordPress admin.','shortpixel-image-optimiser') . "
-		</p>
-		<p>" .  __('If you do not have an API key yet, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
+		$message = '<p>' . sprintf(
+				/* translators: 1: opening settings link, 2: closing settings link. */
+				__( 'To start the upscaling process, you need to validate your API key on the %1$sShortpixel Image Upscale%2$s page in your WordPress admin.', 'shortpixel-upscale-image' ),
+				'<a href="options-general.php?page=shortpixel-upscale-settings">',
+				'</a>'
+			) . '</p><p>' . __( 'If you do not have an API key yet, just fill out the form and a key will be created.', 'shortpixel-upscale-image' ) . '</p>';
 
 		return $message;
 	}

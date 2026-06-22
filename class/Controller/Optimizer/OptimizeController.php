@@ -154,7 +154,7 @@ class OptimizeController extends OptimizerBase
 
       $qItem->addResult([
         'apiStatus' => RequestManager::STATUS_UNCHANGED,
-        'message' => __('Item is waiting (blocked)', 'shortpixel-image-optimiser'),
+        'message' => __('Item is waiting (blocked)', 'shortpixel-upscale-image'),
       ]);
       Log::addWarn('Encountered blocked item, processing success? ', $item_id);
     } else {
@@ -334,7 +334,7 @@ class OptimizeController extends OptimizerBase
           // Nothing here.
         } else {
           Log::addWarn('Api returns Success, but result has no files', $qItem->result());
-          $message = sprintf(__('Image API returned succes, but without images', 'shortpixel-image-optimiser'), $item_id);
+          $message = sprintf(__('Image API returned succes, but without images', 'shortpixel-upscale-image'), $item_id);
           ResponseController::addData($item_id, 'message', $message);
           $qItem->addResult(['is_error' => true, 'apiStatus' => RequestManager::STATUS_FAIL]);
         }
@@ -391,7 +391,7 @@ class OptimizeController extends OptimizerBase
         }
 
         if ($retry_limit == $qItem->data()->tries || $retry_limit == ($qItem->data()->tries - 1)) {
-          $message = __('Retry Limit reached. Image might be too large, limit too low or network issues.  ', 'shortpixel-image-optimiser');
+          $message = __('Retry Limit reached. Image might be too large, limit too low or network issues.  ', 'shortpixel-upscale-image');
 
           ResponseController::addData($item_id, 'message', $message);
           ResponseController::addData($item_id, 'is_error', true);
@@ -449,7 +449,15 @@ class OptimizeController extends OptimizerBase
            $fileArray['type'] = $tmpFile->getMime();  // @todo 
            $fileArray['size'] = $tmpFile->getFileSize(); 
 
-           $new_attach_id = media_handle_sideload($fileArray, $attached_post_id, $newPostTitle);
+           // SPUI: suppress the auto-optimize upload hooks while WordPress generates the new
+           // attachment's metadata, otherwise the upscaled copy gets queued and upscaled again
+           // (endless _upscale_2x_upscale_2x chain). The generated copy is the final result.
+           \SPUI\Controller\AdminController::$suppressAutoUpscale = true;
+           try {
+              $new_attach_id = media_handle_sideload($fileArray, $attached_post_id, $newPostTitle);
+           } finally {
+              \SPUI\Controller\AdminController::$suppressAutoUpscale = false;
+           }
 
            // SPUI: mark both the source and the generated attachment as scaled.
            if ( ! is_wp_error($new_attach_id) ) {
@@ -644,10 +652,10 @@ class OptimizeController extends OptimizerBase
     if (is_object($converter) && $converter->isConverterFor('api')) {
       $optimizedResult = $converter->handleConverted($successData);
       if (true === $optimizedResult) {
-        ResponseController::addData($item_id, 'message', __('File Converted', 'shortpixel-image-optimiser'));
+        ResponseController::addData($item_id, 'message', __('File Converted', 'shortpixel-upscale-image'));
         $status = ApiController::STATUS_CONVERTED;
       } else {
-        ResponseController::addData($item_id, 'message', __('File conversion failed.', 'shortpixel-image-optimiser'));
+        ResponseController::addData($item_id, 'message', __('File conversion failed.', 'shortpixel-upscale-image'));
         $q->itemFailed($qItem, true);
         Log::addError('File conversion failed with data ', $successData);
         $status = ApiController::STATUS_FAIL;

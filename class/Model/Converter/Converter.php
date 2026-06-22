@@ -184,7 +184,7 @@ abstract class Converter
 
 		if (! $fileDir->is_writable()) {
 			Log::addWarn('Replacement path for PNG not writable ' . $newPath);
-			$msg = __('Replacement path for PNG not writable', 'shortpixel-image-optimiser');
+			$msg = __('Replacement path for PNG not writable', 'shortpixel-upscale-image');
 			ResponseController::addData($image_id, 'message', $msg);
 
 			return false;

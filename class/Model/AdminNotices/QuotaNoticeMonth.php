@@ -52,10 +52,10 @@ class QuotaNoticeMonth extends \SPUI\Model\AdminNoticeModel
 		$month_total = $quotaData->monthly->total;// $this->getData('month_total');
 		$onetime_remaining = $quotaData->onetime->remaining; //$this->getData('onetime_remaining'); */
 
-		$message = '<p>' . sprintf(__("You add an average of %s %d images and thumbnails %s to your Media Library every month and you have <strong>a plan of %d images/month (and %d one-time images)</strong>.%s"
-					. " You may need to upgrade your plan to have all your images optimized.", 'shortpixel-image-optimiser'), '<strong>', $average, '</strong>', $month_total, $onetime_remaining, '<br>') . '</p>';
+		/* translators: 1: Opening strong tag. 2: Average number of images added monthly. 3: Closing strong tag. 4: Monthly plan limit. 5: Remaining one-time credits. 6: Line break tag. */
+		$message = '<p>' . sprintf( __( 'You add an average of %1$s %2$d images and thumbnails %3$s to your Media Library every month and you have <strong>a plan of %4$d images/month (and %5$d one-time images)</strong>.%6$s You may need to upgrade your plan to have all your images optimized.', 'shortpixel-upscale-image' ), '<strong>', $average, '</strong>', $month_total, $onetime_remaining, '<br>' ) . '</p>';
 
-		$message .= '  <button class="button button-primary" id="shortpixel-upgrade-advice" onclick="SPUI.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>';
+		$message .= '  <button class="button button-primary" id="shortpixel-upgrade-advice" onclick="SPUI.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-upscale-image') . '</strong></button>';
 
 		return $message;
 	}

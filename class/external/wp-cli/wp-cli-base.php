@@ -103,7 +103,7 @@ class SpioCommandBase
 		$type = isset($assoc['type']) ? sanitize_text_field($assoc['type']) : 'media';
 
 		if (! isset($args[0])) {
-			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-image-optimiser'));
+			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-upscale-image'));
 			return;
 		}
 		$id = intval($args[0]);
@@ -112,7 +112,7 @@ class SpioCommandBase
 		$imageObj = $fs->getImage($id, $type);
 
 		if ($imageObj === false) {
-			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-image-optimiser'));
+			\WP_CLI::Error(__('Image object not found / non-existing in database by this ID', 'shortpixel-upscale-image'));
 		}
 
 		$result = $controller->addItemtoQueue($imageObj);
@@ -124,14 +124,15 @@ class SpioCommandBase
 			$message = $result->message;
 		}
 		if ($result->is_error) {
-			\WP_CLI::Error(sprintf(__("while adding item: %s", 'shortpixel_image_optimiser'), $message));
+			// translators: %s: Queue error message while adding an item.
+			\WP_CLI::Error(sprintf(__("while adding item: %s", 'shortpixel-upscale-image'), $message));
 		} else {
 			\WP_CLI::Success($message);
 
 			if (! isset($assoc['halt'])) {
 				$this->run($args, $assoc);
 			} else {
-				\WP_CLI::Line(__('You can upscale images via the run command', 'shortpixel-image-optimiser'));
+				\WP_CLI::Line(__('You can upscale images via the run command', 'shortpixel-upscale-image'));
 			}
 		}
 
@@ -358,7 +359,7 @@ class SpioCommandBase
 				}
 
 				$outputTable[] = array('name' => ' ', 'improvement' => ' ');
-				$outputTable[] = array('name' => __('Total', 'shortpixel-image-optimiser'), 'improvement' => $improvements['totalpercentage'] . '%');
+				$outputTable[] = array('name' => __('Total', 'shortpixel-upscale-image'), 'improvement' => $improvements['totalpercentage'] . '%');
 
 				\WP_CLI\Utils\format_items('table', $outputTable, array('name', 'improvement'));
 
@@ -432,17 +433,17 @@ class SpioCommandBase
 				'fatal errors' => $stats->fatal_errors,
 				'done' => $stats->done,
 				'total' => $stats->total,
-				'preparing' => ($stats->is_preparing) ? __('Yes', 'shortpixel-image-optimiser') : __('No', 'shortpixel-image-optimiser'),
-				'running' => ($stats->is_running) ? __('Yes', 'shortpixel-image-optimiser') : __('No', 'shortpixel-image-optimiser'),
-				'finished' => ($stats->is_finished) ? __('Yes', 'shortpixel-image-optimiser') : __('No', 'shortpixel-image-optimiser'),
+				'preparing' => ($stats->is_preparing) ? __('Yes', 'shortpixel-upscale-image') : __('No', 'shortpixel-upscale-image'),
+				'running' => ($stats->is_running) ? __('Yes', 'shortpixel-upscale-image') : __('No', 'shortpixel-upscale-image'),
+				'finished' => ($stats->is_finished) ? __('Yes', 'shortpixel-upscale-image') : __('No', 'shortpixel-upscale-image'),
 			);
 
-			$items[] = $item;
+				$items[] = $item;
 
-			if (isset($assoc['show-debug'])) {
-				print_r($stats);
+				if (isset($assoc['show-debug'])) {
+					\WP_CLI::debug( wp_json_encode( $stats ) );
+				}
 			}
-		}
 
 		\WP_CLI::Line("--- Current Status ---");
 		\WP_CLI\Utils\format_items('table', $items, $fields);
@@ -503,7 +504,7 @@ class SpioCommandBase
 			$queue->resetQueue();
 		}
 
-		\WP_CLI::Success(__('Queue(s) cleared', 'shortpixel-image-optimiser'));
+		\WP_CLI::Success(__('Queue(s) cleared', 'shortpixel-upscale-image'));
 	}
 
 
@@ -517,14 +518,16 @@ class SpioCommandBase
 			if ($colored) {
 				$values = array('%g', '%n');
 			}
-			$res =  vsprintf(__('%sYes%s', 'shortpixel-image-optimiser'), $values);
+			// translators: 1: Opening terminal color code. 2: Closing terminal color code.
+			$res =  vsprintf(__('%1$sYes%2$s', 'shortpixel-upscale-image'), $values);
 			if ($colored)
 				$res = \WP_CLI::colorize($res);
 		} else {
 			if ($colored) {
 				$values = array('%r', '');
 			}
-			$res = vsprintf(__('%sNo%s', 'shortpixel-image-optimiser'), $values);
+			// translators: 1: Opening terminal color code. 2: Closing terminal color code.
+			$res = vsprintf(__('%1$sNo%2$s', 'shortpixel-upscale-image'), $values);
 			if ($colored)
 				$res = \WP_CLI::colorize($res);
 		}

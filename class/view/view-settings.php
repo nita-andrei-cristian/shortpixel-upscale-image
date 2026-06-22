@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <header>
   <h1>
-      <?php echo UIHelper::getIcon('res/images/illustration/logo_settings.svg'); ?>
+	      <?php echo wp_kses_post( UIHelper::getIcon('res/images/illustration/logo_settings.svg') ); ?>
   </h1>
   <div class='top-buttons'>
     <?php if ( !$view->key->hide_api_key ) { ?>
@@ -27,30 +27,30 @@ if ( ! defined( 'ABSPATH' ) ) {
   </div>
 </header>
 
-  <input type='checkbox' name='heavy_features' value='1' <?php echo ($this->disable_heavy_features) ? 'checked' : '' ?> class='shortpixel-hide' />
+	  <input type='checkbox' name='heavy_features' value='1' <?php echo ( $this->disable_heavy_features ) ? 'checked' : ''; ?> class='shortpixel-hide' />
 
 <article class='spui-settings shortpixel-settings'>
   <label class='mobile-menu closed'>
-    <span class='open'><?php echo UIHelper::getIcon('res/images/icon/accordion.svg'); ?></span>
-    <span class='close'><?php echo UIHelper::getIcon('res/images/icon/close.svg'); ?></span>
+	    <span class='open'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/accordion.svg') ); ?></span>
+	    <span class='close'><?php echo wp_kses_post( UiHelper::getIcon('res/images/icon/close.svg') ); ?></span>
     <input type='checkbox'>
   </label>
 
   <menu>
     <ul>
       <li>
-        <?php echo $this->settingLink([
-          'part' => 'optimisation',
-          'title' => __('Image Upscaling', 'shortpixel-upscale-image'),
-          'icon' => 'shortpixel-icon optimization'
-        ]); ?>
+	        <?php echo wp_kses_post( $this->settingLink([
+	          'part' => 'optimisation',
+	          'title' => __('Image Upscaling', 'shortpixel-upscale-image'),
+	          'icon' => 'shortpixel-icon optimization'
+	        ]) ); ?>
       </li>
       <li>
-        <?php echo $this->settingLink([
-          'part' => 'help',
-          'title' => __('Help Center', 'shortpixel-upscale-image'),
-          'icon' => 'shortpixel-icon help-circle'
-        ]); ?>
+	        <?php echo wp_kses_post( $this->settingLink([
+	          'part' => 'help',
+	          'title' => __('Help Center', 'shortpixel-upscale-image'),
+	          'icon' => 'shortpixel-icon help-circle'
+	        ]) ); ?>
       </li>
     </ul>
   </menu>

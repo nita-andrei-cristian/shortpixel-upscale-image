@@ -99,7 +99,7 @@ class DownloadHelper
           {
               Log::addError('Tmp File zero bytes', $tempFile); 
               ResponseController::addData('is_error', true);
-              Responsecontroller::addData('message', __('Temp file zero bytes', 'shortpixel-image-optimiser'));
+              Responsecontroller::addData('message', __('Temp file zero bytes', 'shortpixel-upscale-image'));
 
               $file->delete(); // Prevent it from hanging around 
               return false; 
@@ -112,7 +112,7 @@ class DownloadHelper
              {
                Log::addError('Failed to move Download', $args);
                ResponseController::addData('is_error', true);
-               Responsecontroller::addData('message', __('Failed to move download to destination!', 'shortpixel-image-optimiser'));
+               Responsecontroller::addData('message', __('Failed to move download to destination!', 'shortpixel-upscale-image'));
                return false;
              }
              else {
@@ -214,11 +214,11 @@ class DownloadHelper
 		          $result = download_url($testURL, 10);
 		          $settings->downloadProto = is_wp_error( $result ) ? 'https' : 'http';
 
-              // remove test.
-              if (false === is_wp_error($result))
-              {
-                @unlink($result);
-              }
+	              // remove test.
+	              if (false === is_wp_error($result))
+	              {
+	                wp_delete_file($result);
+	              }
               
 		      }
 		      return $settings->downloadProto == 'http' ?

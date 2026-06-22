@@ -220,12 +220,12 @@ class NoticeController //extends ShortPixelController
   {
     $response = array('result' => false, 'reason' => '');
 
-    if (isset($_POST['nonce']) && wp_verify_nonce( sanitize_key($_POST['nonce']), 'dismiss') )
+    if (isset($_POST['nonce']) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'dismiss') )
     {
        if (isset($_POST['plugin_action']) && 'dismiss' == $_POST['plugin_action'] )
        {
           $id = (isset($_POST['id'])) ? sanitize_text_field( wp_unslash($_POST['id'])) : null;
-          $type = (isset($_POST['dismisstype'])) ? sanitize_text_field($_POST['dismisstype']) : 'dismiss';
+          $type = (isset($_POST['dismisstype'])) ? sanitize_text_field( wp_unslash( $_POST['dismisstype'] ) ) : 'dismiss';
 
 					if (! is_null($id))
 					{
@@ -362,7 +362,7 @@ class NoticeController //extends ShortPixelController
           }
           foreach($this->getNoticesForDisplay() as $notice)
           {
-            echo $notice->getForDisplay();
+	            echo wp_kses_post( $notice->getForDisplay() );
           }
       }
       $this->update(); // puts views, and updates

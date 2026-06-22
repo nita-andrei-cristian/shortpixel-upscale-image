@@ -90,7 +90,8 @@ class QuotaController
           $quota = (object) [
               'unlimited' => isset($quotaData['Unlimited']) ? $quotaData['Unlimited'] : false,
               'monthly' => (object) [
-                'text' =>  sprintf(__('%s/month', 'shortpixel-image-optimiser'), $quotaData['APICallsQuota']),
+                /* translators: %s: Monthly plan quota as text. */
+                'text' =>  sprintf(__('%s/month', 'shortpixel-upscale-image'), $quotaData['APICallsQuota']),
                 'total' =>  $quotaData['APICallsQuotaNumeric'],
                 'consumed' => $quotaData['APICallsMadeNumeric'],
                 'remaining' => max($quotaData['APICallsQuotaNumeric'] - $quotaData['APICallsMadeNumeric'], 0),
@@ -227,7 +228,7 @@ class QuotaController
 
           }
 
-          $args['body']['host'] = parse_url(get_site_url(),PHP_URL_HOST);
+	          $args['body']['host'] = wp_parse_url(get_site_url(),PHP_URL_HOST);
           $argsStr .= "&host={$args['body']['host']}";
 					if (defined('SPUI_HTTP_AUTH_USER') && defined('SPUI_HTTP_AUTH_PASSWORD'))
 					{
@@ -289,9 +290,9 @@ class QuotaController
 
           $defaultData = array(
               "APIKeyValid" => false,
-              "Message" => __('API Key could not be validated due to a connectivity error.<BR>Your firewall may be blocking us. Please contact your hosting provider and ask them to allow connections from your site to api.shortpixel.com (IP 176.9.21.94).<BR> If you still cannot validate your API Key after this, please <a href="https://shortpixel.com/contact" target="_blank">contact us</a> and we will try to help. ','shortpixel-image-optimiser'),
-              "APICallsMade" => __('Information unavailable. Please check your API key.','shortpixel-image-optimiser'),
-              "APICallsQuota" => __('Information unavailable. Please check your API key.','shortpixel-image-optimiser'),
+              "Message" => __('API Key could not be validated due to a connectivity error.<BR>Your firewall may be blocking us. Please contact your hosting provider and ask them to allow connections from your site to api.shortpixel.com (IP 176.9.21.94).<BR> If you still cannot validate your API Key after this, please <a href="https://shortpixel.com/contact" target="_blank">contact us</a> and we will try to help. ','shortpixel-upscale-image'),
+              "APICallsMade" => __('Information unavailable. Please check your API key.','shortpixel-upscale-image'),
+              "APICallsQuota" => __('Information unavailable. Please check your API key.','shortpixel-upscale-image'),
               "APICallsMadeOneTime" => 0,
               "APICallsQuotaOneTime" => 0,
               "APICallsMadeNumeric" => 0,
@@ -303,15 +304,21 @@ class QuotaController
               "DomainCheck" => 'NOT Accessible');
           $defaultData = is_array($settings->currentStats) ? array_merge( $settings->currentStats, $defaultData) : $defaultData;
 
-          if(is_object($response) && get_class($response) == 'WP_Error') {
+	          if(is_object($response) && get_class($response) == 'WP_Error') {
 
-              $urlElements = parse_url($requestURL);
-              $portConnect = @fsockopen($urlElements['host'],8,$errno,$errstr,15);
-              if(!$portConnect) {
-                  $defaultData['Message'] .= "<BR>Debug info: <i>$errstr</i>";
-              }
-              return $defaultData;
-          }
+		              $urlElements = wp_parse_url($requestURL);
+	              $connectCheck = wp_remote_get(
+	              	'https://' . $urlElements['host'] . ':8',
+	              	array(
+	              		'timeout' => 15,
+	              		'sslverify' => false,
+	              	)
+	              );
+	              if ( is_wp_error( $connectCheck ) ) {
+	                  $defaultData['Message'] .= '<BR>Debug info: <i>' . esc_html( $connectCheck->get_error_message() ) . '</i>';
+	              }
+	              return $defaultData;
+	          }
 
           if($response['response']['code'] != 200) {
              return $defaultData;
@@ -329,10 +336,10 @@ class QuotaController
 
           $dataArray = array(
               "APIKeyValid" => true,
-              "APICallsMade" => number_format($data->APICallsMade) . __(' credits','shortpixel-image-optimiser'),
-              "APICallsQuota" => number_format($data->APICallsQuota) . __(' credits','shortpixel-image-optimiser'),
-              "APICallsMadeOneTime" => number_format($data->APICallsMadeOneTime) . __(' credits','shortpixel-image-optimiser'),
-              "APICallsQuotaOneTime" => number_format($data->APICallsQuotaOneTime) . __(' credits','shortpixel-image-optimiser'),
+              "APICallsMade" => number_format($data->APICallsMade) . __(' credits','shortpixel-upscale-image'),
+              "APICallsQuota" => number_format($data->APICallsQuota) . __(' credits','shortpixel-upscale-image'),
+              "APICallsMadeOneTime" => number_format($data->APICallsMadeOneTime) . __(' credits','shortpixel-upscale-image'),
+              "APICallsQuotaOneTime" => number_format($data->APICallsQuotaOneTime) . __(' credits','shortpixel-upscale-image'),
               "APICallsMadeNumeric" => (int) max($data->APICallsMade, 0),
               "APICallsQuotaNumeric" => (int) max($data->APICallsQuota, 0),
               "APICallsMadeOneTimeNumeric" =>  (int) max($data->APICallsMadeOneTime, 0),

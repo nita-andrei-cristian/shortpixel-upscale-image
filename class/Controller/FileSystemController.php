@@ -361,7 +361,7 @@ class FileSystemController extends \SPUI\Controller
     if (is_null($url))
       return false;
 
-    $parsed = parse_url($url); // returns array, null, or false.
+	    $parsed = wp_parse_url($url); // returns array, null, or false.
 
     // Some hosts set the content dir to a relative path instead of a full URL. Api can't handle that, so add domain and such if this is the case.
     if (!isset($parsed['scheme'])) { //no absolute URLs used -> we implement a hack
@@ -467,15 +467,24 @@ class FileSystemController extends \SPUI\Controller
   // Url very sparingly.
   public function url_exists($url)
   {
-    if (! \wpSPUI()->env()->is_function_usable('curl_init')) {
+    if (! function_exists('wp_remote_head')) {
       return null;
     }
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_NOBODY, true);
-    curl_exec($ch);
-    $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $response = wp_remote_head(
+      $url,
+      [
+        'timeout' => 5,
+        'redirection' => 5,
+        'sslverify' => false,
+      ]
+    );
+
+    if (is_wp_error($response)) {
+      return false;
+    }
+
+    $responseCode = wp_remote_retrieve_response_code($response);
 
     if ($responseCode == 200) {
       return true;
@@ -556,11 +565,18 @@ class FileSystemController extends \SPUI\Controller
          }
        }
 
-    } 
+    }
 
     if (false === $args['to_temp'])
     {
-       rmdir($tmpLocation); //cleanup
+       if (! function_exists('WP_Filesystem')) {
+         require_once ABSPATH . 'wp-admin/includes/file.php';
+       }
+       WP_Filesystem();
+       global $wp_filesystem;
+       if (is_object($wp_filesystem)) {
+         $wp_filesystem->rmdir($tmpLocation, false); // cleanup
+       }
     }
 
 

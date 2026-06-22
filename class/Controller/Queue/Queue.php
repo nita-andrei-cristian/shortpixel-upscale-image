@@ -307,14 +307,18 @@ abstract class Queue
 
          $base_query .= $dateSQL;
    
-            if (true === $get_start_id)
+         if (true === $get_start_id)
          {
-             $startSQL = $base_query . '  ORDER BY ' . $date_field . ' DESC LIMIT 1'; 
-             $startSQL = $wpdb->prepare($startSQL, $prepare); 
-             $start_id = $wpdb->get_var($startSQL); 
-             if (is_null($start_id))
-             {
-               $start_id = -1; 
+             // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Query is prepared here and date field is selected from internal allowed values.
+             $start_query = $wpdb->prepare(
+                $base_query . '  ORDER BY ' . $date_field . ' DESC LIMIT 1',
+                $prepare
+             );
+             $start_id = $wpdb->get_var( $start_query );
+             // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	             if (is_null($start_id))
+	             {
+	               $start_id = -1; 
              }
    
              $this->options['filters']['start_id'] = $start_id; 
@@ -322,13 +326,16 @@ abstract class Queue
    
          if (true === $get_end_id)
          {
-            $endSQL = $base_query . '  ORDER BY ' . $date_field . ' ASC LIMIT 1'; 
-            $endSQL = $wpdb->prepare($endSQL, $prepare); 
-
-            $end_id = $wpdb->get_var($endSQL); 
-            if (is_null($end_id))
-            {
-                $end_id = -1; 
+            // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Query is prepared here and date field is selected from internal allowed values.
+            $end_query = $wpdb->prepare(
+               $base_query . '  ORDER BY ' . $date_field . ' ASC LIMIT 1',
+               $prepare
+            );
+            $end_id = $wpdb->get_var( $end_query );
+            // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	            if (is_null($end_id))
+	            {
+	                $end_id = -1; 
             }
             $this->options['filters']['end_id'] = $end_id; 
    

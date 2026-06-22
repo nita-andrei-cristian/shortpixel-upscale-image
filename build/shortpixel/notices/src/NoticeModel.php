@@ -279,7 +279,7 @@ class NoticeModel //extends ShortPixelModel
             </label>
              <div class="detail-content-wrapper"><p class="detail-content">%s</p></div>
           <label for="check-%s" class="hide-details"><span>%s</span></label>
-            </div>', $id, $id, __('See Details', 'shortpixel-image-optimiser'), $this->parseDetails(), $id, __('Hide Details', 'shortpixel-image-optimiser') );
+            </div>', $id, $id, __('See Details', 'shortpixel-upscale-image'), $this->parseDetails(), $id, __('Hide Details', 'shortpixel-upscale-image') );
 
       $output .= $details;
 
@@ -288,7 +288,7 @@ class NoticeModel //extends ShortPixelModel
 
     if ($this->is_removable)
     {
-        $output .= sprintf('<button type="button" id="button-%s" class="notice-dismiss" data-dismiss="%s" ><span class="screen-reader-text">%s</span></button>', $id,  $this->suppress_period, __('Dismiss this notice', 'shortpixel-image-optimiser') );
+        $output .= sprintf('<button type="button" id="button-%s" class="notice-dismiss" data-dismiss="%s" ><span class="screen-reader-text">%s</span></button>', $id,  $this->suppress_period, __('Dismiss this notice', 'shortpixel-upscale-image') );
 
        if (! $this->is_persistent)
        {

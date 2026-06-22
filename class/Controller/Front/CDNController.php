@@ -91,7 +91,7 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 			 $register_domain .= 'revoke-domain/'; 
 		}
 
-		$parsed_url = parse_url(get_site_url());
+		$parsed_url = wp_parse_url(get_site_url());
 
 		if (isset($parsed_url['host']))
 		{
@@ -128,7 +128,7 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 		{
 			$settings->cdn_purge_version = substr(time(), -4, 4); 
 
-			$result['message'] = __('CDN and JS cache purged', 'shortpixel-image-optimiser');
+			$result['message'] = __('CDN and JS cache purged', 'shortpixel-upscale-image');
 		}
 
 		if ('all' == $purge)
@@ -147,7 +147,7 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 				$response = isset($remote_post['body']) ? json_decode($remote_post['body']) : []; 
 				if (property_exists($response, 'Status') && $response->Status == 2 )
 				{
-					 $result['message'] = __('Cache purged', 'shortpixel-image-optimiser');
+					 $result['message'] = __('Cache purged', 'shortpixel-upscale-image');
 				}
 	
 			}
@@ -165,8 +165,8 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 		$settings = \wpSPUI()->settings();
 		$apiKeyController = ApiKeyController::getInstance();
 
-		$site_domain = parse_url(get_site_url());
-		$cdnDomain = parse_url($settings->CDNDomain); 
+		$site_domain = wp_parse_url(get_site_url());
+		$cdnDomain = wp_parse_url($settings->CDNDomain); 
 		$key = $apiKeyController->forceGetApiKey();
 		$cdnHost = (isset($cdnDomain['host'])) ? $cdnDomain['host'] : 'spcdn.shortpixel.ai';
 
@@ -442,7 +442,7 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 			$cdn_domain = $CDNDomain;
 		}
 
-		$parsed_domain = parse_url($cdn_domain);
+		$parsed_domain = wp_parse_url($cdn_domain);
 		if (false === isset($parsed_domain['path']) || 
 			strlen($parsed_domain['path']) === 0 ||
 			'/' === $parsed_domain['path']
@@ -648,7 +648,7 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 			}
 
 			$url = $site_url . $original_url;
-			$replaceBlock->parsed = parse_url($url); // parse the new URL
+				$replaceBlock->parsed = wp_parse_url($url); // parse the new URL
 			$replaceBlock->url = $url;
 
 			return true;
@@ -723,13 +723,13 @@ class CDNController extends \SPUI\Controller\Front\PageConverter
 			 $raw_url = $replaceBlock->raw_url; 
 			
 			 // @TODO . Check on Raw_URL if there is " or '  and add that, if none, add none. 
-			 if (true === str_contains($raw_url, '"'))
-			 {
-				$delim = '"'; 
-			 }
-			 elseif (true === str_contains($raw_url, "'"))
-			 {
-				 $delim = "'";
+				 if (false !== strpos($raw_url, '"'))
+				 {
+					$delim = '"'; 
+				 }
+				 elseif (false !== strpos($raw_url, "'"))
+				 {
+					 $delim = "'";
 			 }
 			 else 
 			 	$delim = '';

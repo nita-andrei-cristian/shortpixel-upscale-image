@@ -70,30 +70,31 @@ class ShortPixelFeedback {
       //  $form['body'] = 'bs';
 
         // Build the HTML to go in the form
-        $html = '<div class="shortpixel-deactivate-form-head"><strong>' . esc_html__( $form['heading'] ) . '</strong></div>';
+        $html = '<div class="shortpixel-deactivate-form-head"><strong>' . esc_html( $form['heading'] ) . '</strong></div>';
         $html .= '<div class="shortpixel-deactivate-form-body">';
         if( is_array( $form['options'] ) ) {
             $html .= '<div class="shortpixel-deactivate-options">';
-            $html .= '<p><strong>' . esc_html__( $form['body'] ) . '</strong></p><p>';
+            $html .= '<p><strong>' . esc_html( $form['body'] ) . '</strong></p><p>';
             foreach( $form['options'] as $key => $option ) {
                 $html .= '<input type="radio" name="shortpixel-deactivate-reason" id="' . esc_attr( $key ) . '" value="' . esc_attr( $key ) . '"> <label for="' . esc_attr( $key ) . '">' . esc_attr( $option ) . '</label><br>';
             }
-            $html .= '</p><label id="shortpixel-deactivate-details-label" for="shortpixel-deactivate-reasons"><strong>' . esc_html__( $form['details'] ) .'</strong></label><textarea name="shortpixel-deactivate-details" id="shortpixel-deactivate-details" rows="2" style="width:100%"></textarea>';
+            $html .= '</p><label id="shortpixel-deactivate-details-label" for="shortpixel-deactivate-reasons"><strong>' . esc_html( $form['details'] ) .'</strong></label><textarea name="shortpixel-deactivate-details" id="shortpixel-deactivate-details" rows="2" style="width:100%"></textarea>';
             $html .= '</div><!-- .shortpixel-deactivate-options -->';
         }
         $html .= '<hr/>';
-        $html .= '<span title="' . __( 'Un-check this if you don\\\'t plan to use ShortPixel in the future on this website. You might also want to run a Bulk Delete SP Metadata before removing the plugin (Media Library -> Bulk Upscale).', 'shortpixel-image-optimiser' )
+        $html .= '<span title="' . __( 'Un-check this if you don\\\'t plan to use ShortPixel in the future on this website. You might also want to run a Bulk Delete SP Metadata before removing the plugin (Media Library -> Bulk Upscale).', 'shortpixel-upscale-image' )
             . '">'
-            . sprintf(esc_html__(  'If you want to completely uninstall ShortPixel from your site, please go to %s Settings → Shortpixel Image Upscale → Tools %s.', 'shortpixel-image-optimiser' ),'<a href="' . esc_url(admin_url('/options-general.php?page=shortpixel-upscale-settings&part=tools'))  . '">', '</a>') . '</span><br>';
+            /* translators: 1: Opening Tools settings link. 2: Closing Tools settings link. */
+            . sprintf( wp_kses_post( __( 'If you want to completely uninstall ShortPixel from your site, please go to %1$s Settings → Shortpixel Image Upscale → Tools %2$s.', 'shortpixel-upscale-image' ) ), '<a href="' . esc_url( admin_url( '/options-general.php?page=shortpixel-upscale-settings&part=tools' ) )  . '">', '</a>' ) . '</span><br>';
         $html .= '<hr/>';
         $html .= '</div><!-- .shortpixel-deactivate-form-body -->';
-        $html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . esc_html__( 'Submitting form', 'shortpixel-image-optimiser' ) . '</p>';
+        $html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . esc_html__( 'Submitting form', 'shortpixel-upscale-image' ) . '</p>';
         $html .= '<div class="shortpixel-deactivate-form-footer"><p>';
         $html .= '<label for="anonymous" title="'
-            . esc_html__("If you UNCHECK this then your email address will be sent along with your feedback. This can be used by ShortPixel to get back to you for more info or a solution.",'shortpixel-image-optimiser')
-            . '"><input type="checkbox" name="shortpixel-deactivate-tracking" checked="checked" id="anonymous" value="1"> ' . esc_html__( 'Send anonymous', 'shortpixel-image-optimiser' ) . '</label><br>';
+            . esc_html__("If you UNCHECK this then your email address will be sent along with your feedback. This can be used by ShortPixel to get back to you for more info or a solution.",'shortpixel-upscale-image')
+            . '"><input type="checkbox" name="shortpixel-deactivate-tracking" checked="checked" id="anonymous" value="1"> ' . esc_html__( 'Send anonymous', 'shortpixel-upscale-image' ) . '</label><br>';
         $html .= '<a id="shortpixel-deactivate-submit-form" class="button button-primary" href="#">'
-            . __( '<span>Submit&nbsp;and&nbsp;</span>Deactivate', 'shortpixel-image-optimiser' )
+            . __( '<span>Submit&nbsp;and&nbsp;</span>Deactivate', 'shortpixel-upscale-image' )
             . '</a>';
         $html .= '</p></div>';
         ?>
@@ -187,12 +188,12 @@ class ShortPixelFeedback {
                     formContainer = $(formID),
                     deactivated = true,
                     detailsStrings = {
-                        'setup' : '<?php esc_html_e( 'What was the dificult part ?', 'shortpixel-image-optimiser') ?>',
-                        'docs' : '<?php esc_html_e( 'What can we describe more ?', 'shortpixel-image-optimiser' ) ?>',
-                        'features' : '<?php esc_html_e( 'How could we improve ?', 'shortpixel-image-optimiser' ) ?>',
-                        'better-plugin' : '<?php esc_html_e( 'Can you mention it ?', 'shortpixel-image-optimiser' ) ?>',
-                        'incompatibility' : '<?php esc_html_e( 'With what plugin or theme is incompatible ?', 'shortpixel-image-optimiser' ) ?>',
-                        'maintenance' : '<?php esc_html_e( 'Please specify', 'shortpixel-image-optimiser') ?>',
+                        'setup' : '<?php esc_html_e( 'What was the dificult part ?', 'shortpixel-upscale-image') ?>',
+                        'docs' : '<?php esc_html_e( 'What can we describe more ?', 'shortpixel-upscale-image' ) ?>',
+                        'features' : '<?php esc_html_e( 'How could we improve ?', 'shortpixel-upscale-image' ) ?>',
+                        'better-plugin' : '<?php esc_html_e( 'Can you mention it ?', 'shortpixel-upscale-image' ) ?>',
+                        'incompatibility' : '<?php esc_html_e( 'With what plugin or theme is incompatible ?', 'shortpixel-upscale-image' ) ?>',
+                        'maintenance' : '<?php esc_html_e( 'Please specify', 'shortpixel-upscale-image') ?>',
 												'temporary' : '',
                     };
 
@@ -232,7 +233,7 @@ class ShortPixelFeedback {
                         }
                         $('html,body').animate({ scrollTop: Math.max(0, offset.top - 50) });
                     }});
-                    formContainer.html( '<?php echo $html; ?>');
+                    formContainer.html( <?php echo wp_json_encode( $html ); ?> );
 
                     formContainer.on( 'change', 'input[type=radio]', function(){
 
@@ -302,18 +303,18 @@ class ShortPixelFeedback {
      */
     public function getFormInfo() {
         $form = array();
-        $form['heading'] = __( 'Sorry to see you go', 'shortpixel-image-optimiser' );
-        $form['body'] = __( 'Before you deactivate the plugin, would you quickly give us your reason for doing so?', 'shortpixel-image-optimiser' );
+        $form['heading'] = __( 'Sorry to see you go', 'shortpixel-upscale-image' );
+        $form['body'] = __( 'Before you deactivate the plugin, would you quickly give us your reason for doing so?', 'shortpixel-upscale-image' );
         $form['options'] = array(
-						'temporary' 			=> __('Temporary deactivation', 'shortpixel-image-optimiser'),
-            'setup'           => __( 'Set up is too difficult',  'shortpixel-image-optimiser' ),
-            'docs'            => __( 'Lack of documentation',  'shortpixel-image-optimiser' ),
-            'features'        => __( 'Not the features I wanted',  'shortpixel-image-optimiser' ),
-            'better-plugin'   => __( 'Found a better plugin',  'shortpixel-image-optimiser' ),
-            'incompatibility' => __( 'Incompatible with theme or plugin',  'shortpixel-image-optimiser' ),
-            'maintenance'     => __( 'Other',  'shortpixel-image-optimiser' ),
+						'temporary' 			=> __('Temporary deactivation', 'shortpixel-upscale-image'),
+            'setup'           => __( 'Set up is too difficult',  'shortpixel-upscale-image' ),
+            'docs'            => __( 'Lack of documentation',  'shortpixel-upscale-image' ),
+            'features'        => __( 'Not the features I wanted',  'shortpixel-upscale-image' ),
+            'better-plugin'   => __( 'Found a better plugin',  'shortpixel-upscale-image' ),
+            'incompatibility' => __( 'Incompatible with theme or plugin',  'shortpixel-upscale-image' ),
+            'maintenance'     => __( 'Other',  'shortpixel-upscale-image' ),
         );
-        $form['details'] = __( 'How could we improve ?',  'shortpixel-image-optimiser');
+        $form['details'] = __( 'How could we improve ?',  'shortpixel-upscale-image');
         return $form;
     }
 

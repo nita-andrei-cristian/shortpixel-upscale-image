@@ -373,12 +373,14 @@ class CustomImageModel extends \SPUI\Model\Image\ImageModel
     public function loadMeta()
     {
 
-      global $wpdb;
-
-      $sql = 'SELECT * FROM '  . $wpdb->prefix . 'shortpixel_meta where id = %d';
-      $sql = $wpdb->prepare($sql, $this->id);
-
-      $imagerow = $wpdb->get_row($sql);
+	      global $wpdb;
+	      $shortpixel_meta_table = esc_sql( $wpdb->prefix . 'shortpixel_meta' );
+	      $imagerow = $wpdb->get_row(
+	      	$wpdb->prepare(
+	      		"SELECT * FROM {$shortpixel_meta_table} where id = %d",
+	      		$this->id
+	      	)
+	      );
 
 			$metaObj = new ImageMeta();
 			$this->image_meta = $metaObj; // even if not found, load an empty imageMeta.
@@ -464,12 +466,14 @@ class CustomImageModel extends \SPUI\Model\Image\ImageModel
        $this->fullpath = $path;
        $this->path_md5 = md5($this->fullpath);
 
-       global $wpdb;
-
-       $sql = 'SELECT id from '  . $wpdb->prefix . 'shortpixel_meta where path =  %s';
-       $sql = $wpdb->prepare($sql, $path);
-
-       $result = $wpdb->get_var($sql);
+	       global $wpdb;
+	       $shortpixel_meta_table = esc_sql( $wpdb->prefix . 'shortpixel_meta' );
+	       $result = $wpdb->get_var(
+	       	$wpdb->prepare(
+	       		"SELECT id from {$shortpixel_meta_table} where path = %s",
+	       		$path
+	       	)
+	       );
        if ( ! is_null($result)  )
        {
           $this->in_db = true;

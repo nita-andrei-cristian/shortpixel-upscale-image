@@ -19,37 +19,37 @@ if ( ! defined( 'ABSPATH' ) ) {
   <!--
   <div class="bulk-welcome">
     <h3 class="heading">
-      <?php printf(esc_html__('ShortPixel Bulk Image Upscaling', 'shortpixel-image-optimiser')); ?>
+      <?php printf(esc_html__('ShortPixel Bulk Image Upscaling', 'shortpixel-upscale-image')); ?>
     </h3>
-    <?php echo UIHelper::getIcon('res/images/illustration/bulk_welcome.svg'); ?>
+    <?php echo wp_kses_post( UIHelper::getIcon('res/images/illustration/bulk_welcome.svg') ); ?>
   </div>
 -->
     <div class='bulk-wrapper'>
 
       <?php 
-      $link = (false !== $view->dashboard_link) ? sprintf('title="%s" href="%s" target="_blank"', $view->dashboard_message, $view->dashboard_link) : ''; 
+      $spui_link = (false !== $view->dashboard_link) ? sprintf('title="%s" href="%s" target="_blank"', esc_attr( $view->dashboard_message ), esc_url( $view->dashboard_link ) ) : ''; 
       ?>
-      <a class='top-circle' <?php echo $link ?>>
-          <div class='the-circle' style='background-image: url("<?php echo $view->dashboard_icon ?>");'>&nbsp;</div>
+      <a class='top-circle' <?php echo wp_kses_post( $spui_link ); ?>>
+          <div class='the-circle' style='background-image: url("<?php echo esc_url( $view->dashboard_icon ); ?>");'>&nbsp;</div>
       </a>
       <?php //if (false !== $view->dashboard_title): ?>
-       <h3 class='title-offer'><?php echo ( (false !== $view->dashboard_title) ? $view->dashboard_title : "Ready to start upscaling?"); ?></h3>
+       <h3 class='title-offer'><?php echo esc_html( ( false !== $view->dashboard_title ) ? $view->dashboard_title : 'Ready to start upscaling?' ); ?></h3>
       <?php //endif; ?>
 
 
 
         <button type="button" class="button-primary button start" id="start-optimize" data-action="open-panel" data-panel="selection" <?php echo ($this->view->error) ? "disabled" : ''; ?>  >
-            <?php esc_html_e('Start Upscaling','shortpixel-image-optimiser'); ?>
+            <?php esc_html_e('Start Upscaling','shortpixel-upscale-image'); ?>
         </button>
 
 			<div class='dashboard-text'>
-         <a class='button button-primary' type="button" href="<?php echo admin_url('options-general.php?page=shortpixel-upscale-settings&part=help'); ?>" target="_blank">
-         <span class='icon white'><?php echo UIHelper::getIcon('res/images/icon/help-circle.svg', ['width' => '16']); ?></span> 
-         <span><?php _e('Help','shortpixel-image-optimiser'); ?></span>
+         <a class='button button-primary' type="button" href="<?php echo esc_url( admin_url('options-general.php?page=shortpixel-upscale-settings&part=help') ); ?>" target="_blank">
+         <span class='icon white'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/help-circle.svg', ['width' => '16']) ); ?></span> 
+         <span><?php esc_html_e('Help','shortpixel-upscale-image'); ?></span>
          </a> 
          <a class='button' type='button' href="https://wordpress.org/support/plugin/shortpixel-image-optimiser/reviews/#new-post" target="_blank">
-            <span class='icon'><?php echo UIHelper::getIcon('res/images/icon/heart.svg', ['width' => '16']); ?></span> 
-            <span><?php _e('Rate ShortPixel', 'shortpixel-image-optimiser'); ?></span>
+            <span class='icon'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/heart.svg', ['width' => '16']) ); ?></span> 
+            <span><?php esc_html_e('Rate ShortPixel', 'shortpixel-upscale-image'); ?></span>
          </a>
       </div>
 
@@ -57,7 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) {
    <?php if ($this->view->error): ?>
      <div class='bulk error'>
         <h3><?php echo esc_html($this->view->errorTitle); ?></h3>
-        <p><?php echo $this->view->errorContent; ?></p>
+        <p><?php echo wp_kses_post( $this->view->errorContent ); ?></p>
         <?php if (property_exists($this->view, 'errorText')): ?>
             <p class='text'><?php echo esc_html($this->view->errorText) ?></p>
         <?php endif; ?>
@@ -82,9 +82,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <label for="bulk-history">     
         <h3>
-        <span class='icon white'><?php echo UIHelper::getIcon('res/images/icon/history.svg'); ?></span> 
-          <?php esc_html_e('Bulk History', 'shortpixel_image_optimizer'); ?>
-          <span class='collap-arrow'><?php echo UIHelper::getIcon('res/images/icon/chevron.svg'); ?></span> 
+        <span class='icon white'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/history.svg') ); ?></span> 
+          <?php esc_html_e('Bulk History', 'shortpixel-upscale-image'); ?>
+          <span class='collap-arrow'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/chevron.svg') ); ?></span> 
         </h3>
     </label>
 
@@ -92,21 +92,22 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class='dashboard-log'>
         <?php
           echo "<div class='head'>";
-          foreach($this->view->logHeaders as $header)
+          foreach ( $this->view->logHeaders as $spui_header )
           {
-            echo "<span>" . esc_attr($header) . "</span>";
+            echo "<span>" . esc_html( $spui_header ) . "</span>";
           }
           echo "</div>";
-          foreach ($this->view->logs as $logItem):
+          foreach ( $this->view->logs as $spui_log_item ) :
           {
-              echo "<div class='data " . esc_attr($logItem['type']) . "'>";
+              echo "<div class='data " . esc_attr($spui_log_item['type']) . "'>";
 
-              echo "<span>" . esc_html($logItem['images'])  . '</span>';
-              echo "<span>" . $logItem['errors'] . '</span>';
+              echo "<span>" . esc_html($spui_log_item['images'])  . '</span>';
+              echo "<span>" . esc_html($spui_log_item['errors']) . '</span>';
 
-                echo '<span class="checkmark_green date">' . sprintf(esc_html__('%sCompleted%s on %s','shortpixel-image-optimiser'), '','', esc_html($logItem['date'])) . '</span>';
+                // translators: 1: Opening emphasis markup, unused here. 2: Closing emphasis markup, unused here. 3: Completion date.
+                echo '<span class="checkmark_green date">' . sprintf(esc_html__('%1$sCompleted%2$s on %3$s','shortpixel-upscale-image'), '', '', esc_html($spui_log_item['date'])) . '</span>';
 
-              echo "<span>" . esc_html($logItem['bulkName']) . '</span>';
+              echo "<span>" . esc_html($spui_log_item['bulkName']) . '</span>';
 
             echo "</div>";
           }
@@ -127,7 +128,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				 	 <span class="svg-spinner"><?php $this->loadView('snippets/part-svgloader', false); ?></span>
 
            <span>
-           <h2><?php esc_html_e('Please wait, ShortPixel is loading'); ?></h2>
+           <h2><?php esc_html_e('Please wait, ShortPixel is loading', 'shortpixel-upscale-image'); ?></h2>
 
          </span>
 

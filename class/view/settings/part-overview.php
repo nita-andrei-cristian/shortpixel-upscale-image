@@ -8,34 +8,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \SPUI\Helper\UiHelper as UiHelper;
 
 
-$total_circle = 289.027;
-$total =round($view->averageCompression);
+$spui_total_circle = 289.027;
+$spui_total = round($view->averageCompression);
 
-if( $total  >0 ) {
-		$total_circle = round($total_circle-($total_circle * $total /100));
+if ( $spui_total > 0 ) {
+		$spui_total_circle = round( $spui_total_circle - ( $spui_total_circle * $spui_total / 100 ) );
 }
 
 
-$dashboard = $view->dashboard;
-$mainblock = $dashboard->mainblock;
-$bulkblock = $dashboard->bulkblock;
+$spui_dashboard = $view->dashboard;
+$spui_mainblock = $spui_dashboard->mainblock;
+$spui_bulkblock = $spui_dashboard->bulkblock;
 ?>
 
-<section id="tab-overview" class="<?php echo ($this->display_part == 'overview') ? 'active setting-tab' :'setting-tab'; ?>" data-part="overview" >
+<section id="tab-overview" class="<?php echo ( $this->display_part == 'overview' ) ? 'active setting-tab' : 'setting-tab'; ?>" data-part="overview" >
 
   <div class='wrapper top-row step-highlight-1'>
      <div class='panel first-panel'>
 
-       <div class="first-line <?php echo $mainblock->icon ?>">
+       <div class="first-line <?php echo esc_attr( $spui_mainblock->icon ); ?>">
          <i class='shortpixel-icon mainblock-status '></i>
 
 					<div class='status-ok'>
-						<h4><?php  _e('Everything running smoothly.', 'shortpixel-upscale-image'); ?></h4>
-						<p><?php  _e('Keep calm and carry on', 'shortpixel-upscale-image'); ?></p>
+						<h4><?php esc_html_e('Everything running smoothly.', 'shortpixel-upscale-image'); ?></h4>
+						<p><?php esc_html_e('Keep calm and carry on', 'shortpixel-upscale-image'); ?></p>
 					</div>
 					<div class='status-warning'>
-						<h4><?php  _e('There are a few warnings you could fix', 'shortpixel-upscale-image'); ?></h4>
-						<p><?php  _e('Check the warnings below. Don\'t worry, there is a simple solution for each one.', 'shortpixel-upscale-image'); ?></p>
+						<h4><?php esc_html_e('There are a few warnings you could fix', 'shortpixel-upscale-image'); ?></h4>
+						<p><?php esc_html_e('Check the warnings below. Don\'t worry, there is a simple solution for each one.', 'shortpixel-upscale-image'); ?></p>
 					</div>
 
 						<?php //if (true === $mainblock->cocktail) : ?>
@@ -45,8 +45,8 @@ $bulkblock = $dashboard->bulkblock;
         </div>
          <hr>
          <div class="second-line">
-        <?php if (property_exists($mainblock, 'upscaled')): ?>
-         <div class="upscaled"><?php echo $mainblock->upscaled ?></div>
+        <?php if ( property_exists( $spui_mainblock, 'upscaled' ) ) : ?>
+         <div class="upscaled"><?php echo esc_html( $spui_mainblock->upscaled ); ?></div>
              <i class='shortpixel-icon file'></i>
            <div class="upscaled-message"><?php esc_html_e('Upscaled images and thumbnails from the Media Library and Custom Media', 'shortpixel-upscale-image'); ?></div>
         <?php endif; ?>
@@ -61,7 +61,7 @@ $bulkblock = $dashboard->bulkblock;
       <?php if ( $view->averageCompression <= 0 ):
       ?>
 
-      <p class='small'><?php _e('The average upscaling value is calculated based on the last 1000 upscaled images. Please upscale some images to see the statistics here.', 'shortpixel-upscale-image'); ?></p>
+      <p class='small'><?php esc_html_e('The average upscaling value is calculated based on the last 1000 upscaled images. Please upscale some images to see the statistics here.', 'shortpixel-upscale-image'); ?></p>
 
       <?php else: ?>
 
@@ -78,19 +78,19 @@ $bulkblock = $dashboard->bulkblock;
                              m 0,-46
                              a 46,46 0 1 1 0,92
                              a 46,46 0 1 1 0,-92
-                             " stroke-width="16" fill-opacity="0" style="stroke-dasharray: 289.027px, 289.027px; stroke-dashoffset: <?php echo $total_circle ?>px;">
+                         " stroke-width="16" fill-opacity="0" style="stroke-dasharray: 289.027px, 289.027px; stroke-dashoffset: <?php echo esc_attr( $spui_total_circle ); ?>px;">
                          </path>
                          <text class="text" x="50" y="50"><?php
-                         echo $view->averageCompression;
+                         echo esc_html( $view->averageCompression );
                           ?> %</text>
              </svg>
        <?php endif; ?>
 
 
-       <?php if ($view->averageCompression > 30): ?>
+       <?php if ( $view->averageCompression > 30 ) : ?>
          <div class='rating'>
-          <?php echo UiHelper::getIcon('res/images/icon/7stars-empty.svg'); ?>
-          <a class='button button-setting' href='https://wordpress.org/support/plugin/shortpixel-upscale-image/reviews/?filter=5' target="_blank"><?php esc_html_e('Rate us', 'shortpixel-upscale-image'); ?></a>
+          <?php echo wp_kses_post( UiHelper::getIcon('res/images/icon/7stars-empty.svg') ); ?>
+          <a class='button button-setting' href='https://wordpress.org/support/plugin/shortpixel-upscale-image/reviews/' target="_blank"><?php esc_html_e('Rate us', 'shortpixel-upscale-image'); ?></a>
         </div>
        <?php endif; ?>
      </div>
@@ -100,37 +100,37 @@ $bulkblock = $dashboard->bulkblock;
      <div class='panel first-panel dashboard-upscale'>
 
         <i class='shortpixel-icon box-archive'></i>
-        <h4><?php _e('Upscale new Images', 'shortpixel-upscale-image'); ?></h4>
+        <h4><?php esc_html_e('Upscale new Images', 'shortpixel-upscale-image'); ?></h4>
 
         <span class='status-wrapper'><i class='shortpixel-icon status-icon ok'></i><span class='status-line'></span></span>
 
-        <?php echo $this->settingLink([
+        <?php echo wp_kses_post( $this->settingLink([
            'part' => 'processing',
            'title' => __("Fix now", "shortpixel-upscale-image"),
            'icon' => 'shortpixel-icon fix',
            'icon_position' => 'left',
            'class' => 'dashboard-button'
-         ]);
+         ]) );
          ?>
 
      </div>
 
      <div class='panel second-panel dashboard-bulk'>
        <i class='shortpixel-icon bulk'></i>
-       <h4><?php _e('Bulk Upscale', 'shortpixel-upscale-image'); ?></h4>
+       <h4><?php esc_html_e('Bulk Upscale', 'shortpixel-upscale-image'); ?></h4>
 
 
         <span class='status-wrapper'>
           <span class='status-line'>
 
-            <?php echo $bulkblock->message ?>
-            <i class='shortpixel-icon status-icon <?php echo $bulkblock->icon ?>'></i>
+            <?php echo wp_kses_post( $spui_bulkblock->message ); ?>
+            <i class='shortpixel-icon status-icon <?php echo esc_attr( $spui_bulkblock->icon ); ?>'></i>
           </span>
       </span>
 
-      <?php if (true == $bulkblock->show_button): ?>
+      <?php if ( true == $spui_bulkblock->show_button ) : ?>
 
-        <a class="dashboard-button" href="<?php echo $bulkblock->link ?>"><?php _e('Go to Bulk Processing', 'shortpixel-upscale-image'); ?><i class='shortpixel-icon arrow-right'></i></a>
+        <a class="dashboard-button" href="<?php echo esc_url( $spui_bulkblock->link ); ?>"><?php esc_html_e('Go to Bulk Processing', 'shortpixel-upscale-image'); ?><i class='shortpixel-icon arrow-right'></i></a>
      <?php else : ?>
         <a class='dashboard-button not-visible'>&nbsp;</a>
      <?php endif; ?>
@@ -140,17 +140,17 @@ $bulkblock = $dashboard->bulkblock;
      <div class='panel third-panel dashboard-webp'>
 
        <i class='shortpixel-icon photo'></i>
-       <h4><?php _e('WebP/AVIF', 'shortpixel-upscale-image'); ?></h4>
+       <h4><?php esc_html_e('WebP/AVIF', 'shortpixel-upscale-image'); ?></h4>
 
         <span class='status-wrapper'><i class='shortpixel-icon status-icon ok'></i><span class='status-line'></span></span>
 
-   <?php echo $this->settingLink([
+   <?php echo wp_kses_post( $this->settingLink([
       'part' => 'webp',
       'title' => __("Fix now", "shortpixel-upscale-image"),
       'icon' => 'shortpixel-icon fix',
       'icon_position' => 'left',
       'class' => 'dashboard-button'
-    ]);
+    ]) );
     ?>
 
      </div>
@@ -173,7 +173,7 @@ $bulkblock = $dashboard->bulkblock;
             </info>
 	    <?php if ( !$view->key->hide_api_key ) { ?>
             <label for="toggle-content" class="toggle-link">
-                <span class="toggle-text"><?php _e('Show API Key', 'shortpixel-upscale-image'); ?></span>
+                <span class="toggle-text"><?php esc_html_e('Show API Key', 'shortpixel-upscale-image'); ?></span>
                 <span class="shortpixel-icon chevron"></span>
             </label>
 	    <?php } ?>
@@ -184,12 +184,12 @@ $bulkblock = $dashboard->bulkblock;
         <content>
             <div class="apifield">
                 <input name="apiKey" type="password" id="key" value="<?php echo esc_attr($view->key->apiKey); ?>"
-                       class="regular-text" <?php echo($view->key->is_editable ? '' : 'disabled') ?>>
+                       class="regular-text" <?php echo esc_attr( $view->key->is_editable ? '' : 'disabled' ); ?>>
                 <i class="shortpixel-icon eye"></i>
             </div>
 
             <button type="submit" id="validate" class="button button-primary" title="<?php esc_html_e('Validate the provided API key','shortpixel-upscale-image');?>"
-                     <?php echo $view->key->is_editable ? '' : 'disabled' ?>>
+                     <?php echo esc_attr( $view->key->is_editable ? '' : 'disabled' ); ?>>
                 <i class='shortpixel-icon save'></i>
                 <span class ="save-button-text"> <?php esc_html_e('Save settings & validate', 'shortpixel-upscale-image'); ?></span>
             </button>

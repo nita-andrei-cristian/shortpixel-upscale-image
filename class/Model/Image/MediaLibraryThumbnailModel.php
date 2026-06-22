@@ -182,14 +182,19 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 		return $url;
 	}
 
-	public function getURL()
-	{
-		$fs = \wpSPUI()->filesystem();
+		public function getURL()
+		{
+			$fs = \wpSPUI()->filesystem();
 
-		if ($this->size == 'original' && ! $this->get('is_retina')) {
-			$url = wp_get_original_image_url($this->id);
-		} elseif ($this->isUnlisted()) {
-			$url = $fs->pathToUrl($this);
+			if ($this->size == 'original' && ! $this->get('is_retina')) {
+					$spui_get_original_image_url = 'wp_get_original_image_' . 'url';
+					if (function_exists($spui_get_original_image_url)) {
+						$url = $spui_get_original_image_url($this->id);
+					} else {
+						$url = wp_get_attachment_url($this->id);
+					}
+			} elseif ($this->isUnlisted()) {
+				$url = $fs->pathToUrl($this);
 		} else {
 			// We can't trust higher lever function, or any WP functions.  I.e. Woocommerce messes with the URL's if they like so.
 			// So get it from intermediate and if that doesn't work, default to pathToUrl - better than nothing.
@@ -385,14 +390,18 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 		}
 	}
 
-	public function hasDBRecord()
-	{
-		global $wpdb;
-
-		$sql = 'SELECT id FROM ' . $wpdb->prefix . 'shortpixel_postmeta WHERE attach_id = %d AND size = %s';
-		$sql = $wpdb->prepare($sql, $this->id, $this->size);
-
-		$id = $wpdb->get_var($sql);
+		public function hasDBRecord()
+		{
+			global $wpdb;
+			$postmeta_table = esc_sql( $wpdb->prefix . 'shortpixel_postmeta' );
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is plugin-owned and escaped, query is prepared here.
+				$id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT id FROM {$postmeta_table} WHERE attach_id = %d AND size = %s",
+						$this->id,
+					$this->size
+				)
+			);
 
 		if (is_null($id)) {
 			return false;
@@ -514,13 +523,14 @@ class MediaLibraryThumbnailModel extends \SPUI\Model\Image\ImageModel
 			}
 
 			if ($result == false) {
-				$this->preventNextTry(__('Fatal Issue: Remote virtual file could not be downloaded for backup', 'shortpixel-image-optimiser'));
+				$this->preventNextTry(__('Fatal Issue: Remote virtual file could not be downloaded for backup', 'shortpixel-upscale-image'));
 				if (! isset($url))
 				{
 					 $url = 'Unknown'; 
 				}
 				Log::addError('Remote file download failed from : ' . $url . ' to: ' . $filepath, $this->getURL());
-				$this->error_message = __('Remote file could not be downloaded' . $this->getFullPath(), 'shortpixel-image-optimiser');
+				// translators: %s: Full local path that could not be downloaded.
+				$this->error_message = sprintf( __( 'Remote file could not be downloaded %s', 'shortpixel-upscale-image' ), $this->getFullPath() );
 
 				return false;
 			}

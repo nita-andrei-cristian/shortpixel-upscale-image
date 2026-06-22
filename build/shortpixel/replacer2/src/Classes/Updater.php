@@ -17,11 +17,14 @@ class Updater
     public function updatePost($post_id, $content)
     {
         global $wpdb; 
-        
-        $sql = 'UPDATE ' . $wpdb->posts . ' SET post_content = %s WHERE ID = %d';
-        $sql = $wpdb->prepare($sql, $content, $post_id);
-    
-        $result = $wpdb->query($sql);
+
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$wpdb->posts} SET post_content = %s WHERE ID = %d",
+                $content,
+                $post_id
+            )
+        );
     
         if ($result === false) {
             // Notice::addError('Something went wrong while replacing' .  $result->get_error_message() );

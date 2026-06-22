@@ -289,22 +289,22 @@ class ShortPixelPlugin {
 	public function admin_pages() {
 		$admin_pages = array();
 		// settings page
-		$admin_pages[] = add_options_page( __( 'Shortpixel Image Upscale', 'shortpixel-image-optimiser' ), 'Shortpixel Image Upscale', 'manage_options', 'shortpixel-upscale-settings', array( $this, 'route' ) );
+		$admin_pages[] = add_options_page( __( 'Shortpixel Image Upscale', 'shortpixel-upscale-image' ), 'Shortpixel Image Upscale', 'manage_options', 'shortpixel-upscale-settings', array( $this, 'route' ) );
 
 		$otherMediaController = OtherMediaController::getInstance();
 		if ( $otherMediaController->showMenuItem() ) {
 			/*translators: title and menu name for the Other media page*/
-			$admin_pages[] = add_media_page( __( 'Custom Media Upscale by ShortPixel', 'shortpixel-image-optimiser' ), __( 'Custom Media', 'shortpixel-image-optimiser' ), 'edit_others_posts', 'wp-short-pixel-custom', array( $this, 'route' ) );
+			$admin_pages[] = add_media_page( __( 'Custom Media Upscale by ShortPixel', 'shortpixel-upscale-image' ), __( 'Custom Media', 'shortpixel-upscale-image' ), 'edit_others_posts', 'wp-short-pixel-custom', array( $this, 'route' ) );
 		}
 		/*translators: title and menu name for the Bulk Processing page*/
-		$admin_pages[] = add_media_page( __( 'ShortPixel Bulk Upscale', 'shortpixel-image-optimiser' ), __( 'Bulk Upscale', 'shortpixel-image-optimiser' ), 'edit_others_posts', 'wp-short-pixel-bulk', array( $this, 'route' ) );
+		$admin_pages[] = add_media_page( __( 'ShortPixel Bulk Upscale', 'shortpixel-upscale-image' ), __( 'Bulk Upscale', 'shortpixel-upscale-image' ), 'edit_others_posts', 'wp-short-pixel-bulk', array( $this, 'route' ) );
 
 		$this->admin_pages = $admin_pages;
 	}
 
 	public function admin_network_pages()
 	{
-	//	  	add_menu_page(__('Shortpixel MU', 'shortpixel-image-optimiser'), __('Shortpixel', 'shortpixel_image_optimiser'), 'manage_sites', 'shortpixel-upscale-network-settings', [$this, 'route'], $this->plugin_url('res/img/shortpixel.png') );
+	//	  	add_menu_page(__('Shortpixel MU', 'shortpixel-upscale-image'), __('Shortpixel', 'shortpixel-upscale-image'), 'manage_sites', 'shortpixel-upscale-network-settings', [$this, 'route'], $this->plugin_url('res/img/shortpixel.png') );
 	}
 
 	/** All scripts should be registed, not enqueued here (unless global wp-admin is needed )
@@ -335,8 +335,8 @@ class ShortPixelPlugin {
 
 	 wp_localize_script('spui-folderbrowser', 'spui_folderbrowser', array(
 		 		'strings' => array(
-						'loading' => __('Loading', 'shortpixel-image-optimiser'),
-						'empty_result' => __('No Directories found that can be added to Custom Folders', 'shortpixel-image-optimiser'),
+						'loading' => __('Loading', 'shortpixel-upscale-image'),
+						'empty_result' => __('No Directories found that can be added to Custom Folders', 'shortpixel-upscale-image'),
 				),
 				'icons' => array(
 						'folder_closed' => plugins_url('res/img/filebrowser/folder-closed.svg', SPUI_PLUGIN_FILE),
@@ -351,11 +351,11 @@ class ShortPixelPlugin {
 		wp_register_script( 'spui-tooltip', plugins_url( '/res/js/shortpixel-tooltip.js', SPUI_PLUGIN_FILE ), array( 'jquery' ), SPUI_IMAGE_OPTIMISER_VERSION, true );
 
 		$tooltip_localize = array(
-			'processing' => __('Processing... ','shortpixel-image-optimiser'),
-			'pause' =>  __('Click to pause', 'shortpixel-image-optimiser'),
-			'resume' => __('Click to resume', 'shortpixel-image-optimiser'),
-			'item' => __('item in queue', 'shortpixel-image-optimiser'),
-			'items' => __('items in queue', 'shortpixel-image-optimiser'),
+			'processing' => __('Processing... ','shortpixel-upscale-image'),
+			'pause' =>  __('Click to pause', 'shortpixel-upscale-image'),
+			'resume' => __('Click to resume', 'shortpixel-upscale-image'),
+			'item' => __('item in queue', 'shortpixel-upscale-image'),
+			'items' => __('items in queue', 'shortpixel-upscale-image'),
 		);
 
 		wp_localize_script( 'spui-tooltip', 'spui_tooltipStrings', $tooltip_localize);
@@ -378,10 +378,10 @@ class ShortPixelPlugin {
 		// This filter is from ListMediaViewController for the media library grid display, executive script in shortpixel-media.js.
 
 		$filters = array('optimized' => array(
-					'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-					'optimized' => __('Upscaled', 'shortpixel-image-optimiser'),
-					'unoptimized' => __('Not Upscaled', 'shortpixel-image-optimiser'),
-					'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
+					'all' => __('Any ShortPixel State', 'shortpixel-upscale-image'),
+					'optimized' => __('Upscaled', 'shortpixel-upscale-image'),
+					'unoptimized' => __('Not Upscaled', 'shortpixel-upscale-image'),
+					'prevented' => __('Upscaling Error', 'shortpixel-upscale-image'),
 		));
 
 		$editor_localize = ImageEditorController::localizeScript();
@@ -432,29 +432,29 @@ class ShortPixelPlugin {
 		wp_register_script( 'spui-screen-nolist', plugins_url( '/res/js/screens/screen-nolist.js', SPUI_PLUGIN_FILE ), array( 'jquery', 'spui-processor', 'spui-screen-base' ), SPUI_IMAGE_OPTIMISER_VERSION, true );
 
 	  $screen_localize = array(  // Item Base
-			'startAction' => __('Processing... ','shortpixel-image-optimiser'),
-			'startActionAI' => __('Generating image SEO data', 'shortpixel-image-optimiser'),
-			'fatalError' => __('ShortPixel encountered a fatal error when optimizing images. Please check the issue below. If this is caused by a bug please contact our support', 'shortpixel-image-optimiser'),
-			'fatalErrorStop' => __('ShortPixel has encounted multiple errors and has now stopped processing', 'shortpixel-image-optimiser'),
-			'fatalErrorStopText' => __('No items are being processed. To try again after solving the issues, please reload the page ', 'shortpixel-image-optimiser'),
-			'fatalError500' => __('A fatal error HTTP 500 has occurred. On the bulk screen, this may be caused by the script running out of memory. Check your error log, increase memory or disable heavy plugins.'),
+			'startAction' => __('Processing... ','shortpixel-upscale-image'),
+			'startActionAI' => __('Generating image SEO data', 'shortpixel-upscale-image'),
+			'fatalError' => __('ShortPixel encountered a fatal error when optimizing images. Please check the issue below. If this is caused by a bug please contact our support', 'shortpixel-upscale-image'),
+			'fatalErrorStop' => __('ShortPixel has encounted multiple errors and has now stopped processing', 'shortpixel-upscale-image'),
+			'fatalErrorStopText' => __('No items are being processed. To try again after solving the issues, please reload the page ', 'shortpixel-upscale-image'),
+			'fatalError500' => __('A fatal error HTTP 500 has occurred. On the bulk screen, this may be caused by the script running out of memory. Check your error log, increase memory or disable heavy plugins.', 'shortpixel-upscale-image'),
 
 		);
 	
 
 	 $screen_localize_custom = array( // Custom Screen
-			'stopActionMessage' => __('Folder scan has stopped', 'shortpixel-image-optimiser'),
+			'stopActionMessage' => __('Folder scan has stopped', 'shortpixel-upscale-image'),
 		);
 
 	 $screen_localize_media = [ 
 			'hide_ai' => ! $OptimizeAiController->isAiEnabled(),  // turn around negative setting
 			'hide_spio_in_popups' => apply_filters('spui/js/media/hide_in_popups', false), 
 			'modalcss' => plugins_url('res/css/shortpixel-media-modal.css', SPUI_PLUGIN_FILE), 
-			'remove_background_title' => __('AI Background Removal', 'shortpixel-image-optimiser'),
-			'scale_title' => __('AI Image Upscale', 'shortpixel-image-optimiser'),
+			'remove_background_title' => __('AI Background Removal', 'shortpixel-upscale-image'),
+			'scale_title' => __('AI Image Upscale', 'shortpixel-upscale-image'),
 			'upscale_max_width' => 1200, // Scale X and max width pin Pixels.
 			'popup_load_preview' => true, // Upon opening, load Preview or not.
-			'too_big_for_scale_title'  => __('Image too big for scaling', 'shortpixel-image-optimiser'), 
+			'too_big_for_scale_title'  => __('Image too big for scaling', 'shortpixel-upscale-image'), 
 			'wp_screen_id' => $env->screen_id, 
 	 ];
 
@@ -468,7 +468,7 @@ class ShortPixelPlugin {
 		$panel = isset( $_GET['panel'] ) ? sanitize_text_field( wp_unslash($_GET['panel']) ) : false;
 
 		$bulkLocalize = [
-			'endBulk'   => __( 'This will stop the bulk processing and take you back to the start. Are you sure you want to do this?', 'shortpixel-image-optimiser' ),
+			'endBulk'   => __( 'This will stop the bulk processing and take you back to the start. Are you sure you want to do this?', 'shortpixel-upscale-image' ),
 			'reloadURL' => admin_url( 'upload.php?page=wp-short-pixel-bulk'),
 		];
 		if ( $panel ) {
@@ -501,26 +501,26 @@ class ShortPixelPlugin {
 		}
 
 		$jsTranslation = array(
-			'optimizeWithSP'              => __( 'ShortPixel', 'shortpixel-image-optimiser' ),
-			'optimize'              => __( 'Upscale', 'shortpixel-image-optimiser' ),
-			'redoLossy'                   => __( 'Re-optimize Lossy', 'shortpixel-image-optimiser' ),
-			'redoGlossy'                  => __( 'Re-optimize Glossy', 'shortpixel-image-optimiser' ),
-			'redoLossless'                => __( 'Re-optimize Lossless', 'shortpixel-image-optimiser' ),
-			'redoSmartcrop'               => __( 'Re-optimize with SmartCrop', 'shortpixel-image-optimiser'),
-			'redoSmartcropless'           => __( 'Re-optimize without SmartCrop', 'shortpixel-image-optimiser'),
-			'restoreOriginal'             => __( 'Restore Originals', 'shortpixel-image-optimiser' ),
-			'generateAI' 				  => __( 'Generate image SEO data', 'shortpixel-image-optimiser'),
-			'markCompleted' 			  => __('Mark as completed' ,'shortpixel-image-optimiser'),
-			'areYouSureStopOptimizing'    => __( 'Are you sure you want to stop upscaling the folder {0}?', 'shortpixel-image-optimiser' ),
-			'pleaseDoNotSetLesserSize'    => __( "Please do not set a {0} less than the {1} of the largest thumbnail which is {2}, to be able to still regenerate all your thumbnails in case you'll ever need this.", 'shortpixel-image-optimiser' ),
-			'pleaseDoNotSetLesser1024'    => __( "Please do not set a {0} less than 1024, to be able to still regenerate all your thumbnails in case you'll ever need this.", 'shortpixel-image-optimiser' ),
-			'confirmBulkRestore'          => __( 'Are you sure you want to restore from backup all the images in your Media Library upscaled with ShortPixel?', 'shortpixel-image-optimiser' ),
-			'confirmBulkCleanup'          => __( "Are you sure you want to cleanup the ShortPixel metadata info for the images in your Media Library upscaled with ShortPixel? This will make ShortPixel 'forget' that it processed them and will upscale them again if you re-run the Bulk Upscale process.", 'shortpixel-image-optimiser' ),
-			'alertDeliverWebPAltered'     => __( "Warning: Using this method alters the structure of the rendered HTML code (IMG tags get included in PICTURE tags), which, in some rare \ncases, can lead to CSS/JS inconsistencies.\n\nPlease test this functionality thoroughly after activating!\n\nIf you notice any issue, just deactivate it and the HTML will will revert to the previous state.", 'shortpixel-image-optimiser' ),
-			'alertDeliverWebPUnaltered'   => __( 'This option will serve both WebP and the original image using the same URL, based on the web browser capabilities, please make sure you\'re serving the images from your server and not using a CDN which caches the images.', 'shortpixel-image-optimiser' ),
-			'originalImage'               => __( 'Original image', 'shortpixel-image-optimiser' ),
-			'optimizedImage'              => __( 'Upscaled image', 'shortpixel-image-optimiser' ),
-			'loading'                     => __( 'Loading...', 'shortpixel-image-optimiser' ),
+			'optimizeWithSP'              => __( 'ShortPixel', 'shortpixel-upscale-image' ),
+			'optimize'              => __( 'Upscale', 'shortpixel-upscale-image' ),
+			'redoLossy'                   => __( 'Re-optimize Lossy', 'shortpixel-upscale-image' ),
+			'redoGlossy'                  => __( 'Re-optimize Glossy', 'shortpixel-upscale-image' ),
+			'redoLossless'                => __( 'Re-optimize Lossless', 'shortpixel-upscale-image' ),
+			'redoSmartcrop'               => __( 'Re-optimize with SmartCrop', 'shortpixel-upscale-image'),
+			'redoSmartcropless'           => __( 'Re-optimize without SmartCrop', 'shortpixel-upscale-image'),
+			'restoreOriginal'             => __( 'Restore Originals', 'shortpixel-upscale-image' ),
+			'generateAI' 				  => __( 'Generate image SEO data', 'shortpixel-upscale-image'),
+			'markCompleted' 			  => __('Mark as completed' ,'shortpixel-upscale-image'),
+			'areYouSureStopOptimizing'    => __( 'Are you sure you want to stop upscaling the folder {0}?', 'shortpixel-upscale-image' ),
+			'pleaseDoNotSetLesserSize'    => __( "Please do not set a {0} less than the {1} of the largest thumbnail which is {2}, to be able to still regenerate all your thumbnails in case you'll ever need this.", 'shortpixel-upscale-image' ),
+			'pleaseDoNotSetLesser1024'    => __( "Please do not set a {0} less than 1024, to be able to still regenerate all your thumbnails in case you'll ever need this.", 'shortpixel-upscale-image' ),
+			'confirmBulkRestore'          => __( 'Are you sure you want to restore from backup all the images in your Media Library upscaled with ShortPixel?', 'shortpixel-upscale-image' ),
+			'confirmBulkCleanup'          => __( "Are you sure you want to cleanup the ShortPixel metadata info for the images in your Media Library upscaled with ShortPixel? This will make ShortPixel 'forget' that it processed them and will upscale them again if you re-run the Bulk Upscale process.", 'shortpixel-upscale-image' ),
+			'alertDeliverWebPAltered'     => __( "Warning: Using this method alters the structure of the rendered HTML code (IMG tags get included in PICTURE tags), which, in some rare \ncases, can lead to CSS/JS inconsistencies.\n\nPlease test this functionality thoroughly after activating!\n\nIf you notice any issue, just deactivate it and the HTML will will revert to the previous state.", 'shortpixel-upscale-image' ),
+			'alertDeliverWebPUnaltered'   => __( 'This option will serve both WebP and the original image using the same URL, based on the web browser capabilities, please make sure you\'re serving the images from your server and not using a CDN which caches the images.', 'shortpixel-upscale-image' ),
+			'originalImage'               => __( 'Original image', 'shortpixel-upscale-image' ),
+			'optimizedImage'              => __( 'Upscaled image', 'shortpixel-upscale-image' ),
+			'loading'                     => __( 'Loading...', 'shortpixel-upscale-image' ),
 
 		);
 
@@ -568,7 +568,8 @@ class ShortPixelPlugin {
 		if ( wp_style_is( $name, 'registered' ) ) {
 			wp_enqueue_style( $name );
 		} else {
-			Log::addWarn( "Style $name was asked for, but not registered", $_SERVER['REQUEST_URI'] );
+			$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+			Log::addWarn( "Style $name was asked for, but not registered", $request_uri );
 		}
 	}
 
@@ -586,7 +587,8 @@ class ShortPixelPlugin {
 			if ( wp_script_is( $name, 'registered' ) ) {
 				wp_enqueue_script( $name );
 			} else {
-				Log::addWarn( "Script $name was asked for, but not registered", $_SERVER['REQUEST_URI']  );
+				$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+				Log::addWarn( "Script $name was asked for, but not registered", $request_uri );
 			}
 		}
 	}

@@ -110,9 +110,9 @@ if (! defined('ABSPATH')) {
 
     <setting class='textarea'>
       <content>
-        <name><?php _e('General site context', 'shortpixel-upscale-image'); ?></name>
-        <info><?php _e('This is a general context that will be passed to the AI model to provide more relevant data for your website.', 'shortpixel-upscale-image'); ?></info>
-        <textarea class="ai_general_context" name="ai_general_context"><?php echo $view->data->ai_general_context; ?></textarea>
+        <name><?php esc_html_e( 'General site context', 'shortpixel-upscale-image' ); ?></name>
+        <info><?php esc_html_e( 'This is a general context that will be passed to the AI model to provide more relevant data for your website.', 'shortpixel-upscale-image' ); ?></info>
+        <textarea class="ai_general_context" name="ai_general_context"><?php echo esc_textarea( $view->data->ai_general_context ); ?></textarea>
       </content>
 
     </setting>
@@ -141,14 +141,17 @@ if (! defined('ABSPATH')) {
 
         <content class='toggleTarget ai_gen_alt is-advanced'>
           <?php
-          $input = "<input type='number' name='ai_limit_alt_chars' value='" . $view->data->ai_limit_alt_chars . "' max='200' min='0'>";
+          $spui_alt_input = "<input type='number' name='ai_limit_alt_chars' value='" . (int) $view->data->ai_limit_alt_chars . "' max='200' min='0'>";
           ?>
-          <name><?php printf(__('Limit generated ALT Tag to %s characters', 'shortpixel-upscale-image'), $input); ?></name>
+          <name><?php
+          /* translators: %s: Number input for the ALT tag character limit. */
+          printf( wp_kses_post( __( 'Limit generated ALT Tag to %s characters', 'shortpixel-upscale-image' ) ), wp_kses( $spui_alt_input, array( 'input' => array( 'type' => true, 'name' => true, 'value' => true, 'max' => true, 'min' => true ) ) ) );
+          ?></name>
         </content>
 
         <content class='toggleTarget ai_gen_alt is-advanced'>
-          <name> <?php _e('Additional context for generating ALT Tags:', 'shortpixel-upscale-image'); ?></name>
-          <textarea name="ai_alt_context"><?php echo $view->data->ai_alt_context ?></textarea>
+          <name> <?php esc_html_e( 'Additional context for generating ALT Tags:', 'shortpixel-upscale-image' ); ?></name>
+          <textarea name="ai_alt_context"><?php echo esc_textarea( $view->data->ai_alt_context ); ?></textarea>
         </content>
 
       </setting>
@@ -170,14 +173,17 @@ if (! defined('ABSPATH')) {
 
         <content class='toggleTarget ai_gen_description is-advanced'>
           <?php
-          $input = "<input type='number' name='ai_limit_description_chars' value='" . $view->data->ai_limit_description_chars . "' max='500' min='0'>";
+          $spui_description_input = "<input type='number' name='ai_limit_description_chars' value='" . (int) $view->data->ai_limit_description_chars . "' max='500' min='0'>";
           ?>
-          <name><?php printf(__('Limit generated image description to %s characters', 'shortpixel-upscale-image'), $input); ?></name>
+          <name><?php
+          /* translators: %s: Number input for the description character limit. */
+          printf( wp_kses_post( __( 'Limit generated image description to %s characters', 'shortpixel-upscale-image' ) ), wp_kses( $spui_description_input, array( 'input' => array( 'type' => true, 'name' => true, 'value' => true, 'max' => true, 'min' => true ) ) ) );
+          ?></name>
         </content>
 
         <content class='toggleTarget ai_gen_description is-advanced'>
-          <name> <?php _e('Additional context for generating image description', 'shortpixel-upscale-image'); ?></name>
-          <textarea name='ai_description_context'><?php echo $view->data->ai_description_context ?></textarea>
+          <name> <?php esc_html_e( 'Additional context for generating image description', 'shortpixel-upscale-image' ); ?></name>
+          <textarea name='ai_description_context'><?php echo esc_textarea( $view->data->ai_description_context ); ?></textarea>
         </content>
 
 
@@ -201,15 +207,18 @@ if (! defined('ABSPATH')) {
 
         <content class='toggleTarget ai_gen_caption is-advanced'>
           <?php
-          $input = '<input type="number" name="ai_limit_caption_chars" value="' . $view->data->ai_limit_caption_chars . '" max="250" min="0" >';
+          $spui_caption_input = '<input type="number" name="ai_limit_caption_chars" value="' . (int) $view->data->ai_limit_caption_chars . '" max="250" min="0" >';
           ?>
-          <name><?php printf(__('Limit generated image caption to %s characters', 'shortpixel-upscale-image'), $input); ?></name>
+          <name><?php
+          /* translators: %s: Number input for the caption character limit. */
+          printf( wp_kses_post( __( 'Limit generated image caption to %s characters', 'shortpixel-upscale-image' ) ), wp_kses( $spui_caption_input, array( 'input' => array( 'type' => true, 'name' => true, 'value' => true, 'max' => true, 'min' => true ) ) ) );
+          ?></name>
         </content>
 
 
         <content class='toggleTarget ai_gen_caption is-advanced'>
-          <name> <?php _e('Additional context for generating image caption', 'shortpixel-upscale-image'); ?></name>
-          <textarea name='ai_caption_context'><?php echo $view->data->ai_caption_context ?></textarea>
+          <name> <?php esc_html_e( 'Additional context for generating image caption', 'shortpixel-upscale-image' ); ?></name>
+          <textarea name='ai_caption_context'><?php echo esc_textarea( $view->data->ai_caption_context ); ?></textarea>
         </content>
 
       </setting>
@@ -232,19 +241,22 @@ if (! defined('ABSPATH')) {
 
         <content class='nextline ai_gen_posttitle is-advanced'>
           <?php
-          $input  = '<input type="number" name="ai_limit_post_title_chars" value="' . $view->data->ai_limit_post_title_chars . '" max="100" min="0">';
+          $spui_post_title_input  = '<input type="number" name="ai_limit_post_title_chars" value="' . (int) $view->data->ai_limit_post_title_chars . '" max="100" min="0">';
           ?>
-          <name><?php printf(__('Limit image title to %s characters ', 'shortpixel-upscale-image'), $input); ?></name>
+          <name><?php
+          /* translators: %s: Number input for the image title character limit. */
+          printf( wp_kses_post( __( 'Limit image title to %s characters ', 'shortpixel-upscale-image' ) ), wp_kses( $spui_post_title_input, array( 'input' => array( 'type' => true, 'name' => true, 'value' => true, 'max' => true, 'min' => true ) ) ) );
+          ?></name>
         </content>
 
         <content class='nextline ai_gen_posttitle is-advanced'>
-          <name><?php _e('Additional context for image title generation: ', 'shortpixel-upscale-image'); ?></name>
-          <textarea name="ai_post_title_context"><?php echo $view->data->ai_post_title_context ?></textarea>
+          <name><?php esc_html_e( 'Additional context for image title generation: ', 'shortpixel-upscale-image' ); ?></name>
+          <textarea name="ai_post_title_context"><?php echo esc_textarea( $view->data->ai_post_title_context ); ?></textarea>
 
         </content>
         <warning class="ai_overwrite_warning">
            <message>
-          <?php _e('SPUI may still write image title when preserving data, since image title is always set', 'shortpixel-upscale-image'); ?>
+          <?php esc_html_e( 'SPUI may still write image title when preserving data, since image title is always set', 'shortpixel-upscale-image' ); ?>
           </message>
         </warning>
       </setting>
@@ -268,14 +280,17 @@ if (! defined('ABSPATH')) {
 
         <content class='nextline ai_gen_filename is-advanced'>
           <?php
-          $input  = '<input type="number" name="ai_limit_filename_chars" value="' . $view->data->ai_limit_filename_chars . '" max="200" min="0">';
+          $spui_filename_input  = '<input type="number" name="ai_limit_filename_chars" value="' . (int) $view->data->ai_limit_filename_chars . '" max="200" min="0">';
           ?>
-          <name><?php printf(__('Limit filename to %s characters ', 'shortpixel-upscale-image'), $input); ?></name>
+          <name><?php
+          /* translators: %s: Number input for the filename character limit. */
+          printf( wp_kses_post( __( 'Limit filename to %s characters ', 'shortpixel-upscale-image' ) ), wp_kses( $spui_filename_input, array( 'input' => array( 'type' => true, 'name' => true, 'value' => true, 'max' => true, 'min' => true ) ) ) );
+          ?></name>
         </content>
 
         <content class='nextline ai_gen_filename is-advanced'>
-          <name><?php _e('Additional context for filename generation: ', 'shortpixel-upscale-image'); ?></name>
-          <textarea name="ai_filename_context"><?php echo $view->data->ai_filename_context ?></textarea>
+          <name><?php esc_html_e( 'Additional context for filename generation: ', 'shortpixel-upscale-image' ); ?></name>
+          <textarea name="ai_filename_context"><?php echo esc_textarea( $view->data->ai_filename_context ); ?></textarea>
 
         </content>
 
@@ -292,7 +307,10 @@ if (! defined('ABSPATH')) {
         </content>
 
         <content class='nextline'>
-            <name><?php printf(esc_html__('This is a feature we are currently evaluating. If you would like to see it implemented in a future version of our plugin, please %svote for it here%s.','shortpixel-upscale-image'), '<a target="_blank" href="https://ideas.shortpixel.com/update-image-filename-with-an-seo-friendly-one~4cMEvKmvFbosoYTI9T4UgK?from=board">', '</a>' ); ?></name>
+            <name><?php
+            /* translators: 1: Opening feature request link. 2: Closing feature request link. */
+            printf( wp_kses_post( __( 'This is a feature we are currently evaluating. If you would like to see it implemented in a future version of our plugin, please %1$svote for it here%2$s.', 'shortpixel-upscale-image' ) ), '<a target="_blank" href="https://ideas.shortpixel.com/update-image-filename-with-an-seo-friendly-one~4cMEvKmvFbosoYTI9T4UgK?from=board">', '</a>' );
+            ?></name>
         </content>
       </setting>
 
@@ -333,13 +351,13 @@ if (! defined('ABSPATH')) {
 
         <i class='documentation dashicons dashicons-editor-help' data-link="https://shortpixel.com/knowledge-base/article/ai-image-seo-settings-explained/#3-toc-title?target=iframe"></i>
 
-        <info><?php _e('When this is enabled, the title of the image\'s parent post or page will be sent to the AI model for more accurate image SEO results.', 'shortpixel-upscale-image'); ?></info>
+        <info><?php esc_html_e( 'When this is enabled, the title of the image\'s parent post or page will be sent to the AI model for more accurate image SEO results.', 'shortpixel-upscale-image' ); ?></info>
       </content>
     </setting>
 
   <setting>
     <content>
-      <name><?php _e('Language', 'shortpixel-upscale-image'); ?>
+      <name><?php esc_html_e( 'Language', 'shortpixel-upscale-image' ); ?>
         <?php
         wp_dropdown_languages([
           'name' => 'ai_language',
@@ -350,7 +368,7 @@ if (! defined('ABSPATH')) {
         ]);
         ?>
       </name>
-      <info><?php _e('Select the language you would like to be used for generating image SEO data.','shortpixel-upscale-image'); ?></info>
+      <info><?php esc_html_e( 'Select the language you would like to be used for generating image SEO data.', 'shortpixel-upscale-image' ); ?></info>
     </content>
   </setting>
   </gridbox>
@@ -361,13 +379,13 @@ if (! defined('ABSPATH')) {
     <div class='ai_preview'>
       <gridbox class='width_half'>
         <span><img src="" class='image_preview'></span>
-        <span><h2><i class='shortpixel-icon ai'></i><?php _e('AI Image SEO Preview','shortpixel-upscale-image'); ?></h2>
-          <p><?php _e('Preview only: the current image data will not be touched!', 'shortpixel-upscale-image'); ?></p>
+        <span><h2><i class='shortpixel-icon ai'></i><?php esc_html_e( 'AI Image SEO Preview', 'shortpixel-upscale-image' ); ?></h2>
+          <p><?php esc_html_e( 'Preview only: the current image data will not be touched!', 'shortpixel-upscale-image' ); ?></p>
           <p>
             <button type='button' name='open_change_photo'>
-              <i class='shortpixel-icon optimization'></i><?php _e('Select test image', 'shortpixel-upscale-image'); ?></button>
+              <i class='shortpixel-icon optimization'></i><?php esc_html_e( 'Select test image', 'shortpixel-upscale-image' ); ?></button>
             <button type='button' name='refresh_ai_preview'>
-              <i class='shortpixel-icon refresh'></i><?php _e('Generate AI SEO data preview', 'shortpixel-upscale-image'); ?></button>
+              <i class='shortpixel-icon refresh'></i><?php esc_html_e( 'Generate AI SEO data preview', 'shortpixel-upscale-image' ); ?></button>
           </p>
           <div class='preview_result'>
               
@@ -377,28 +395,28 @@ if (! defined('ABSPATH')) {
     <hr>
     <gridbox class='width_two_with_middle result_wrapper'>
       <div class='current result_info'>
-        <h3><?php _e('Current SEO Data', 'shortpixel-upscale-image'); ?></h3>
+        <h3><?php esc_html_e( 'Current SEO Data', 'shortpixel-upscale-image' ); ?></h3>
         <ul>
-      <!--    <li <label><?php _e('Image filemame', 'shortpixel-upscale-image'); ?>:</label> <span class='filename'></span>
+      <!--    <li <label><?php esc_html_e('Image filemame', 'shortpixel-upscale-image'); ?>:</label> <span class='filename'></span>
           </li> -->
-          <li><label><?php _e('Image ALT tag', 'shortpixel-upscale-image'); ?>:</label> <span class='alt'></span></li>
-          <li><label><?php _e('Image caption', 'shortpixel-upscale-image'); ?>:</label> <span class='caption'></span></li>
-          <li><label><?php _e('Image description', 'shortpixel-upscale-image'); ?>:</label> <span class='description'></span>
-          <li><label><?php _e('Image Title', 'shortpixel-upscale-image'); ?>:</label> <span class='post_title'></span>
+          <li><label><?php esc_html_e( 'Image ALT tag', 'shortpixel-upscale-image' ); ?>:</label> <span class='alt'></span></li>
+          <li><label><?php esc_html_e( 'Image caption', 'shortpixel-upscale-image' ); ?>:</label> <span class='caption'></span></li>
+          <li><label><?php esc_html_e( 'Image description', 'shortpixel-upscale-image' ); ?>:</label> <span class='description'></span>
+          <li><label><?php esc_html_e( 'Image Title', 'shortpixel-upscale-image' ); ?>:</label> <span class='post_title'></span>
 
           </li>
         </ul>
       </div>
       <div class='icon'><i class='shortpixel-icon chevron rotate_right'></i>&nbsp;</div>
       <div class='result result_info'>
-        <h3><?php _e('Generated AI Image SEO data', 'shortpixel-upscale-image'); ?></h3>
+        <h3><?php esc_html_e( 'Generated AI Image SEO data', 'shortpixel-upscale-image' ); ?></h3>
         <ul>
-<!--          <li><label><?php _e('Image filemame', 'shortpixel-upscale-image'); ?>:</label> <span class='filename'></span>
+<!--          <li><label><?php esc_html_e('Image filemame', 'shortpixel-upscale-image'); ?>:</label> <span class='filename'></span>
           </li> -->
-          <li><label><?php _e('Image ALT tag', 'shortpixel-upscale-image'); ?>:</label> <span class='alt'></span></li>
-          <li><label><?php _e('Image caption', 'shortpixel-upscale-image'); ?>:</label> <span class='caption'></span></li>
-          <li><label><?php _e('Image description', 'shortpixel-upscale-image'); ?>:</label> <span class='description'></span>
-          <li><label><?php _e('Image Title', 'shortpixel-upscale-image'); ?>:</label> <span class='post_title'></span>
+          <li><label><?php esc_html_e( 'Image ALT tag', 'shortpixel-upscale-image' ); ?>:</label> <span class='alt'></span></li>
+          <li><label><?php esc_html_e( 'Image caption', 'shortpixel-upscale-image' ); ?>:</label> <span class='caption'></span></li>
+          <li><label><?php esc_html_e( 'Image description', 'shortpixel-upscale-image' ); ?>:</label> <span class='description'></span>
+          <li><label><?php esc_html_e( 'Image Title', 'shortpixel-upscale-image' ); ?>:</label> <span class='post_title'></span>
         </ul>
       </div>
 

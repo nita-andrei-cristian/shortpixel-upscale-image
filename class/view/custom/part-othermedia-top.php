@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="wrap shortpixel-other-media">
     <h2>
-        <?php esc_html_e($view->title);?>
+        <?php echo esc_html( $view->title );?>
     </h2>
 
     <div class='toolbar'>
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <input type="hidden" name="orderby" value="<?php echo esc_attr($this->orderby) ?>" />
 
                 <p class="search-form">
-                  <label><?php esc_html_e('Search', 'shortpixel-image-optimiser'); ?></label>
+                  <label><?php esc_html_e('Search', 'shortpixel-upscale-image'); ?></label>
                   <input type="text" name="s" value="<?php echo esc_attr($this->search) ?>" />
 
                 </p>
@@ -36,27 +36,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<?php if ($this->view->pagination !== false): ?>
 	      <div class='tablenav-pages'>
-	        <?php echo $this->view->pagination; ?>
+	        <?php echo wp_kses_post( $this->view->pagination ); ?>
 	    	</div>
 			<?php endif; ?>
   </div>
 
 <?php
-$file_url =  esc_url(add_query_arg('part', 'files', $this->url));
-$folder_url = esc_url(add_query_arg('part', 'folders', $this->url));
-$scan_url = esc_url(add_query_arg('part', 'scan', $this->url));
+$spui_file_url =  esc_url(add_query_arg('part', 'files', $this->url));
+$spui_folder_url = esc_url(add_query_arg('part', 'folders', $this->url));
+$spui_scan_url = esc_url(add_query_arg('part', 'scan', $this->url));
 
-$current_part = isset($_GET['part']) ? sanitize_text_field($_GET['part']) : 'files';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab switch parameter.
+$spui_current_part = isset( $_GET['part'] ) ? sanitize_text_field( wp_unslash( $_GET['part'] ) ) : 'files';
 
 $tabs = array(
-	'files' => array('link' => $file_url,
-									 'text' => __('Files', 'shortpixel-image-optimiser'),
+	'files' => array('link' => $spui_file_url,
+									 'text' => __('Files', 'shortpixel-upscale-image'),
 								 ),
-	 'folders' => array('link' => $folder_url,
-	 										'text' => __('Folders', 'shortpixel-image-optimiser'),
+	 'folders' => array('link' => $spui_folder_url,
+	 										'text' => __('Folders', 'shortpixel-upscale-image'),
  								),
-		'scan' => array('link' => $scan_url,
-										'text' => __('Scan', 'shortpixel-image-optimiser'),
+		'scan' => array('link' => $spui_scan_url,
+										'text' => __('Scan', 'shortpixel-upscale-image'),
 
 	),
 );
@@ -64,10 +65,10 @@ $tabs = array(
 ?>
 
 <div class="custom-media-tabs">
-		<?php foreach($tabs as $tabName => $tab)
+		<?php foreach ( $tabs as $spui_tab_name => $spui_tab )
 		{
-				$class = ($current_part == $tabName) ? ' class="selected" ' : '';
+				$spui_class = ( $spui_current_part == $spui_tab_name ) ? ' class="selected" ' : '';
 
-				echo '<a href="' . $tab['link'] . '" ' . $class . '>' . $tab['text'] . '</a>';
+				echo '<a href="' . esc_url( $spui_tab['link'] ) . '" ' . wp_kses_post( $spui_class ) . '>' . esc_html( $spui_tab['text'] ) . '</a>';
 		} ?>
 </div>

@@ -30,6 +30,12 @@ class AdminController extends \SPUI\Controller
 
 		private static $preventUploadHook = array();
 
+		// SPUI: when true, the auto-optimize upload hooks bail out. Set around media_handle_sideload()
+		// in OptimizeController so the freshly generated upscaled copy is not auto-upscaled again
+		// (which produced endless _upscale_2x_upscale_2x chains). Mirrors the generated-copy guard
+		// already present in the bulk path (Queue::prepare, $spui_generated_upscale).
+		public static $suppressAutoUpscale = false;
+
     public static function getInstance()
     {
       if (is_null(self::$instance))
@@ -63,6 +69,11 @@ class AdminController extends \SPUI\Controller
     */
     public function handleImageUploadHook($meta, $id)
     {
+        // SPUI: skip auto-upscale for our own freshly sideloaded upscaled copies.
+        if (self::$suppressAutoUpscale)
+        {
+           return $meta;
+        }
 
         // Media only hook
 				if ( in_array($id, self::$preventUploadHook))
@@ -149,6 +160,12 @@ class AdminController extends \SPUI\Controller
      */
     public function handleAiImageUploadHook($meta, $id)
     {
+        // SPUI: skip auto-handling for our own freshly sideloaded upscaled copies.
+        if (self::$suppressAutoUpscale)
+        {
+           return $meta;
+        }
+
               // Media only hook
 				if ( in_array($id, self::$preventUploadHook))
 				{
@@ -453,34 +470,43 @@ class AdminController extends \SPUI\Controller
       return $query;
     }
 
-    public function filter_add_where ($where, $query)
-    {
-        global $wpdb;
-        $filter = $this->selected_filter_value( 'shortpixel_status', 'all' );
-        $tableName = UtilHelper::getPostMetaTable();
+	    public function filter_add_where ($where, $query)
+	    {
+	        global $wpdb;
+	        $filter = $this->selected_filter_value( 'shortpixel_status', 'all' );
+	        $table_name = esc_sql( UtilHelper::getPostMetaTable() );
 
         switch($filter)
         {
              case 'all':
 
              break;
-             case 'unoptimized':
-              // The parent <> %d exclusion is meant to also deselect duplicate items ( translations ) since they don't have a status, but shouldn't be in a list like this.
-                $sql = " AND " . $wpdb->posts . '.ID not in ( SELECT  attach_id FROM ' . $tableName . " WHERE (parent = %d and status = %d) OR parent <> %d ) ";
-  					    $where .= $wpdb->prepare($sql, MediaLibraryModel::IMAGE_TYPE_MAIN, ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_MAIN);
-             break;
-             case 'optimized':
-								$sql = ' AND ' . $wpdb->posts . '.ID in ( SELECT distinct attach_id FROM ' . $tableName . ' WHERE status = %d) ';
-   					    $where .= $wpdb->prepare($sql, ImageModel::FILE_STATUS_SUCCESS);
-             break;
-             case 'prevented':
+	             case 'unoptimized':
+	              // The parent <> %d exclusion is meant to also deselect duplicate items ( translations ) since they don't have a status, but shouldn't be in a list like this.
+									// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is plugin-owned and escaped upstream.
+	                $where .= $wpdb->prepare(
+										" AND {$wpdb->posts}.ID not in ( SELECT attach_id FROM {$table_name} WHERE (parent = %d and status = %d) OR parent <> %d ) ",
+										MediaLibraryModel::IMAGE_TYPE_MAIN,
+										ImageModel::FILE_STATUS_SUCCESS,
+										MediaLibraryModel::IMAGE_TYPE_MAIN
+									);
+	             break;
+	             case 'optimized':
+									// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is plugin-owned and escaped upstream.
+									$where .= $wpdb->prepare(
+										" AND {$wpdb->posts}.ID in ( SELECT distinct attach_id FROM {$table_name} WHERE status = %d) ",
+										ImageModel::FILE_STATUS_SUCCESS
+									);
+	             break;
+	             case 'prevented':
 
-                $sql = sprintf('AND %s.ID in (SELECT post_id FROM %s WHERE meta_key = %%s)', $wpdb->posts, $wpdb->postmeta);
+	                $sql = sprintf('AND %s.ID in (SELECT post_id FROM %s WHERE meta_key = %%s)', $wpdb->posts, $wpdb->postmeta);
 
-                $sql .= sprintf(' AND %s.ID not in ( SELECT attach_id FROM %s WHERE parent = 0 and status = %s)', $wpdb->posts, $tableName, ImageModel::FILE_STATUS_MARKED_DONE);
+	                $sql .= sprintf(' AND %s.ID not in ( SELECT attach_id FROM %s WHERE parent = 0 and status = %d)', $wpdb->posts, $table_name, ImageModel::FILE_STATUS_MARKED_DONE);
 
-                $where = $wpdb->prepare($sql, '_shortpixel_prevent_optimize');
-            break;
+	                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared here and dynamic fragments are controller-owned.
+	                $where = $wpdb->prepare($sql, '_shortpixel_prevent_optimize');
+	            break;
         }
 
         return $where;
@@ -495,22 +521,22 @@ class AdminController extends \SPUI\Controller
   	 *
   	 * @return string
   	 */
-  	private function selected_filter_value( $key, $default ) {
-  		if ( wp_doing_ajax() ) {
-  			if ( isset( $_REQUEST['query'][ $key ] ) ) {
-  				$value = sanitize_text_field( $_REQUEST['query'][ $key ] );
-  			}
-  		} else {
-  			if ( ! isset( $_REQUEST['filter_action'] )  ) {
+	  	private function selected_filter_value( $key, $default ) {
+	  		if ( wp_doing_ajax() ) {
+	  			if ( isset( $_REQUEST['query'][ $key ] ) ) {
+	  				$value = sanitize_text_field( wp_unslash( $_REQUEST['query'][ $key ] ) );
+	  			}
+	  		} else {
+	  			if ( ! isset( $_REQUEST['filter_action'] )  ) {
   				return $default;
   			}
 
-  			if ( ! isset( $_REQUEST[ $key ] ) ) {
-  				return $default;
-  			}
+	  			if ( ! isset( $_REQUEST[ $key ] ) ) {
+	  				return $default;
+	  			}
 
-  			$value = sanitize_text_field( $_REQUEST[ $key ] );
-  		}
+	  			$value = sanitize_text_field( wp_unslash( $_REQUEST[ $key ] ) );
+	  		}
 
   		return ! empty( $value ) ? $value : $default;
   	}
@@ -595,8 +621,8 @@ class AdminController extends \SPUI\Controller
 					return $fields;
 				}
 
-				$fields["shortpixel-image-optimiser"] = array(
-							"label" => esc_html__("ShortPixel", "shortpixel-image-optimiser"),
+					$fields["shortpixel-image-optimiser"] = array(
+								"label" => esc_html__("ShortPixel", "shortpixel-upscale-image"),
 							"input" => "html",
 							"html" => '<div id="shortpixel-data-' . $post->ID . '">--</div>',
 						);
@@ -626,6 +652,15 @@ class AdminController extends \SPUI\Controller
         Log::addDebug('onDeleteImage - Image Removal Detected ' . $post_id);
         $result = null;
         $fs = \wpSPUI()->filesystem();
+
+        // SPUI: upscaling cross-links the source and the generated copy via _spui_scaled.
+        // When either half is deleted, clear the reference on the paired attachment so the
+        // source is no longer treated as "already upscaled" and can be upscaled again.
+        $linked_id = (int) get_post_meta($post_id, '_spui_scaled', true);
+        if ($linked_id > 0)
+        {
+           delete_post_meta($linked_id, '_spui_scaled');
+        }
 
         try
         {
@@ -659,7 +694,7 @@ class AdminController extends \SPUI\Controller
         $extraClasses = " shortpixel-hide";
         /*translators: toolbar icon tooltip*/
         $id = 'short-pixel-notice-toolbar';
-        $tooltip = __('ShortPixel optimizing...','shortpixel-image-optimiser');
+        $tooltip = __('ShortPixel optimizing...','shortpixel-upscale-image');
         $icon = "shortpixel.png";
         $successLink = $link = admin_url(current_user_can( 'edit_others_posts')? 'upload.php?page=wp-short-pixel-bulk' : 'upload.php');
         $blank = "";
@@ -673,12 +708,12 @@ class AdminController extends \SPUI\Controller
 
             if ($access->userIsAllowed('quota-warning'))
             {
-              $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-image-optimiser');
+              $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-upscale-image');
               //$link = "http://shortpixel.com/login/" . $this->_settings->apiKey;
               $link = "options-general.php?page=shortpixel-upscale-settings";
             }
             else {
-              $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-image-optimiser');
+              $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-upscale-image');
               //$link = "http://shortpixel.com/login/" . $this->_settings->apiKey;
               $link = false;
             }
@@ -686,11 +721,11 @@ class AdminController extends \SPUI\Controller
 
         $args = array(
                 'id'    => 'shortpixel_processing',
-                'title' => '<div id="' . $id . '" title="' . $tooltip . '"><span class="stats hidden">0</span><img alt="' . __('ShortPixel icon','shortpixel-image-optimiser') . '" src="'
+                'title' => '<div id="' . $id . '" title="' . $tooltip . '"><span class="stats hidden">0</span><img alt="' . __('ShortPixel icon','shortpixel-upscale-image') . '" src="'
                          . plugins_url( 'res/img/'.$icon, SPUI_PLUGIN_FILE ) . '" success-url="' . $successLink . '"><span class="shp-alert">!</span>'
                          . '<div class="controls">
-                              <span class="dashicons dashicons-controls-pause pause" title="' . __('Pause', 'shortpixel-image-optimiser') . '">&nbsp;</span>
-                              <span class="dashicons dashicons-controls-play play" title="' . __('Resume', 'shortpixel-image-optimiser') . '">&nbsp;</span>
+                              <span class="dashicons dashicons-controls-pause pause" title="' . __('Pause', 'shortpixel-upscale-image') . '">&nbsp;</span>
+                              <span class="dashicons dashicons-controls-play play" title="' . __('Resume', 'shortpixel-upscale-image') . '">&nbsp;</span>
                             </div>'
 
                          .'<div class="cssload-container"><div class="cssload-speeding-wheel"></div></div></div>',

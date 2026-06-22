@@ -43,7 +43,8 @@ class Formidable
 
     public function formUpload($id, $new_values)
     {
-       $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : null;
+       // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Request is triggered by Formidable hooks, not this plugin's own form endpoint.
+       $form_id = isset( $_POST['form_id'] ) ? intval( wp_unslash( $_POST['form_id'] ) ) : null;
 
        if (is_null($form_id))
        {
@@ -51,7 +52,8 @@ class Formidable
           return;
        }
 
-       if (false === isset($_POST['item_meta']) || false === is_array($_POST['item_meta']))
+       // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Request is triggered by Formidable hooks, not this plugin's own form endpoint.
+       if ( false === isset( $_POST['item_meta'] ) || false === is_array( $_POST['item_meta'] ) )
        {
           return;
        }
@@ -66,7 +68,8 @@ class Formidable
 
        foreach($fields as $index => $field_id)
        {
-         $meta = isset($_POST['item_meta'][$field_id]) ? $_POST['item_meta'][$field_id] : '';
+         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Request is triggered by Formidable hooks, not this plugin's own form endpoint.
+         $meta = isset( $_POST['item_meta'][ $field_id ] ) ? wp_unslash( $_POST['item_meta'][ $field_id ] ) : '';
 
          // array can contain non numeric or empty values.
          if (! is_numeric($meta) && ! is_array($meta))
@@ -78,7 +81,7 @@ class Formidable
             $meta = array_filter($meta);
             foreach($meta as $index => $meta_id)
             {
-               $this->checkMediaLibrary(intval($meta_id));
+               $this->checkMediaLibrary(intval(sanitize_text_field(wp_unslash($meta_id))));
             }
          }
          else {
@@ -94,10 +97,13 @@ class Formidable
     {
         global $wpdb;
 
-        $sql = 'SELECT id FROM ' . $wpdb->prefix . 'frm_fields where form_id = %d and type = %s ';
-        $sql = $wpdb->prepare($sql, $form_id, 'file');
-
-        $row = $wpdb->get_col($sql);
+        $row = $wpdb->get_col(
+            $wpdb->prepare(
+                'SELECT id FROM ' . esc_sql( $wpdb->prefix ) . 'frm_fields where form_id = %d and type = %s ',
+                $form_id,
+                'file'
+            )
+        );
 
         if (count($row) === 0)
         {
@@ -124,4 +130,4 @@ class Formidable
 
 }
 
-$f = new Formidable();
+$spui_formidable = new Formidable();

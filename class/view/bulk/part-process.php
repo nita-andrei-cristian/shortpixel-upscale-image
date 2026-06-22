@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-$settings = \wpSPUI()->settings();
+$spui_settings = \wpSPUI()->settings();
 ?>
 <section class="panel process" data-panel="process" >
   <div class="panel-container">
@@ -17,10 +17,10 @@ $settings = \wpSPUI()->settings();
 
     <div class='process_heading'>
     <h3 class="heading">
-      <?php esc_html_e('ShortPixel Bulk Upscale is in progress','shortpixel-image-optimiser'); ?>
+      <?php esc_html_e('ShortPixel Bulk Upscale is in progress','shortpixel-upscale-image'); ?>
 
       <div class='average-optimization  shortpixel-hide'>
-         <!-- <p><?php esc_html_e('Average this run','shortpixel-image-optimiser'); ?></p> -->
+         <!-- <p><?php esc_html_e('Average this run','shortpixel-upscale-image'); ?></p> -->
           <svg class="opt-circle-average" viewBox="-10 0 150 140">
                         <path class="trail" d="
                             M 50,50
@@ -36,23 +36,24 @@ $settings = \wpSPUI()->settings();
                             a 46,46 0 1 1 0,-92
                             " stroke-width="16" fill-opacity="0" style="stroke-dasharray: 289.027px, 289.027px; stroke-dashoffset: 180px;">
                         </path>
-                        <text class="text" x="50" y="50"><?php esc_html_e('N/A', 'shortpixel-image-optimiser'); ?></text>
+                        <text class="text" x="50" y="50"><?php esc_html_e('N/A', 'shortpixel-upscale-image'); ?></text>
                     </svg>
 
       </div>
     </h3>
 
     <?php
-     if ($settings->doBackgroundProcess): ?>
+     if ( $spui_settings->doBackgroundProcess ) : ?>
       <p class="description">
 
         <?php
         $link = 'https://shortpixel.com/knowledge-base/article/background-processing-using-cron-jobs-in-shortpixel-image-optimizer/';
-        printf(esc_html('ShortPixel Bulk is processing in the background. You can close this browser window now and reopen it at any time to check the status of the bulk processing. %sLearn more%s','shortpixel-image-optimiser'), '<strong><a href="' . esc_attr($link) . '" target="_blank">','</a></strong>'); ?>
+        /* translators: 1: Opening background processing documentation link wrapped in strong tag. 2: Closing link and strong tags. */
+        printf( wp_kses_post( __( 'ShortPixel Bulk is processing in the background. You can close this browser window now and reopen it at any time to check the status of the bulk processing. %1$sLearn more%2$s', 'shortpixel-upscale-image' ) ), '<strong><a href="' . esc_attr( $link ) . '" target="_blank">', '</a></strong>' ); ?>
       </p>
     <?php else: ?>
       <p class='description'>
-        <?php esc_html_e('ShortPixel is processing your images. Please keep this window open to complete the process.', 'shortpixel-image-optimiser'); ?>
+        <?php esc_html_e('ShortPixel is processing your images. Please keep this window open to complete the process.', 'shortpixel-upscale-image'); ?>
       </p>
     <?php endif; ?>
 
@@ -64,10 +65,12 @@ $settings = \wpSPUI()->settings();
 		<span class='hidden' data-check-media-total data-stats-media="total">0</span>
     <div class='bulk-summary' data-check-visibility data-control="data-check-media-total">
       <div class='heading'>
-        <span><i class='dashicons dashicons-format-image'>&nbsp;</i> <?php esc_html_e('Media Library' ,'shortpixel-image-optimiser'); ?>
-              <?php printf(esc_html__('( %s items )', 'shortpixel-image-optimiser'), '<i data-stats-media="total">--</i>'); ?>
+        <span><i class='dashicons dashicons-format-image'>&nbsp;</i> <?php esc_html_e('Media Library' ,'shortpixel-upscale-image'); ?>
+              <?php
+              /* translators: %s: HTML element that will be replaced with the current item count. */
+              printf( wp_kses_post( __( '( %s items )', 'shortpixel-upscale-image' ) ), '<i data-stats-media="total">--</i>' ); ?>
         <?php if (false !== $this->view->customOperationMedia) {
-            echo "</br><span class='special-op'>" . $this->view->customOperationMedia . "</span>";
+            echo "</br><span class='special-op'>" . esc_html( $this->view->customOperationMedia ) . "</span>";
          } ?>
         </span>
         <span>
@@ -79,18 +82,18 @@ $settings = \wpSPUI()->settings();
 							<span class='dashicons spin dashicons-update line-progressbar-spinner' data-check-visibility data-control="data-check-media-in_process">&nbsp;</span>
 
         </span>
-        <span><?php esc_html_e('Processing', 'shortpixel-image-optimiser') ?>: <i data-stats-media="in_process" data-check-media-in_process >0</i></span>
+        <span><?php esc_html_e('Processing', 'shortpixel-upscale-image') ?>: <i data-stats-media="in_process" data-check-media-in_process >0</i></span>
       </div>
 
       <div>
-        <span><?php esc_html_e('Processed', 'shortpixel-image-optimiser'); ?>: <i data-stats-media="done">0</i></span>
+        <span><?php esc_html_e('Processed', 'shortpixel-upscale-image'); ?>: <i data-stats-media="done">0</i></span>
 
-        <span><?php esc_html_e('Waiting','shortpixel-image-optimiser'); ?>: <i data-stats-media="in_queue">0</i></span>
-        <span><?php esc_html_e('Errors','shortpixel-image-optimiser') ?>: <i data-check-media-fatalerrors data-stats-media="fatal_errors" class='error'>0 </i>
-					<span class="display-error-box" data-check-visibility data-control="data-check-media-fatalerrors" ><label title="<?php esc_html_e('Show Errors', 'shortpixel-image-optimiser'); ?>">
+        <span><?php esc_html_e('Waiting','shortpixel-upscale-image'); ?>: <i data-stats-media="in_queue">0</i></span>
+        <span><?php esc_html_e('Errors','shortpixel-upscale-image') ?>: <i data-check-media-fatalerrors data-stats-media="fatal_errors" class='error'>0 </i>
+					<span class="display-error-box" data-check-visibility data-control="data-check-media-fatalerrors" ><label title="<?php esc_html_e('Show Errors', 'shortpixel-upscale-image'); ?>">
 						<input type="checkbox" name="show-errors" value="show" data-action='ToggleErrorBox' data-errorbox='media' data-event='change'>
-						<span><?php esc_html_e('Show Errors','shortpixel-image-optimiser'); ?></span>
-            <span class='collap-arrow'><?php echo UIHelper::getIcon('res/images/icon/chevron.svg'); ?></span>
+						<span><?php esc_html_e('Show Errors','shortpixel-upscale-image'); ?></span>
+            <span class='collap-arrow'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/chevron.svg') ); ?></span>
 
             </label>
 				 </span>
@@ -105,7 +108,7 @@ $settings = \wpSPUI()->settings();
 		<div data-error-media="message" data-presentation="append" class='errorbox media'>
 				<?php if(property_exists($this->view, 'mediaErrorLog') && $this->view->mediaErrorLog !== false)
 				{
-					echo $this->view->mediaErrorLog;
+					echo wp_kses_post( $this->view->mediaErrorLog );
 				}
 				?>
 		</div>
@@ -115,9 +118,9 @@ $settings = \wpSPUI()->settings();
 
     <div class='bulk-summary' data-check-visibility data-control="data-check-custom-total">
       <div class='heading'>
-        <span><i class='dashicons dashicons-open-folder'>&nbsp;</i> <?php esc_html_e('Custom Media', 'shortpixel-image-optimiser'); ?>
+        <span><i class='dashicons dashicons-open-folder'>&nbsp;</i> <?php esc_html_e('Custom Media', 'shortpixel-upscale-image'); ?>
           <?php if (false !== $this->view->customOperationCustom) {
-             echo "</br><span class='special-op'>" . $this->view->customOperationCustom . "</span>";
+             echo "</br><span class='special-op'>" . esc_html( $this->view->customOperationCustom ) . "</span>";
           } ?>
         </span>
         <span>
@@ -128,18 +131,18 @@ $settings = \wpSPUI()->settings();
 							<span class='dashicons spin dashicons-update line-progressbar-spinner' data-check-visibility data-control="data-check-custom-in_process">&nbsp;</span>
 
         </span>
-  			<span><?php esc_html_e('Processing', 'shortpixel-image-optimiser') ?>: <i data-stats-custom="in_process" data-check-custom-in_process>-</i></span>
+  			<span><?php esc_html_e('Processing', 'shortpixel-upscale-image') ?>: <i data-stats-custom="in_process" data-check-custom-in_process>-</i></span>
 
       </div>
       <div>
-        <span><?php esc_html_e('Processed','shortpixel-image-optimiser'); ?>: <i data-stats-custom="done">-</i></span>
+        <span><?php esc_html_e('Processed','shortpixel-upscale-image'); ?>: <i data-stats-custom="done">-</i></span>
 
-        <span><?php esc_html_e('Waiting','shortpixel-image-optimiser'); ?>: <i data-stats-custom="in_queue">-</i></span>
-        <span><?php esc_html_e('Errors') ?>: <i data-check-custom-fatalerrors  data-stats-custom="fatal_errors" class='error'>-</i>
+        <span><?php esc_html_e('Waiting','shortpixel-upscale-image'); ?>: <i data-stats-custom="in_queue">-</i></span>
+        <span><?php esc_html_e('Errors', 'shortpixel-upscale-image') ?>: <i data-check-custom-fatalerrors  data-stats-custom="fatal_errors" class='error'>-</i>
 
-					<span class="display-error-box" data-check-visibility data-control="data-check-custom-fatalerrors" ><label title="<?php esc_html_e('Show Errors', 'shortpixel-image-optimiser'); ?>">
-						<input type="checkbox" name="show-errors" value="show" data-action='ToggleErrorBox' data-errorbox='custom' data-event='change'><?php esc_html_e('Show Errors','shortpixel-image-optimiser'); ?>
-            <span class='collap-arrow'><?php echo UIHelper::getIcon('res/images/icon/chevron.svg'); ?></span>
+					<span class="display-error-box" data-check-visibility data-control="data-check-custom-fatalerrors" ><label title="<?php esc_html_e('Show Errors', 'shortpixel-upscale-image'); ?>">
+						<input type="checkbox" name="show-errors" value="show" data-action='ToggleErrorBox' data-errorbox='custom' data-event='change'><?php esc_html_e('Show Errors','shortpixel-upscale-image'); ?>
+            <span class='collap-arrow'><?php echo wp_kses_post( UIHelper::getIcon('res/images/icon/chevron.svg') ); ?></span>
 
 		</label>
 				 </span>
@@ -154,7 +157,7 @@ $settings = \wpSPUI()->settings();
     <div data-error-custom="message" data-presentation="append" class='errorbox custom'>
 			<?php if(property_exists($this->view, 'customErrorLog') && $this->view->customErrorLog !== false)
 			{
-					echo $this->view->customErrorLog;
+					echo wp_kses_post( $this->view->customErrorLog );
 			}
 			?>
 		</div>
@@ -162,22 +165,22 @@ $settings = \wpSPUI()->settings();
 		<nav>
 			<button class='button stop' type='button' data-action="StopBulk" >
           <span class='dashicons dashicons-no'></span>  
-					<?php esc_html_e('Stop Bulk Processing' ,'shortpixel-image-optimiser'); ?>
+					<?php esc_html_e('Stop Bulk Processing' ,'shortpixel-upscale-image'); ?>
 			</button>
 			<button class='button pause' type='button' data-action="PauseBulk" id="PauseBulkButton">
         <span class='dashicons dashicons-controls-pause'></span>  
-				<?php esc_html_e('Pause Bulk Processing' ,'shortpixel-image-optimiser') ?>
+				<?php esc_html_e('Pause Bulk Processing' ,'shortpixel-upscale-image') ?>
 			</button>
 			<button class='button button-primary resume' type='button' data-action='ResumeBulk' id="ResumeBulkButton">
          <span class='dashicons dashicons-controls-play'></span>  
-				<?php esc_html_e('Resume Bulk Processing','shortpixel-image-optimiser'); ?>
+				<?php esc_html_e('Resume Bulk Processing','shortpixel-upscale-image'); ?>
 			</button>
 
 		</nav>
 
     <!--- ***** IMAGE PREVIEW SECTION **** *--> 
     <div class='image-preview-section hidden'> <!-- /hidden -->
-			 <div class='title'><span><?php esc_html_e('Just Processed', 'shortpixel-image-optimiser'); ?></span></div>
+			 <div class='title'><span><?php esc_html_e('Just Processed', 'shortpixel-upscale-image'); ?></span></div>
        <div class="image-preview-line">
         <!-- <strong data-result="queuetype"></strong>  -->
 				<span>&nbsp;</span> <!-- Spacer for flex -->
@@ -209,7 +212,7 @@ $settings = \wpSPUI()->settings();
 					<div class='current preview-image'>
 		        <div class="image source">
 		          <img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
-		          <p><?php esc_html_e('Original Image', 'shortpixel-image-optimiser'); ?></p>
+		          <p><?php esc_html_e('Original Image', 'shortpixel-upscale-image'); ?></p>
 							<?php $this->loadView('snippets/part-svgloader', false); ?>
 		        </div>
             <div class="image-arrow">
@@ -217,8 +220,8 @@ $settings = \wpSPUI()->settings();
 			      </div>
 		        <div class="image result">
 		          <img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
-						<p><?php esc_html_e('Upscaled Image', 'shortpixel-image-optimiser'); ?>
-								- <span data-result="improvements-totalpercentage"></span>% <?php _e('smaller', 'shortpixel-image-optimiser'); ?>
+						<p><?php esc_html_e('Upscaled Image', 'shortpixel-upscale-image'); ?>
+								- <span data-result="improvements-totalpercentage"></span>% <?php esc_html_e( 'smaller', 'shortpixel-upscale-image' ); ?>
 						</p>
 						<?php $this->loadView('snippets/part-svgloader', false); ?>
 		        </div>
@@ -229,14 +232,14 @@ $settings = \wpSPUI()->settings();
 							<div class="image source">
 								<img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 								<?php $this->loadView('snippets/part-svgloader', false); ?>
-								<p><?php esc_html_e('Original Image','shortpixel-image-optimiser'); ?></p>
+								<p><?php esc_html_e('Original Image','shortpixel-upscale-image'); ?></p>
 							</div>
 
 							<div class="image result">
 								<img src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/bulk/placeholder.svg')); ?>" >
 								<?php $this->loadView('snippets/part-svgloader', false); ?>
-							<p class='improvement-item'><?php esc_html_e('Upscaled Image','shortpixel-image-optimiser'); ?>
-								- <span data-result="improvements-totalpercentage"></span>% <?php _e('smaller', 'shortpixel-image-optimiser'); ?>
+							<p class='improvement-item'><?php esc_html_e('Upscaled Image','shortpixel-upscale-image'); ?>
+								- <span data-result="improvements-totalpercentage"></span>% <?php esc_html_e( 'smaller', 'shortpixel-upscale-image' ); ?>
 							</p>
 							</div>
 					</div>
@@ -244,7 +247,7 @@ $settings = \wpSPUI()->settings();
 			</div>  <!-- preview wrapper -->
 
       <div class='ai-preview-wrapper hidden'>
-          <h3><i class='shortpixel-icon ai'></i><?php _e('AI Generated Data: ', 'shortpixel-image-optimiser'); ?></h3>
+          <h3><i class='shortpixel-icon ai'></i><?php esc_html_e( 'AI Generated Data: ', 'shortpixel-upscale-image' ); ?></h3>
           <ul class='ai-preview-data'>
 
           </ul>

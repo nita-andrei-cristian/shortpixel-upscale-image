@@ -67,7 +67,7 @@ class OptimizeAiController extends OptimizerBase
         $qItem->addResult([
             'is_error' => true, 
             'is_done' => true,
-            'message' => __('AI data cannot be generated for GIF files by ShortPixel AI, for now', 'shortpixel-image-optimiser'), 
+            'message' => __('AI data cannot be generated for GIF files by ShortPixel AI, for now', 'shortpixel-upscale-image'), 
             'apiStatus' => AiController::AI_STATUS_INVALID_URL,
         ]); 
 
@@ -153,7 +153,7 @@ class OptimizeAiController extends OptimizerBase
             if ($qItem->result()->message == '')
             {
                 $qItem->addResult([
-                'message' => __('Request for image SEO data sent to Shortpixel AI', 'shortpixel-image-optimiser')]);
+                'message' => __('Request for image SEO data sent to Shortpixel AI', 'shortpixel-upscale-image')]);
             }
         }
         else
@@ -269,10 +269,10 @@ class OptimizeAiController extends OptimizerBase
   private function getDataLabels()
   {
     $labels = [
-      'alt' => __('Alt', 'shortpixel-image-optimiser'), 
-      'caption' => __('Caption', 'shortpixel-image-optimiser'), 
-      'description' => __('Description', 'shortpixel-image-optimiser'), 
-      'post_title' =>  __('Image Title' , 'shortpixel-image-optimiser'), 
+      'alt' => __('Alt', 'shortpixel-upscale-image'), 
+      'caption' => __('Caption', 'shortpixel-upscale-image'), 
+      'description' => __('Description', 'shortpixel-upscale-image'), 
+      'post_title' =>  __('Image Title' , 'shortpixel-upscale-image'), 
     ];
 
     return $labels;
@@ -393,7 +393,7 @@ class OptimizeAiController extends OptimizerBase
       $source_url = $url = $baseFileObj->getURL();
       $base_filename = $baseFileObj->getFileBase();
 
-      $base_url = parse_url($url, PHP_URL_PATH);
+	      $base_url = wp_parse_url($url, PHP_URL_PATH);
       $base_url = str_replace('.' . pathinfo($base_url, PATHINFO_EXTENSION), '', $base_url);
       $base_url = str_replace($base_filename, '', $base_url);
 
@@ -673,7 +673,7 @@ class OptimizeAiController extends OptimizerBase
        $qItem->addResult([
         'is_done' => true, 
         'is_error' => false,
-        'message' => __('AI Data reverted ', 'shortpixel-image-optimiser'), 
+        'message' => __('AI Data reverted ', 'shortpixel-upscale-image'), 
         'apiStatus' => ApiController::STATUS_NOT_API,
     ]);
     $this->finishItemProcess($qItem);

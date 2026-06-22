@@ -38,11 +38,12 @@ class ImageEditorController
       //      $local['is_optimized'] = ($mediaImage->isOptimized()) ? 'true' : 'false';
 			//			$local['post_id'] = $post_id;
 
-						$local['optimized_text'] = sprintf(__('This image has been upscaled by SPUI. It is strongly %s recommended %s to restore the image from the backup (if any) before editing it, because after saving the image all upscaling data will be lost. If the image is not restored and ShortPixel re-upscales the new image, this may result in a loss of quality. After you have finished editing, please upscale the image again by clicking "Upscale Now" as this will not happen automatically.', 'shortpixel-image-optimiser'), '<strong>', '</strong>');
+						/* translators: 1: Opening strong tag. 2: Closing strong tag. */
+						$local['optimized_text'] = sprintf(__('This image has been upscaled by SPUI. It is strongly %1$s recommended %2$s to restore the image from the backup (if any) before editing it, because after saving the image all upscaling data will be lost. If the image is not restored and ShortPixel re-upscales the new image, this may result in a loss of quality. After you have finished editing, please upscale the image again by clicking "Upscale Now" as this will not happen automatically.', 'shortpixel-upscale-image'), '<strong>', '</strong>');
 
             $local['restore_link']  = 'javascript:window.SPUIProcessor.screen.RestoreItem(#post_id#)';
-	 			    $local['restore_link_text'] = __('Restore the backup now.', 'shortpixel-image-optimiser');
-            $local['restore_link_text_unrestorable'] = __(' (This item is not restorable) ', 'shortpixel-image-optimiser');
+	 			    $local['restore_link_text'] = __('Restore the backup now.', 'shortpixel-upscale-image');
+            $local['restore_link_text_unrestorable'] = __(' (This item is not restorable) ', 'shortpixel-upscale-image');
 
 
 			return $local;

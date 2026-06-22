@@ -43,7 +43,7 @@ class BulkViewController extends \SPUI\ViewController
     $this->view->stats = $queueController->getStartupData();
     $this->view->approx = $this->getApproxData();
 
-    $this->view->logHeaders = array(__('Images', 'shortpixel_image_optimiser'), __('Errors', 'shortpixel_image_optimizer'), __('Date', 'shortpixel_image_optimizer'), '');
+    $this->view->logHeaders = array(__('Images', 'shortpixel-upscale-image'), __('Errors', 'shortpixel-upscale-image'), __('Date', 'shortpixel-upscale-image'), '');
     $this->view->logs = $this->getLogs();
 
     $keyControl = ApiKeyController::getInstance();
@@ -53,16 +53,16 @@ class BulkViewController extends \SPUI\ViewController
     if ( ! $keyControl->keyIsVerified() )
     {
         $this->view->error = true;
-        $this->view->errorTitle = __('Missing API Key', 'shortpixel_image_optimiser');
+        $this->view->errorTitle = __('Missing API Key', 'shortpixel-upscale-image');
         $this->view->errorContent = $this->getActivationNotice();
         $this->view->showError = 'key';
     }
     elseif ( ! $quota->hasQuota())
     {
         $this->view->error = true;
-        $this->view->errorTitle = __('Quota Exceeded','shortpixel-image-optimiser');
-        $this->view->errorContent = __('Can\'t start the Bulk Process due to lack of credits.', 'shortpixel-image-optimiser');
-        $this->view->errorText = __('Please check or add quota and refresh the page', 'shortpixel-image-optimiser');
+        $this->view->errorTitle = __('Quota Exceeded','shortpixel-upscale-image');
+        $this->view->errorContent = __('Can\'t start the Bulk Process due to lack of credits.', 'shortpixel-upscale-image');
+        $this->view->errorText = __('Please check or add quota and refresh the page', 'shortpixel-upscale-image');
         $this->view->showError = 'quota';
 
     }
@@ -120,16 +120,16 @@ class BulkViewController extends \SPUI\ViewController
       switch($operation)
       {
           case 'bulk-restore':
-            $label = __('Bulk Restore', 'shortpixel-image-optimiser');
+            $label = __('Bulk Restore', 'shortpixel-upscale-image');
           break;
           case 'migrate':
-            $label = __('Bulk Migrate Upscale Data', 'shortpixel-image-optimiser');
+            $label = __('Bulk Migrate Upscale Data', 'shortpixel-upscale-image');
           break;
           case 'removeLegacy':
-            $label = __('Bulk Remove Legacy Data', 'shortpixel-image-optimiser');
+            $label = __('Bulk Remove Legacy Data', 'shortpixel-upscale-image');
           break;
           case 'bulk-undoAI':
-            $label = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');           
+            $label = __('Bulk Remove AI Data', 'shortpixel-upscale-image');           
           break; 
       }
 
@@ -142,7 +142,7 @@ class BulkViewController extends \SPUI\ViewController
    */
   private function checkBulkViaPanelArg()
   {
-      $panel = isset($_GET['panel']) ? sanitize_text_field($_GET['panel']) : null;
+	      $panel = isset($_GET['panel']) ? sanitize_text_field(wp_unslash($_GET['panel'])) : null;
 
       if (is_null($panel))
       {
@@ -174,10 +174,9 @@ class BulkViewController extends \SPUI\ViewController
 	// Double with ApiNotice . @todo Fix.
 	protected function getActivationNotice()
 	{
-		$message = "<p>" . __('In order to start the upscaling process, you need to validate your API Key in the '
-						. '<a href="options-general.php?page=shortpixel-upscale-settings">Shortpixel Image Upscale</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
-		</p>
-		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
+			$message = "<p>" . __('In order to start the upscaling process, you need to validate your API Key in the <a href="options-general.php?page=shortpixel-upscale-settings">Shortpixel Image Upscale</a> page in your WordPress Admin.','shortpixel-upscale-image') . "
+			</p>
+			<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-upscale-image') . "</p>";
 		return $message;
 	}
 
@@ -276,7 +275,7 @@ class BulkViewController extends \SPUI\ViewController
 				if ($message)
 					$output .= $message;
 				if ($filename)
-					$output .= ' ( '. __('in file ','shortpixel-image-optimiser') . ' ' . $filename . ' ) ' . $kbinfo;
+					$output .= ' ( '. __('in file ','shortpixel-upscale-image') . ' ' . $filename . ' ) ' . $kbinfo;
 
 				$output .= '</div>';
 		 }
@@ -312,10 +311,10 @@ class BulkViewController extends \SPUI\ViewController
 					switch($logData['type'])
 					{
 						 case 'custom':
-						 	$bulkName = __('Custom Media Bulk', 'shortpixel-image-optimiser');
+						 	$bulkName = __('Custom Media Bulk', 'shortpixel-upscale-image');
 						 break;
 						 case 'media':
-						 	$bulkName = __('Media Library Bulk', 'shortpixel-image-optimiser');
+						 	$bulkName = __('Media Library Bulk', 'shortpixel-upscale-image');
 						 break;
 
 					}
@@ -325,19 +324,19 @@ class BulkViewController extends \SPUI\ViewController
 					switch($op)
 					{
 							 case 'bulk-restore':
-							 	$bulkName .= __('Restore', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Restore', 'shortpixel-upscale-image');
 							 break;
 							 case 'migrate':
-							 	$bulkName .= __('Migrate old Metadata', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Migrate old Metadata', 'shortpixel-upscale-image');
 							 break;
 							 case 'removeLegacy':
-								$bulkName = __('Remove Legacy Data', 'shortpixel-image-optimiser');
+								$bulkName = __('Remove Legacy Data', 'shortpixel-upscale-image');
 							 break;
 							 case 'bulk-undoAI':
-								$bulkName  = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');
+								$bulkName  = __('Bulk Remove AI Data', 'shortpixel-upscale-image');
 							 break;
 							 default:
-							 	$bulkName .= __('Upscale', 'shortpixel-image-optimiser');
+							 	$bulkName .= __('Upscale', 'shortpixel-upscale-image');
 							 break;
 					}
 

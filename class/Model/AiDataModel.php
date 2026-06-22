@@ -85,12 +85,14 @@ class AiDataModel
     protected function fetchRecord($attach_id, $type)
     {
            global $wpdb; 
-           $tableName = self::getTableName();
-           
-           $sql = ' SELECT * FROM ' . $tableName . ' where attach_id = %d and post_type = %d';
-           $sql = $wpdb->prepare($sql, $attach_id, $type); 
-
-           $row = $wpdb->get_row($sql);  
+           $table_name = esc_sql( self::getTableName() );
+           $row = $wpdb->get_row(
+             $wpdb->prepare(
+               "SELECT * FROM {$table_name} where attach_id = %d and post_type = %d",
+               $attach_id,
+               $type
+             )
+           );
 
         if (false === $row && strpos($wpdb->last_error, 'exist') !== false) {
 			InstallHelper::checkTables();
@@ -338,10 +340,11 @@ class AiDataModel
     protected function getConnectedPostTitle()
     {
          $attach_id = $this->attach_id; 
-         $post_parent = get_post_parent($attach_id); 
-         if (! is_null($post_parent))
+         $post = get_post($attach_id);
+         $post_parent = ( is_object($post) ) ? $post->post_parent : 0;
+         if ($post_parent > 0)
          {
-            $post = get_post($post_parent); 
+             $post = get_post($post_parent); 
             if (false === is_null($post))
             {
                 $post_title = $post->post_title; 
@@ -464,22 +467,23 @@ class AiDataModel
         switch($this->processable_status)
         {
             case self::P_PROCESSABLE:
-                $message = __('AI is processable', 'shortpixel-image-optimiser');
+                $message = __('AI is processable', 'shortpixel-upscale-image');
             break; 
             case self::P_ALREADYDONE:
-                $message = __('This image already has generated data', 'shortpixel-image-optimiser');
+                $message = __('This image already has generated data', 'shortpixel-upscale-image');
             break; 
             case self::P_EXIFAI:
-                $message = __('Image Exif settings restrict AI usage', 'shortpixel-image-optimiser');
+                $message = __('Image Exif settings restrict AI usage', 'shortpixel-upscale-image');
             break; 
             case self::P_EXTENSION:
-                 $message = __('File Extension not supported', 'shortpixel-image-optimiser');
+                 $message = __('File Extension not supported', 'shortpixel-upscale-image');
             break; 
             case self::P_NOJOB:
-                $message = __('No fields to generate', 'shortpixel-image-optimiser'); 
+                $message = __('No fields to generate', 'shortpixel-upscale-image'); 
             break; 
             default:
-                 $message = sprintf(__('Status %s unknown', 'shortpixel-image-optimiser'), $this->processable_status);
+                // translators: %s: Internal AI processability status code.
+                 $message = sprintf(__('Status %s unknown', 'shortpixel-upscale-image'), $this->processable_status);
             break; 
         }
 
@@ -608,8 +612,8 @@ class AiDataModel
     public static function getMostRecent()
     {
         global $wpdb; 
-         $sql = 'SELECT attach_id FROM ' . self::getTableName() . ' order by tsUpdated desc limit 1'; 
-         $attach_id = $wpdb->get_var($sql);         
+        $table_name = esc_sql( self::getTableName() );
+        $attach_id = $wpdb->get_var("SELECT attach_id FROM {$table_name} order by tsUpdated desc limit 1");
 
         if (false === $attach_id)
         {

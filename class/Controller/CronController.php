@@ -52,12 +52,12 @@ class CronController
   {
         $schedules['spui_interval'] = array(
           'interval' => apply_filters('spui/cron/interval', 60),
-          'display' => __('ShortPixel cron interval', 'shortpixel-image-optimiser')
+          'display' => __('ShortPixel cron interval', 'shortpixel-upscale-image')
         );
 
         $schedules['spui_interval_30min'] = array(
           'interval' => apply_filters('spui/cron/interval', 30 * MINUTE_IN_SECONDS),
-          'display' => __('ShortPixel 30 min interval', 'shortpixel-image-optimiser')
+          'display' => __('ShortPixel 30 min interval', 'shortpixel-upscale-image')
         );
 
         return $schedules;

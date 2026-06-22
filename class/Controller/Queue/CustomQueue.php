@@ -190,8 +190,9 @@ class CustomQueue extends Queue
 
      global $wpdb;
 
-     $folderSQL = ' SELECT id FROM ' . $wpdb->prefix . 'shortpixel_folders where status >= 0 ';
-     $folderRow = $wpdb->get_col($folderSQL);
+	     $folderSQL = ' SELECT id FROM ' . $wpdb->prefix . 'shortpixel_folders where status >= 0 ';
+	     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses plugin-owned table name only.
+	     $folderRow = $wpdb->get_col($folderSQL);
 
      // No Active Folders, No Items.
      if (count($folderRow) == 0)
@@ -233,9 +234,8 @@ class CustomQueue extends Queue
      $sql .= ' order by id DESC LIMIT %d ';
      $prepare[] = $limit;
 
-     $sql = $wpdb->prepare($sql, $prepare);
-
-     $results = $wpdb->get_col($sql);
+	     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+	     $results = $wpdb->get_col($wpdb->prepare($sql, $prepare));
 
      foreach($results as $item_id)
      {
@@ -266,9 +266,8 @@ class CustomQueue extends Queue
      $sql .= ' order by id DESC limit %d';
      $prepare[] = $limit;
 
-     $sql = $wpdb->prepare($sql, $prepare);
-
-     $results = $wpdb->get_col($sql);
+	     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+	     $results = $wpdb->get_col($wpdb->prepare($sql, $prepare));
 
      foreach($results as $item_id)
      {

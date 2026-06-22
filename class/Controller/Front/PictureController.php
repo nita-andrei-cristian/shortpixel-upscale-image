@@ -38,7 +38,7 @@ class PictureController extends \SPUI\Controller\Front\PageConverter
         if(UtilHelper::shortPixelIsPluginActive('shortpixel-adaptive-images/short-pixel-ai.php')) {
             Notices::addWarning(__('Please deactivate the ShortPixel Upscale Image\'s
                 <a href="options-general.php?page=shortpixel-upscale-settings&part=webp">Serve WebP/AVIF images from locally hosted files (without using a CDN)</a>
-                option when the ShortPixel Adaptive Images plugin is active.','shortpixel-image-optimiser'), true);
+                option when the ShortPixel Adaptive Images plugin is active.','shortpixel-upscale-image'), true);
         }
         elseif( $webp_option == self::WEBP_GLOBAL ){
             //add_action( 'wp_head', array($this, 'addPictureJs') ); // adds polyfill JS to the header || Removed. Browsers without picture support?

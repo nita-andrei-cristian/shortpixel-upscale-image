@@ -99,7 +99,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => false,
             'is_done' => true,
-            'message' => __('A duplicate of this item is already active in queue. ', 'shortpixel-image-optimiser'),
+            'message' => __('A duplicate of this item is already active in queue. ', 'shortpixel-upscale-image'),
 
         ]);
 
@@ -117,7 +117,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => false,
             'is_done' => false,
-            'message' =>__('Action has been added to queue and will be processed after current actions', 'shortpixel-image-optimiser'),
+            'message' =>__('Action has been added to queue and will be processed after current actions', 'shortpixel-upscale-image'),
           ]);
         }
 
@@ -127,7 +127,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => false,
             'is_done' => true,
-            'message' =>__('This item is already awaiting processing in queue', 'shortpixel-image-optimiser'),
+            'message' =>__('This item is already awaiting processing in queue', 'shortpixel-upscale-image'),
           ]); 
         }
 
@@ -144,7 +144,7 @@ class QueueController
             'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
             'is_error' => true,
             'is_done' => true,
-            'message' => __('No action found!', 'shortpixel-image-optimiser'),
+            'message' => __('No action found!', 'shortpixel-upscale-image'),
          ]);
       }
 
@@ -168,14 +168,15 @@ class QueueController
             if ($status->numitems > 0)
             {
               
-              $message = sprintf(__('Item %s added to Queue. %d items in Queue', 'shortpixel-image-optimiser'), $imageModel->getFileName(), $status->numitems);
+              /* translators: 1: filename added to queue, 2: number of items currently in queue. */
+              $message = sprintf(__('Item %1$s added to Queue. %2$d items in Queue', 'shortpixel-upscale-image'), $imageModel->getFileName(), $status->numitems);
   
               // Check if background process is active / this needs activating.
               $cronController = CronController::getInstance();
               $cronController->checkNewJobs();
             }
             else {
-              $message = __('No items added to queue', 'shortpixel-image-optimiser');
+              $message = __('No items added to queue', 'shortpixel-upscale-image');
               //$json->status = 0;
             }
   
@@ -254,7 +255,7 @@ class QueueController
          $json = $this->getJsonResponse();
          $json->status = false;
          $json->error = AjaxController::APIKEY_FAILED;
-         $json->message =  __('Invalid API Key', 'shortpixel-image-optimiser');
+         $json->message =  __('Invalid API Key', 'shortpixel-upscale-image');
          $json->status = false;
          return $json;
       }
@@ -281,7 +282,7 @@ class QueueController
           $json = $this->getJsonResponse();
           $json->error = AjaxController::NOQUOTA;
           $json->status = false;
-          $json->message =   __('Quota Exceeded','shortpixel-image-optimiser');
+          $json->message =   __('Quota Exceeded','shortpixel-upscale-image');
           return $json;
         }
       } // No Quota Check 
@@ -364,7 +365,7 @@ class QueueController
                 'fileStatus' => ImageModel::FILE_STATUS_UNPROCESSED,
                 'is_error' => true,
                 'is_done' => true,
-                'message' => __('No action found!', 'shortpixel-image-optimiser'),
+                'message' => __('No action found!', 'shortpixel-upscale-image'),
             ]);
             
             $Q->itemFailed($qItem, true); 
@@ -388,7 +389,7 @@ class QueueController
             Log::addWarn('ImageObject was empty when send to processing - ' . $item_id);
             $qItem->addResult([
                 'apiStatus' => RequestManager::STATUS_NOT_API,
-                'message' => __("File Error. Media Item could not be loaded with this ID ", 'shortpixel-image-optimiser'),
+                'message' => __("File Error. Media Item could not be loaded with this ID ", 'shortpixel-upscale-image'),
                 'fileStatus' => ImageModel::FILE_STATUS_ERROR,
                 'is_done' => true,
                 'is_error' => true,
@@ -400,7 +401,7 @@ class QueueController
           {
             $qItem->addResult([
                 'apiStatus' => RequestManager::STATUS_UNCHANGED,
-                'message' => __('Item is waiting (blocked)', 'shortpixel-image-optimiser'),
+                'message' => __('Item is waiting (blocked)', 'shortpixel-upscale-image'),
             ]);
             Log::addWarn('Encountered blocked item, processing success? ', $item_id);
             ResponseController::addData($item_id, 'fileName', $imageModel->getFileName());
@@ -511,30 +512,35 @@ class QueueController
       switch($result->qstatus)
       {
         case Queue::RESULT_PREPARING:
-          $json->message = sprintf(__('Prepared %s items', 'shortpixel-image-optimiser'), $result->items );
+          /* translators: %s is the number of prepared items. */
+          $json->message = sprintf(__('Prepared %s items', 'shortpixel-upscale-image'), $result->items );
         break;
         case Queue::RESULT_PREPARING_OVERLIMIT:
-          $json->message = sprintf(__('Prepared %s items - but went over limit! ', 'shortpixel-image-optimiser'), $result->items );
+          /* translators: %s is the number of prepared items. */
+          $json->message = sprintf(__('Prepared %s items - but went over limit! ', 'shortpixel-upscale-image'), $result->items );
         break;
         case Queue::RESULT_PREPARING_DONE:
-          $json->message = sprintf(__('Preparing is done, queue has %s items ', 'shortpixel-image-optimiser'), $result->stats->total );
+          /* translators: %s is the number of items in queue after preparation. */
+          $json->message = sprintf(__('Preparing is done, queue has %s items ', 'shortpixel-upscale-image'), $result->stats->total );
         break;
         case Queue::RESULT_EMPTY:
-            $json->message  = __('Queue returned no active items', 'shortpixel-image-optimiser');
+            $json->message  = __('Queue returned no active items', 'shortpixel-upscale-image');
         break;
         case Queue::RESULT_QUEUE_EMPTY:
-            $json->message = __('Queue empty and done', 'shortpixel-image-optimiser');
+            $json->message = __('Queue empty and done', 'shortpixel-upscale-image');
         break;
         case Queue::RESULT_ITEMS:
-          $json->message = sprintf(__("Fetched %d items",  'shortpixel-image-optimiser'), count($result->items));
+          /* translators: %d is the number of fetched queue items. */
+          $json->message = sprintf(__("Fetched %d items",  'shortpixel-upscale-image'), count($result->items));
           $json->results = $result->items;
         break;
         case Queue::RESULT_RECOUNT: // This one should probably not happen.
            $json->has_error = true;
-           $json->message = sprintf(__('Bulk preparation seems to be interrupted. Restart the queue or continue without accurate count', 'shortpixel-image-optimiser'));
+           $json->message = __('Bulk preparation seems to be interrupted. Restart the queue or continue without accurate count', 'shortpixel-upscale-image');
         break;
         default:
-           $json->message = sprintf(__('Unknown Status %s ', 'shortpixel-image-optimiser'), $result->qstatus);
+           /* translators: %s is the unknown queue status code. */
+           $json->message = sprintf(__('Unknown Status %s ', 'shortpixel-upscale-image'), $result->qstatus);
         break;
       }
       $json->qstatus = $result->qstatus;

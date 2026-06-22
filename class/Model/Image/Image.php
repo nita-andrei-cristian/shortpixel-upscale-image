@@ -201,7 +201,7 @@ Class Image extends \SPUI\Model\File\FileModel
             if (false === $bg)
             {
                 Log::addError('ImageCreateTrueColor failed');
-                $this->error['message'] = __('Creating an TrueColor Image failed - Possible library error', 'shortpixel-image-optimiser');
+                $this->error['message'] = __('Creating an TrueColor Image failed - Possible library error', 'shortpixel-upscale-image');
                 $this->error['error_code'] = -10;
             }
 

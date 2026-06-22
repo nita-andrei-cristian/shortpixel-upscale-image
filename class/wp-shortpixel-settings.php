@@ -248,12 +248,6 @@ class SPUI_Settings extends \SPUI\Model {
         if (array_key_exists($name, self::$_optionsMap)) {
             return $this->getOpt(self::$_optionsMap[$name]['key'], self::$_optionsMap[$name]['default']);
         }
-        $trace = debug_backtrace();
-        trigger_error(
-            'Undefined property via __get(): ' . esc_html($name) .
-            ' in ' . esc_html($trace[0]['file']) .
-            ' on line ' . esc_html($trace[0]['line']),
-            E_USER_NOTICE);
         return null;
     }
 
@@ -308,18 +302,40 @@ class SPUI_Settings extends \SPUI\Model {
             // still not? try the DB way...
             if($ret === false && $val != get_option($key)) {
                 global $wpdb;
-                $sql = "SELECT * FROM {$wpdb->prefix}options WHERE option_name = '" . $key . "'";
-                $rows = $wpdb->get_results($sql);
+                $rows = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT * FROM {$wpdb->options} WHERE option_name = %s",
+                        $key
+                    )
+                );
                 if(count($rows) === 0) {
-                    $wpdb->insert($wpdb->prefix.'options',
-                                 array("option_name" => $key, "option_value" => (is_array($val) ? serialize($val) : $val), "autoload" => $autoload),
-                                 array("option_name" => "%s", "option_value" => (is_numeric($val) ? "%d" : "%s")));
+                    $wpdb->insert(
+                        $wpdb->options,
+                        array(
+                            'option_name'  => $key,
+                            'option_value' => ( is_array( $val ) ? maybe_serialize( $val ) : $val ),
+                            'autoload'     => $autoload ? 'yes' : 'no',
+                        ),
+                        array(
+                            '%s',
+                            is_numeric( $val ) ? '%d' : '%s',
+                            '%s',
+                        )
+                    );
                 } else { //update
-                    $sql = "update {$wpdb->prefix}options SET option_value=" .
-                           (is_array($val)
-                               ? "'" . serialize($val) . "'"
-                               : (is_numeric($val) ? $val : "'" . $val . "'")) . " WHERE option_name = '" . $key . "'";
-                    $rows = $wpdb->get_results($sql);
+                    $wpdb->update(
+                        $wpdb->options,
+                        array(
+                            'option_value' => ( is_array( $val ) ? maybe_serialize( $val ) : $val ),
+                        ),
+                        array(
+                            'option_name' => $key,
+                        ),
+                        array(
+                            is_numeric( $val ) ? '%d' : '%s',
+                        ),
+                        array( '%s' )
+                    );
                 }
 
                 if($val != get_option($key)) {

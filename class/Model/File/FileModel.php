@@ -54,6 +54,19 @@ class FileModel extends \SPUI\Model
 
 	public static $TRUSTED_MODE = false;
 
+	protected function getWPFilesystem()
+	{
+		global $wp_filesystem;
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		WP_Filesystem();
+
+		return $wp_filesystem;
+	}
+
 	// Constants for is_virtual . Virtual Remote is truly a remote file, not writable from machine. Stateless means it looks remote, but it's a protocol-based filesystem remote or not - that will accept writes / is_writable. Stateless also mean performance issue since it can't be 'translated' to a local path. All communication happens over http wrapper, so check should be very limited.
 	public static $VIRTUAL_REMOTE = 1;
 	public static $VIRTUAL_STATELESS = 2;
@@ -163,7 +176,7 @@ class FileModel extends \SPUI\Model
     {
       if ($this->exists())
       {
-        $this->is_writable = @is_writable($this->fullpath);
+	        $this->is_writable = wp_is_writable($this->fullpath);
       }
       else // quite expensive check to see if file is writable.
       {
@@ -343,9 +356,10 @@ class FileModel extends \SPUI\Model
 
       if (! is_null($fileDir) && $fileDir->exists())
       {
-        $res = @touch($this->fullpath);
-        $this->exists = $res;
-        return $res;
+	        $wp_filesystem = $this->getWPFilesystem();
+	        $res = ( $wp_filesystem ) ? $wp_filesystem->put_contents( $this->fullpath, '', FS_CHMOD_FILE ) : false;
+	        $this->exists = $res;
+	        return $res;
       }
     }
      else
@@ -364,11 +378,22 @@ class FileModel extends \SPUI\Model
           Log::addWarn('File append failed on ' . $this->getFullPath() . ' - not writable');
 					return false;
 			}
-      $handle = fopen($this->getFullPath(), 'a');
-      fwrite($handle, $message);
-      fclose($handle);
+	      $existing_contents = '';
+	      $wp_filesystem = $this->getWPFilesystem();
+	      if ( ! $wp_filesystem ) {
+	      	return false;
+	      }
 
-			return true;
+	      if ( $this->exists() ) {
+	      	$existing_contents = $wp_filesystem->get_contents( $this->getFullPath() );
+	      	if ( false === $existing_contents ) {
+	      		$existing_contents = '';
+	      	}
+	      }
+
+	      $wp_filesystem->put_contents( $this->getFullPath(), $existing_contents . $message, FS_CHMOD_FILE );
+
+				return true;
   }
 
 
@@ -910,8 +935,11 @@ class FileModel extends \SPUI\Model
 	// @tozo Lazy IMplementation / copy, should be brought in line w/ other attributes.
   public function setPermissions($permissions)
   {
-    @chmod($this->fullpath, $permissions);
-  }
+	    $wp_filesystem = $this->getWPFilesystem();
+	    if ( $wp_filesystem ) {
+	    	$wp_filesystem->chmod( $this->fullpath, $permissions );
+	    }
+	  }
 
 
   /** Fix for multibyte pathnames and pathinfo which doesn't take into regard the locale.

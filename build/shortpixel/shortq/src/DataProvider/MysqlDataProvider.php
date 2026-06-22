@@ -51,7 +51,8 @@ class MysqlDataProvider implements DataProvider
 
       }
       $sql .= implode( ",\n", $values );
-      $result = $wpdb->query($sql, $values);
+      // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Insert statement is assembled from prepared value tuples above.
+      $result = $wpdb->query($sql);
 
       if (! $this->checkQueryOK())
       {
@@ -141,7 +142,7 @@ class MysqlDataProvider implements DataProvider
       if ($timestamp == 0)
         $timestamp = time();
 
-      $date =  date('Y-m-d H:i:s', $timestamp);
+      $date =  gmdate('Y-m-d H:i:s', $timestamp);
 
       return $date;
    }
@@ -230,9 +231,8 @@ class MysqlDataProvider implements DataProvider
         $prepare[] = $args['numitems'];
      }
 
-     $sql = $wpdb->prepare($sql, $prepare);
-
-     $result = $wpdb->get_results($sql, ARRAY_A);
+     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
+     $result = $wpdb->get_results($wpdb->prepare($sql, $prepare), ARRAY_A);
 
      $items = array();
 
@@ -302,16 +302,19 @@ class MysqlDataProvider implements DataProvider
       if (is_numeric($status) && $status != ShortQ::QSTATUS_ALL)
       {
         $sql = 'SELECT count(*) FROM ' . $this->table . ' WHERE queue_name = %s and plugin_slug = %s and status = %d ';
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
         $count = $wpdb->get_var($wpdb->prepare($sql, $this->qName, $this->slug, $status));
       }
       elseif ($status == ShortQ::QSTATUS_ALL) // full queue, with records from all status.
       {
         $sql = 'SELECT count(*) FROM ' . $this->table . ' WHERE queue_name = %s and plugin_slug = %s ';
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
         $count = $wpdb->get_var($wpdb->prepare($sql, $this->qName, $this->slug));
       }
       elseif ($status == 'countbystatus')
       {
         $sql = 'SELECT count(id) as count, status FROM ' . $this->table . ' WHERE queue_name = %s and plugin_slug = %s group by status';
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
         $rows = $wpdb->get_results($wpdb->prepare($sql, $this->qName, $this->slug), ARRAY_A);
         $count = array();
 
@@ -342,16 +345,19 @@ class MysqlDataProvider implements DataProvider
       if (is_numeric($status) && $status != ShortQ::QSTATUS_ALL)
       {
         $sql = 'SELECT SUM(item_count) FROM ' . $this->table . ' WHERE queue_name = %s and plugin_slug = %s and status = %d ';
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
         $count = (int) $wpdb->get_var($wpdb->prepare($sql, $this->qName, $this->slug, $status));
       }
       elseif ($status == ShortQ::QSTATUS_ALL) // full queue, with records from all status.
       {
         $sql = 'SELECT SUM(item_count) FROM ' . $this->table . ' WHERE queue_name = %s and plugin_slug = %s ';
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
         $count = (int) $wpdb->get_var($wpdb->prepare($sql, $this->qName, $this->slug));
       }
       elseif ($status == 'countbystatus')
       {
         $sql = 'SELECT SUM(item_count) as count, status FROM ' . $this->table . ' WHERE queue_name = %s and plugin_slug = %s group by status';
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
         $rows = $wpdb->get_results($wpdb->prepare($sql, $this->qName, $this->slug), ARRAY_A);
         $count = array();
 
@@ -424,9 +430,8 @@ class MysqlDataProvider implements DataProvider
           $placeholders[] = $value;
         }
       }
-      $update_sql = $wpdb->prepare($update_sql, $placeholders);
-
-      $result = $wpdb->query($update_sql);
+      // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
+      $result = $wpdb->query($wpdb->prepare($update_sql, $placeholders));
       return $result;
    }
 
@@ -486,8 +491,8 @@ class MysqlDataProvider implements DataProvider
        return false; // prevent accidents if all is not set explicitly.
      }
 
-     $delete_sql = $wpdb->prepare($delete_sql, $data);
-     $result = $wpdb->query($delete_sql);
+     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is provider-owned.
+     $result = $wpdb->query($wpdb->prepare($delete_sql, $data));
      return $result;
    }
 
@@ -502,6 +507,7 @@ class MysqlDataProvider implements DataProvider
               SHOW TABLES LIKE %s
               ", $this->table);
 
+      // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here.
       $result = intval($wpdb->query($sql));
 
       if ($result == 0)
@@ -546,10 +552,12 @@ class MysqlDataProvider implements DataProvider
 			$result = dbDelta($sql);
 
       $sql = "SHOW INDEX FROM " . $this->table . " WHERE Key_name = 'uq_" . $prefix . "'";
+      // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses provider-owned table name only.
       $result = $wpdb->get_results($sql);
       if (is_null($result) || count($result) == 0)
       {
          $sql = 'ALTER TABLE '. $this->table . ' ADD CONSTRAINT UNIQUE uq_' . $prefix . '(plugin_slug,queue_name,item_id)';
+         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema query uses provider-owned table name only.
          $wpdb->query($sql);
       }
 
@@ -566,6 +574,7 @@ class MysqlDataProvider implements DataProvider
         return false;
 
      $sql = 'SELECT count(*) as cnt FROM ' . $this->table;
+     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses provider-owned table name only.
      $records = $wpdb->get_var($sql);
 
 
@@ -575,6 +584,7 @@ class MysqlDataProvider implements DataProvider
 
      $sql = ' DROP TABLE IF EXISTS ' . $this->table;
 
+     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query uses provider-owned table name only.
      $wpdb->query($sql);
 
      return $this->check();

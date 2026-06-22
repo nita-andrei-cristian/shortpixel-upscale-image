@@ -32,9 +32,13 @@ class NewExclusionFormat extends \SPUI\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$message = "<p>" . __('Since version 5.5.0, Shortpixel Image Upscale also checks thumbnails for exclusions. This can change which images are upscaled and which are excluded. Please check your exclusion rules in the '
-						. '<a href="options-general.php?page=shortpixel-upscale-settings&part=exclusions">Shortpixel Image Upscale</a> page.','shortpixel-image-optimiser') . "
-		</p>";
+				/* translators: 1: Opening exclusions settings link. 2: Closing exclusions settings link. */
+				$notice_text = __( 'Since version 5.5.0, Shortpixel Image Upscale also checks thumbnails for exclusions. This can change which images are upscaled and which are excluded. Please check your exclusion rules in the %1$sShortpixel Image Upscale%2$s page.', 'shortpixel-upscale-image' );
+				$message = '<p>' . sprintf(
+					$notice_text,
+					'<a href="options-general.php?page=shortpixel-upscale-settings&part=exclusions">',
+					'</a>'
+				) . '</p>';
 
 		return $message;
 	}

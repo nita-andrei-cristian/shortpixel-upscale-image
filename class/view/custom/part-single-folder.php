@@ -10,52 +10,56 @@ if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-$item = $this->view->current_item;
+$spui_item = $this->view->current_item;
 
-$folder_id = $item->get('id');
+$spui_folder_id = $spui_item->get('id');
 
-$type_display =   ($item->get('is_nextgen') ) ? __('Nextgen', 'shortpixel-image-optimiser') : __('Custom Media', 'shortpixel-image-optimiser');
-$stat = $item->getStats();
+$spui_type_display = ( $spui_item->get( 'is_nextgen' ) ) ? __( 'Nextgen', 'shortpixel-upscale-image' ) : __( 'Custom Media', 'shortpixel-upscale-image' );
+$spui_stat         = $spui_item->getStats();
 
 
-$fullstatus = esc_html__("Upscaled",'shortpixel-image-optimiser') . ": " . $stat['optimized'] . "\n"
-      . "" . esc_html__("Not Upscaled",'shortpixel-image-optimiser') . ": " . $stat['waiting'] . "\n"
+$spui_fullstatus = esc_html__( 'Upscaled', 'shortpixel-upscale-image' ) . ': ' . $spui_stat['optimized'] . "\n"
+      . esc_html__( 'Not Upscaled', 'shortpixel-upscale-image' ) . ': ' . $spui_stat['waiting'] . "\n"
       ;
 
 
-$err = ''; // unused since failed is gone.
-if (! $item->exists() && ! $err)
-  $err = __('Directory does not exist', 'shortpixel-image-optimiser');
+$spui_err = ''; // unused since failed is gone.
+if ( ! $spui_item->exists() && ! $spui_err ) {
+  $spui_err = __( 'Directory does not exist', 'shortpixel-upscale-image' );
+}
 
 
-if ($item->get('is_nextgen') && $view->settings->includeNextGen == 1)
+if ( $spui_item->get( 'is_nextgen' ) && $view->settings->includeNextGen == 1 ) {
   $action = false;
+}
 
-  $refreshUrl = add_query_arg(array('sp-action' => 'action_refreshfolder', 'folder_id' => $folder_id, 'part' => 'adv-settings'), $this->url); // has url
+$spui_refresh_url = add_query_arg( array( 'sp-action' => 'action_refreshfolder', 'folder_id' => $spui_folder_id, 'part' => 'adv-settings' ), $this->url ); // has url
 
-  $rowActions = $this->getRowActions($item);
+$spui_row_actions = $this->getRowActions( $spui_item );
 ?>
-<div class='item item-<?php echo esc_attr($item->get('id')) ?>'>
+<div class='item item-<?php echo esc_attr( $spui_item->get( 'id' ) ); ?>'>
   <span><input type="checkbox" /></span>
 
-    <span class='folder folder-<?php echo esc_attr($item->get('id')) ?>'>
-        <?php echo esc_html($item->getPath()); ?>
+    <span class='folder folder-<?php echo esc_attr( $spui_item->get( 'id' ) ); ?>'>
+        <?php echo esc_html( $spui_item->getPath() ); ?>
 
       <div class="row-actions">
-      <span class='item-id'>#<?php echo esc_attr($item->get('id')); ?></span>
+      <span class='item-id'>#<?php echo esc_html( $spui_item->get( 'id' ) ); ?></span>
       <?php
-      if (isset($rowActions)):
-        $i = 0;
-        foreach($rowActions as $actionName => $action):
-          $classes = '';
-          $link = ($action['type'] == 'js') ? 'javascript:' . $action['function'] : $action['function'];
+      if ( isset( $spui_row_actions ) ) :
+        $spui_i = 0;
+        foreach ( $spui_row_actions as $spui_action_name => $spui_action ) :
+          $spui_classes = '';
+          $spui_link    = ( 'js' === $spui_action['type'] ) ? '#' : $spui_action['function'];
+          $spui_onclick = ( 'js' === $spui_action['type'] ) ? $spui_action['function'] : '';
 
-          if ($i > 0)
+          if ( $spui_i > 0 ) {
             echo "|";
+          }
           ?>
-          <a href="<?php echo $link ?>" class="<?php echo $classes ?>"><?php echo $action['text'] ?></a>
+          <a href="<?php echo esc_url( $spui_link ); ?>"<?php echo ( '' !== $spui_onclick ) ? ' onclick="' . esc_attr( $spui_onclick ) . '"' : ''; ?> class="<?php echo esc_attr( $spui_classes ); ?>"><?php echo esc_html( $spui_action['text'] ); ?></a>
           <?php
-          $i++;
+          $spui_i++;
         endforeach;
 
       endif;
@@ -65,24 +69,24 @@ if ($item->get('is_nextgen') && $view->settings->includeNextGen == 1)
 
     </span>
     <span>
-        <?php echo $type_display; ?>
+        <?php echo esc_html( $spui_type_display ); ?>
     </span>
     <span>
 
-        <span title="<?php echo esc_attr($fullstatus); ?>" class='info-icon'>
-            <img alt='<?php esc_html_e('Info Icon', 'shortpixel-image-optimiser') ?>' src='<?php echo esc_url( wpSPUI()->plugin_url('res/img/info-icon.png' ));?>' style="margin-bottom: -2px;"/>
+        <span title="<?php echo esc_attr( $spui_fullstatus ); ?>" class='info-icon'>
+            <img alt='<?php esc_attr_e( 'Info Icon', 'shortpixel-upscale-image' ); ?>' src='<?php echo esc_url( wpSPUI()->plugin_url( 'res/img/info-icon.png' ) ); ?>' style="margin-bottom: -2px;"/>
         </span>&nbsp;<?php
-        //echo esc_html($type_display. ' ' );
+        //echo esc_html( $spui_type_display . ' ' );
         ?>
 
         <span class='files-number'><?php
-          echo esc_html($stat['optimized']);
+          echo esc_html( $spui_stat['optimized'] );
           echo '/';
-          echo esc_html($stat['total']); ?>
-        </span> <?php _e('Files', 'shortpixel-image-optimiser'); ?>
+          echo esc_html( $spui_stat['total'] ); ?>
+        </span> <?php esc_html_e( 'Files', 'shortpixel-upscale-image' ); ?>
     </span>
 		<span class='updated'>
-        <?php echo esc_html(UiHelper::formatTS($item->get('updated'))) ?>
+        <?php echo esc_html( UiHelper::formatTS( $spui_item->get( 'updated' ) ) ); ?>
     </span>
     <span class='status'>
 

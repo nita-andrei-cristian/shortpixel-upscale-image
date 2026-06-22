@@ -35,7 +35,7 @@ class AiController extends RequestManager
       
       if (! is_object($imageObj))
       {
-        $qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-image-optimiser')));
+        $qItem->addResult($this->returnFailure(self::STATUS_FAIL, __('Item seems invalid, removed or corrupted.', 'shortpixel-upscale-image')));
         return;
       }
 
@@ -138,14 +138,14 @@ class AiController extends RequestManager
         
         if (false === $apiData)
         {
-            return $this->returnRetry(RequestManager::STATUS_CONNECTION_ERROR, __('AI Api returned without any data. ', 'shortpixel-image-optimiser')) ;
+            return $this->returnRetry(RequestManager::STATUS_CONNECTION_ERROR, __('AI Api returned without any data. ', 'shortpixel-upscale-image')) ;
         }
 
         if ($qItem->data()->action == 'requestAlt')
         {
             if (false === $id && false === $is_error)
             {
-               return $this->returnRetry(RequestManager::STATUS_WAITING, __('Response without result object', 'shortpixel-image-optimiser'));
+               return $this->returnRetry(RequestManager::STATUS_WAITING, __('Response without result object', 'shortpixel-upscale-image'));
             }
             
             
@@ -154,15 +154,16 @@ class AiController extends RequestManager
               $remote_id = intval($id);
               $qItem->addResult(['remote_id' => $remote_id]);
               
-              return $this->returnSuccess(['remote_id' => $remote_id], RequestManager::STATUS_SUCCESS, __('Request for image SEO data sent to ShortPixel AI', 'shortpixel-image-optimiser'));  
+              return $this->returnSuccess(['remote_id' => $remote_id], RequestManager::STATUS_SUCCESS, __('Request for image SEO data sent to ShortPixel AI', 'shortpixel-upscale-image'));  
             }
-            elseif(self::AI_STATUS_OVERQUOTA === $status)
-            {
-               return $this->returnFailure(RequestManager::STATUS_ERROR, sprintf(esc_html__('Your AI quota for this month has been exceeded. We would love to hear your feedback — please share it with us %shere%s.', 'shortpixel-image-optimiser'), '<a href="https://shortpixel.com/contact" target="_blank">', '</a>'));
-            }
+	            elseif(self::AI_STATUS_OVERQUOTA === $status)
+	            {
+								 /* translators: 1: opening feedback link tag, 2: closing feedback link tag. */
+	               return $this->returnFailure(RequestManager::STATUS_ERROR, sprintf(esc_html__('Your AI quota for this month has been exceeded. We would love to hear your feedback — please share it with us %1$shere%2$s.', 'shortpixel-upscale-image'), '<a href="https://shortpixel.com/contact" target="_blank">', '</a>'));
+	            }
             elseif(self::AI_STATUS_INVALID_URL === $status)
             {
-                return $this->returnFailure(RequestManager::STATUS_FAIL, __('No URL or Invalid URL', 'shortpixel-image-optimiser'));
+                return $this->returnFailure(RequestManager::STATUS_FAIL, __('No URL or Invalid URL', 'shortpixel-upscale-image'));
             }
             else
             {
@@ -196,7 +197,7 @@ class AiController extends RequestManager
                       }
                   case '1':
                  
-                     return $this->returnOk(RequestManager::STATUS_WAITING, __('Waiting for result', 'shortpixel-image-optimiser'));
+                     return $this->returnOk(RequestManager::STATUS_WAITING, __('Waiting for result', 'shortpixel-upscale-image'));
                   break; 
                   case '2':  // Success of some kind. 
                   default: 
@@ -239,7 +240,7 @@ class AiController extends RequestManager
          }
       }
       
-      return $this->returnSuccess(['aiData' => $aiData], RequestManager::STATUS_SUCCESS, __('Retrieved AI Image SEO data', 'shortpixel-image-optimiser')); ;
+      return $this->returnSuccess(['aiData' => $aiData], RequestManager::STATUS_SUCCESS, __('Retrieved AI Image SEO data', 'shortpixel-upscale-image')); ;
     }
 
     protected function doRequest(QueueItem $item, $requestParameters)
@@ -265,7 +266,7 @@ class AiController extends RequestManager
           if ($token !== false)
           {
              delete_transient($this->auth_token);
-             return $this->returnRetry($code, __('Authentication token failure - Reset - Please wait', 'shortpixel-image-optimiser'));
+             return $this->returnRetry($code, __('Authentication token failure - Reset - Please wait', 'shortpixel-upscale-image'));
           }
        }
        return parent::returnFailure($code, $message);

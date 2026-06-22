@@ -12,17 +12,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 if (! $view->key->is_verifiedkey && $view->key->hide_api_key && ! $view->key->is_constant_key)
 {
 
-	$error_message = __('wp-config.php is hiding the API key, but no API key was found. Remove the constant, or define the SPUI_API_KEY constant as well', 'shortpixel-upscale-image');
-	Notice::addError($error_message);
+	$spui_error_message = __( 'wp-config.php is hiding the API key, but no API key was found. Remove the constant, or define the SPUI_API_KEY constant as well', 'shortpixel-upscale-image' );
+	Notice::addError( $spui_error_message );
 }
 elseif ($view->key->is_constant_key && ! $view->key->is_verifiedkey)
 {
-  $dkey = ($view->key->hide_api_key) ? '' : '(' . SPUI_API_KEY.  ')';
-	$error_message = sprintf(__('Constant API Key is not verified. Please check if this is a valid API key %s'),$dkey);
-  Notice::addError($error_message);
+  $spui_display_key = ( $view->key->hide_api_key ) ? '' : '(' . SPUI_API_KEY . ')';
+		/* translators: %s: Visible API key shown in parentheses, when not hidden. */
+	$spui_constant_key_error = __( 'Constant API Key is not verified. Please check if this is a valid API key %s', 'shortpixel-upscale-image' );
+	$spui_error_message = sprintf(
+		$spui_constant_key_error,
+		$spui_display_key
+	);
+  Notice::addError( $spui_error_message );
 }
 
-$adminEmail = get_bloginfo('admin_email');
+$spui_admin_email = get_bloginfo( 'admin_email' );
 
 
 // When key is not editable, basically all fields should be off.
@@ -31,9 +36,9 @@ $spui_is_disabled = ! $view->key->is_editable;
 ?>
 <section id="tab-nokey" class="<?php echo ($this->display_part == 'nokey') ? 'active setting-tab' :'setting-tab'; ?>" data-part="nokey" >
 
-  <h1><?php _e('Welcome Onboard!', 'shortpixel-upscale-image'); ?></h1>
+  <h1><?php esc_html_e( 'Welcome Onboard!', 'shortpixel-upscale-image' ); ?></h1>
   <div class='onboarding-logo'>
-        <?php echo UIHelper::getIcon('res/images/illustration/onboarding.svg'); ?>
+        <?php echo wp_kses_post( UiHelper::getIcon( 'res/images/illustration/onboarding.svg' ) ); ?>
   </div>
 
     <progressbar>
@@ -53,7 +58,7 @@ $spui_is_disabled = ! $view->key->is_editable;
 <settinglist class='new-customer now-active' tabindex="0" role="button" aria-pressed="true">
 
 	<h3><?php esc_html_e('New user?','shortpixel-upscale-image');?></h3>
-	<?php echo UiHelper::getIcon('res/images/icon/new-user.svg'); ?>
+	<?php echo wp_kses_post( UiHelper::getIcon( 'res/images/icon/new-user.svg' ) ); ?>
 	<h2><?php esc_html_e('Create account','shortpixel-upscale-image');?></h2>
 	<p><?php esc_html_e('If you don\'t have an API Key, you can request one for free. Just press the "Request Key" button after checking that the e-mail is correct.','shortpixel-upscale-image');?></p>
 
@@ -62,7 +67,7 @@ $spui_is_disabled = ! $view->key->is_editable;
   <setting>
       <content>
       <name for="pluginemail"><?php esc_html_e('E-mail address:','shortpixel-upscale-image');?></name>
-              <input name="pluginemail" type="text" id="pluginemail" value="<?php echo esc_attr( sanitize_email($adminEmail) );?>" class="regular-text" <?php disabled( $spui_is_disabled ); ?> />
+              <input name="pluginemail" type="text" id="pluginemail" value="<?php echo esc_attr( sanitize_email( $spui_admin_email ) );?>" class="regular-text" <?php disabled( $spui_is_disabled ); ?> />
 
               <span class="spinner" id="pluginemail_spinner" style="float:none;"></span>
 <!--
@@ -77,8 +82,9 @@ $spui_is_disabled = ! $view->key->is_editable;
                     <b><?php esc_html_e('Please provide a valid e-mail address.', 'shortpixel-upscale-image');?></b>
                 </p>
                 <p class="settings-info" id='pluginemail-info'>
-                    <?php if($adminEmail) {
-                        printf(esc_html__('%s %s %s is the e-mail address in your WordPress Settings. You can use it, or change it to any valid e-mail address that you own.','shortpixel-upscale-image'), '<b>', esc_html(sanitize_email($adminEmail)),  '</b>');
+                    <?php if ( $spui_admin_email ) {
+                        /* translators: 1: Opening bold tag. 2: Admin email address. 3: Closing bold tag. */
+                        printf( wp_kses_post( __( '%1$s%2$s%3$s is the e-mail address in your WordPress Settings. You can use it, or change it to any valid e-mail address that you own.', 'shortpixel-upscale-image' ) ), '<b>', esc_html( sanitize_email( $spui_admin_email ) ), '</b>' );
                     } else {
                         esc_html_e('Please input your e-mail address and press the Request Key button.','shortpixel-upscale-image');
                     }
@@ -95,7 +101,9 @@ $spui_is_disabled = ! $view->key->is_editable;
                              src="<?php echo esc_url(\wpSPUI()->plugin_url('res/img/point.png' ));?>" style="position: absolute;left: -39px;bottom: -9px;display:none;">
 
                     </span>
-                    <?php printf(esc_html__('I have read and I agree to the %s Terms of Service %s and the %s Privacy Policy %s (%s GDPR compliant %s).','shortpixel-upscale-image'), '<a href="https://shortpixel.com/tos" target="_blank">', '</a>', '<a href="https://shortpixel.com/privacy" target="_blank">', '</a>', '<a href="https://shortpixel.com/privacy#gdpr" target="_blank">', '</a>');
+                    <?php
+                    /* translators: 1: Opening Terms of Service link. 2: Closing Terms of Service link. 3: Opening Privacy Policy link. 4: Closing Privacy Policy link. 5: Opening GDPR link. 6: Closing GDPR link. */
+                    printf( wp_kses_post( __( 'I have read and I agree to the %1$s Terms of Service %2$s and the %3$s Privacy Policy %4$s (%5$s GDPR compliant %6$s).', 'shortpixel-upscale-image' ) ), '<a href="https://shortpixel.com/tos" target="_blank">', '</a>', '<a href="https://shortpixel.com/privacy" target="_blank">', '</a>', '<a href="https://shortpixel.com/privacy#gdpr" target="_blank">', '</a>' );
                     ?></label> </p>
               </info>
       </content>
@@ -110,7 +118,7 @@ $spui_is_disabled = ! $view->key->is_editable;
 			<?php esc_html_e('Already have an account?','shortpixel-upscale-image');?>
 	</h3>
 
-	<?php echo UiHelper::getIcon('res/images/icon/login.svg'); ?>
+	<?php echo wp_kses_post( UiHelper::getIcon( 'res/images/icon/login.svg' ) ); ?>
 	<h2><?php esc_html_e('Login','shortpixel-upscale-image');?></h2>
 
 	<p>

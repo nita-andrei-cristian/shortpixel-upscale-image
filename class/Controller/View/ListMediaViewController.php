@@ -54,7 +54,7 @@ class ListMediaViewController extends \SPUI\ViewController
 
   public function headerColumns($defaults)
   {
-    $defaults['spui-shortPixel'] = __('ShortPixel Upscale', 'shortpixel-image-optimiser');
+    $defaults['spui-shortPixel'] = __('ShortPixel Upscale', 'shortpixel-upscale-image');
 
 
     return $defaults;
@@ -85,7 +85,7 @@ class ListMediaViewController extends \SPUI\ViewController
 		 // Asking for something non-existing.
 	 if ($mediaItem === false)
      {
-       $this->view->text = __('File Error. This could be not an image or the file is missing', 'shortpixel-image-optimiser');
+       $this->view->text = __('File Error. This could be not an image or the file is missing', 'shortpixel-upscale-image');
 		 	 return;
      }
      $this->view->mediaItem = $mediaItem;
@@ -175,21 +175,22 @@ class ListMediaViewController extends \SPUI\ViewController
      $this->view->item_id = $item_id;
 
      $generated_data = $AiDataModel->getGeneratedData(); 
-     if ($AiDataModel->isSomeThingGenerated())
-     {
-        if (isset($generated_data['filebase']))
-        {
-           unset($generated_data['filebase']);
-        }
-        $generated_fields = implode(',', array_keys(array_filter($generated_data)));
-        $this->view->ai_icon = 'ai'; 
-        $this->view->ai_title = sprintf(__('AI-generated image SEO data: %s', 'shortpixel-image-optimiser'), $generated_fields); 
+	     if ($AiDataModel->isSomeThingGenerated())
+	     {
+	        if (isset($generated_data['filebase']))
+	        {
+	           unset($generated_data['filebase']);
+	        }
+	        $generated_fields = implode(',', array_keys(array_filter($generated_data)));
+	        $this->view->ai_icon = 'ai'; 
+					/* translators: %s is a comma-separated list of generated AI SEO fields. */
+	        $this->view->ai_title = sprintf(__('AI-generated image SEO data: %s', 'shortpixel-upscale-image'), $generated_fields); 
 
      }
      else
      {
        $this->view->ai_icon = 'no-ai'; 
-       $this->view->ai_title = __('No AI-generated SEO data for this image', 'shortpixel-image-optimiser'); 
+       $this->view->ai_title = __('No AI-generated SEO data for this image', 'shortpixel-upscale-image'); 
 
      }
 
@@ -213,17 +214,17 @@ class ListMediaViewController extends \SPUI\ViewController
       $status   = filter_input(INPUT_GET, 'shortpixel_status', FILTER_UNSAFE_RAW );
 
       $options = array(
-          'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-          'optimized' => __('Upscaled', 'shortpixel-image-optimiser'),
-          'unoptimized' => __('Not Upscaled', 'shortpixel-image-optimiser'),
-					'prevented' => __('Upscaling Error', 'shortpixer-image-optimiser'),
+          'all' => __('Any ShortPixel State', 'shortpixel-upscale-image'),
+          'optimized' => __('Upscaled', 'shortpixel-upscale-image'),
+          'unoptimized' => __('Not Upscaled', 'shortpixel-upscale-image'),
+						'prevented' => __('Upscaling Error', 'shortpixel-upscale-image'),
       );
 
       echo  "<select name='shortpixel_status' id='shortpixel_status'>\n";
       foreach($options as $optname => $optval)
       {
           $selected = ($status == $optname) ? esc_attr('selected') : '';
-          echo "<option value='". esc_attr($optname) . "' $selected >" . esc_html($optval) . "</option>\n";
+	          echo "<option value='" . esc_attr($optname) . "' " . esc_attr($selected) . '>' . esc_html($optval) . "</option>\n";
       }
       echo "</select>";
 

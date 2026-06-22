@@ -39,7 +39,7 @@ abstract class Data
 			$result[$index] = array();
 			$metadata = $item['metadata'];
 
-			$baseurl = parse_url($item['url'], PHP_URL_PATH);
+				$baseurl = wp_parse_url($item['url'], PHP_URL_PATH);
 			$result[$index]['base'] = $baseurl;  // this is the relpath of the mainfile.
 			$baseurl = trailingslashit(str_replace(wp_basename($item['url']), '', $baseurl)); // get the relpath of main file.
 

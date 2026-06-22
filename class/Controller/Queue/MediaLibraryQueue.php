@@ -170,9 +170,8 @@ class MediaLibraryQueue extends Queue
      $sqlmeta .= ' order by post_id DESC LIMIT %d ';
      $prepare[] = $limit;
 
-     $sqlmeta = $wpdb->prepare($sqlmeta, $prepare);
-
-     $results = $wpdb->get_col($sqlmeta);
+	     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and dynamic fragments are queue-owned.
+	     $results = $wpdb->get_col($wpdb->prepare($sqlmeta, $prepare));
 
      $items = [];
      foreach($results as $item_id)
@@ -204,9 +203,8 @@ class MediaLibraryQueue extends Queue
      $sql .= ' order by attach_id DESC LIMIT %d ';
      $prepare[] = $limit;
 
-     $sql = $wpdb->prepare($sql, $prepare);
-
-     $results = $wpdb->get_col($sql);
+	     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+	     $results = $wpdb->get_col($wpdb->prepare($sql, $prepare));
 
      $items = [];
 
@@ -241,9 +239,8 @@ class MediaLibraryQueue extends Queue
        $sql .= ' order by attach_id DESC LIMIT %d ';
        $prepare[] = $limit;
   
-       $sql = $wpdb->prepare($sql, $prepare);
-  
-       $results = $wpdb->get_col($sql);
+	       // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query is prepared here and table name is plugin-owned.
+	       $results = $wpdb->get_col($wpdb->prepare($sql, $prepare));
   
        $items = [];
   
